@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { DisciplineTag } from "@/components/discipline-tag";
 import { Button, LinkButton } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
@@ -17,7 +18,7 @@ type CoachView = {
   disciplineSlugs: string[];
   qualifications: string[];
   testimonials: { quote: string; author: string }[];
-  clinics: { title: string; date: string; location: string }[];
+  clinics: { id: string | null; title: string; date: string; location: string }[];
   photoUrl: string | null;
   canListClinics: boolean;
 };
@@ -42,7 +43,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
       supabase.from("testimonials").select("quote, author_name").eq("coach_id", coach.id),
       supabase
         .from("clinics")
-        .select("title, start_date, location_text")
+        .select("id, title, start_date, location_text")
         .eq("coach_id", coach.id)
         .order("start_date"),
       supabase
@@ -67,6 +68,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
     qualifications: coach.qualifications ?? [],
     testimonials: (testimonialRows ?? []).map((t) => ({ quote: t.quote, author: t.author_name })),
     clinics: (clinicRows ?? []).map((c) => ({
+      id: c.id,
       title: c.title,
       date: c.start_date,
       location: c.location_text,
@@ -90,7 +92,7 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
     disciplineSlugs: coach.disciplines,
     qualifications: coach.qualifications,
     testimonials: coach.testimonials,
-    clinics: coach.clinics,
+    clinics: coach.clinics.map((c) => ({ ...c, id: null })),
     photoUrl: null,
     canListClinics: coach.tier === "standard_plus_clinics",
   };
@@ -166,8 +168,14 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
           <h2 className="text-lg font-semibold text-fg">Upcoming clinics</h2>
           <div className="mt-3 flex flex-col gap-2">
             {coach.clinics.map((clinic) => (
-              <div key={clinic.title} className="rounded-lg border border-border bg-surface p-4">
-                <div className="font-semibold text-fg">{clinic.title}</div>
+              <div key={clinic.id ?? clinic.title} className="rounded-lg border border-border bg-surface p-4">
+                {clinic.id ? (
+                  <Link href={`/clinics/${clinic.id}`} className="font-semibold text-fg hover:text-accent">
+                    {clinic.title}
+                  </Link>
+                ) : (
+                  <div className="font-semibold text-fg">{clinic.title}</div>
+                )}
                 <div className="text-sm text-muted">
                   {new Date(clinic.date).toLocaleDateString("en-AU", {
                     day: "numeric",
