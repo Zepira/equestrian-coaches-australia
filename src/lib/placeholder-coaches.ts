@@ -1,3 +1,5 @@
+import { getDisciplineBySlug } from "@/lib/disciplines";
+
 // Sample data standing in for the `coach_profiles` table until Supabase is
 // wired up (see build plan, phase 2). Shape mirrors the planned DB columns
 // so swapping this for a real query later is a like-for-like replacement.
@@ -89,4 +91,22 @@ export function getCoachBySlug(slug: string) {
 
 export function getCoachesByDiscipline(disciplineSlug: string) {
   return placeholderCoaches.filter((c) => c.disciplines.includes(disciplineSlug));
+}
+
+// Shapes a PlaceholderCoach into the same CoachCardData the real DB-backed
+// search returns, so pages can render one card component regardless of
+// whether Supabase is configured yet.
+export function toCoachCardData(coach: PlaceholderCoach) {
+  return {
+    slug: coach.slug,
+    name: coach.name,
+    suburb: coach.suburb,
+    state: coach.state,
+    headline: coach.headline,
+    disciplineNames: coach.disciplines.map(
+      (slug) => getDisciplineBySlug(slug)?.name ?? slug
+    ),
+    photoUrl: null,
+    distanceKm: null,
+  };
 }

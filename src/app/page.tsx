@@ -3,10 +3,15 @@ import { CoachCard } from "@/components/coach-card";
 import { DisciplineTag } from "@/components/discipline-tag";
 import { LinkButton } from "@/components/ui/button";
 import { disciplines } from "@/lib/disciplines";
-import { placeholderCoaches } from "@/lib/placeholder-coaches";
+import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
+import { createClient } from "@/lib/supabase/server";
+import { searchCoaches } from "@/lib/supabase/queries";
 
-export default function Home() {
-  const featured = placeholderCoaches.slice(0, 3);
+export default async function Home() {
+  const supabase = await createClient();
+  const featured = supabase
+    ? (await searchCoaches(supabase, {})).slice(0, 3)
+    : placeholderCoaches.slice(0, 3).map(toCoachCardData);
   const topDisciplines = disciplines.slice(0, 6);
 
   return (

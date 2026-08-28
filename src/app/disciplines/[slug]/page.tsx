@@ -1,25 +1,31 @@
 import { notFound } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
-import { disciplines, getDisciplineBySlug } from "@/lib/disciplines";
-import { getCoachesByDiscipline } from "@/lib/placeholder-coaches";
+import { createClient } from "@/lib/supabase/server";
+import { getDisciplines, searchCoaches } from "@/lib/supabase/queries";
+import { disciplines as staticDisciplines } from "@/lib/disciplines";
+import { getCoachesByDiscipline, toCoachCardData } from "@/lib/placeholder-coaches";
 
 export function generateStaticParams() {
-  return disciplines.map((d) => ({ slug: d.slug }));
+  return staticDisciplines.map((d) => ({ slug: d.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const discipline = getDisciplineBySlug(slug);
+  const discipline = staticDisciplines.find((d) => d.slug === slug);
   return { title: discipline ? `${discipline.name} coaches` : "Discipline not found" };
 }
 
 export default async function DisciplinePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const discipline = getDisciplineBySlug(slug);
+  const supabase = await createClient();
+  const disciplines = await getDisciplines(supabase);
+  const discipline = disciplines.find((d) => d.slug === slug);
   if (!discipline) notFound();
 
-  const coaches = getCoachesByDiscipline(slug);
+  const coaches = supabase
+    ? await searchCoaches(supabase, { disciplineId: discipline.id })
+    : getCoachesByDiscipline(slug).map(toCoachCardData);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">

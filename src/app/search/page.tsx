@@ -1,8 +1,9 @@
 import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
 import { DisciplineTag } from "@/components/discipline-tag";
-import { disciplines } from "@/lib/disciplines";
-import { placeholderCoaches } from "@/lib/placeholder-coaches";
+import { createClient } from "@/lib/supabase/server";
+import { getDisciplines, resolveLocation, searchCoaches } from "@/lib/supabase/queries";
+import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 
 export const metadata = { title: "Find a coach" };
 
@@ -12,15 +13,44 @@ export default async function SearchPage({
   searchParams: Promise<{ discipline?: string; location?: string }>;
 }) {
   const { discipline = "", location = "" } = await searchParams;
+  const supabase = await createClient();
+  const disciplines = await getDisciplines(supabase);
 
-  // Placeholder filtering — becomes a PostGIS radius query + discipline join
-  // once Supabase is wired up (see build plan, phase 4).
-  const results = placeholderCoaches.filter((coach) => {
-    const matchesDiscipline = !discipline || coach.disciplines.includes(discipline);
-    const matchesLocation =
-      !location || coach.suburb.toLowerCase().includes(location.toLowerCase().split(" ")[0]);
-    return matchesDiscipline && matchesLocation;
-  });
+  let results;
+  let locationNotFound = false;
+
+  if (supabase) {
+    const selected = disciplines.find((d) => d.slug === discipline);
+    let lat: number | null = null;
+    let long: number | null = null;
+
+    if (location) {
+      const resolved = await resolveLocation(supabase, location);
+      if (resolved) {
+        lat = resolved.lat;
+        long = resolved.long;
+      } else {
+        locationNotFound = true;
+      }
+    }
+
+    results = await searchCoaches(supabase, {
+      disciplineId: selected?.id ?? null,
+      lat,
+      long,
+      radiusKm: 100,
+    });
+  } else {
+    // Placeholder filtering — used only when Supabase isn't configured.
+    results = placeholderCoaches
+      .filter((coach) => {
+        const matchesDiscipline = !discipline || coach.disciplines.includes(discipline);
+        const matchesLocation =
+          !location || coach.suburb.toLowerCase().includes(location.toLowerCase().split(" ")[0]);
+        return matchesDiscipline && matchesLocation;
+      })
+      .map(toCoachCardData);
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
@@ -38,9 +68,15 @@ export default async function SearchPage({
         ))}
       </div>
 
+      {locationNotFound && (
+        <p className="mt-6 rounded-md border border-border bg-accent-soft p-3 text-sm text-fg">
+          Couldn&apos;t find &ldquo;{location}&rdquo; — showing results for any location instead.
+        </p>
+      )}
+
       <p className="mt-6 text-sm text-muted">
         {results.length} coach{results.length === 1 ? "" : "es"} found
-        {location ? ` near ${location}` : ""}
+        {location && !locationNotFound ? ` near ${location}` : ""}
       </p>
 
       {results.length > 0 ? (

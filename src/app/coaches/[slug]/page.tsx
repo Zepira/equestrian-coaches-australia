@@ -1,28 +1,119 @@
 import { notFound } from "next/navigation";
 import { DisciplineTag } from "@/components/discipline-tag";
 import { Button, LinkButton } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 
 export function generateStaticParams() {
   return placeholderCoaches.map((c) => ({ slug: c.slug }));
 }
 
+type CoachView = {
+  name: string;
+  suburb: string;
+  state: string;
+  headline: string;
+  bio: string;
+  disciplineSlugs: string[];
+  qualifications: string[];
+  testimonials: { quote: string; author: string }[];
+  clinics: { title: string; date: string; location: string }[];
+  photoUrl: string | null;
+  canListClinics: boolean;
+};
+
+async function getCoachFromDb(slug: string): Promise<CoachView | null> {
+  const supabase = await createClient();
+  if (!supabase) return null;
+
+  const { data: coach } = await supabase
+    .from("coach_profiles")
+    .select(
+      "id, headline, bio, suburb, state, qualifications, subscription_tier, published, profiles!coach_profiles_id_fkey(name)"
+    )
+    .eq("slug", slug)
+    .eq("published", true)
+    .maybeSingle();
+  if (!coach) return null;
+
+  const [{ data: disciplineRows }, { data: testimonialRows }, { data: clinicRows }, { data: photoRows }] =
+    await Promise.all([
+      supabase.from("coach_disciplines").select("disciplines(slug)").eq("coach_id", coach.id),
+      supabase.from("testimonials").select("quote, author_name").eq("coach_id", coach.id),
+      supabase
+        .from("clinics")
+        .select("title, start_date, location_text")
+        .eq("coach_id", coach.id)
+        .order("start_date"),
+      supabase
+        .from("coach_photos")
+        .select("storage_path")
+        .eq("coach_id", coach.id)
+        .order("sort_order")
+        .limit(1),
+    ]);
+
+  const profileName = (coach as unknown as { profiles: { name: string } | null }).profiles?.name;
+
+  return {
+    name: profileName ?? "Coach",
+    suburb: coach.suburb,
+    state: coach.state,
+    headline: coach.headline,
+    bio: coach.bio,
+    disciplineSlugs: (disciplineRows ?? [])
+      .map((r) => (r as unknown as { disciplines: { slug: string } | null }).disciplines?.slug)
+      .filter((s): s is string => Boolean(s)),
+    qualifications: coach.qualifications ?? [],
+    testimonials: (testimonialRows ?? []).map((t) => ({ quote: t.quote, author: t.author_name })),
+    clinics: (clinicRows ?? []).map((c) => ({
+      title: c.title,
+      date: c.start_date,
+      location: c.location_text,
+    })),
+    photoUrl: photoRows?.[0]
+      ? supabase.storage.from("coach-photos").getPublicUrl(photoRows[0].storage_path).data.publicUrl
+      : null,
+    canListClinics: coach.subscription_tier === "standard_plus_clinics",
+  };
+}
+
+function getCoachFromPlaceholder(slug: string): CoachView | null {
+  const coach = getCoachBySlug(slug);
+  if (!coach) return null;
+  return {
+    name: coach.name,
+    suburb: coach.suburb,
+    state: coach.state,
+    headline: coach.headline,
+    bio: coach.bio,
+    disciplineSlugs: coach.disciplines,
+    qualifications: coach.qualifications,
+    testimonials: coach.testimonials,
+    clinics: coach.clinics,
+    photoUrl: null,
+    canListClinics: coach.tier === "standard_plus_clinics",
+  };
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const coach = getCoachBySlug(slug);
+  const coach = (await getCoachFromDb(slug)) ?? getCoachFromPlaceholder(slug);
   return { title: coach ? coach.name : "Coach not found" };
 }
 
 export default async function CoachPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const coach = getCoachBySlug(slug);
+  const coach = (await getCoachFromDb(slug)) ?? getCoachFromPlaceholder(slug);
   if (!coach) notFound();
-
-  const canListClinics = coach.tier === "standard_plus_clinics";
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <div className="h-48 w-full rounded-lg bg-accent-soft sm:h-72" aria-hidden />
+      <div
+        className="h-48 w-full rounded-lg bg-accent-soft bg-cover bg-center sm:h-72"
+        style={coach.photoUrl ? { backgroundImage: `url(${coach.photoUrl})` } : undefined}
+        aria-hidden
+      />
 
       <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -31,12 +122,12 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
             {coach.suburb} {coach.state}
           </p>
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {coach.disciplines.map((slug) => (
+            {coach.disciplineSlugs.map((slug) => (
               <DisciplineTag key={slug} slug={slug} />
             ))}
           </div>
         </div>
-        {/* Favouriting requires a rider account — wired up once auth ships (phase 2/7) */}
+        {/* Favouriting requires a rider account — wired up once auth ships (phase 7) */}
         <Button variant="secondary" className="shrink-0">
           ♡ Favourite
         </Button>
@@ -61,10 +152,7 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
           <h2 className="text-lg font-semibold text-fg">Testimonials</h2>
           <div className="mt-3 flex flex-col gap-3">
             {coach.testimonials.map((t) => (
-              <blockquote
-                key={t.quote}
-                className="border-l-2 border-accent pl-4 text-fg"
-              >
+              <blockquote key={t.quote} className="border-l-2 border-accent pl-4 text-fg">
                 “{t.quote}”
                 <footer className="mt-1 text-sm text-muted">— {t.author}</footer>
               </blockquote>
@@ -73,7 +161,7 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
         </section>
       )}
 
-      {canListClinics && coach.clinics.length > 0 && (
+      {coach.canListClinics && coach.clinics.length > 0 && (
         <section className="mt-8">
           <h2 className="text-lg font-semibold text-fg">Upcoming clinics</h2>
           <div className="mt-3 flex flex-col gap-2">

@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# raw postcode dataset — re-download per supabase/scripts/load-postcodes.mjs
+/supabase/data/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

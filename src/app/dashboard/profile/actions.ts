@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { resolveLocation } from "@/lib/supabase/queries";
 
 async function requireCoach() {
   const supabase = await createClient();
@@ -29,6 +30,11 @@ export async function saveProfile(formData: FormData) {
     .filter(Boolean);
   const disciplineIds = formData.getAll("discipline").map(String);
 
+  // Geocode suburb/state/postcode into a point so radius search (phase 4)
+  // can find this coach. Silently skipped if it doesn't resolve — the
+  // profile still saves, it just won't surface in "near me" searches yet.
+  const resolved = await resolveLocation(supabase, `${suburb} ${postcode || state}`.trim());
+
   const { error } = await supabase
     .from("coach_profiles")
     .update({
@@ -38,6 +44,9 @@ export async function saveProfile(formData: FormData) {
       state,
       postcode,
       qualifications,
+      ...(resolved
+        ? { location: `SRID=4326;POINT(${resolved.long} ${resolved.lat})` }
+        : {}),
       updated_at: new Date().toISOString(),
     })
     .eq("id", userId);
