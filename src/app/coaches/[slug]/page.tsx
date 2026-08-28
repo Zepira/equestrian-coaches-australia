@@ -3,9 +3,12 @@ import Link from "next/link";
 import { DisciplineTag } from "@/components/discipline-tag";
 import { Button, LinkButton } from "@/components/ui/button";
 import { FavouriteButton } from "@/components/favourite-button";
+import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 import { getMockCoachBySlug } from "@/lib/mock-coaches";
+import { getDisciplineBySlug } from "@/lib/disciplines";
+import { breadcrumbSchema, coachPersonSchema } from "@/lib/structured-data";
 
 export function generateStaticParams() {
   return placeholderCoaches.map((c) => ({ slug: c.slug }));
@@ -17,6 +20,8 @@ type CoachView = {
   name: string;
   suburb: string;
   state: string;
+  lat: number | null;
+  long: number | null;
   headline: string;
   bio: string;
   disciplineSlugs: string[];
@@ -34,7 +39,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
   const { data: coach } = await supabase
     .from("coach_profiles")
     .select(
-      "id, headline, bio, suburb, state, qualifications, subscription_tier, published, profiles!coach_profiles_id_fkey(name)"
+      "id, headline, bio, suburb, state, lat, long, qualifications, subscription_tier, published, profiles!coach_profiles_id_fkey(name)"
     )
     .eq("slug", slug)
     .eq("published", true)
@@ -69,6 +74,8 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
     name: profileName ?? "Coach",
     suburb: coach.suburb,
     state: coach.state,
+    lat: coach.lat,
+    long: coach.long,
     headline: coach.headline,
     bio: coach.bio,
     disciplineSlugs: (disciplineRows ?? [])
@@ -100,6 +107,8 @@ function getCoachFromMock(slug: string): CoachView | null {
     name: coach.name,
     suburb: coach.suburb,
     state: coach.state,
+    lat: coach.lat,
+    long: coach.long,
     headline: coach.headline,
     bio: coach.bio,
     disciplineSlugs: coach.disciplineSlugs,
@@ -120,6 +129,8 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
     name: coach.name,
     suburb: coach.suburb,
     state: coach.state,
+    lat: null,
+    long: null,
     headline: coach.headline,
     bio: coach.bio,
     disciplineSlugs: coach.disciplines,
@@ -146,8 +157,33 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
   const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
   if (!coach) notFound();
 
+  const disciplineNames = coach.disciplineSlugs
+    .map((s) => getDisciplineBySlug(s)?.name)
+    .filter((n): n is string => Boolean(n));
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <JsonLd
+        data={[
+          coachPersonSchema({
+            name: coach.name,
+            slug: coach.slug,
+            headline: coach.headline,
+            bio: coach.bio,
+            suburb: coach.suburb,
+            state: coach.state,
+            lat: coach.lat,
+            long: coach.long,
+            photoUrl: coach.photoUrl,
+            disciplineNames,
+          }),
+          breadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Find a coach", url: "/search" },
+            { name: coach.name, url: `/coaches/${coach.slug}` },
+          ]),
+        ]}
+      />
       <div
         className="h-48 w-full rounded-lg bg-accent-soft bg-cover bg-center sm:h-72"
         style={coach.photoUrl ? { backgroundImage: `url(${coach.photoUrl})` } : undefined}

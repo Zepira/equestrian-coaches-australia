@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
+import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
 import { searchCoaches } from "@/lib/supabase/queries";
 import { searchMockCoaches } from "@/lib/mock-coaches";
+import { breadcrumbSchema, itemListSchema } from "@/lib/structured-data";
 
 // "riding instructor near me" catches far more search volume than any one
 // discipline name (see CLAUDE.md, "How Riders Find Us" spec) — this page
@@ -56,6 +58,17 @@ export default async function RidingInstructorsAreaPage({ params }: { params: Pr
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: `Riding instructors in ${area.name}, ${area.state}`, url: `/riding-instructors/${areaSlug}` },
+          ]),
+          ...(coaches.length > 0
+            ? [itemListSchema(coaches.map((c) => ({ name: c.name, url: `/coaches/${c.slug}` })))]
+            : []),
+        ]}
+      />
       <h1 className="text-2xl font-bold text-fg sm:text-3xl">
         Riding instructors in {area.name}, {area.state}
       </h1>

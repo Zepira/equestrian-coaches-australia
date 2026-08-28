@@ -49,6 +49,8 @@ export async function saveProfile(formData: FormData) {
       ...(resolved
         ? {
             location: `SRID=4326;POINT(${resolved.long} ${resolved.lat})`,
+            lat: resolved.lat,
+            long: resolved.long,
             area_id: resolved.area_id,
           }
         : {}),

@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
+import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines, searchCoaches } from "@/lib/supabase/queries";
 import { disciplines as staticDisciplines } from "@/lib/disciplines";
 import { getCoachesByDiscipline, toCoachCardData } from "@/lib/placeholder-coaches";
 import { getMockCoachesByDiscipline } from "@/lib/mock-coaches";
+import { breadcrumbSchema, itemListSchema } from "@/lib/structured-data";
 
 export function generateStaticParams() {
   return staticDisciplines.map((d) => ({ slug: d.slug }));
@@ -38,6 +40,17 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: `${discipline.name} coaches`, url: `/disciplines/${slug}` },
+          ]),
+          ...(coaches.length > 0
+            ? [itemListSchema(coaches.map((c) => ({ name: c.name, url: `/coaches/${c.slug}` })))]
+            : []),
+        ]}
+      />
       <h1 className="text-2xl font-bold text-fg sm:text-3xl">{discipline.name} coaches</h1>
       <p className="mt-2 max-w-xl text-muted">{discipline.blurb}</p>
 
