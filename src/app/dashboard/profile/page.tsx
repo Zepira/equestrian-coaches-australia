@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getDisciplines, ensureCoachProfile } from "@/lib/supabase/queries";
+import { getDisciplines, getSkills, getAttributes, ensureCoachProfile } from "@/lib/supabase/queries";
 import { ProfileForm } from "./profile-form";
 
 export const metadata = { title: "Edit profile" };
@@ -7,14 +7,18 @@ export const metadata = { title: "Edit profile" };
 export default async function ProfileEditPage() {
   const supabase = await createClient();
   const disciplines = await getDisciplines(supabase);
+  const skills = await getSkills(supabase);
+  const attributes = await getAttributes(supabase);
 
   if (!supabase) {
     return (
       <ProfileForm
         configured={false}
         disciplines={disciplines}
+        skills={skills}
+        attributes={attributes}
         coach={null}
-        selectedDisciplineIds={[]}
+        selectedTermIds={[]}
         photos={[]}
         testimonials={[]}
       />
@@ -35,7 +39,7 @@ export default async function ProfileEditPage() {
   const coach = await ensureCoachProfile(supabase, user.id, profile?.name ?? "Coach");
 
   const [{ data: selected }, { data: photos }, { data: testimonials }] = await Promise.all([
-    supabase.from("coach_disciplines").select("discipline_id").eq("coach_id", user.id),
+    supabase.from("coach_terms").select("term_id").eq("coach_id", user.id),
     supabase
       .from("coach_photos")
       .select("id, storage_path, sort_order")
@@ -58,7 +62,9 @@ export default async function ProfileEditPage() {
       configured
       coach={coach}
       disciplines={disciplines}
-      selectedDisciplineIds={(selected ?? []).map((s) => s.discipline_id)}
+      skills={skills}
+      attributes={attributes}
+      selectedTermIds={(selected ?? []).map((s) => s.term_id)}
       photos={photosWithUrls}
       testimonials={testimonials ?? []}
     />

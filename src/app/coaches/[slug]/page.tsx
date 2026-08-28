@@ -43,7 +43,10 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
 
   const [{ data: disciplineRows }, { data: testimonialRows }, { data: clinicRows }, { data: photoRows }] =
     await Promise.all([
-      supabase.from("coach_disciplines").select("disciplines(slug)").eq("coach_id", coach.id),
+      supabase
+        .from("coach_terms")
+        .select("terms(slug, kind)")
+        .eq("coach_id", coach.id),
       supabase.from("testimonials").select("quote, author_name").eq("coach_id", coach.id),
       supabase
         .from("clinics")
@@ -69,8 +72,9 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
     headline: coach.headline,
     bio: coach.bio,
     disciplineSlugs: (disciplineRows ?? [])
-      .map((r) => (r as unknown as { disciplines: { slug: string } | null }).disciplines?.slug)
-      .filter((s): s is string => Boolean(s)),
+      .map((r) => (r as unknown as { terms: { slug: string; kind: string } | null }).terms)
+      .filter((t): t is { slug: string; kind: string } => Boolean(t) && t!.kind === "discipline")
+      .map((t) => t.slug),
     qualifications: coach.qualifications ?? [],
     testimonials: (testimonialRows ?? []).map((t) => ({ quote: t.quote, author: t.author_name })),
     clinics: (clinicRows ?? []).map((c) => ({

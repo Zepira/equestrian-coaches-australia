@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { saveProfile, uploadPhoto, deletePhoto, addTestimonial, deleteTestimonial } from "./actions";
 
-type Discipline = { id: string; slug: string; name: string; blurb: string };
+type Term = { id: string; slug: string; name: string; blurb?: string };
 type Coach = {
   headline: string;
   bio: string;
@@ -15,18 +15,62 @@ type Coach = {
 type Photo = { id: string; url: string; storage_path: string };
 type Testimonial = { id: string; author_name: string; quote: string };
 
+function TermCheckboxGroup({
+  legend,
+  hint,
+  name,
+  terms,
+  selectedIds,
+  configured,
+}: {
+  legend: string;
+  hint?: string;
+  name: string;
+  terms: Term[];
+  selectedIds: string[];
+  configured: boolean;
+}) {
+  return (
+    <fieldset disabled={!configured}>
+      <legend className="mb-1 text-sm font-medium text-fg">{legend}</legend>
+      {hint && <p className="mb-2 text-sm text-muted">{hint}</p>}
+      <div className="flex flex-wrap gap-2">
+        {terms.map((t) => (
+          <label
+            key={t.id}
+            className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-sm text-fg has-checked:border-accent has-checked:bg-accent-soft"
+          >
+            <input
+              type="checkbox"
+              name={name}
+              value={t.id}
+              defaultChecked={selectedIds.includes(t.id)}
+              className="accent-current"
+            />
+            {t.name}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 export function ProfileForm({
   configured,
   coach,
   disciplines,
-  selectedDisciplineIds,
+  skills,
+  attributes,
+  selectedTermIds,
   photos,
   testimonials,
 }: {
   configured: boolean;
   coach: Coach;
-  disciplines: Discipline[];
-  selectedDisciplineIds: string[];
+  disciplines: Term[];
+  skills: Term[];
+  attributes: Term[];
+  selectedTermIds: string[];
   photos: Photo[];
   testimonials: Testimonial[];
 }) {
@@ -123,26 +167,32 @@ export function ProfileForm({
           </label>
         </div>
 
-        <fieldset disabled={!configured}>
-          <legend className="mb-2 text-sm font-medium text-fg">Disciplines you teach</legend>
-          <div className="flex flex-wrap gap-2">
-            {disciplines.map((d) => (
-              <label
-                key={d.id}
-                className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-sm text-fg has-checked:border-accent has-checked:bg-accent-soft"
-              >
-                <input
-                  type="checkbox"
-                  name="discipline"
-                  value={d.id}
-                  defaultChecked={selectedDisciplineIds.includes(d.id)}
-                  className="accent-current"
-                />
-                {d.name}
-              </label>
-            ))}
-          </div>
-        </fieldset>
+        <TermCheckboxGroup
+          legend="Disciplines you teach"
+          hint="The first one you tick leads your profile title and card — reordering comes later."
+          name="discipline"
+          terms={disciplines}
+          selectedIds={selectedTermIds}
+          configured={configured}
+        />
+
+        <TermCheckboxGroup
+          legend="Skills you coach"
+          hint="What you fix — the searches that convert best. Pick a handful that are genuinely you."
+          name="skill"
+          terms={skills}
+          selectedIds={selectedTermIds}
+          configured={configured}
+        />
+
+        <TermCheckboxGroup
+          legend="About your setup"
+          hint="Practical facts riders filter on before they bother enquiring."
+          name="attribute"
+          terms={attributes}
+          selectedIds={selectedTermIds}
+          configured={configured}
+        />
 
         <label className="block">
           <span className="mb-1 block text-sm font-medium text-fg">Qualifications</span>

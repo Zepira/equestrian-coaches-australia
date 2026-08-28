@@ -29,6 +29,8 @@ export async function saveProfile(formData: FormData) {
     .map((q) => q.trim())
     .filter(Boolean);
   const disciplineIds = formData.getAll("discipline").map(String);
+  const skillIds = formData.getAll("skill").map(String);
+  const attributeIds = formData.getAll("attribute").map(String);
 
   // Geocode suburb/state/postcode into a point so radius search (phase 4)
   // can find this coach. Silently skipped if it doesn't resolve — the
@@ -52,18 +54,21 @@ export async function saveProfile(formData: FormData) {
     .eq("id", userId);
   if (error) throw error;
 
-  // Replace the discipline tag set wholesale — simplest correct approach
-  // for a small, infrequently-changed list.
-  const { error: deleteError } = await supabase
-    .from("coach_disciplines")
-    .delete()
-    .eq("coach_id", userId);
+  // Replace the whole term set (disciplines + skills + attributes)
+  // wholesale — simplest correct approach for a small, infrequently-
+  // changed list. Disciplines keep their checked order as sort_order, so
+  // the first one ticked leads the coach's page title (spec: "lowest-
+  // ordered discipline is primary" — full drag-to-reorder is a follow-up).
+  const { error: deleteError } = await supabase.from("coach_terms").delete().eq("coach_id", userId);
   if (deleteError) throw deleteError;
 
-  if (disciplineIds.length > 0) {
-    const { error: insertError } = await supabase
-      .from("coach_disciplines")
-      .insert(disciplineIds.map((discipline_id) => ({ coach_id: userId, discipline_id })));
+  const termRows = [
+    ...disciplineIds.map((term_id, sort_order) => ({ coach_id: userId, term_id, sort_order })),
+    ...skillIds.map((term_id) => ({ coach_id: userId, term_id, sort_order: 0 })),
+    ...attributeIds.map((term_id) => ({ coach_id: userId, term_id, sort_order: 0 })),
+  ];
+  if (termRows.length > 0) {
+    const { error: insertError } = await supabase.from("coach_terms").insert(termRows);
     if (insertError) throw insertError;
   }
 

@@ -3,22 +3,54 @@ import { disciplines as staticDisciplines } from "@/lib/disciplines";
 
 const AU_STATES = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"];
 
-// Fetches the discipline taxonomy from the DB, falling back to the static
-// list in src/lib/disciplines.ts when there's no live Supabase project yet
-// (or the table is empty). Keeps every page working before/after phase 2's
-// migration is actually run.
-export async function getDisciplines(supabase: SupabaseClient | null) {
-  if (!supabase) return staticDisciplines.map((d) => ({ id: d.slug, ...d }));
+export type TermKind = "discipline" | "skill" | "attribute";
+
+// Generic reader for the terms table (phase 9 taxonomy — see CLAUDE.md
+// "Search & taxonomy build spec"). Falls back to the static discipline
+// list when there's no live Supabase project, or for skills/attributes
+// when the table is empty (both cases keep pages working rather than
+// throwing).
+export async function getTerms(supabase: SupabaseClient | null, kind: TermKind) {
+  if (!supabase) return kind === "discipline" ? staticDisciplines.map((d) => ({ id: d.slug, ...d })) : [];
 
   const { data, error } = await supabase
-    .from("disciplines")
+    .from("terms")
     .select("id, slug, name, blurb")
+    .eq("kind", kind)
+    .eq("active", true)
     .order("sort_order");
 
   if (error || !data || data.length === 0) {
-    return staticDisciplines.map((d) => ({ id: d.slug, ...d }));
+    return kind === "discipline" ? staticDisciplines.map((d) => ({ id: d.slug, ...d })) : [];
   }
   return data;
+}
+
+// Kept as the discipline-specific name since it's used all over the app —
+// equivalent to getTerms(supabase, "discipline").
+export function getDisciplines(supabase: SupabaseClient | null) {
+  return getTerms(supabase, "discipline");
+}
+
+export function getSkills(supabase: SupabaseClient | null) {
+  return getTerms(supabase, "skill");
+}
+
+export function getAttributes(supabase: SupabaseClient | null) {
+  return getTerms(supabase, "attribute");
+}
+
+// Suggested skills/attributes to offer once a coach picks a discipline
+// (term_suggestions, curated seed — see 0008_taxonomy_seed_and_migrate.sql).
+export async function getSuggestedTerms(supabase: SupabaseClient, disciplineId: string) {
+  const { data } = await supabase
+    .from("term_suggestions")
+    .select("term_id, terms(id, slug, name, kind)")
+    .eq("discipline_id", disciplineId)
+    .order("sort_order");
+  return (data ?? [])
+    .map((r) => (r as unknown as { terms: { id: string; slug: string; name: string; kind: TermKind } | null }).terms)
+    .filter((t): t is { id: string; slug: string; name: string; kind: TermKind } => Boolean(t));
 }
 
 export type ResolvedLocation = {
@@ -88,21 +120,28 @@ export type CoachSearchResult = {
   photoUrl: string | null;
 };
 
-// Runs the nearby_coaches() RPC (phase 4 migration) then hydrates the thin
+export type SearchFilters = {
+  disciplineIds?: string[];
+  skillIds?: string[];
+  attributeIds?: string[];
+  lat?: number | null;
+  long?: number | null;
+  radiusKm?: number;
+};
+
+// Runs the nearby_coaches() RPC (phase 4, rewritten for multi-select in
+// phase 9 — OR within a kind, AND across kinds) then hydrates the thin
 // result rows with what CoachCard needs to render — name, disciplines, a
-// thumbnail — in a second batched query, preserving the RPC's distance
-// ordering.
+// thumbnail — in a second batched query, preserving the RPC's
+// distance/match-count ordering.
 export async function searchCoaches(
   supabase: SupabaseClient,
-  {
-    disciplineId,
-    lat,
-    long,
-    radiusKm = 50,
-  }: { disciplineId?: string | null; lat?: number | null; long?: number | null; radiusKm?: number }
+  { disciplineIds, skillIds, attributeIds, lat, long, radiusKm = 50 }: SearchFilters
 ): Promise<CoachSearchResult[]> {
   const { data: matches, error } = await supabase.rpc("nearby_coaches", {
-    p_discipline_id: disciplineId ?? null,
+    p_discipline_ids: disciplineIds?.length ? disciplineIds : null,
+    p_skill_ids: skillIds?.length ? skillIds : null,
+    p_attribute_ids: attributeIds?.length ? attributeIds : null,
     p_lat: lat ?? null,
     p_long: long ?? null,
     p_radius_km: radiusKm,
@@ -114,8 +153,8 @@ export async function searchCoaches(
   const [{ data: profileRows }, { data: disciplineRows }, { data: photoRows }] = await Promise.all([
     supabase.from("profiles").select("id, name").in("id", ids),
     supabase
-      .from("coach_disciplines")
-      .select("coach_id, disciplines(name)")
+      .from("coach_terms")
+      .select("coach_id, terms(name, kind)")
       .in("coach_id", ids),
     supabase
       .from("coach_photos")
@@ -127,10 +166,10 @@ export async function searchCoaches(
   const nameById = new Map((profileRows ?? []).map((p) => [p.id, p.name as string]));
   const disciplinesById = new Map<string, string[]>();
   for (const row of disciplineRows ?? []) {
-    const name = (row as unknown as { disciplines: { name: string } | null }).disciplines?.name;
-    if (!name) continue;
+    const term = (row as unknown as { terms: { name: string; kind: TermKind } | null }).terms;
+    if (!term || term.kind !== "discipline") continue;
     const list = disciplinesById.get(row.coach_id) ?? [];
-    list.push(name);
+    list.push(term.name);
     disciplinesById.set(row.coach_id, list);
   }
   const photoById = new Map<string, string>();

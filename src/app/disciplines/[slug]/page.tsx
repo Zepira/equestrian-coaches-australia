@@ -30,7 +30,10 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
 
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const coaches = supabase
-    ? [...(await searchCoaches(supabase, { disciplineId: discipline.id })), ...getMockCoachesByDiscipline(slug)]
+    ? [
+        ...(await searchCoaches(supabase, { disciplineIds: [discipline.id] })),
+        ...getMockCoachesByDiscipline(slug),
+      ]
     : getCoachesByDiscipline(slug).map(toCoachCardData);
 
   return (

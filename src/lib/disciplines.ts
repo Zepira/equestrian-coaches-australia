@@ -64,6 +64,46 @@ export const disciplines: Discipline[] = [
     name: "Para-Equestrian",
     blurb: "Adaptive coaching for para riders, across grades and disciplines.",
   },
+  {
+    slug: "trail-riding",
+    name: "Trail Riding",
+    blurb: "Trail and bush riding, on your horse or a lesson horse, out on real terrain.",
+  },
+  {
+    slug: "showing-hack",
+    name: "Showing & Hack",
+    blurb: "Led and ridden showing, hack classes and led classes for the show ring.",
+  },
+  {
+    slug: "polocrosse",
+    name: "Polocrosse",
+    blurb: "Polocrosse coaching, from first swings to representative squads.",
+  },
+  {
+    slug: "endurance",
+    name: "Endurance",
+    blurb: "Endurance riding, conditioning and vetting-out coaching for long-distance rides.",
+  },
+  {
+    slug: "stock-horse",
+    name: "Stock Horse",
+    blurb: "Australian Stock Horse work — station skills, campdraft prep and led/ridden classes.",
+  },
+  {
+    slug: "mounted-games",
+    name: "Mounted Games",
+    blurb: "Mounted games coaching for pony club and club-level competitors.",
+  },
+  {
+    slug: "vaulting",
+    name: "Vaulting",
+    blurb: "Equestrian vaulting — gymnastics on horseback, solo or team.",
+  },
+  {
+    slug: "carriage-driving",
+    name: "Carriage Driving",
+    blurb: "Carriage and harness driving, from recreational to competitive combined driving.",
+  },
 ];
 
 export function getDisciplineBySlug(slug: string): Discipline | undefined {

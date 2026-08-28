@@ -10,7 +10,7 @@ async function getClinic(id: string) {
   const { data } = await supabase
     .from("clinics")
     .select(
-      "title, description, location_text, start_date, end_date, disciplines(slug, name), coach_profiles(slug, profiles!coach_profiles_id_fkey(name))"
+      "title, description, location_text, start_date, end_date, terms(slug, name), coach_profiles(slug, profiles!coach_profiles_id_fkey(name))"
     )
     .eq("id", id)
     .maybeSingle();
@@ -29,8 +29,7 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
   const clinic = await getClinic(id);
   if (!clinic) notFound();
 
-  const discipline = (clinic as unknown as { disciplines: { slug: string; name: string } | null })
-    .disciplines;
+  const discipline = (clinic as unknown as { terms: { slug: string; name: string } | null }).terms;
   const coach = (
     clinic as unknown as { coach_profiles: { slug: string; profiles: { name: string } | null } | null }
   ).coach_profiles;

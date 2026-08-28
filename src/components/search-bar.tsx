@@ -19,7 +19,7 @@ export function SearchBar({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (discipline) params.set("discipline", discipline);
+    if (discipline) params.set("d", discipline);
     if (location) params.set("location", location);
     router.push(`/search?${params.toString()}`);
   }

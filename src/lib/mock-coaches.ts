@@ -164,7 +164,7 @@ export function getMockCoachBySlug(slug: string) {
 }
 
 type SearchFilter = {
-  disciplineSlug?: string | null;
+  disciplineSlugs?: string[];
   lat?: number | null;
   long?: number | null;
   radiusKm?: number;
@@ -195,12 +195,18 @@ function toCard(coach: MockCoach, distanceKm: number | null): MockCoachCard {
 }
 
 // Mirrors searchCoaches()'s filter semantics (src/lib/supabase/queries.ts)
-// so the two result sets can be concatenated and sorted together.
-export function searchMockCoaches({ disciplineSlug, lat, long, radiusKm = 50 }: SearchFilter): MockCoachCard[] {
+// so the two result sets can be concatenated and sorted together. OR
+// within disciplineSlugs, matching the real multi-select search.
+export function searchMockCoaches({ disciplineSlugs, lat, long, radiusKm = 50 }: SearchFilter): MockCoachCard[] {
   if (!MOCK_COACHES_ENABLED) return [];
 
   return mockCoaches
-    .filter((c) => !disciplineSlug || c.disciplineSlugs.includes(disciplineSlug))
+    .filter(
+      (c) =>
+        !disciplineSlugs ||
+        disciplineSlugs.length === 0 ||
+        c.disciplineSlugs.some((s) => disciplineSlugs.includes(s))
+    )
     .map((c) => {
       const distanceKm = lat != null && long != null ? haversineKm(lat, long, c.lat, c.long) : null;
       return { coach: c, distanceKm };
@@ -210,5 +216,5 @@ export function searchMockCoaches({ disciplineSlug, lat, long, radiusKm = 50 }: 
 }
 
 export function getMockCoachesByDiscipline(disciplineSlug: string): MockCoachCard[] {
-  return searchMockCoaches({ disciplineSlug });
+  return searchMockCoaches({ disciplineSlugs: [disciplineSlug] });
 }

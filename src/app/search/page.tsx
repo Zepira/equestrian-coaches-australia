@@ -1,23 +1,29 @@
 import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
-import { DisciplineTag } from "@/components/discipline-tag";
+import { DisciplineFilter } from "@/components/discipline-filter";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines, resolveLocation, searchCoaches } from "@/lib/supabase/queries";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { searchMockCoaches } from "@/lib/mock-coaches";
+import { logSearchEvent } from "@/lib/search-events";
 
+// noindex, follow — faceted URLs are the classic directory crawl-budget
+// disaster (spec: "What earns a page"). /disciplines/[slug] is the
+// indexable equivalent for a single discipline.
 export const metadata = {
   title: "Find a coach",
   description:
     "Search riding coaches across Australia by discipline and location — bridleless, working equitation, dressage and more.",
+  robots: { index: false, follow: true },
 };
 
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ discipline?: string; location?: string }>;
+  searchParams: Promise<{ d?: string; location?: string }>;
 }) {
-  const { discipline = "", location = "" } = await searchParams;
+  const { d = "", location = "" } = await searchParams;
+  const disciplineSlugs = d.split(",").filter(Boolean);
   const supabase = await createClient();
   const disciplines = await getDisciplines(supabase);
 
@@ -25,7 +31,9 @@ export default async function SearchPage({
   let locationNotFound = false;
 
   if (supabase) {
-    const selected = disciplines.find((d) => d.slug === discipline);
+    const disciplineIds = disciplines
+      .filter((disc) => disciplineSlugs.includes(disc.slug))
+      .map((disc) => disc.id);
     let lat: number | null = null;
     let long: number | null = null;
 
@@ -39,23 +47,30 @@ export default async function SearchPage({
       }
     }
 
-    results = await searchCoaches(supabase, {
-      disciplineId: selected?.id ?? null,
-      lat,
-      long,
-      radiusKm: 100,
-    });
+    results = await searchCoaches(supabase, { disciplineIds, lat, long, radiusKm: 100 });
 
     // Mock data merge — see src/lib/mock-coaches.ts to remove.
     results = [
       ...results,
-      ...searchMockCoaches({ disciplineSlug: discipline || null, lat, long, radiusKm: 100 }),
+      ...searchMockCoaches({ disciplineSlugs, lat, long, radiusKm: 100 }),
     ].sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
+
+    // search_events — logged regardless of hit/miss, the zero-result rows
+    // are the interesting ones (supply gap vs vocabulary gap).
+    await logSearchEvent({
+      termIds: disciplineIds,
+      locationText: location || null,
+      lat,
+      lng: long,
+      radiusKm: 100,
+      resultCount: results.length,
+    });
   } else {
     // Placeholder filtering — used only when Supabase isn't configured.
     results = placeholderCoaches
       .filter((coach) => {
-        const matchesDiscipline = !discipline || coach.disciplines.includes(discipline);
+        const matchesDiscipline =
+          disciplineSlugs.length === 0 || coach.disciplines.some((s) => disciplineSlugs.includes(s));
         const matchesLocation =
           !location || coach.suburb.toLowerCase().includes(location.toLowerCase().split(" ")[0]);
         return matchesDiscipline && matchesLocation;
@@ -67,16 +82,12 @@ export default async function SearchPage({
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <h1 className="text-2xl font-bold text-fg sm:text-3xl">Find a coach</h1>
       <div className="mt-4">
-        <SearchBar defaultDiscipline={discipline} defaultLocation={location} />
+        <SearchBar defaultDiscipline={disciplineSlugs[0] ?? ""} defaultLocation={location} />
       </div>
 
-      {/* Discipline quick filters — horizontal scroller on mobile, wraps on desktop */}
-      <div className="mt-6 -mx-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
-        {disciplines.map((d) => (
-          <div key={d.slug} className="shrink-0">
-            <DisciplineTag slug={d.slug} active={d.slug === discipline} />
-          </div>
-        ))}
+      {/* Multi-select — OR within disciplines, e.g. "dressage or show jumping" */}
+      <div className="mt-6">
+        <DisciplineFilter disciplines={disciplines} />
       </div>
 
       {locationNotFound && (

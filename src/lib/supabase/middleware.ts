@@ -4,6 +4,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/client";
 
 const COACH_ROUTES = "/dashboard";
 const RIDER_ROUTES = "/account";
+const ADMIN_ROUTES = "/admin";
 
 // Refreshes the Supabase session on every request and gates the coach
 // dashboard / rider account routes. Runs from src/middleware.ts.
@@ -38,7 +39,10 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
-  const needsAuth = pathname.startsWith(COACH_ROUTES) || pathname.startsWith(RIDER_ROUTES);
+  const needsAuth =
+    pathname.startsWith(COACH_ROUTES) ||
+    pathname.startsWith(RIDER_ROUTES) ||
+    pathname.startsWith(ADMIN_ROUTES);
 
   if (needsAuth && !user) {
     const loginUrl = new URL("/login", request.url);
@@ -54,6 +58,13 @@ export async function updateSession(request: NextRequest) {
       .single();
     if (profile?.role !== "coach") {
       return NextResponse.redirect(new URL("/account", request.url));
+    }
+  }
+
+  if (user && pathname.startsWith(ADMIN_ROUTES)) {
+    const { data: isAdmin } = await supabase.rpc("is_admin");
+    if (!isAdmin) {
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
