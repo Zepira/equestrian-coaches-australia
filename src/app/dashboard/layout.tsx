@@ -1,4 +1,11 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+// Applies to every /dashboard/* route — private, coach-only pages have no
+// reason to be indexed.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 const tabs = [
   { href: "/dashboard", label: "Overview" },

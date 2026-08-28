@@ -14,7 +14,11 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const discipline = staticDisciplines.find((d) => d.slug === slug);
-  return { title: discipline ? `${discipline.name} coaches` : "Discipline not found" };
+  if (!discipline) return { title: "Discipline not found" };
+  return {
+    title: `${discipline.name} coaches`,
+    description: `${discipline.blurb} Search ${discipline.name.toLowerCase()} coaches across Australia by location.`,
+  };
 }
 
 export default async function DisciplinePage({ params }: { params: Promise<{ slug: string }> }) {

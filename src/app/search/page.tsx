@@ -6,7 +6,11 @@ import { getDisciplines, resolveLocation, searchCoaches } from "@/lib/supabase/q
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { searchMockCoaches } from "@/lib/mock-coaches";
 
-export const metadata = { title: "Find a coach" };
+export const metadata = {
+  title: "Find a coach",
+  description:
+    "Search riding coaches across Australia by discipline and location — bridleless, working equitation, dressage and more.",
+};
 
 export default async function SearchPage({
   searchParams,

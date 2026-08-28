@@ -20,7 +20,8 @@ async function getClinic(id: string) {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const clinic = await getClinic(id);
-  return { title: clinic ? clinic.title : "Clinic not found" };
+  if (!clinic) return { title: "Clinic not found" };
+  return { title: clinic.title, description: `${clinic.title} — ${clinic.location_text}.` };
 }
 
 export default async function ClinicPage({ params }: { params: Promise<{ id: string }> }) {

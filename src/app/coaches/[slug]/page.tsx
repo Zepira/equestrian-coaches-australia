@@ -130,7 +130,11 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
-  return { title: coach ? coach.name : "Coach not found" };
+  if (!coach) return { title: "Coach not found" };
+  return {
+    title: coach.name,
+    description: `${coach.headline} ${coach.suburb} ${coach.state}.`,
+  };
 }
 
 export default async function CoachPage({ params }: { params: Promise<{ slug: string }> }) {

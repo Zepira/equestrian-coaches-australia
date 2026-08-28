@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getDisciplines } from "@/lib/supabase/queries";
 import { saveRiderPreferences, removeFavourite } from "./actions";
 
-export const metadata = { title: "My account" };
+export const metadata = { title: "My account", robots: { index: false, follow: false } };
 
 type Favourite = {
   coachId: string;

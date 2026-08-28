@@ -3,7 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { isMockPayments } from "@/lib/stripe";
 import { startCheckout } from "@/app/dashboard/billing/actions";
 
-export const metadata = { title: "For coaches" };
+export const metadata = {
+  title: "For coaches",
+  description:
+    "List your coaching profile from $9.99 a month. Be found by riders searching by discipline and location, with no accreditation gatekeeping.",
+};
 
 const tiers = [
   {
