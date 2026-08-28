@@ -1,8 +1,6 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { DisciplineTag } from "@/components/discipline-tag";
 import { Button, LinkButton } from "@/components/ui/button";
-import { getDisciplineBySlug } from "@/lib/disciplines";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 
 export function generateStaticParams() {

@@ -1,16 +1,81 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LinkButton } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 const navLinks = [
   { href: "/search", label: "Find a coach" },
   { href: "/for-coaches", label: "For coaches" },
 ];
 
+type AuthState = { loggedIn: boolean; role: "rider" | "coach" | null };
+
+function useAuthState(): AuthState {
+  const [state, setState] = useState<AuthState>({ loggedIn: false, role: null });
+
+  useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) return; // not pointed at a live Supabase project yet
+
+    async function loadRole(client: NonNullable<typeof supabase>, userId: string) {
+      const { data } = await client.from("profiles").select("role").eq("id", userId).single();
+      setState({ loggedIn: true, role: (data?.role as "rider" | "coach") ?? null });
+    }
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) loadRole(supabase, user.id);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) loadRole(supabase, session.user.id);
+      else setState({ loggedIn: false, role: null });
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return state;
+}
+
+function AccountLinks({ auth, onNavigate }: { auth: AuthState; onNavigate?: () => void }) {
+  if (!auth.loggedIn) {
+    return (
+      <>
+        <Link href="/login" onClick={onNavigate} className="text-[15px] font-medium text-fg hover:text-accent">
+          Log in
+        </Link>
+        <LinkButton href="/signup?role=coach" onClick={onNavigate} className="text-sm">
+          List your profile
+        </LinkButton>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Link
+        href={auth.role === "coach" ? "/dashboard" : "/account"}
+        onClick={onNavigate}
+        className="text-[15px] font-medium text-fg hover:text-accent"
+      >
+        {auth.role === "coach" ? "Dashboard" : "My account"}
+      </Link>
+      <form action="/auth/sign-out" method="post">
+        <button type="submit" className="text-[15px] font-medium text-fg hover:text-accent">
+          Log out
+        </button>
+      </form>
+    </>
+  );
+}
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const auth = useAuthState();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur">
@@ -26,9 +91,7 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
-          <LinkButton href="/dashboard/profile" className="text-sm">
-            List your profile
-          </LinkButton>
+          <AccountLinks auth={auth} />
         </nav>
 
         {/* Mobile menu toggle */}
@@ -75,9 +138,9 @@ export function SiteHeader() {
               </li>
             ))}
           </ul>
-          <LinkButton href="/dashboard/profile" onClick={() => setOpen(false)} className="mt-3 w-full">
-            List your profile
-          </LinkButton>
+          <div className="mt-2 flex flex-col gap-1">
+            <AccountLinks auth={auth} onNavigate={() => setOpen(false)} />
+          </div>
         </nav>
       )}
     </header>

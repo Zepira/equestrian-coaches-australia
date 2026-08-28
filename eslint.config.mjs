@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendor export from Claude Design — not app source, not ours to lint.
+    "design-preview/**",
   ]),
 ]);
 
