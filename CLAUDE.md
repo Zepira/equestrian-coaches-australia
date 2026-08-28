@@ -188,6 +188,28 @@ Target queries are "riding instructor near me", "dressage coach Melbourne", "bri
 
 - **Also not budgeted but launch-blocking:** public liability + professional indemnity insurance and terms disclaiming that you vet or accredit coaches (~$600–1,200/yr).
 
+## Search & taxonomy build spec (28 Aug 2026)
+
+Full spec: **["How Riders Find Us"](https://claude.ai/code/artifact/e11731ff-7c5f-4408-8e5c-e2fc9ea41a66)**. Written for the build (technical), unlike the marketing plan which is client-facing. Key decisions:
+
+- **One `terms` table with a `kind` enum (`discipline` | `skill` | `attribute`)**, not three parallel tables — otherwise the alias layer, admin UI and search filter get built three times and drift. Existing `disciplines`/`coach_disciplines` fold into `terms`/`coach_terms` with an insert-select. Do it now, while only test coaches exist.
+  - **discipline** = what they teach. The *only* kind that generates URLs (initially).
+  - **skill** = what they fix — float loading, starting young horses, confidence building, OTTB retraining. Filters + page content, no URLs.
+  - **attribute** = how they work — horses available for lessons, own arena, beginners welcome, NDIS registered.
+- **`term_aliases`** with `unique(lower(alias))` — an alias belongs to exactly one term or matching is ambiguous. `source` column tracks seed/admin/search_console/onsite.
+- **`term_suggestions`** maps discipline → suggested skills/attributes (curated seed; add a data-driven "other Western coaches also list…" row once 10+ coaches share a discipline). Cap the suggestion list at ~8.
+- **`coach_terms.sort_order`** — lowest-ordered discipline is the coach's primary, used in page titles. No extra column, coach reorders by dragging.
+- **`areas` table** (suburb/town/region/state, with centroid + hand-written intro), separate from the 18.5k `postcodes` which map into it. Riders search place names, not postcodes.
+- **`indexable_pages` register** — nightly job recomputes which pages clear the 3-coach gate; sitemap, internal links and the prune report all read from it. Below the gate → 301 to the parent area page, never 404.
+- **Four page types:** `/coaches/[slug]`, `/riding-instructors/[area]` (all disciplines — this catches the highest-volume "riding instructor near me" queries), `/disciplines/[slug]/[area]`, `/disciplines/[slug]`. `/search` is **noindex, follow** — faceted URLs are the classic directory crawl-budget disaster.
+- **Multi-select search:** OR within a kind, AND across kinds → pass three arrays to `nearby_coaches` (`p_discipline_ids`, `p_skill_ids`, `p_attribute_ids`), not one array + match-all flag. Tie-break on match count after distance.
+- **Aliases go in exactly four places:** title tag, one natural sentence of body copy, varied internal-link anchor text, and structured data (`knowsAbout` / `alternateName`). Never as a visible list — that is keyword stuffing.
+- **Admin:** separate `admin_users` table + `is_admin()` — do NOT add `'admin'` to the `user_role` enum (it would mean touching the signup trigger and would stop an admin also being a coach). **Slug trap:** a term/area/coach slug in a live URL must be read-only once indexable; changes go through a deliberate action that writes `term_slug_history` and middleware 301s the old slug.
+- **`search_events`** logs every on-site search (query, terms, location, result_count, click). Insert from the server action with the service-role client — **no anon insert policy**, that is an open spam endpoint. Zero-result searches split into supply gaps (recruiting targets) vs vocabulary gaps.
+- **Weekly SEO digest** (Vercel Cron + `CRON_SECRET` → Resend email, not a dashboard): unmapped queries, zero-result splits, performance by URL pattern + 90-day prune list, near misses (position 5–20), and promotion candidates (skill terms searched *with a location* → flip `generates_pages = true`). GSC via a **service account** (`webmasters.readonly`), which must be added as a user on the property or it 403s. Limits: 2–3 day lag, 16-month retention, 25k rows/request, max 4 dimensions, 1,200 queries/100s.
+- **Freshness:** coach pages static + on-demand `revalidatePath` on save (also revalidating their area pages); area pages ISR 1h + on-demand; sitemap `lastmod` from real `last_coach_change` (Google ignores fabricated ones). Clinics are the honest freshness engine since they expire by themselves. Monthly stale-profile nudge at 6 months untouched doubles as retention.
+- **Verify the Search Console domain property (`sc-domain:`) on launch day**, even with 12 coaches. It only collects from verification and only holds 16 months.
+
 ## Status / next steps
 
 - [ ] Review 5 Claude Design directions and choose one (or graft favourite elements together)
@@ -195,9 +217,15 @@ Target queries are "riding instructor near me", "dressage coach Melbourne", "bri
 - [ ] Firm up real hero copy (headline/subhead/CTA) instead of placeholder copy used in design exploration
 - [ ] **Validate pricing before promising founding coaches a grandfathered rate.** $9.99 looks too cheap: EquiDirectory charges $80–$400/yr for a worse product, and a coach charging $70–$120/hr covers $9.99/mo with one extra lesson a year. Moving to $19/$29 roughly doubles net ARPU to $20.84 and base-case LTV to ~$298, which doubles what can be spent acquiring. Ask the first ten coaches what they'd pay without leading with a number.
 - [ ] Pick the beachhead region (the one Alana rides in) and build the phase-zero list of 400–600 named coaches
-- [ ] **Add `search_aliases` to the `disciplines` table** (SEO build task — needed before any discipline × area pages ship)
-- [ ] Add `LocalBusiness`/`Person` schema to coach pages and `ItemList` to area pages (phase 8 SEO work)
-- [ ] Enforce the 3-coach minimum before generating any discipline × area page
+- [ ] Build the taxonomy layer per the spec below (`0007_taxonomy` migration + seed vocabulary) — supersedes the earlier "add search_aliases to disciplines" note
+- [ ] Add `areas` table and map postcodes into it
+- [ ] Rewrite `nearby_coaches` for multi-select (three arrays: disciplines / skills / attributes)
+- [ ] Profile editor: multi-select disciplines + suggested skills + attributes, drag to reorder
+- [ ] Log `search_events` from the search server action (service-role only, no anon policy)
+- [ ] `indexable_pages` register + nightly eligibility job + new page routes + sitemap
+- [ ] Structured data (`Person`/`LocalBusiness`, `ItemList`, `BreadcrumbList`) and slug-history 301s
+- [ ] `/admin` taxonomy screens (can wait — seed data covers launch)
+- [ ] **Verify the Search Console domain property on launch day**, then wire the weekly digest
 - [ ] Decide the coach enquiry method on `/coaches/[slug]` (currently a placeholder — mailto vs. an in-app contact form)
 
 ## Working notes
