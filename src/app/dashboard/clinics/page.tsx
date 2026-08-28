@@ -38,7 +38,7 @@ export default async function ClinicsPage() {
 
   if (!hasClinicsTier) {
     return (
-      <div className="rounded-lg border border-dashed border-border p-6 text-center text-muted">
+      <div className="rounded-[var(--radius-tile)] border border-dashed border-border p-6 text-center text-muted">
         Clinics are available on the Standard + Clinics plan.
         <div className="mt-3">
           <LinkButton href="/dashboard/billing">Upgrade plan</LinkButton>
@@ -52,7 +52,7 @@ export default async function ClinicsPage() {
       <section>
         <h2 className="text-lg font-semibold text-fg">Your clinics</h2>
         {clinics.length === 0 ? (
-          <div className="mt-3 rounded-lg border border-dashed border-border p-6 text-center text-muted">
+          <div className="mt-3 rounded-[var(--radius-tile)] border border-dashed border-border p-6 text-center text-muted">
             You haven&apos;t listed any clinics yet.
           </div>
         ) : (
@@ -60,7 +60,7 @@ export default async function ClinicsPage() {
             {clinics.map((clinic) => (
               <div
                 key={clinic.id}
-                className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-2 rounded-[var(--radius-tile)] border border-border bg-surface p-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
                   <div className="font-semibold text-fg">{clinic.title}</div>
@@ -102,7 +102,7 @@ export default async function ClinicsPage() {
               type="text"
               required
               placeholder="e.g. Weekend Working Equitation Clinic"
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
             />
           </label>
           <label className="block">
@@ -110,7 +110,7 @@ export default async function ClinicsPage() {
             <textarea
               name="description"
               rows={3}
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
             />
           </label>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -118,7 +118,7 @@ export default async function ClinicsPage() {
               <span className="mb-1 block text-sm font-medium text-fg">Discipline</span>
               <select
                 name="discipline_id"
-                className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+                className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
               >
                 <option value="">Any discipline</option>
                 {disciplines.map((d) => (
@@ -135,7 +135,7 @@ export default async function ClinicsPage() {
                 type="text"
                 required
                 placeholder="e.g. Bendigo VIC"
-                className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
+                className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
               />
             </label>
           </div>
@@ -146,7 +146,7 @@ export default async function ClinicsPage() {
                 name="start_date"
                 type="date"
                 required
-                className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+                className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
               />
             </label>
             <label className="block">
@@ -154,7 +154,7 @@ export default async function ClinicsPage() {
               <input
                 name="end_date"
                 type="date"
-                className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+                className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
               />
             </label>
           </div>

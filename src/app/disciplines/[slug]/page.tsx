@@ -69,7 +69,7 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
           ))}
         </div>
       ) : (
-        <div className="mt-8 rounded-lg border border-dashed border-border p-8 text-center text-muted">
+        <div className="mt-8 rounded-[var(--radius-tile)] border border-dashed border-border p-8 text-center text-muted">
           No {discipline.name.toLowerCase()} coaches listed yet — check back soon.
         </div>
       )}

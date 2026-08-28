@@ -80,7 +80,7 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
       {clinic.description && <p className="mt-6 text-fg">{clinic.description}</p>}
 
       {coach && (
-        <section className="mt-8 rounded-lg border border-border bg-surface p-5">
+        <section className="mt-8 rounded-[var(--radius-tile)] border border-border bg-surface p-5">
           <div className="text-sm text-muted">Hosted by</div>
           <div className="mt-1 text-lg font-semibold text-fg">{coach.profiles?.name ?? "Coach"}</div>
           <LinkButton href={`/coaches/${coach.slug}`} variant="secondary" className="mt-4">

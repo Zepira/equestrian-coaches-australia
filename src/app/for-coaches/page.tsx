@@ -56,7 +56,7 @@ export default async function ForCoachesPage() {
           kept current by you.
         </p>
         {isMockPayments && (
-          <p className="mx-auto mt-4 max-w-md rounded-md border border-border bg-accent-soft p-3 text-sm text-fg">
+          <p className="mx-auto mt-4 max-w-md rounded-[var(--radius-control)] border border-border bg-accent-soft p-3 text-sm text-fg">
             Running on mock payments while the business/billing setup is confirmed — subscribing
             publishes your profile for real, no card is charged yet.
           </p>
@@ -67,7 +67,7 @@ export default async function ForCoachesPage() {
         {tiers.map((tier) => (
           <div
             key={tier.tier}
-            className={`flex flex-col rounded-xl border p-6 ${
+            className={`flex flex-col rounded-[var(--radius-tile)] border p-6 ${
               tier.recommended ? "border-accent bg-accent-soft" : "border-border bg-surface"
             }`}
           >

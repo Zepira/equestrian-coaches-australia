@@ -5,88 +5,184 @@ import { LinkButton } from "@/components/ui/button";
 import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
-import { searchCoaches } from "@/lib/supabase/queries";
-import { searchMockCoaches } from "@/lib/mock-coaches";
+import { searchCoaches, getSkills, getAttributes } from "@/lib/supabase/queries";
+import { searchMockCoaches, disciplinePhoto } from "@/lib/mock-coaches";
 
 export default async function Home() {
   const supabase = await createClient();
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
-  const featured = supabase
-    ? [...(await searchCoaches(supabase, {})), ...searchMockCoaches({})].slice(0, 3)
-    : placeholderCoaches.slice(0, 3).map(toCoachCardData);
-  const topDisciplines = disciplines.slice(0, 6);
+  const [featured, skills, attributes] = await Promise.all([
+    supabase
+      ? [...(await searchCoaches(supabase, {})), ...searchMockCoaches({})].slice(0, 4)
+      : placeholderCoaches.slice(0, 4).map(toCoachCardData),
+    getSkills(supabase),
+    getAttributes(supabase),
+  ]);
+  const topDisciplines = disciplines.slice(0, 3);
+  const moreDisciplines = disciplines.slice(3, 9);
 
   return (
     <>
-      <section className="border-b border-border bg-surface">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-12">
+      {/* Hero */}
+      <section className="bg-bg">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-14">
           <div className="lg:order-1">
-            <div className="text-sm font-semibold uppercase tracking-wide text-accent">
+            <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
               Coaching, discipline by discipline
             </div>
-            <h1 className="mt-3 max-w-2xl text-4xl font-bold leading-tight text-fg sm:text-6xl">
+            <h1 className="mt-6 max-w-xl text-5xl leading-[0.98] text-ink sm:text-6xl lg:text-[72px]">
               Find your perfect riding coach, nearby.
             </h1>
-            <p className="mt-4 max-w-xl text-lg text-muted">
+            <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted">
               Search verified coaches across Australia by discipline and location — liberty,
               bridleless, working equitation and every other discipline.
             </p>
             <div className="mt-8 max-w-2xl">
-              <SearchBar />
+              <SearchBar skills={skills} attributes={attributes} />
+            </div>
+            <div className="mt-6 text-[15px] text-muted">
+              <strong className="text-ink">{disciplines.length}</strong> disciplines listed, from
+              dressage to liberty
             </div>
           </div>
-          <div className="order-first h-56 w-full overflow-hidden rounded-2xl sm:h-72 lg:order-2 lg:h-[420px]">
+          <div className="order-first h-56 w-full overflow-hidden rounded-[var(--radius-tile)] sm:h-72 lg:order-2 lg:h-[480px]">
             {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL, not worth next/image remote-pattern config yet */}
             <img
-              src="https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=1200&q=80"
-              alt="A rider on a grey horse in a classical dressage arena"
+              src="https://images.unsplash.com/photo-1690112330355-300fa08844b7?auto=format&fit=crop&w=1200&q=85"
+              alt="A rider working a horse in an open yard"
               className="h-full w-full object-cover"
             />
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-        <h2 className="text-2xl font-bold text-fg sm:text-3xl">Start with the discipline you ride</h2>
-        <p className="mt-2 max-w-xl text-muted">
-          Coaches are listed by the disciplines they actually teach, not by keyword.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-2">
-          {topDisciplines.map((d) => (
-            <DisciplineTag key={d.slug} slug={d.slug} />
-          ))}
+      {/* Featured disciplines */}
+      <section className="bg-shade">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+            <div>
+              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+                Featured disciplines
+              </div>
+              <h2 className="mt-4 max-w-xl text-4xl leading-[1.05] text-ink sm:text-5xl">
+                Start with the discipline you ride.
+              </h2>
+            </div>
+            <p className="max-w-sm text-lg leading-relaxed text-muted">
+              Coaches are listed by the disciplines they actually teach, not by keyword.
+            </p>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
+            {topDisciplines.map((d) => (
+              <a key={d.slug} href={`/disciplines/${d.slug}`} className="group">
+                <div className="arch-crop h-64 bg-border sm:h-80">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL */}
+                  <img
+                    src={disciplinePhoto(d.slug)}
+                    alt={d.name}
+                    className="h-full w-full object-cover transition-opacity group-hover:opacity-90"
+                  />
+                </div>
+                <h3 className="mt-6 text-2xl font-medium text-ink">{d.name}</h3>
+                <p className="mt-1 text-[17px] leading-relaxed text-muted">{d.blurb}</p>
+              </a>
+            ))}
+          </div>
+
+          <div className="mt-11 flex flex-col items-start justify-between gap-6 border-t border-border pt-8 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap gap-2.5">
+              {moreDisciplines.map((d) => (
+                <DisciplineTag key={d.slug} slug={d.slug} />
+              ))}
+            </div>
+            <LinkButton href="/search" variant="ghost" className="shrink-0">
+              All disciplines →
+            </LinkButton>
+          </div>
         </div>
       </section>
 
-      <section className="border-t border-border bg-surface">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+      {/* Featured coaches */}
+      <section className="bg-bg">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
           <div className="flex items-end justify-between gap-4">
-            <h2 className="text-2xl font-bold text-fg sm:text-3xl">Recently listed coaches</h2>
+            <div>
+              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+                Featured coaches
+              </div>
+              <h2 className="mt-4 text-4xl leading-[1.05] text-ink sm:text-5xl">
+                Coaches taking riders now.
+              </h2>
+            </div>
             <LinkButton href="/search" variant="ghost" className="hidden shrink-0 sm:inline-flex">
               See all coaches →
             </LinkButton>
           </div>
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {featured.map((coach) => (
               <CoachCard key={coach.slug} coach={coach} />
             ))}
           </div>
-          <LinkButton href="/search" variant="secondary" className="mt-6 w-full sm:hidden">
+          <LinkButton href="/search" variant="secondary" className="mt-8 w-full sm:hidden">
             See all coaches
           </LinkButton>
         </div>
       </section>
 
-      <section className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-16">
-          <h2 className="text-2xl font-bold text-fg sm:text-3xl">Coaching professionally?</h2>
-          <p className="mx-auto mt-2 max-w-md text-muted">
-            List your profile from $9.99 a month — bio, photo, location, specialties,
-            qualifications and testimonials.
-          </p>
-          <LinkButton href="/for-coaches" className="mt-6">
-            List your coaching profile
-          </LinkButton>
+      {/* How it works */}
+      <section className="bg-ink text-ink-fg">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <h2 className="max-w-xl text-4xl leading-[1.05] text-ink-fg sm:text-5xl">
+            Three steps to a lesson.
+          </h2>
+          <div className="mt-12 grid grid-cols-1 gap-10 sm:grid-cols-3">
+            {[
+              {
+                n: "01",
+                title: "Search your discipline",
+                body: "Pick what you ride and the town you ride in. Every listing is a real coach, not an agency.",
+              },
+              {
+                n: "02",
+                title: "Read the profile",
+                body: "Qualifications, disciplines, travel radius, testimonials from riders they've taught.",
+              },
+              {
+                n: "03",
+                title: "Contact them direct",
+                body: "No commission, no booking fee. You deal with your coach, the way riders always have.",
+              },
+            ].map((step) => (
+              <div key={step.n} className="border-t border-ink-fg/35 pt-6">
+                <div className="text-2xl text-border">{step.n}</div>
+                <div className="mt-3 text-2xl font-medium text-ink-fg">{step.title}</div>
+                <p className="mt-2.5 text-[17px] leading-relaxed text-ink-fg/82">{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Coach CTA */}
+      <section className="border-t border-border bg-bg">
+        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 px-4 py-14 sm:flex-row sm:items-center sm:px-6 sm:py-16">
+          <div className="max-w-xl">
+            <h2 className="text-3xl leading-[1.05] text-ink sm:text-4xl">Coaching professionally?</h2>
+            <p className="mt-3 text-lg leading-relaxed text-muted">
+              List from <strong className="text-ink">$9.99 a month</strong> — bio, photo, location,
+              specialties, qualifications and testimonials.{" "}
+              <strong className="text-ink">$14.95</strong> adds your clinics and events.
+            </p>
+          </div>
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <LinkButton href="/for-coaches" className="w-full sm:w-auto">
+              List your coaching profile
+            </LinkButton>
+            <LinkButton href="/for-coaches" variant="secondary" className="w-full sm:w-auto">
+              See pricing
+            </LinkButton>
+          </div>
         </div>
       </section>
     </>

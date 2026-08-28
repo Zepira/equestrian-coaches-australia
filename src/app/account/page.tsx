@@ -81,7 +81,7 @@ export default async function AccountPage() {
       <section className="mt-8">
         <h2 className="text-lg font-semibold text-fg">Favourite coaches</h2>
         {favourites.length === 0 ? (
-          <div className="mt-3 rounded-lg border border-dashed border-border p-6 text-center text-muted">
+          <div className="mt-3 rounded-[var(--radius-tile)] border border-dashed border-border p-6 text-center text-muted">
             You haven&apos;t favourited any coaches yet.
             <div className="mt-3">
               <LinkButton href="/search" variant="secondary">
@@ -94,7 +94,7 @@ export default async function AccountPage() {
             {favourites.map((f) => (
               <div
                 key={f.coachId}
-                className="flex items-start justify-between gap-3 rounded-lg border border-border bg-surface p-4"
+                className="flex items-start justify-between gap-3 rounded-[var(--radius-tile)] border border-border bg-surface p-4"
               >
                 <Link href={`/coaches/${f.slug}`} className="min-w-0">
                   <div className="font-semibold text-fg">{f.name}</div>
@@ -127,7 +127,7 @@ export default async function AccountPage() {
               type="text"
               defaultValue={area}
               placeholder="e.g. Bendigo VIC"
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted sm:max-w-xs"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted sm:max-w-xs"
             />
           </label>
           <fieldset>

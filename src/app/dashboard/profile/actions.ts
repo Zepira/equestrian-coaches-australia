@@ -31,6 +31,13 @@ export async function saveProfile(formData: FormData) {
   const disciplineIds = formData.getAll("discipline").map(String);
   const skillIds = formData.getAll("skill").map(String);
   const attributeIds = formData.getAll("attribute").map(String);
+  const contactEmail = String(formData.get("contact_email") ?? "").trim();
+  const contactPhone = String(formData.get("contact_phone") ?? "").trim();
+  const facebookUrl = String(formData.get("facebook_url") ?? "").trim();
+  const showContactEmail = formData.get("show_contact_email") === "on";
+  const showContactPhone = formData.get("show_contact_phone") === "on";
+  const showFacebook = formData.get("show_facebook") === "on";
+  const showContactForm = formData.get("show_contact_form") === "on";
 
   // Geocode suburb/state/postcode into a point so radius search (phase 4)
   // can find this coach. Silently skipped if it doesn't resolve — the
@@ -46,6 +53,13 @@ export async function saveProfile(formData: FormData) {
       state,
       postcode,
       qualifications,
+      contact_email: contactEmail,
+      contact_phone: contactPhone,
+      facebook_url: facebookUrl,
+      show_contact_email: showContactEmail && Boolean(contactEmail),
+      show_contact_phone: showContactPhone && Boolean(contactPhone),
+      show_facebook: showFacebook && Boolean(facebookUrl),
+      show_contact_form: showContactForm,
       ...(resolved
         ? {
             location: `SRID=4326;POINT(${resolved.long} ${resolved.lat})`,

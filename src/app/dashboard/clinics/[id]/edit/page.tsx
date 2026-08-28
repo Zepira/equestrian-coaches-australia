@@ -36,7 +36,7 @@ export default async function EditClinicPage({ params }: { params: Promise<{ id:
           type="text"
           required
           defaultValue={clinic.title}
-          className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+          className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
         />
       </label>
       <label className="block">
@@ -45,7 +45,7 @@ export default async function EditClinicPage({ params }: { params: Promise<{ id:
           name="description"
           rows={3}
           defaultValue={clinic.description}
-          className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+          className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
         />
       </label>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -54,7 +54,7 @@ export default async function EditClinicPage({ params }: { params: Promise<{ id:
           <select
             name="discipline_id"
             defaultValue={clinic.discipline_id ?? ""}
-            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
           >
             <option value="">Any discipline</option>
             {disciplines.map((d) => (
@@ -71,7 +71,7 @@ export default async function EditClinicPage({ params }: { params: Promise<{ id:
             type="text"
             required
             defaultValue={clinic.location_text}
-            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
           />
         </label>
       </div>
@@ -83,7 +83,7 @@ export default async function EditClinicPage({ params }: { params: Promise<{ id:
             type="date"
             required
             defaultValue={clinic.start_date}
-            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
           />
         </label>
         <label className="block">
@@ -92,7 +92,7 @@ export default async function EditClinicPage({ params }: { params: Promise<{ id:
             name="end_date"
             type="date"
             defaultValue={clinic.end_date ?? ""}
-            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
           />
         </label>
       </div>

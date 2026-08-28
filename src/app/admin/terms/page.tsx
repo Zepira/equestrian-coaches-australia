@@ -45,7 +45,7 @@ export default async function AdminTermsPage() {
             {byKind[kind].map((term) => (
               <div
                 key={term.id}
-                className={`flex flex-col gap-2 rounded-lg border border-border bg-surface p-3 sm:flex-row sm:items-center sm:justify-between ${
+                className={`flex flex-col gap-2 rounded-[var(--radius-tile)] border border-border bg-surface p-3 sm:flex-row sm:items-center sm:justify-between ${
                   !term.active ? "opacity-50" : ""
                 }`}
               >
@@ -54,7 +54,7 @@ export default async function AdminTermsPage() {
                     <input
                       name="name"
                       defaultValue={term.name}
-                      className="w-full rounded-md border border-border bg-bg px-2 py-1.5 text-sm text-fg sm:max-w-xs"
+                      className="w-full rounded-[var(--radius-control)] border border-border bg-bg px-2 py-1.5 text-sm text-fg sm:max-w-xs"
                     />
                     <button type="submit" className="shrink-0 text-sm font-medium text-accent">
                       Save
@@ -71,7 +71,7 @@ export default async function AdminTermsPage() {
                     <input
                       name="slug"
                       defaultValue={term.slug}
-                      className="w-32 rounded-md border border-border bg-bg px-2 py-1 text-xs text-fg"
+                      className="w-32 rounded-[var(--radius-control)] border border-border bg-bg px-2 py-1 text-xs text-fg"
                     />
                     <button type="submit" className="shrink-0 font-medium text-danger" title="Old URL will 301 here">
                       Change slug
@@ -111,14 +111,14 @@ export default async function AdminTermsPage() {
             <input
               name="name"
               required
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
             />
           </label>
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-fg">Kind</span>
             <select
               name="kind"
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
             >
               <option value="discipline">Discipline</option>
               <option value="skill">Skill</option>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LinkButton } from "@/components/ui/button";
+import { LogoMark } from "@/components/logo-mark";
 import { createClient } from "@/lib/supabase/client";
 
 const navLinks = [
@@ -78,9 +79,14 @@ export function SiteHeader() {
   const auth = useAuthState();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border bg-bg/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="text-lg font-bold tracking-tight text-fg" onClick={() => setOpen(false)}>
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 font-display text-[15px] font-semibold uppercase tracking-[0.16em] text-ink"
+          onClick={() => setOpen(false)}
+        >
+          <LogoMark className="h-6 w-6 shrink-0" />
           Equestrian Coaches Australia
         </Link>
 
@@ -100,7 +106,7 @@ export function SiteHeader() {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex h-10 w-10 items-center justify-center rounded-md text-fg md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-control)] text-fg md:hidden"
         >
           <span className="relative block h-4 w-5">
             <span
@@ -131,7 +137,7 @@ export function SiteHeader() {
                 <Link
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-md px-2 py-3 text-[17px] font-medium text-fg hover:bg-accent-soft"
+                  className="block rounded-[var(--radius-control)] px-2 py-3 text-[17px] font-medium text-fg hover:bg-accent-soft"
                 >
                   {link.label}
                 </Link>

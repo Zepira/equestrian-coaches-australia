@@ -1,25 +1,33 @@
 @import "tailwindcss";
 
 /*
-  Generic placeholder design tokens — no visual direction has been chosen
-  yet (see /design-preview and CLAUDE.md). Every colour/font in the app
-  should reference one of these roles rather than a raw Tailwind palette
-  class, so picking a direction later is a token swap here, not a
-  page-by-page rebuild.
+  Design tokens — "Paddock Edit" direction (chosen 28 Aug 2026, imported from
+  Claude Design: https://claude.ai/design/p/3537d2ba-893d-495f-834a-5c6c81384b38).
+  Warm editorial ground, deep green ink, terracotta accent. Every colour/font
+  in the app should reference one of these roles rather than a raw Tailwind
+  palette class, so a future palette swap (see the six alternates in the
+  design file) stays a token edit here, not a page-by-page rebuild.
 */
 :root {
-  --color-bg: #f7f5f1;
-  --color-surface: #ffffff;
-  --color-fg: #1f1d1a;
-  --color-muted: #6b6558;
-  --color-border: #e4e0d8;
-  --color-accent: #3d5a50;
-  --color-accent-fg: #ffffff;
-  --color-accent-soft: #e3e9e5;
-  --color-danger: #b3452e;
+  --color-bg: #f6f1e7; /* ground — page background */
+  --color-surface: #fffdf8; /* cards, panels, pills */
+  --color-fg: #22201c; /* body text */
+  --color-muted: #4a4842; /* secondary body text */
+  --color-subtle: #6c685e; /* tertiary text — meta, captions, eyebrows-on-light */
+  --color-border: #e7dac6; /* tint — rules, card borders, pill borders */
+  --color-shade: #efe9dc; /* alternating section background */
+  --color-accent: #b4553a; /* terracotta — eyebrows, links, accents */
+  --color-accent-fg: #f6f1e7;
+  --color-accent-soft: #efe9dc;
+  --color-ink: #1f3a2e; /* deep green — headers, footers, primary buttons */
+  --color-ink-fg: #f6f1e7; /* text/icons on ink */
+  --color-danger: #a8452b;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-work-sans), "Work Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-fraunces), Fraunces, Georgia, "Times New Roman", serif;
+
+  --radius-tile: 3px;
+  --radius-control: 2px;
 }
 
 @theme inline {
@@ -27,17 +35,50 @@
   --color-surface: var(--color-surface);
   --color-fg: var(--color-fg);
   --color-muted: var(--color-muted);
+  --color-subtle: var(--color-subtle);
   --color-border: var(--color-border);
+  --color-shade: var(--color-shade);
   --color-accent: var(--color-accent);
   --color-accent-fg: var(--color-accent-fg);
   --color-accent-soft: var(--color-accent-soft);
+  --color-ink: var(--color-ink);
+  --color-ink-fg: var(--color-ink-fg);
   --color-danger: var(--color-danger);
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
+  --radius-tile: var(--radius-tile);
+  --radius-control: var(--radius-control);
 }
 
 body {
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-sans);
+}
+
+* {
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* Arch crop — the discipline/hero photo signature. Half the tile's own
+   width as the top radius, a hairline radius at the base. Set an explicit
+   width (or let the grid track size it) for the curve to read correctly. */
+.arch-crop {
+  border-radius: 50% 50% var(--radius-tile) var(--radius-tile) / 28% 28% 2% 2%;
+  overflow: hidden;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-ink-fg);
 }

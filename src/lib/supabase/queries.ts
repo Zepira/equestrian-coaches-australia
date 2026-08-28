@@ -120,6 +120,8 @@ export type CoachSearchResult = {
   state: string;
   distanceKm: number | null;
   disciplineNames: string[];
+  skillNames: string[];
+  attributeNames: string[];
   photoUrl: string | null;
 };
 
@@ -167,13 +169,18 @@ export async function searchCoaches(
   ]);
 
   const nameById = new Map((profileRows ?? []).map((p) => [p.id, p.name as string]));
-  const disciplinesById = new Map<string, string[]>();
+  const namesByKindAndCoach: Record<TermKind, Map<string, string[]>> = {
+    discipline: new Map(),
+    skill: new Map(),
+    attribute: new Map(),
+  };
   for (const row of disciplineRows ?? []) {
     const term = (row as unknown as { terms: { name: string; kind: TermKind } | null }).terms;
-    if (!term || term.kind !== "discipline") continue;
-    const list = disciplinesById.get(row.coach_id) ?? [];
+    if (!term) continue;
+    const byCoach = namesByKindAndCoach[term.kind];
+    const list = byCoach.get(row.coach_id) ?? [];
     list.push(term.name);
-    disciplinesById.set(row.coach_id, list);
+    byCoach.set(row.coach_id, list);
   }
   const photoById = new Map<string, string>();
   for (const row of photoRows ?? []) {
@@ -193,7 +200,9 @@ export async function searchCoaches(
     suburb: m.suburb,
     state: m.state,
     distanceKm: m.distance_km,
-    disciplineNames: disciplinesById.get(m.id) ?? [],
+    disciplineNames: namesByKindAndCoach.discipline.get(m.id) ?? [],
+    skillNames: namesByKindAndCoach.skill.get(m.id) ?? [],
+    attributeNames: namesByKindAndCoach.attribute.get(m.id) ?? [],
     photoUrl: photoById.get(m.id) ?? null,
   }));
 }

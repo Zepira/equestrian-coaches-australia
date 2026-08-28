@@ -7,41 +7,47 @@ export type CoachCardData = {
   state: string;
   headline: string;
   disciplineNames: string[];
+  skillNames?: string[];
+  attributeNames?: string[];
   photoUrl?: string | null;
   distanceKm?: number | null;
 };
 
 export function CoachCard({ coach }: { coach: CoachCardData }) {
   return (
-    <Link
-      href={`/coaches/${coach.slug}`}
-      className="flex gap-4 rounded-lg border border-border bg-surface p-4 transition-shadow hover:shadow-md sm:flex-col sm:gap-3"
-    >
+    <Link href={`/coaches/${coach.slug}`} className="group flex flex-col gap-3">
       <div
-        className="h-20 w-20 flex-none rounded-md bg-accent-soft bg-cover bg-center sm:h-40 sm:w-full"
+        className="h-40 w-full flex-none rounded-[var(--radius-tile)] bg-shade bg-cover bg-center transition-opacity group-hover:opacity-90 sm:h-56"
         style={coach.photoUrl ? { backgroundImage: `url(${coach.photoUrl})` } : undefined}
         aria-hidden
       />
       <div className="min-w-0">
         <div className="flex items-baseline justify-between gap-2">
-          <div className="truncate text-lg font-semibold text-fg">{coach.name}</div>
+          <div className="truncate font-display text-xl font-medium text-ink">{coach.name}</div>
           {typeof coach.distanceKm === "number" && (
-            <span className="shrink-0 text-xs font-medium text-muted">
-              {Math.round(coach.distanceKm)} km
-            </span>
+            <span className="shrink-0 text-sm text-subtle">{Math.round(coach.distanceKm)} km</span>
           )}
         </div>
-        <div className="text-sm text-muted">
+        <div className="mt-1 text-sm text-subtle">
           {coach.suburb} {coach.state}
         </div>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {coach.disciplineNames.map((name) => (
-            <span key={name} className="rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-fg">
+            <span
+              key={name}
+              className="rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-ink"
+            >
               {name}
             </span>
           ))}
         </div>
-        <p className="mt-2 line-clamp-2 text-sm text-muted sm:line-clamp-3">{coach.headline}</p>
+        <p className="mt-2 line-clamp-2 text-sm text-muted">{coach.headline}</p>
+        {(coach.skillNames?.length || coach.attributeNames?.length) && (
+          <p className="mt-1.5 line-clamp-1 text-xs text-subtle">
+            {[...(coach.skillNames ?? []), ...(coach.attributeNames ?? [])].slice(0, 3).join(" · ")}
+          </p>
+        )}
+        <div className="mt-2 text-sm font-semibold text-accent">View profile →</div>
       </div>
     </Link>
   );

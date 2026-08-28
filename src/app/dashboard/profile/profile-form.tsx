@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { saveProfile, uploadPhoto, deletePhoto, addTestimonial, deleteTestimonial } from "./actions";
+import { saveProfile, deletePhoto, addTestimonial, deleteTestimonial } from "./actions";
+import { PhotoUploadForm } from "./photo-upload-form";
 
 type Term = { id: string; slug: string; name: string; blurb?: string };
 type Coach = {
@@ -12,6 +13,13 @@ type Coach = {
   state: string;
   postcode: string;
   qualifications: string[];
+  contact_email: string;
+  contact_phone: string;
+  facebook_url: string;
+  show_contact_email: boolean;
+  show_contact_phone: boolean;
+  show_facebook: boolean;
+  show_contact_form: boolean;
 } | null;
 type Photo = { id: string; url: string; storage_path: string };
 type Testimonial = { id: string; author_name: string; quote: string };
@@ -137,7 +145,7 @@ function DisciplinePicker({
                 onDragStart={() => setDragId(id)}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={() => dropOn(id)}
-                className="flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg"
+                className="flex items-center gap-2 rounded-[var(--radius-control)] border border-border bg-surface px-3 py-1.5 text-sm text-fg"
               >
                 <span aria-hidden className="cursor-grab text-muted">
                   ⠿
@@ -177,6 +185,57 @@ function DisciplinePicker({
   );
 }
 
+// One row per contact channel: a value field plus its own "show this on
+// my public profile" toggle, so a coach can keep a phone number on file
+// without publishing it (spec: "riders will get to choose which one to
+// display — maybe they don't all want email enquiries").
+function ContactChannelField({
+  label,
+  name,
+  type = "text",
+  placeholder,
+  defaultValue,
+  showName,
+  defaultShow,
+  configured,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  placeholder?: string;
+  defaultValue?: string;
+  showName: string;
+  defaultShow: boolean;
+  configured: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5 sm:flex-row sm:items-end sm:gap-3">
+      <label className="block flex-1">
+        <span className="mb-1 block text-sm font-medium text-fg">{label}</span>
+        <input
+          name={name}
+          type={type}
+          defaultValue={defaultValue}
+          placeholder={placeholder}
+          disabled={!configured}
+          className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted disabled:opacity-60"
+        />
+      </label>
+      <label className="flex items-center gap-2 pb-2.5 text-sm text-fg sm:pb-2.5">
+        <input
+          type="checkbox"
+          name={showName}
+          value="on"
+          defaultChecked={defaultShow}
+          disabled={!configured}
+          className="accent-current"
+        />
+        Show on my profile
+      </label>
+    </div>
+  );
+}
+
 export function ProfileForm({
   configured,
   coach,
@@ -199,7 +258,7 @@ export function ProfileForm({
   return (
     <div className="flex flex-col gap-10">
       {!configured && (
-        <p className="rounded-md border border-border bg-accent-soft p-3 text-sm text-fg">
+        <p className="rounded-[var(--radius-control)] border border-border bg-accent-soft p-3 text-sm text-fg">
           Not connected to Supabase yet — this form is a preview until the project is set up
           (build plan, phase 2).
         </p>
@@ -215,21 +274,29 @@ export function ProfileForm({
                 <img
                   src={photo.url}
                   alt=""
-                  className="h-full w-full rounded-md object-cover"
+                  className="h-full w-full rounded-[var(--radius-control)] object-cover"
                 />
-                <form action={deletePhoto.bind(null, photo.id, photo.storage_path)}>
-                  <button
-                    type="submit"
-                    disabled={!configured}
-                    aria-label="Remove photo"
-                    className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-fg text-xs font-bold text-bg"
-                  >
-                    ×
-                  </button>
-                </form>
+                {/* formAction, not a nested <form> — this button already lives
+                    inside the outer <form action={saveProfile}>, and HTML
+                    forbids a <form> inside a <form> (it silently breaks:
+                    browsers hoist the inner one out, so the button ends up
+                    submitting whichever form the DOM parser decided on,
+                    unpredictable across browsers/devices). A submit button's
+                    own formAction overrides the enclosing form's action for
+                    just that button — the correct way to have two different
+                    server actions in one <form>. */}
+                <button
+                  type="submit"
+                  formAction={deletePhoto.bind(null, photo.id, photo.storage_path)}
+                  disabled={!configured}
+                  aria-label="Remove photo"
+                  className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-fg text-xs font-bold text-bg"
+                >
+                  ×
+                </button>
               </div>
             ))}
-            <div className="h-20 w-20 rounded-md bg-accent-soft" aria-hidden />
+            <div className="h-20 w-20 rounded-[var(--radius-control)] bg-accent-soft" aria-hidden />
           </div>
         </div>
 
@@ -241,7 +308,7 @@ export function ProfileForm({
             defaultValue={coach?.headline}
             disabled={!configured}
             placeholder="e.g. Working equitation, from first flatwork to your first competition."
-            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted disabled:opacity-60"
+            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted disabled:opacity-60"
           />
         </label>
 
@@ -252,7 +319,7 @@ export function ProfileForm({
             rows={5}
             defaultValue={coach?.bio}
             disabled={!configured}
-            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
+            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
           />
         </label>
 
@@ -264,7 +331,7 @@ export function ProfileForm({
               type="text"
               defaultValue={coach?.suburb}
               disabled={!configured}
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
             />
           </label>
           <label className="block">
@@ -274,7 +341,7 @@ export function ProfileForm({
               type="text"
               defaultValue={coach?.state}
               disabled={!configured}
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
             />
           </label>
           <label className="block">
@@ -284,7 +351,7 @@ export function ProfileForm({
               type="text"
               defaultValue={coach?.postcode}
               disabled={!configured}
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
             />
           </label>
         </div>
@@ -323,36 +390,73 @@ export function ProfileForm({
             defaultValue={coach?.qualifications?.join("\n")}
             disabled={!configured}
             placeholder="One per line — e.g. EA Level 1 Coach"
-            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted disabled:opacity-60"
+            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted disabled:opacity-60"
           />
         </label>
+
+        <fieldset disabled={!configured} className="flex flex-col gap-4 border-t border-border pt-6">
+          <div>
+            <legend className="text-sm font-medium text-fg">Contact &amp; enquiries</legend>
+            <p className="mt-1 text-sm text-muted">
+              Pick how riders can reach you — turn any of these off if you&apos;d rather not get
+              enquiries that way.
+            </p>
+          </div>
+          <ContactChannelField
+            label="Email"
+            name="contact_email"
+            type="email"
+            placeholder="you@example.com"
+            defaultValue={coach?.contact_email}
+            showName="show_contact_email"
+            defaultShow={coach?.show_contact_email ?? false}
+            configured={configured}
+          />
+          <ContactChannelField
+            label="Phone"
+            name="contact_phone"
+            type="tel"
+            placeholder="04xx xxx xxx"
+            defaultValue={coach?.contact_phone}
+            showName="show_contact_phone"
+            defaultShow={coach?.show_contact_phone ?? false}
+            configured={configured}
+          />
+          <ContactChannelField
+            label="Facebook page or profile"
+            name="facebook_url"
+            type="url"
+            placeholder="https://facebook.com/yourpage"
+            defaultValue={coach?.facebook_url}
+            showName="show_facebook"
+            defaultShow={coach?.show_facebook ?? false}
+            configured={configured}
+          />
+          <label className="flex items-center gap-2 text-sm text-fg">
+            <input
+              type="checkbox"
+              name="show_contact_form"
+              value="on"
+              defaultChecked={coach?.show_contact_form ?? true}
+              disabled={!configured}
+              className="accent-current"
+            />
+            Show the in-app contact form (riders message you without seeing your email)
+          </label>
+        </fieldset>
 
         <Button type="submit" disabled={!configured} className="self-start">
           Save profile
         </Button>
       </form>
 
-      <form action={uploadPhoto} className="flex flex-wrap items-end gap-3 border-t border-border pt-6">
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">Add a photo</span>
-          <input
-            name="photo"
-            type="file"
-            accept="image/*"
-            disabled={!configured}
-            className="text-sm text-fg disabled:opacity-60"
-          />
-        </label>
-        <Button type="submit" variant="secondary" disabled={!configured}>
-          Upload
-        </Button>
-      </form>
+      <PhotoUploadForm configured={configured} />
 
       <section className="border-t border-border pt-6">
         <h2 className="text-lg font-semibold text-fg">Testimonials</h2>
         <div className="mt-3 flex flex-col gap-3">
           {testimonials.map((t) => (
-            <div key={t.id} className="flex items-start justify-between gap-3 rounded-lg border border-border bg-surface p-4">
+            <div key={t.id} className="flex items-start justify-between gap-3 rounded-[var(--radius-tile)] border border-border bg-surface p-4">
               <div>
                 <p className="text-fg">&ldquo;{t.quote}&rdquo;</p>
                 <p className="mt-1 text-sm text-muted">— {t.author_name}</p>
@@ -373,7 +477,7 @@ export function ProfileForm({
               name="author_name"
               type="text"
               disabled={!configured}
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
             />
           </label>
           <label className="block flex-[2]">
@@ -382,7 +486,7 @@ export function ProfileForm({
               name="quote"
               type="text"
               disabled={!configured}
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
             />
           </label>
           <Button type="submit" variant="secondary" disabled={!configured}>

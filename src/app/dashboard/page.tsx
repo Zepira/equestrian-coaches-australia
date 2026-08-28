@@ -45,7 +45,7 @@ export default async function DashboardPage({
   return (
     <div className="flex flex-col gap-6">
       {checkout === "success" && (
-        <p className="rounded-md border border-border bg-accent-soft p-3 text-sm text-fg">
+        <p className="rounded-[var(--radius-control)] border border-border bg-accent-soft p-3 text-sm text-fg">
           {mock === "1"
             ? "Mock subscription activated — your profile is published. No card was charged."
             : "Payment received — your plan updates here shortly once Stripe confirms it."}
@@ -53,7 +53,7 @@ export default async function DashboardPage({
       )}
 
       {showCompleteSubscription && (
-        <div className="rounded-lg border border-accent bg-accent-soft p-5">
+        <div className="rounded-[var(--radius-tile)] border border-accent bg-accent-soft p-5">
           <div className="text-lg font-semibold text-fg">Complete your subscription</div>
           <p className="mt-1 text-sm text-fg">
             One step left — subscribe to publish your profile and appear in search.
@@ -64,7 +64,7 @@ export default async function DashboardPage({
         </div>
       )}
 
-      <div className="rounded-lg border border-border bg-surface p-5">
+      <div className="rounded-[var(--radius-tile)] border border-border bg-surface p-5">
         <div className="text-sm font-semibold uppercase tracking-wide text-muted">
           Subscription status
         </div>

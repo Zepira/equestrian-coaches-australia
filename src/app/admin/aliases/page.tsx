@@ -38,7 +38,7 @@ export default async function AdminAliasesPage() {
           {aliases.map((a) => (
             <div
               key={a.id}
-              className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3 py-2 text-sm"
+              className="flex items-center justify-between gap-3 rounded-[var(--radius-tile)] border border-border bg-surface px-3 py-2 text-sm"
             >
               <div className="min-w-0">
                 <span className="font-medium text-fg">{a.alias}</span>
@@ -70,7 +70,7 @@ export default async function AdminAliasesPage() {
             <select
               name="term_id"
               required
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
             >
               {(terms ?? []).map((t) => (
                 <option key={t.id} value={t.id}>
@@ -85,7 +85,7 @@ export default async function AdminAliasesPage() {
               name="alias"
               required
               placeholder="e.g. flatwork coach"
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
+              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
             />
           </label>
           <Button type="submit">Add</Button>

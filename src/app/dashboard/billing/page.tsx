@@ -43,7 +43,7 @@ export default async function BillingPage() {
   return (
     <div className="flex flex-col gap-6">
       {isMockPayments && (
-        <p className="rounded-md border border-border bg-accent-soft p-3 text-sm text-fg">
+        <p className="rounded-[var(--radius-control)] border border-border bg-accent-soft p-3 text-sm text-fg">
           Running on <strong>mock payments</strong> — no Stripe account exists yet (business
           structure still being confirmed). Subscribing here updates the real database and
           unlocks every gated feature, but no card is charged. Swaps to real Stripe automatically
@@ -51,7 +51,7 @@ export default async function BillingPage() {
         </p>
       )}
 
-      <div className="rounded-lg border border-border bg-surface p-5">
+      <div className="rounded-[var(--radius-tile)] border border-border bg-surface p-5">
         <div className="text-sm font-semibold uppercase tracking-wide text-muted">Current plan</div>
         <div className="mt-1 text-lg font-semibold text-fg">
           {tier ? tierLabels[tier] : statusLabels[status]}

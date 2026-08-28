@@ -54,14 +54,17 @@ export type CoachSchemaInput = {
   long: number | null;
   photoUrl: string | null;
   disciplineNames: string[];
+  skillNames?: string[];
 };
 
 // Person, not LocalBusiness/Organization — coaches on ECA are individuals,
 // not registered businesses (that's EquiDirectory's model, not this one).
-// knowsAbout carries the disciplines; aliases (bridleless → "at liberty",
-// "groundwork") deliberately don't appear here — the spec's "four places"
-// rule for aliases doesn't include structured data beyond alternateName,
-// and disciplineNames are already the canonical term names.
+// knowsAbout carries the disciplines plus skills (schema.org allows either
+// — "what a coach knows about" fairly includes "float loading" alongside
+// "dressage") since skills are real search terms riders type; aliases
+// (bridleless → "at liberty", "groundwork") deliberately don't appear here
+// — the spec's "four places" rule for aliases doesn't include structured
+// data beyond alternateName, and these are already the canonical term names.
 export function coachPersonSchema(coach: CoachSchemaInput) {
   return {
     "@context": "https://schema.org",
@@ -80,7 +83,9 @@ export function coachPersonSchema(coach: CoachSchemaInput) {
     ...(coach.lat != null && coach.long != null
       ? { geo: { "@type": "GeoCoordinates", latitude: coach.lat, longitude: coach.long } }
       : {}),
-    ...(coach.disciplineNames.length > 0 ? { knowsAbout: coach.disciplineNames } : {}),
+    ...(coach.disciplineNames.length > 0 || coach.skillNames?.length
+      ? { knowsAbout: [...coach.disciplineNames, ...(coach.skillNames ?? [])] }
+      : {}),
   };
 }
 

@@ -4,13 +4,13 @@ import { ComponentProps } from "react";
 type Variant = "primary" | "secondary" | "ghost" | "danger-ghost";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-md text-[15px] font-semibold px-5 py-3 transition-colors disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] text-[15px] font-semibold px-6 py-3 transition-colors disabled:opacity-50 disabled:pointer-events-none";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-accent text-accent-fg hover:opacity-90",
-  secondary: "border border-border bg-surface text-fg hover:bg-accent-soft",
-  ghost: "text-fg hover:bg-accent-soft",
-  "danger-ghost": "text-danger hover:bg-accent-soft",
+  primary: "bg-ink text-ink-fg hover:opacity-90",
+  secondary: "border border-ink text-ink hover:bg-shade",
+  ghost: "px-0 py-0 font-semibold text-accent border-b border-accent rounded-none hover:text-ink hover:border-ink",
+  "danger-ghost": "px-0 py-0 font-semibold text-danger rounded-none hover:opacity-80",
 };
 
 type ButtonProps = ComponentProps<"button"> & { variant?: Variant };

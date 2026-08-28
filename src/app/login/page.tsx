@@ -55,7 +55,7 @@ function LoginForm() {
       <h1 className="text-2xl font-bold text-fg">Log in</h1>
 
       {!isSupabaseConfigured && (
-        <p className="mt-4 rounded-md border border-border bg-accent-soft p-3 text-sm text-fg">
+        <p className="mt-4 rounded-[var(--radius-control)] border border-border bg-accent-soft p-3 text-sm text-fg">
           Auth isn&apos;t connected yet — this form is a preview until Supabase is set up.
         </p>
       )}
@@ -67,7 +67,7 @@ function LoginForm() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
             required
           />
         </label>
@@ -77,7 +77,7 @@ function LoginForm() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-md border border-border bg-surface px-3 py-2.5 text-fg"
+            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
             required
           />
         </label>

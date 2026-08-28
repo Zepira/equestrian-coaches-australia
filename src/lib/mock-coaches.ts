@@ -68,6 +68,79 @@ const QUALIFICATIONS_BY_DISCIPLINE: Record<string, string[]> = {
   "para-equestrian": ["Para-Equestrian Australia accredited coach"],
 };
 
+// Skills a coach in this discipline is plausibly offering — mirrors the
+// curated discipline→skill term_suggestions in
+// supabase/migrations/0008_taxonomy_seed_and_migrate.sql, so mock coaches
+// show the same real vocabulary a rider filtering by skill would see (not
+// a second, drifting set of made-up skill names).
+const SKILLS_BY_DISCIPLINE: Record<string, string[]> = {
+  dressage: ["lateral-work", "dressage-test-riding", "confidence-building", "competition-preparation"],
+  "show-jumping": ["jumping-technique", "confidence-building", "competition-preparation", "first-show-preparation"],
+  eventing: ["cross-country-schooling", "jumping-technique", "dressage-test-riding", "competition-preparation"],
+  western: ["stock-work", "starting-young-horses", "groundwork-handling", "confidence-building"],
+  campdrafting: ["stock-work", "starting-young-horses", "competition-preparation", "confidence-building"],
+  liberty: ["groundwork-handling", "confidence-building", "trick-training", "problem-behaviour"],
+  bridleless: ["groundwork-handling", "confidence-building", "trick-training"],
+  "natural-horsemanship": ["groundwork-handling", "starting-young-horses", "problem-behaviour", "spooking-napping"],
+  "pony-club": ["adult-beginners", "confidence-building", "first-show-preparation", "returning-to-riding"],
+  "para-equestrian": ["confidence-building", "returning-after-fall", "rider-biomechanics"],
+  "working-equitation": ["lateral-work", "stock-work", "competition-preparation", "confidence-building"],
+};
+
+// Setup/attribute names, keyed by slug, purely for display — the same
+// slugs the real terms table seeds in 0008. Exported so the coach detail
+// page can render a mock coach's skills/attributes without a second name
+// lookup table.
+export const ATTRIBUTE_NAMES: Record<string, string> = {
+  "horses-available": "Horses available for lessons",
+  "own-arena": "Own arena",
+  "indoor-arena": "Indoor arena",
+  "xc-course-on-site": "Cross-country course on site",
+  "agistment-available": "Agistment available",
+  "beginners-welcome": "Beginners welcome",
+  "children-juniors": "Children & juniors",
+  "adults-only": "Adults only",
+  "nervous-riders": "Nervous riders",
+  "ndis-registered": "NDIS registered",
+  "group-lessons": "Group lessons",
+  "weekend-availability": "Weekend availability",
+  "ea-accredited": "EA accredited",
+};
+export const SKILL_NAMES: Record<string, string> = {
+  "lateral-work": "Lateral work",
+  "dressage-test-riding": "Dressage test riding & scoring",
+  "confidence-building": "Confidence building",
+  "competition-preparation": "Competition preparation",
+  "jumping-technique": "Jumping technique & gridwork",
+  "first-show-preparation": "First-show preparation",
+  "cross-country-schooling": "Cross-country schooling",
+  "stock-work": "Stock work & cattle handling",
+  "starting-young-horses": "Starting young horses",
+  "groundwork-handling": "Groundwork & handling",
+  "trick-training": "Trick training",
+  "problem-behaviour": "Problem behaviour & re-schooling",
+  "spooking-napping": "Spooking & napping",
+  "adult-beginners": "Adult beginners",
+  "returning-to-riding": "Returning to riding",
+  "returning-after-fall": "Getting back on after a fall",
+  "rider-biomechanics": "Rider biomechanics & position",
+};
+
+// A varied but deterministic setup mix — every mock coach gets 1–2 of
+// these, cycling through so the "setup" facet has real coverage to filter
+// on rather than every coach looking identical.
+const ATTRIBUTE_ROTATION = [
+  ["own-arena", "beginners-welcome"],
+  ["horses-available", "group-lessons"],
+  ["indoor-arena", "weekend-availability"],
+  ["ea-accredited"],
+  ["nervous-riders", "ndis-registered"],
+  ["own-arena", "children-juniors"],
+  ["agistment-available"],
+  ["xc-course-on-site", "own-arena"],
+  ["adults-only", "weekend-availability"],
+];
+
 // Unsplash (free license — https://unsplash.com/license), hand-picked per
 // discipline: polished arena/competition shots for the more formal
 // disciplines, warmer natural-connection shots for liberty/bridleless/
@@ -89,8 +162,15 @@ const PHOTO_BY_DISCIPLINE: Record<string, string> = {
 };
 
 function photoFor(disciplineSlug: string) {
+  return disciplinePhoto(disciplineSlug, 800);
+}
+
+// Exported so any component (e.g. the homepage's featured-disciplines strip)
+// can reuse the same hand-picked, stress-signal-checked photo set instead of
+// duplicating discipline→Unsplash-ID mappings.
+export function disciplinePhoto(disciplineSlug: string, width = 800) {
   const base = PHOTO_BY_DISCIPLINE[disciplineSlug] ?? PHOTO_BY_DISCIPLINE.dressage;
-  return `${base}?auto=format&fit=crop&w=800&q=75`;
+  return `${base}?auto=format&fit=crop&w=${width}&q=80`;
 }
 
 const HEADLINE_TEMPLATES = [
@@ -124,10 +204,53 @@ export type MockCoach = {
   headline: string;
   bio: string;
   disciplineSlugs: string[];
+  skillSlugs: string[];
+  attributeSlugs: string[];
   qualifications: string[];
   tier: "standard" | "standard_plus_clinics";
   photoUrl: string;
+  contact: {
+    email: string | null;
+    phone: string | null;
+    facebookUrl: string | null;
+    showContactForm: boolean;
+  };
 };
+
+// Deterministic Australian-looking mobile number from the coach's index —
+// not random, so the same coach always gets the same number across builds.
+function mockPhone(i: number) {
+  const n = 400000000 + ((i * 9973) % 100000000);
+  const digits = String(n).padStart(9, "0");
+  return `04${digits.slice(1, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 9)}`;
+}
+
+// Contact-channel mix, varied across the roster so search/browse pages show
+// every real toggle combination a coach can choose (see the dashboard's
+// "Contact & enquiries" section). Weighted so most coaches show phone + the
+// in-app form — the two the client asked to be the common case — with a
+// spread of other combinations (email instead of/as well as phone, a
+// Facebook-only coach with the form switched off, a couple with everything)
+// so the design isn't only ever demoed in one configuration.
+function mockContact(i: number, slug: string): MockCoach["contact"] {
+  const bucket = i % 10;
+  const phone = mockPhone(i);
+  const email = `${slug.replace(/-\d+$/, "")}@example.com`;
+  const facebookUrl = `https://facebook.com/${slug.replace(/-\d+$/, "")}`;
+
+  switch (true) {
+    case bucket <= 4: // 50% — phone + form, the common case
+      return { email: null, phone, facebookUrl: null, showContactForm: true };
+    case bucket <= 6: // 20% — phone + email + form
+      return { email, phone, facebookUrl: null, showContactForm: true };
+    case bucket === 7: // 10% — form only, no phone/email published
+      return { email: null, phone: null, facebookUrl: null, showContactForm: true };
+    case bucket === 8: // 10% — email + form, no phone
+      return { email, phone: null, facebookUrl: null, showContactForm: true };
+    default: // 10% (bucket 9) — phone + Facebook, form switched off
+      return { email: null, phone, facebookUrl, showContactForm: false };
+  }
+}
 
 const COACH_COUNT = 50;
 
@@ -142,9 +265,22 @@ export const mockCoaches: MockCoach[] = Array.from({ length: COACH_COUNT }, (_, 
     i % 3 === 0 ? [primaryDiscipline, secondaryDiscipline] : [primaryDiscipline];
   const disciplineName = getDisciplineBySlug(primaryDiscipline)?.name ?? primaryDiscipline;
   const years = 3 + (i % 12);
+  const slug = `${slugify(name)}-${i}`;
+
+  // Two skills from the discipline's curated suggestion list (same one the
+  // dashboard offers a real coach once they tick that discipline), picked
+  // by index so the mix varies coach to coach rather than every dressage
+  // coach listing the exact same two skills.
+  const disciplineSkills = SKILLS_BY_DISCIPLINE[primaryDiscipline] ?? [];
+  const skillSlugs = disciplineSkills.length
+    ? [disciplineSkills[i % disciplineSkills.length], disciplineSkills[(i + 2) % disciplineSkills.length]].filter(
+        (s, idx, arr) => arr.indexOf(s) === idx
+      )
+    : [];
+  const attributeSlugs = ATTRIBUTE_ROTATION[i % ATTRIBUTE_ROTATION.length];
 
   return {
-    slug: `${slugify(name)}-${i}`,
+    slug,
     name,
     suburb: town.suburb,
     state: town.state,
@@ -153,9 +289,12 @@ export const mockCoaches: MockCoach[] = Array.from({ length: COACH_COUNT }, (_, 
     headline: HEADLINE_TEMPLATES[i % HEADLINE_TEMPLATES.length](disciplineName, town.suburb),
     bio: `${firstName} has spent ${years} year${years === 1 ? "" : "s"} coaching ${disciplineName.toLowerCase()} around ${town.suburb} ${town.state}, working with riders at every level from their first lesson through to competition.`,
     disciplineSlugs,
+    skillSlugs,
+    attributeSlugs,
     qualifications: QUALIFICATIONS_BY_DISCIPLINE[primaryDiscipline] ?? [],
     tier: i % 5 < 2 ? "standard_plus_clinics" : "standard",
     photoUrl: photoFor(primaryDiscipline),
+    contact: mockContact(i, slug),
   };
 });
 
@@ -165,6 +304,8 @@ export function getMockCoachBySlug(slug: string) {
 
 type SearchFilter = {
   disciplineSlugs?: string[];
+  skillSlugs?: string[];
+  attributeSlugs?: string[];
   lat?: number | null;
   long?: number | null;
   radiusKm?: number;
@@ -177,6 +318,8 @@ export type MockCoachCard = {
   state: string;
   headline: string;
   disciplineNames: string[];
+  skillNames: string[];
+  attributeNames: string[];
   photoUrl: string;
   distanceKm: number | null;
 };
@@ -189,15 +332,24 @@ function toCard(coach: MockCoach, distanceKm: number | null): MockCoachCard {
     state: coach.state,
     headline: coach.headline,
     disciplineNames: coach.disciplineSlugs.map((s) => getDisciplineBySlug(s)?.name ?? s),
+    skillNames: coach.skillSlugs.map((s) => SKILL_NAMES[s] ?? s),
+    attributeNames: coach.attributeSlugs.map((s) => ATTRIBUTE_NAMES[s] ?? s),
     photoUrl: coach.photoUrl,
     distanceKm,
   };
 }
 
 // Mirrors searchCoaches()'s filter semantics (src/lib/supabase/queries.ts)
-// so the two result sets can be concatenated and sorted together. OR
-// within disciplineSlugs, matching the real multi-select search.
-export function searchMockCoaches({ disciplineSlugs, lat, long, radiusKm = 50 }: SearchFilter): MockCoachCard[] {
+// so the two result sets can be concatenated and sorted together. OR within
+// a facet, AND across facets — matching the real multi-select search.
+export function searchMockCoaches({
+  disciplineSlugs,
+  skillSlugs,
+  attributeSlugs,
+  lat,
+  long,
+  radiusKm = 50,
+}: SearchFilter): MockCoachCard[] {
   if (!MOCK_COACHES_ENABLED) return [];
 
   return mockCoaches
@@ -206,6 +358,15 @@ export function searchMockCoaches({ disciplineSlugs, lat, long, radiusKm = 50 }:
         !disciplineSlugs ||
         disciplineSlugs.length === 0 ||
         c.disciplineSlugs.some((s) => disciplineSlugs.includes(s))
+    )
+    .filter(
+      (c) => !skillSlugs || skillSlugs.length === 0 || c.skillSlugs.some((s) => skillSlugs.includes(s))
+    )
+    .filter(
+      (c) =>
+        !attributeSlugs ||
+        attributeSlugs.length === 0 ||
+        c.attributeSlugs.some((s) => attributeSlugs.includes(s))
     )
     .map((c) => {
       const distanceKm = lat != null && long != null ? haversineKm(lat, long, c.lat, c.long) : null;
