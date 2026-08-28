@@ -122,6 +122,15 @@ Build phases: 1 Scaffold, 2 Data+Auth (Supabase), 3 Coach profile CRUD, 4 Search
 - [x] **Phase 7 — Rider account:** favourites are the last piece (preferences were pulled forward into phase 6). `src/app/coaches/actions.ts`'s `toggleFavourite()` is called directly from `src/components/favourite-button.tsx`, a small client component on `/coaches/[slug]` that checks auth + current favourite status on mount and sends a logged-out click to `/login?next=/coaches/[slug]` rather than erroring. `/account` now lists real favourites (name, location, headline, linked to the profile) with a working remove button (`removeFavourite` in `src/app/account/actions.ts`). Caught one React 19 lint rule this phase — `react-hooks/set-state-in-effect` flags a synchronous `setState` in an effect body; fixed by deriving the "Supabase not configured" case from `isSupabaseConfigured` in the initial `useState` instead of setting it inside the effect. Verified live: favourited a coach as a throwaway rider, confirmed the button flipped to "♥ Favourited" with no reload, confirmed it appeared on `/account`, removed it there, confirmed it's gone — then also independently verified the notify-me preferences save (pulled forward last phase) actually persists to the DB (suburb/postcode/geocoded point/discipline all correct), not just that the UI didn't show an error. Both throwaway accounts deleted after.
 - [ ] **Phase 8 — Polish/SEO/QA:** metadata, sitemap, accessibility and cross-device QA pass.
 
+## Mock coach data (added 29 Aug 2026)
+
+50 mock coaches populate search/discipline/home pages for design & QA review, deliberately kept **out of Supabase** so they're trivial to remove later — nothing about them touches the DB, so there's no cleanup query to run and no risk of them being mistaken for real signups.
+
+- Everything lives in `src/lib/mock-coaches.ts`: 25 real AU towns (with real lat/long, so radius search genuinely works against them via a plain haversine calc), cycled through 25 first names × 25 last names × the 11 real discipline slugs to procedurally generate 50 distinct-enough profiles (name, town, 1–2 disciplines, a templated headline/bio, a qualification, a tier). No clinics or testimonials on mock coaches — kept simple since clinics/testimonials were already proven out with real data in phases 3 and 6.
+- **To turn off:** set `MOCK_COACHES_ENABLED = false` at the top of `src/lib/mock-coaches.ts`. **To remove entirely:** delete that file and the four small "Mock data merge" blocks that import from it — search the codebase for `mock-coaches` to find all of them (`src/app/page.tsx`, `src/app/search/page.tsx`, `src/app/disciplines/[slug]/page.tsx`, `src/app/coaches/[slug]/page.tsx`). Each merge block just concatenates the mock result array with the real Supabase one (and re-sorts by distance where relevant) — none of it touches `searchCoaches()` or the DB query layer itself.
+- Mock coaches have no `coach_profiles` row, so their favourite button is correctly disabled (same as the static placeholder fallback) rather than erroring.
+- Verified live: 50 coaches show on `/search` with no filters, discipline + radius filtering narrows correctly (confirmed distance calc against a real town), a mock coach's detail page renders correctly, and no console/server errors anywhere in the merge.
+
 ## Running Supabase migrations (decided 28 Aug 2026)
 
 **Preference: Claude Code runs migrations directly against the live DB, not via the Supabase SQL Editor.** No `supabase` CLI is installed in this environment and none is needed — a plain Node script using the `pg` package, run once and deleted, does the job:
@@ -159,6 +168,22 @@ Full plan: **["The First 100 Coaches"](https://claude.ai/code/artifact/7e3f85dd-
 - **Founding cohort:** first 25 get 12 months free, no card, price locked forever; coaches 26–100 get 6 months free with a **card required at signup** (trials with a card convert at 40–60% vs 15–25% without).
 - **Hard rules:** never pre-create unclaimed profiles from scraped data (build it, then email for permission — reputation is the whole asset in a community this small); Spam Act 2003 requires consent + sender ID + working unsubscribe (live 30 days, honoured within 5 working days), with inferred consent only covering conspicuously published *business* addresses where the message is relevant to that role.
 - **Biggest untested risk:** good coaches may already be full. If the first ten conversations say "I have a waitlist", the value proposition shifts from "get students" to "fill your clinics / be found when you move", and the $14.95 clinics tier becomes the main product rather than the upsell.
+### Local SEO — the main long-term rider channel (added 28 Aug 2026)
+
+Target queries are "riding instructor near me", "dressage coach Melbourne", "bridleless trainer Melbourne". Nobody in Australia owns these: most coaches have no site, EA's register sits behind a search form (generally not indexable), and Facebook posts don't rank. **But Google's 2024 core/helpful-content updates hit directories hard** — auto-generated town × category pages are treated as doorway spam. 18.5k postcodes × ~12 disciplines = 222,000 near-empty pages would sink the site. Benchmark from 2026 directory research: differentiated data-anchored pages index at ~49% vs ~43% for templated ones.
+
+**Governing rule: only build a page when there is something real on it.** Concretely:
+
+1. **Three page types.** Coach profiles (strongest — unique by definition); discipline × area pages (`/dressage-coaches/geelong`) **only where 3+ coaches exist**; one national page per discipline. ~400 real pages, not 222,000.
+2. **Hard minimum of 3 coaches per area page** — below that, redirect to the parent area. Most important single rule.
+3. **BUILD TASK — discipline search aliases.** Riders search "riding lessons"/"riding instructor" far more than "coach", and "bridleless trainer Melbourne" is a real low-competition query. The `disciplines` table needs a `search_aliases` field (Liberty → bridleless, at liberty, groundwork; Western → reining, barrel racing, campdraft; Dressage → flatwork) feeding page titles, H1s and body copy. **Add this before any area pages go live** — retrofitting is expensive.
+4. **Hand-written intros (~150 words) on the top 20 area pages** — local clubs, grounds, strong disciplines. Templated intros are exactly what the 2024 update penalises.
+5. **BUILD TASK — structured data.** `LocalBusiness`/`Person` schema on coach pages (address, geo, disciplines as `knowsAbout`); `ItemList` on area pages. Few hours' work, highest return after the pages themselves.
+6. **Push every coach to create a free Google Business Profile** linked to their ECA page. The "near me" map pack only shows businesses with one — ECA can't rank there, individual coaches can, and each profile links back to us.
+7. **Testimonials are the differentiator.** A profile with 8 rider testimonials beats one with a bio, for riders and for ranking. Make collection easy (shareable link + monthly coach email prompt).
+
+**Upkeep:** Search Console from day one; review impressions **by URL pattern** monthly; prune or merge any page with zero impressions after 90 days. Expect 6–12 months before meaningful traffic — which is why it starts pre-launch. Google Search ads on "horse riding lessons [town]" (~$1.50–3.00 AU CPC) fill the gap from month 7.
+
 - **Also not budgeted but launch-blocking:** public liability + professional indemnity insurance and terms disclaiming that you vet or accredit coaches (~$600–1,200/yr).
 
 ## Status / next steps
@@ -168,6 +193,9 @@ Full plan: **["The First 100 Coaches"](https://claude.ai/code/artifact/7e3f85dd-
 - [ ] Firm up real hero copy (headline/subhead/CTA) instead of placeholder copy used in design exploration
 - [ ] **Validate pricing before promising founding coaches a grandfathered rate.** $9.99 looks too cheap: EquiDirectory charges $80–$400/yr for a worse product, and a coach charging $70–$120/hr covers $9.99/mo with one extra lesson a year. Moving to $19/$29 roughly doubles net ARPU to $20.84 and base-case LTV to ~$298, which doubles what can be spent acquiring. Ask the first ten coaches what they'd pay without leading with a number.
 - [ ] Pick the beachhead region (the one Alana rides in) and build the phase-zero list of 400–600 named coaches
+- [ ] **Add `search_aliases` to the `disciplines` table** (SEO build task — needed before any discipline × area pages ship)
+- [ ] Add `LocalBusiness`/`Person` schema to coach pages and `ItemList` to area pages (phase 8 SEO work)
+- [ ] Enforce the 3-coach minimum before generating any discipline × area page
 - [ ] Decide the coach enquiry method on `/coaches/[slug]` (currently a placeholder — mailto vs. an in-app contact form)
 
 ## Working notes

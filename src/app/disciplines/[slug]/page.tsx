@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getDisciplines, searchCoaches } from "@/lib/supabase/queries";
 import { disciplines as staticDisciplines } from "@/lib/disciplines";
 import { getCoachesByDiscipline, toCoachCardData } from "@/lib/placeholder-coaches";
+import { getMockCoachesByDiscipline } from "@/lib/mock-coaches";
 
 export function generateStaticParams() {
   return staticDisciplines.map((d) => ({ slug: d.slug }));
@@ -23,8 +24,9 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
   const discipline = disciplines.find((d) => d.slug === slug);
   if (!discipline) notFound();
 
+  // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const coaches = supabase
-    ? await searchCoaches(supabase, { disciplineId: discipline.id })
+    ? [...(await searchCoaches(supabase, { disciplineId: discipline.id })), ...getMockCoachesByDiscipline(slug)]
     : getCoachesByDiscipline(slug).map(toCoachCardData);
 
   return (

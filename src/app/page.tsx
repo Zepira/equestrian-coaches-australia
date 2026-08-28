@@ -6,11 +6,13 @@ import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
 import { searchCoaches } from "@/lib/supabase/queries";
+import { searchMockCoaches } from "@/lib/mock-coaches";
 
 export default async function Home() {
   const supabase = await createClient();
+  // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const featured = supabase
-    ? (await searchCoaches(supabase, {})).slice(0, 3)
+    ? [...(await searchCoaches(supabase, {})), ...searchMockCoaches({})].slice(0, 3)
     : placeholderCoaches.slice(0, 3).map(toCoachCardData);
   const topDisciplines = disciplines.slice(0, 6);
 

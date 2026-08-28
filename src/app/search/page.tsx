@@ -4,6 +4,7 @@ import { DisciplineTag } from "@/components/discipline-tag";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines, resolveLocation, searchCoaches } from "@/lib/supabase/queries";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
+import { searchMockCoaches } from "@/lib/mock-coaches";
 
 export const metadata = { title: "Find a coach" };
 
@@ -40,6 +41,12 @@ export default async function SearchPage({
       long,
       radiusKm: 100,
     });
+
+    // Mock data merge — see src/lib/mock-coaches.ts to remove.
+    results = [
+      ...results,
+      ...searchMockCoaches({ disciplineSlug: discipline || null, lat, long, radiusKm: 100 }),
+    ].sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
   } else {
     // Placeholder filtering — used only when Supabase isn't configured.
     results = placeholderCoaches

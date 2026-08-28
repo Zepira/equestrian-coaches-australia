@@ -5,6 +5,7 @@ import { Button, LinkButton } from "@/components/ui/button";
 import { FavouriteButton } from "@/components/favourite-button";
 import { createClient } from "@/lib/supabase/server";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
+import { getMockCoachBySlug } from "@/lib/mock-coaches";
 
 export function generateStaticParams() {
   return placeholderCoaches.map((c) => ({ slug: c.slug }));
@@ -85,6 +86,27 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
   };
 }
 
+// Mock data lookup — see src/lib/mock-coaches.ts to remove.
+function getCoachFromMock(slug: string): CoachView | null {
+  const coach = getMockCoachBySlug(slug);
+  if (!coach) return null;
+  return {
+    id: null,
+    slug: coach.slug,
+    name: coach.name,
+    suburb: coach.suburb,
+    state: coach.state,
+    headline: coach.headline,
+    bio: coach.bio,
+    disciplineSlugs: coach.disciplineSlugs,
+    qualifications: coach.qualifications,
+    testimonials: [],
+    clinics: [],
+    photoUrl: null,
+    canListClinics: coach.tier === "standard_plus_clinics",
+  };
+}
+
 function getCoachFromPlaceholder(slug: string): CoachView | null {
   const coach = getCoachBySlug(slug);
   if (!coach) return null;
@@ -107,13 +129,13 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const coach = (await getCoachFromDb(slug)) ?? getCoachFromPlaceholder(slug);
+  const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
   return { title: coach ? coach.name : "Coach not found" };
 }
 
 export default async function CoachPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const coach = (await getCoachFromDb(slug)) ?? getCoachFromPlaceholder(slug);
+  const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
   if (!coach) notFound();
 
   return (
