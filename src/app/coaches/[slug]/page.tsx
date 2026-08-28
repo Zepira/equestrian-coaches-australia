@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { DisciplineTag } from "@/components/discipline-tag";
 import { Button, LinkButton } from "@/components/ui/button";
+import { FavouriteButton } from "@/components/favourite-button";
 import { createClient } from "@/lib/supabase/server";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 
@@ -10,6 +11,8 @@ export function generateStaticParams() {
 }
 
 type CoachView = {
+  id: string | null;
+  slug: string;
   name: string;
   suburb: string;
   state: string;
@@ -57,6 +60,8 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
   const profileName = (coach as unknown as { profiles: { name: string } | null }).profiles?.name;
 
   return {
+    id: coach.id,
+    slug,
     name: profileName ?? "Coach",
     suburb: coach.suburb,
     state: coach.state,
@@ -84,6 +89,8 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
   const coach = getCoachBySlug(slug);
   if (!coach) return null;
   return {
+    id: null,
+    slug: coach.slug,
     name: coach.name,
     suburb: coach.suburb,
     state: coach.state,
@@ -129,10 +136,13 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
             ))}
           </div>
         </div>
-        {/* Favouriting requires a rider account — wired up once auth ships (phase 7) */}
-        <Button variant="secondary" className="shrink-0">
-          ♡ Favourite
-        </Button>
+        {coach.id ? (
+          <FavouriteButton coachId={coach.id} coachSlug={coach.slug} />
+        ) : (
+          <Button variant="secondary" className="shrink-0" disabled>
+            ♡ Favourite
+          </Button>
+        )}
       </div>
 
       <p className="mt-6 text-lg text-fg">{coach.headline}</p>

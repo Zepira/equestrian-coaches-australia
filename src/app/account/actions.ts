@@ -4,9 +4,25 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { resolveLocation } from "@/lib/supabase/queries";
 
-// Pulled forward from phase 7 out of necessity: clinic notifications
-// (phase 6) need somewhere real to match against, so this one form gets
-// wired now. Favourites (the rest of phase 7) still isn't.
+export async function removeFavourite(coachId: string) {
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Supabase isn't connected yet.");
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not signed in.");
+
+  const { error } = await supabase
+    .from("favourites")
+    .delete()
+    .eq("rider_id", user.id)
+    .eq("coach_id", coachId);
+  if (error) throw error;
+
+  revalidatePath("/account");
+}
+
 export async function saveRiderPreferences(formData: FormData) {
   const supabase = await createClient();
   if (!supabase) throw new Error("Supabase isn't connected yet.");

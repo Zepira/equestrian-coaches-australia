@@ -1,32 +1,76 @@
+import Link from "next/link";
 import { Button, LinkButton } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines } from "@/lib/supabase/queries";
-import { saveRiderPreferences } from "./actions";
+import { saveRiderPreferences, removeFavourite } from "./actions";
 
 export const metadata = { title: "My account" };
 
-// Favourite coaches list still isn't wired — that's the rest of phase 7.
+type Favourite = {
+  coachId: string;
+  slug: string;
+  name: string;
+  headline: string;
+  suburb: string;
+  state: string;
+};
+
 export default async function AccountPage() {
   const supabase = await createClient();
   const disciplines = await getDisciplines(supabase);
 
   let area = "";
   let followedIds: string[] = [];
+  let favourites: Favourite[] = [];
 
   if (supabase) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (user) {
-      const { data } = await supabase
-        .from("rider_preferences")
-        .select("suburb, postcode, followed_discipline_ids")
-        .eq("rider_id", user.id)
-        .maybeSingle();
-      if (data) {
-        area = [data.suburb, data.postcode].filter(Boolean).join(" ");
-        followedIds = data.followed_discipline_ids ?? [];
+      const [{ data: prefs }, { data: favouriteRows }] = await Promise.all([
+        supabase
+          .from("rider_preferences")
+          .select("suburb, postcode, followed_discipline_ids")
+          .eq("rider_id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("favourites")
+          .select(
+            "coach_id, coach_profiles(slug, headline, suburb, state, profiles!coach_profiles_id_fkey(name))"
+          )
+          .eq("rider_id", user.id),
+      ]);
+
+      if (prefs) {
+        area = [prefs.suburb, prefs.postcode].filter(Boolean).join(" ");
+        followedIds = prefs.followed_discipline_ids ?? [];
       }
+
+      favourites = (favouriteRows ?? [])
+        .map((row) => {
+          const coach = (
+            row as unknown as {
+              coach_profiles: {
+                slug: string;
+                headline: string;
+                suburb: string;
+                state: string;
+                profiles: { name: string } | null;
+              } | null;
+            }
+          ).coach_profiles;
+          if (!coach) return null;
+          return {
+            coachId: row.coach_id,
+            slug: coach.slug,
+            name: coach.profiles?.name ?? "Coach",
+            headline: coach.headline,
+            suburb: coach.suburb,
+            state: coach.state,
+          };
+        })
+        .filter((f): f is Favourite => f !== null);
     }
   }
 
@@ -36,14 +80,38 @@ export default async function AccountPage() {
 
       <section className="mt-8">
         <h2 className="text-lg font-semibold text-fg">Favourite coaches</h2>
-        <div className="mt-3 rounded-lg border border-dashed border-border p-6 text-center text-muted">
-          You haven&apos;t favourited any coaches yet.
-          <div className="mt-3">
-            <LinkButton href="/search" variant="secondary">
-              Browse coaches
-            </LinkButton>
+        {favourites.length === 0 ? (
+          <div className="mt-3 rounded-lg border border-dashed border-border p-6 text-center text-muted">
+            You haven&apos;t favourited any coaches yet.
+            <div className="mt-3">
+              <LinkButton href="/search" variant="secondary">
+                Browse coaches
+              </LinkButton>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-3 flex flex-col gap-2">
+            {favourites.map((f) => (
+              <div
+                key={f.coachId}
+                className="flex items-start justify-between gap-3 rounded-lg border border-border bg-surface p-4"
+              >
+                <Link href={`/coaches/${f.slug}`} className="min-w-0">
+                  <div className="font-semibold text-fg">{f.name}</div>
+                  <div className="text-sm text-muted">
+                    {f.suburb} {f.state}
+                  </div>
+                  <p className="mt-1 line-clamp-1 text-sm text-muted">{f.headline}</p>
+                </Link>
+                <form action={removeFavourite.bind(null, f.coachId)} className="shrink-0">
+                  <button type="submit" className="text-sm font-medium text-danger">
+                    Remove
+                  </button>
+                </form>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mt-8">
