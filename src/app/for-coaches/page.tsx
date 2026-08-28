@@ -1,4 +1,7 @@
-import { LinkButton } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
+import { isStripeConfigured } from "@/lib/stripe";
+import { startCheckout } from "@/app/dashboard/billing/actions";
 
 export const metadata = { title: "For coaches" };
 
@@ -6,7 +9,7 @@ const tiers = [
   {
     name: "Standard",
     price: "$9.99",
-    tier: "standard",
+    tier: "standard" as const,
     features: [
       "Full profile — bio, photo, location",
       "Discipline tags, qualifications & testimonials",
@@ -16,7 +19,7 @@ const tiers = [
   {
     name: "Standard + Clinics",
     price: "$14.95",
-    tier: "standard_plus_clinics",
+    tier: "standard_plus_clinics" as const,
     features: [
       "Everything in Standard",
       "List clinics & events",
@@ -26,7 +29,20 @@ const tiers = [
   },
 ];
 
-export default function ForCoachesPage() {
+export default async function ForCoachesPage() {
+  const supabase = await createClient();
+  let isLoggedInCoach = false;
+
+  if (supabase) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+      isLoggedInCoach = data?.role === "coach";
+    }
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
       <div className="text-center">
@@ -63,14 +79,26 @@ export default function ForCoachesPage() {
                 </li>
               ))}
             </ul>
-            {/* Wired to Stripe Checkout once payments ship (build plan, phase 5) */}
-            <LinkButton
-              href={`/signup?role=coach&tier=${tier.tier}`}
-              variant={tier.recommended ? "primary" : "secondary"}
-              className="mt-6"
-            >
-              List your profile
-            </LinkButton>
+            {isLoggedInCoach ? (
+              <form action={startCheckout.bind(null, tier.tier)} className="mt-6">
+                <Button
+                  type="submit"
+                  variant={tier.recommended ? "primary" : "secondary"}
+                  disabled={!isStripeConfigured}
+                  className="w-full"
+                >
+                  Subscribe
+                </Button>
+              </form>
+            ) : (
+              <LinkButton
+                href={`/signup?role=coach&tier=${tier.tier}`}
+                variant={tier.recommended ? "primary" : "secondary"}
+                className="mt-6"
+              >
+                List your profile
+              </LinkButton>
+            )}
           </div>
         ))}
       </div>

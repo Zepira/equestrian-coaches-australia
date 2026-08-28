@@ -9,7 +9,7 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/account";
+  const explicitNext = searchParams.get("next");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,15 +27,25 @@ function LoginForm() {
       setError("Auth isn't connected yet — Supabase project pending (build plan, phase 2).");
       return;
     }
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-
-    setLoading(false);
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
     if (signInError) {
+      setLoading(false);
       setError(signInError.message);
       return;
     }
 
+    let next = explicitNext;
+    if (!next) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+      next = profile?.role === "coach" ? "/dashboard" : "/account";
+    }
+
+    setLoading(false);
     router.push(next);
     router.refresh();
   }

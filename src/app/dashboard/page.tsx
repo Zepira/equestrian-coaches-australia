@@ -1,5 +1,7 @@
-import { LinkButton } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { isStripeConfigured } from "@/lib/stripe";
+import { startCheckout } from "./billing/actions";
 
 export const metadata = { title: "Dashboard" };
 
@@ -10,7 +12,12 @@ const statusLabels: Record<string, string> = {
   canceled: "Canceled",
 };
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tier?: string; checkout?: string }>;
+}) {
+  const { tier: pendingTier, checkout } = await searchParams;
   const supabase = await createClient();
   let status = "inactive";
   let published = false;
@@ -32,8 +39,32 @@ export default async function DashboardPage() {
     }
   }
 
+  const validPendingTier: "standard" | "standard_plus_clinics" | null =
+    pendingTier === "standard" || pendingTier === "standard_plus_clinics" ? pendingTier : null;
+  const showCompleteSubscription = status !== "active" && validPendingTier !== null;
+
   return (
     <div className="flex flex-col gap-6">
+      {checkout === "success" && (
+        <p className="rounded-md border border-border bg-accent-soft p-3 text-sm text-fg">
+          Payment received — your plan updates here shortly once Stripe confirms it.
+        </p>
+      )}
+
+      {showCompleteSubscription && (
+        <div className="rounded-lg border border-accent bg-accent-soft p-5">
+          <div className="text-lg font-semibold text-fg">Complete your subscription</div>
+          <p className="mt-1 text-sm text-fg">
+            One step left — subscribe to publish your profile and appear in search.
+          </p>
+          <form action={startCheckout.bind(null, validPendingTier as "standard" | "standard_plus_clinics")} className="mt-4">
+            <Button type="submit" disabled={!isStripeConfigured}>
+              Continue to payment
+            </Button>
+          </form>
+        </div>
+      )}
+
       <div className="rounded-lg border border-border bg-surface p-5">
         <div className="text-sm font-semibold uppercase tracking-wide text-muted">
           Subscription status
@@ -44,8 +75,7 @@ export default async function DashboardPage() {
             ? "Your profile is live and appears in search."
             : "Choose a plan to publish your profile and appear in search."}
         </p>
-        {/* Stripe Checkout wiring lands in phase 5 — links to pricing for now */}
-        <LinkButton href="/for-coaches" className="mt-4">
+        <LinkButton href={status === "inactive" ? "/for-coaches" : "/dashboard/billing"} className="mt-4">
           {status === "inactive" ? "Choose a plan" : "Manage plan"}
         </LinkButton>
       </div>
