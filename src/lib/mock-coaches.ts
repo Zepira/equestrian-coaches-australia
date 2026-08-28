@@ -68,6 +68,31 @@ const QUALIFICATIONS_BY_DISCIPLINE: Record<string, string[]> = {
   "para-equestrian": ["Para-Equestrian Australia accredited coach"],
 };
 
+// Unsplash (free license — https://unsplash.com/license), hand-picked per
+// discipline: polished arena/competition shots for the more formal
+// disciplines, warmer natural-connection shots for liberty/bridleless/
+// natural horsemanship, and every candidate was actually looked at first
+// to skip anything showing a tense or stressed-looking horse (pinned
+// ears, open mouth, hollow back, whites of the eyes) — see CLAUDE.md.
+const PHOTO_BY_DISCIPLINE: Record<string, string> = {
+  dressage: "https://images.unsplash.com/photo-1579113813543-fa41eb8bf556",
+  "show-jumping": "https://images.unsplash.com/photo-1613085411234-9c83af5562d8",
+  eventing: "https://images.unsplash.com/photo-1784841607964-0a48a3b1a307",
+  western: "https://images.unsplash.com/photo-1624125278758-c0572f6ebc55",
+  campdrafting: "https://images.unsplash.com/photo-1547700094-a0b42d320937",
+  liberty: "https://images.unsplash.com/photo-1589801837979-0eecc7c4f3c1",
+  bridleless: "https://images.unsplash.com/photo-1636738176866-ae2c0a80d614",
+  "natural-horsemanship": "https://images.unsplash.com/photo-1629366794937-fb2c3cc69927",
+  "working-equitation": "https://images.unsplash.com/photo-1726209503049-a705ac3fe28f",
+  "pony-club": "https://images.unsplash.com/photo-1726209451255-93951e0f4a46",
+  "para-equestrian": "https://images.unsplash.com/photo-1584817791214-a47da4499486",
+};
+
+function photoFor(disciplineSlug: string) {
+  const base = PHOTO_BY_DISCIPLINE[disciplineSlug] ?? PHOTO_BY_DISCIPLINE.dressage;
+  return `${base}?auto=format&fit=crop&w=800&q=75`;
+}
+
 const HEADLINE_TEMPLATES = [
   (discipline: string, town: string) => `${discipline} coaching for riders in ${town} and surrounds.`,
   (discipline: string, town: string) => `Helping ${town} riders build confidence in ${discipline.toLowerCase()}.`,
@@ -101,6 +126,7 @@ export type MockCoach = {
   disciplineSlugs: string[];
   qualifications: string[];
   tier: "standard" | "standard_plus_clinics";
+  photoUrl: string;
 };
 
 const COACH_COUNT = 50;
@@ -129,6 +155,7 @@ export const mockCoaches: MockCoach[] = Array.from({ length: COACH_COUNT }, (_, 
     disciplineSlugs,
     qualifications: QUALIFICATIONS_BY_DISCIPLINE[primaryDiscipline] ?? [],
     tier: i % 5 < 2 ? "standard_plus_clinics" : "standard",
+    photoUrl: photoFor(primaryDiscipline),
   };
 });
 
@@ -150,7 +177,7 @@ export type MockCoachCard = {
   state: string;
   headline: string;
   disciplineNames: string[];
-  photoUrl: null;
+  photoUrl: string;
   distanceKm: number | null;
 };
 
@@ -162,7 +189,7 @@ function toCard(coach: MockCoach, distanceKm: number | null): MockCoachCard {
     state: coach.state,
     headline: coach.headline,
     disciplineNames: coach.disciplineSlugs.map((s) => getDisciplineBySlug(s)?.name ?? s),
-    photoUrl: null,
+    photoUrl: coach.photoUrl,
     distanceKm,
   };
 }

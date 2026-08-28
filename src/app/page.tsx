@@ -19,19 +19,29 @@ export default async function Home() {
   return (
     <>
       <section className="border-b border-border bg-surface">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-20">
-          <div className="text-sm font-semibold uppercase tracking-wide text-accent">
-            Coaching, discipline by discipline
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-12">
+          <div className="lg:order-1">
+            <div className="text-sm font-semibold uppercase tracking-wide text-accent">
+              Coaching, discipline by discipline
+            </div>
+            <h1 className="mt-3 max-w-2xl text-4xl font-bold leading-tight text-fg sm:text-6xl">
+              Find your perfect riding coach, nearby.
+            </h1>
+            <p className="mt-4 max-w-xl text-lg text-muted">
+              Search verified coaches across Australia by discipline and location — liberty,
+              bridleless, working equitation and every other discipline.
+            </p>
+            <div className="mt-8 max-w-2xl">
+              <SearchBar />
+            </div>
           </div>
-          <h1 className="mt-3 max-w-2xl text-4xl font-bold leading-tight text-fg sm:text-6xl">
-            Find your perfect riding coach, nearby.
-          </h1>
-          <p className="mt-4 max-w-xl text-lg text-muted">
-            Search verified coaches across Australia by discipline and location — liberty,
-            bridleless, working equitation and every other discipline.
-          </p>
-          <div className="mt-8 max-w-2xl">
-            <SearchBar />
+          <div className="order-first h-56 w-full overflow-hidden rounded-2xl sm:h-72 lg:order-2 lg:h-[420px]">
+            {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL, not worth next/image remote-pattern config yet */}
+            <img
+              src="https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=1200&q=80"
+              alt="A rider on a grey horse in a classical dressage arena"
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </section>

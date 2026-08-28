@@ -102,7 +102,7 @@ function getCoachFromMock(slug: string): CoachView | null {
     qualifications: coach.qualifications,
     testimonials: [],
     clinics: [],
-    photoUrl: null,
+    photoUrl: coach.photoUrl,
     canListClinics: coach.tier === "standard_plus_clinics",
   };
 }
