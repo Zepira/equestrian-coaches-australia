@@ -1,11 +1,11 @@
 # Equestrian Coaches Australia
 
-Pre-launch marketplace/directory connecting riders with riding coaches across Australia. See [CLAUDE.md](CLAUDE.md) for full project context.
+Marketplace/directory connecting riders with riding coaches across Australia. See [CLAUDE.md](CLAUDE.md) for full project context, tech stack, and decisions.
 
-## This repo, right now
+## Repo layout
 
-`index.html` (+ `support.js`) is the **five homepage design directions** deck, exported from Claude Design, published here for the client to review via GitHub Pages:
+- **`/` (this app)** — the real Next.js app, deployed to Vercel.
+- **`design-preview/`** — the five homepage design directions deck (exported from Claude Design), auto-published to GitHub Pages via a `gh-pages` branch on every push to `design-preview/**`.
+  **Live preview:** https://zepira.github.io/equestrian-coaches-australia/
 
-**Live preview:** https://zepira.github.io/equestrian-coaches-australia/
-
-Once a direction is chosen, the actual site gets built in this same repo (replacing this deck).
+Once a direction is chosen, its palette/type get pulled into the app's design tokens — the deck itself stays around as a reference/archive.
