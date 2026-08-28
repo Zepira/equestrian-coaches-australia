@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/recompute-indexable-pages",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/seo-digest",
+      "schedule": "0 7 * * 1"
     }
   ]
 }
