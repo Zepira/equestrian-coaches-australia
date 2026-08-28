@@ -2,6 +2,12 @@ import Stripe from "stripe";
 
 export const isStripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY);
 
+// No Stripe account exists yet (business/ownership structure still being
+// decided — see CLAUDE.md). Until STRIPE_SECRET_KEY is set, billing runs
+// in mock mode: real DB writes, real UI, no real card ever charged.
+// Flip off automatically the moment real keys land in .env.
+export const isMockPayments = !isStripeConfigured;
+
 // Returns null until STRIPE_SECRET_KEY is set (see .env.example) — every
 // caller must handle that case rather than assume Stripe is live, same
 // pattern as src/lib/supabase/client.ts.

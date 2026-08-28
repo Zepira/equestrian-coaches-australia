@@ -2,7 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getStripe, TIER_PRICE_IDS } from "@/lib/stripe";
+import { getStripe, isMockPayments, TIER_PRICE_IDS } from "@/lib/stripe";
+import { ensureCoachProfile } from "@/lib/supabase/queries";
 
 async function requireCoach() {
   const supabase = await createClient();
@@ -13,6 +14,18 @@ async function requireCoach() {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Not signed in.");
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("name")
+    .eq("id", user.id)
+    .single();
+
+  // Coaches only get a coach_profiles row lazily (see ensureCoachProfile) —
+  // a coach can reach billing before ever visiting /dashboard/profile, so
+  // guarantee the row exists here too. Without this, the updates below
+  // silently affect zero rows (no error) and "subscribing" does nothing.
+  await ensureCoachProfile(supabase, user.id, profile?.name ?? "Coach");
+
   return { supabase, userId: user.id, email: user.email ?? undefined };
 }
 
@@ -22,6 +35,27 @@ async function requireCoach() {
 // here, so a user can't grant themselves a free listing by hitting cancel.
 export async function startCheckout(tier: "standard" | "standard_plus_clinics") {
   const { supabase, userId, email } = await requireCoach();
+
+  // No Stripe account exists yet (business/ownership structure still being
+  // decided — see CLAUDE.md). Mock mode writes the same DB fields the real
+  // webhook would, so every other feature (publish gating, clinics tier
+  // gating, search) can be built and tested against a real "subscribed"
+  // coach today, and swaps to real billing the moment Stripe keys land.
+  if (isMockPayments) {
+    await supabase
+      .from("coach_profiles")
+      .update({
+        stripe_customer_id: `mock_${userId.slice(0, 8)}`,
+        stripe_subscription_id: `mock_sub_${Date.now()}`,
+        subscription_tier: tier,
+        subscription_status: "active",
+        published: true,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", userId);
+    redirect("/dashboard?checkout=success&mock=1");
+  }
+
   const stripe = getStripe();
   if (!stripe) throw new Error("Stripe isn't connected yet.");
 
@@ -61,6 +95,13 @@ export async function startCheckout(tier: "standard" | "standard_plus_clinics") 
 // there, so none of it needs hand-building.
 export async function openBillingPortal() {
   const { supabase, userId } = await requireCoach();
+
+  if (isMockPayments) {
+    // No portal to send them to — mock cancel happens in-app instead
+    // (see mockCancelSubscription below).
+    redirect("/dashboard/billing?mock=1");
+  }
+
   const stripe = getStripe();
   if (!stripe) throw new Error("Stripe isn't connected yet.");
 
@@ -78,4 +119,19 @@ export async function openBillingPortal() {
   });
 
   redirect(session.url);
+}
+
+// Mock-mode-only stand-in for what Stripe's Customer Portal would do —
+// lets the cancel path (unpublish, clinics tier gating) be tested before
+// there's a real subscription to cancel.
+export async function mockCancelSubscription() {
+  const { supabase, userId } = await requireCoach();
+  if (!isMockPayments) throw new Error("Not in mock mode.");
+
+  await supabase
+    .from("coach_profiles")
+    .update({ subscription_status: "canceled", published: false })
+    .eq("id", userId);
+
+  redirect("/dashboard/billing");
 }

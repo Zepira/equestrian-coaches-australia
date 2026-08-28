@@ -1,6 +1,5 @@
 import { Button, LinkButton } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { isStripeConfigured } from "@/lib/stripe";
 import { startCheckout } from "./billing/actions";
 
 export const metadata = { title: "Dashboard" };
@@ -15,9 +14,9 @@ const statusLabels: Record<string, string> = {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tier?: string; checkout?: string }>;
+  searchParams: Promise<{ tier?: string; checkout?: string; mock?: string }>;
 }) {
-  const { tier: pendingTier, checkout } = await searchParams;
+  const { tier: pendingTier, checkout, mock } = await searchParams;
   const supabase = await createClient();
   let status = "inactive";
   let published = false;
@@ -47,7 +46,9 @@ export default async function DashboardPage({
     <div className="flex flex-col gap-6">
       {checkout === "success" && (
         <p className="rounded-md border border-border bg-accent-soft p-3 text-sm text-fg">
-          Payment received — your plan updates here shortly once Stripe confirms it.
+          {mock === "1"
+            ? "Mock subscription activated — your profile is published. No card was charged."
+            : "Payment received — your plan updates here shortly once Stripe confirms it."}
         </p>
       )}
 
@@ -58,9 +59,7 @@ export default async function DashboardPage({
             One step left — subscribe to publish your profile and appear in search.
           </p>
           <form action={startCheckout.bind(null, validPendingTier as "standard" | "standard_plus_clinics")} className="mt-4">
-            <Button type="submit" disabled={!isStripeConfigured}>
-              Continue to payment
-            </Button>
+            <Button type="submit">Continue to payment</Button>
           </form>
         </div>
       )}

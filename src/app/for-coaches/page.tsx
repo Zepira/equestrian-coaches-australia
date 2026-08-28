@@ -1,6 +1,6 @@
 import { Button, LinkButton } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { isStripeConfigured } from "@/lib/stripe";
+import { isMockPayments } from "@/lib/stripe";
 import { startCheckout } from "@/app/dashboard/billing/actions";
 
 export const metadata = { title: "For coaches" };
@@ -51,6 +51,12 @@ export default async function ForCoachesPage() {
           One flat monthly price, no gatekeeping by discipline or accreditation. Your listing,
           kept current by you.
         </p>
+        {isMockPayments && (
+          <p className="mx-auto mt-4 max-w-md rounded-md border border-border bg-accent-soft p-3 text-sm text-fg">
+            Running on mock payments while the business/billing setup is confirmed — subscribing
+            publishes your profile for real, no card is charged yet.
+          </p>
+        )}
       </div>
 
       <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -84,10 +90,9 @@ export default async function ForCoachesPage() {
                 <Button
                   type="submit"
                   variant={tier.recommended ? "primary" : "secondary"}
-                  disabled={!isStripeConfigured}
                   className="w-full"
                 >
-                  Subscribe
+                  {isMockPayments ? "Subscribe (mock)" : "Subscribe"}
                 </Button>
               </form>
             ) : (

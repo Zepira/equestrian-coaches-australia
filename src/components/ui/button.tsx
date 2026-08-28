@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ComponentProps } from "react";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "ghost" | "danger-ghost";
 
 const base =
   "inline-flex items-center justify-center gap-2 rounded-md text-[15px] font-semibold px-5 py-3 transition-colors disabled:opacity-50 disabled:pointer-events-none";
@@ -10,6 +10,7 @@ const variants: Record<Variant, string> = {
   primary: "bg-accent text-accent-fg hover:opacity-90",
   secondary: "border border-border bg-surface text-fg hover:bg-accent-soft",
   ghost: "text-fg hover:bg-accent-soft",
+  "danger-ghost": "text-danger hover:bg-accent-soft",
 };
 
 type ButtonProps = ComponentProps<"button"> & { variant?: Variant };
