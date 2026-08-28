@@ -21,6 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // the static placeholder fallback are dev/QA aids, not real listings,
   // and shouldn't be indexed.
   let coachRoutes: MetadataRoute.Sitemap = [];
+  let areaRoutes: MetadataRoute.Sitemap = [];
   const supabase = await createClient();
   if (supabase) {
     const { data } = await supabase.from("coach_profiles").select("slug").eq("published", true);
@@ -29,7 +30,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
+
+    // Only pages the nightly indexable_pages recompute has cleared the
+    // 3-coach gate for (0012_indexable_pages.sql) — never every area, that's
+    // the doorway-page mistake the spec explicitly warns against.
+    const { data: pages } = await supabase
+      .from("indexable_pages")
+      .select("slug, last_coach_change")
+      .eq("eligible", true);
+    areaRoutes = (pages ?? []).map((p) => ({
+      url: `${siteUrl}/${p.slug}`,
+      lastModified: p.last_coach_change ? new Date(p.last_coach_change) : undefined,
+      changeFrequency: "weekly" as const,
+      priority: 0.75,
+    }));
   }
 
-  return [...staticRoutes, ...disciplineRoutes, ...coachRoutes];
+  return [...staticRoutes, ...disciplineRoutes, ...coachRoutes, ...areaRoutes];
 }

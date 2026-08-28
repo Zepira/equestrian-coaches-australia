@@ -47,7 +47,10 @@ export async function saveProfile(formData: FormData) {
       postcode,
       qualifications,
       ...(resolved
-        ? { location: `SRID=4326;POINT(${resolved.long} ${resolved.lat})` }
+        ? {
+            location: `SRID=4326;POINT(${resolved.long} ${resolved.lat})`,
+            area_id: resolved.area_id,
+          }
         : {}),
       updated_at: new Date().toISOString(),
     })

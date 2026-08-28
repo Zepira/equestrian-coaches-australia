@@ -59,12 +59,15 @@ export type ResolvedLocation = {
   state: string;
   lat: number;
   long: number;
+  area_id: string | null;
 };
 
 // Resolves free-text like "Bendigo VIC", "3550" or "Toowoomba" against the
 // postcodes table (loaded via supabase/scripts/load-postcodes.mjs). Used by
 // both the search bar and the coach profile save action, so search and
-// listing use exactly the same notion of "where this is".
+// listing use exactly the same notion of "where this is". Also carries
+// area_id (0009_areas.sql) so the profile save action can keep
+// coach_profiles.area_id current for the indexable_pages register.
 export async function resolveLocation(
   supabase: SupabaseClient,
   query: string
@@ -80,7 +83,7 @@ export async function resolveLocation(
   const postcodeMatch = withoutState.match(/\b\d{4}\b/);
   const suburbGuess = withoutState.replace(/\b\d{4}\b/, "").trim();
 
-  let queryBuilder = supabase.from("postcodes").select("postcode, suburb, state, lat, long");
+  let queryBuilder = supabase.from("postcodes").select("postcode, suburb, state, lat, long, area_id");
 
   if (postcodeMatch) {
     queryBuilder = queryBuilder.eq("postcode", postcodeMatch[0]);
@@ -97,7 +100,7 @@ export async function resolveLocation(
   if (!data && suburbGuess) {
     let fallback = supabase
       .from("postcodes")
-      .select("postcode, suburb, state, lat, long")
+      .select("postcode, suburb, state, lat, long, area_id")
       .ilike("suburb", `%${suburbGuess}%`);
     if (stateGuess) fallback = fallback.eq("state", stateGuess);
     const result = await fallback.limit(1).maybeSingle();
