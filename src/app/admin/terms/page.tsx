@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { createTerm, renameTerm, toggleTermActive, toggleGeneratesPages } from "./actions";
+import { createTerm, renameTerm, changeTermSlug, toggleTermActive, toggleGeneratesPages } from "./actions";
 
 export const metadata = { title: "Terms" };
 
@@ -49,17 +49,35 @@ export default async function AdminTermsPage() {
                   !term.active ? "opacity-50" : ""
                 }`}
               >
-                <form action={renameTerm.bind(null, term.id)} className="flex flex-1 items-center gap-2">
-                  <input
-                    name="name"
-                    defaultValue={term.name}
-                    className="w-full rounded-md border border-border bg-bg px-2 py-1.5 text-sm text-fg sm:max-w-xs"
-                  />
-                  <code className="shrink-0 text-xs text-muted">/{term.slug}</code>
-                  <button type="submit" className="shrink-0 text-sm font-medium text-accent">
-                    Save
-                  </button>
-                </form>
+                <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+                  <form action={renameTerm.bind(null, term.id)} className="flex items-center gap-2">
+                    <input
+                      name="name"
+                      defaultValue={term.name}
+                      className="w-full rounded-md border border-border bg-bg px-2 py-1.5 text-sm text-fg sm:max-w-xs"
+                    />
+                    <button type="submit" className="shrink-0 text-sm font-medium text-accent">
+                      Save
+                    </button>
+                  </form>
+                  {/* The slug trap's deliberate escape hatch — changing this
+                      writes term_slug_history so the old URL 301s (see
+                      src/lib/supabase/middleware.ts), it never just breaks. */}
+                  <form
+                    action={changeTermSlug.bind(null, term.id)}
+                    className="flex items-center gap-1 text-xs text-muted"
+                  >
+                    <span>/</span>
+                    <input
+                      name="slug"
+                      defaultValue={term.slug}
+                      className="w-32 rounded-md border border-border bg-bg px-2 py-1 text-xs text-fg"
+                    />
+                    <button type="submit" className="shrink-0 font-medium text-danger" title="Old URL will 301 here">
+                      Change slug
+                    </button>
+                  </form>
+                </div>
                 <div className="flex shrink-0 items-center gap-3 text-sm">
                   {kind === "discipline" && (
                     <span className="text-muted">

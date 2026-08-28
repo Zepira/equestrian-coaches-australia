@@ -39,6 +39,28 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
+
+  // Slug trap redirect — /disciplines/[slug] and /disciplines/[slug]/[area]
+  // are the only URLs a term slug appears in (disciplines are the only
+  // kind that generates_pages today). term_id is the join key rather than
+  // old_slug -> new_slug directly, so this resolves correctly no matter how
+  // many times a term's been renamed since (see changeTermSlug,
+  // src/app/admin/terms/actions.ts).
+  const disciplineMatch = pathname.match(/^\/disciplines\/([^/]+)(\/.*)?$/);
+  if (disciplineMatch) {
+    const [, oldSlug, rest = ""] = disciplineMatch;
+    const { data: history } = await supabase
+      .from("term_slug_history")
+      .select("terms(slug)")
+      .eq("kind", "discipline")
+      .eq("old_slug", oldSlug)
+      .maybeSingle();
+    const currentSlug = (history as unknown as { terms: { slug: string } | null } | null)?.terms?.slug;
+    if (currentSlug && currentSlug !== oldSlug) {
+      return NextResponse.redirect(new URL(`/disciplines/${currentSlug}${rest}`, request.url), 301);
+    }
+  }
+
   const needsAuth =
     pathname.startsWith(COACH_ROUTES) ||
     pathname.startsWith(RIDER_ROUTES) ||
