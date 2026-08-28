@@ -104,14 +104,28 @@ Claude Code suggested Clerk during the build. Assessed and decided: **stick with
 - Clerk's genuine advantages (prebuilt polished components, passkey/WebAuthn support, an "Organizations" primitive for a future multi-coach "riding school" account type) are real, just not worth $20–25/mo yet: the components need custom restyling either way to match the chosen design direction, and Supabase Auth already includes MFA (TOTP) for free.
 - Revisit Clerk specifically if: passkey login becomes a priority, a multi-seat "organization" account type is needed, or hand-building/maintaining auth screens becomes a genuine recurring time sink.
 
+## App build (started 28 Aug 2026)
+
+The real app is being built ahead of a chosen visual direction, skinned generically so a direction can be applied as a design-token swap later. Full plan lives in this session's approved plan (repo root is now the Next.js app; the design deck moved to `design-preview/`, still live via a `gh-pages` branch). MVP scope: rider search/browse, coach profile CRUD, Stripe subscription billing (both tiers), clinics/events full CRUD, rider accounts with favourites + clinic email notifications — mobile-first throughout.
+
+Build phases: 1 Scaffold, 2 Data+Auth (Supabase), 3 Coach profile CRUD, 4 Search & discovery, 5 Payments (Stripe), 6 Clinics + notifications (Resend), 7 Rider account, 8 Polish/SEO/QA.
+
+- [x] **Phase 1 — Scaffold:** Next.js (App Router, TS, Tailwind v4) at repo root; generic CSS-variable design tokens in `src/app/globals.css` (neutral warm palette, swap when a direction is chosen); base layout with mobile-first header (hamburger nav) + footer; placeholder discipline/coach data (`src/lib/`) standing in for Supabase tables; UI-only pages for the full site map (home, search, discipline pages, coach profile, for-coaches/pricing, login/signup, rider account, coach dashboard incl. profile/clinics/billing tabs) — no backend wired yet.
+- [ ] **Phase 2 — Data + Auth:** Supabase project, schema migration, RLS, Supabase Auth wired into the forms already built.
+- [ ] **Phase 3 — Coach profile CRUD:** wire `/dashboard/profile` to Supabase + Storage for real photo upload.
+- [ ] **Phase 4 — Search & discovery:** postcode lookup + PostGIS radius search replacing the placeholder filter in `/search`.
+- [ ] **Phase 5 — Payments:** Stripe products/prices, Checkout, webhook handler, `/dashboard/billing` wired to the Customer Portal.
+- [ ] **Phase 6 — Clinics + notifications:** wire `/dashboard/clinics`, Resend integration, cron matcher job.
+- [ ] **Phase 7 — Rider account:** favourites + preferences wired to Supabase in `/account`.
+- [ ] **Phase 8 — Polish/SEO/QA:** metadata, sitemap, accessibility and cross-device QA pass.
+
 ## Status / next steps
 
 - [ ] Review 5 Claude Design directions and choose one (or graft favourite elements together)
-- [ ] Lock in brand assets (logo, palette, type) from the chosen direction
-- [ ] Define MVP feature set precisely (which of: rider search, coach profiles, payments, clinics/events, notifications ship in v1)
-- [ ] Decide on tech stack / build approach once a direction is chosen
+- [ ] Lock in brand assets (logo, palette, type) from the chosen direction — apply to the app's design tokens once decided
 - [ ] Firm up real hero copy (headline/subhead/CTA) instead of placeholder copy used in design exploration
 - [ ] Validate $9.99 / $14.95 pricing with real coach feedback before launch
+- [ ] Decide the coach enquiry method on `/coaches/[slug]` (currently a placeholder — mailto vs. an in-app contact form)
 
 ## Working notes
 
