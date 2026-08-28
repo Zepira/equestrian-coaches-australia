@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { saveProfile, uploadPhoto, deletePhoto, addTestimonial, deleteTestimonial } from "./actions";
 
@@ -51,6 +52,127 @@ function TermCheckboxGroup({
           </label>
         ))}
       </div>
+    </fieldset>
+  );
+}
+
+// saveProfile assigns sort_order from formData.getAll("discipline")'s array
+// index — the lowest is the coach's primary, used in page titles (spec:
+// "coach reorders by dragging"). Checkboxes here are just membership
+// toggles; the actual order lives in this component's state and is
+// submitted via a run of hidden inputs rendered in that order, since a
+// checkbox's position in the DOM never reflects the order it was checked
+// in (FormData.getAll follows document order, not click order).
+function DisciplinePicker({
+  legend,
+  hint,
+  terms,
+  selectedIds,
+  configured,
+}: {
+  legend: string;
+  hint?: string;
+  terms: Term[];
+  selectedIds: string[];
+  configured: boolean;
+}) {
+  const [order, setOrder] = useState(() => selectedIds.filter((id) => terms.some((t) => t.id === id)));
+  const [dragId, setDragId] = useState<string | null>(null);
+
+  function toggle(id: string, checked: boolean) {
+    setOrder((prev) => (checked ? [...prev, id] : prev.filter((x) => x !== id)));
+  }
+
+  function move(id: string, direction: -1 | 1) {
+    setOrder((prev) => {
+      const from = prev.indexOf(id);
+      const to = from + direction;
+      if (to < 0 || to >= prev.length) return prev;
+      const next = [...prev];
+      [next[from], next[to]] = [next[to], next[from]];
+      return next;
+    });
+  }
+
+  function dropOn(targetId: string) {
+    if (!dragId || dragId === targetId) return;
+    setOrder((prev) => {
+      const next = prev.filter((id) => id !== dragId);
+      next.splice(next.indexOf(targetId), 0, dragId);
+      return next;
+    });
+    setDragId(null);
+  }
+
+  return (
+    <fieldset disabled={!configured}>
+      <legend className="mb-1 text-sm font-medium text-fg">{legend}</legend>
+      {hint && <p className="mb-2 text-sm text-muted">{hint}</p>}
+      <div className="flex flex-wrap gap-2">
+        {terms.map((t) => (
+          <label
+            key={t.id}
+            className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-sm text-fg has-checked:border-accent has-checked:bg-accent-soft"
+          >
+            <input
+              type="checkbox"
+              checked={order.includes(t.id)}
+              onChange={(e) => toggle(t.id, e.target.checked)}
+              className="accent-current"
+            />
+            {t.name}
+          </label>
+        ))}
+      </div>
+
+      {order.length > 0 && (
+        <ol className="mt-3 flex flex-col gap-1.5">
+          {order.map((id, i) => {
+            const term = terms.find((t) => t.id === id);
+            if (!term) return null;
+            return (
+              <li
+                key={id}
+                draggable={configured}
+                onDragStart={() => setDragId(id)}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => dropOn(id)}
+                className="flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg"
+              >
+                <span aria-hidden className="cursor-grab text-muted">
+                  ⠿
+                </span>
+                <span className="flex-1">
+                  {term.name}
+                  {i === 0 && <span className="ml-1.5 text-xs text-muted">(primary — leads your page title)</span>}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => move(id, -1)}
+                  disabled={i === 0}
+                  aria-label={`Move ${term.name} up`}
+                  className="text-muted hover:text-fg disabled:opacity-30"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  onClick={() => move(id, 1)}
+                  disabled={i === order.length - 1}
+                  aria-label={`Move ${term.name} down`}
+                  className="text-muted hover:text-fg disabled:opacity-30"
+                >
+                  ↓
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+
+      {order.map((id) => (
+        <input key={id} type="hidden" name="discipline" value={id} />
+      ))}
     </fieldset>
   );
 }
@@ -167,10 +289,9 @@ export function ProfileForm({
           </label>
         </div>
 
-        <TermCheckboxGroup
+        <DisciplinePicker
           legend="Disciplines you teach"
-          hint="The first one you tick leads your profile title and card — reordering comes later."
-          name="discipline"
+          hint="Tick every discipline you teach, then drag to put your primary one first — that's the one that leads your profile title and card."
           terms={disciplines}
           selectedIds={selectedTermIds}
           configured={configured}
