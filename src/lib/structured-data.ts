@@ -83,3 +83,49 @@ export function coachPersonSchema(coach: CoachSchemaInput) {
     ...(coach.disciplineNames.length > 0 ? { knowsAbout: coach.disciplineNames } : {}),
   };
 }
+
+export type ClinicSchemaInput = {
+  id: string;
+  title: string;
+  description: string | null;
+  locationText: string;
+  startDate: string;
+  endDate: string | null;
+  coach: { name: string; slug: string } | null;
+};
+
+// Clinics are dated, located, hosted — a clean fit for Event even without
+// ticketing data. No `offers`/`performer` (there's no price or ticketing
+// on ECA, and fabricating one just to chase the Events rich-result
+// carousel isn't worth it) — Google still indexes the schema, it just
+// won't be carousel-eligible without offers. `location` is a bare Place
+// with the coach's own location_text as both name and address since
+// clinics aren't geocoded (see CLAUDE.md — only coach_profiles resolve to
+// lat/long today).
+export function clinicEventSchema(clinic: ClinicSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: clinic.title,
+    url: absoluteUrl(`/clinics/${clinic.id}`),
+    ...(clinic.description ? { description: clinic.description } : {}),
+    startDate: clinic.startDate,
+    ...(clinic.endDate ? { endDate: clinic.endDate } : {}),
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    eventStatus: "https://schema.org/EventScheduled",
+    location: {
+      "@type": "Place",
+      name: clinic.locationText,
+      address: clinic.locationText,
+    },
+    ...(clinic.coach
+      ? {
+          organizer: {
+            "@type": "Person",
+            name: clinic.coach.name,
+            url: absoluteUrl(`/coaches/${clinic.coach.slug}`),
+          },
+        }
+      : {}),
+  };
+}

@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { DisciplineTag } from "@/components/discipline-tag";
 import { LinkButton } from "@/components/ui/button";
+import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
+import { breadcrumbSchema, clinicEventSchema } from "@/lib/structured-data";
 
 async function getClinic(id: string) {
   const supabase = await createClient();
@@ -36,6 +38,24 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
+      <JsonLd
+        data={[
+          clinicEventSchema({
+            id,
+            title: clinic.title,
+            description: clinic.description,
+            locationText: clinic.location_text,
+            startDate: clinic.start_date,
+            endDate: clinic.end_date,
+            coach: coach ? { name: coach.profiles?.name ?? "Coach", slug: coach.slug } : null,
+          }),
+          breadcrumbSchema([
+            { name: "Home", url: "/" },
+            ...(coach ? [{ name: coach.profiles?.name ?? "Coach", url: `/coaches/${coach.slug}` }] : []),
+            { name: clinic.title, url: `/clinics/${id}` },
+          ]),
+        ]}
+      />
       {discipline && (
         <div className="mb-3">
           <DisciplineTag slug={discipline.slug} />
