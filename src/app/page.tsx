@@ -11,29 +11,35 @@ import {
   getAttributes,
   getDisciplineCoachCounts,
 } from "@/lib/supabase/queries";
-import { searchMockCoaches, getMockCoachesByDiscipline } from "@/lib/mock-coaches";
+import {
+  searchMockCoaches,
+  getMockCoachesByDiscipline,
+} from "@/lib/mock-coaches";
 
 export default async function Home() {
   const supabase = await createClient();
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
-  const [featured, skills, attributes, realDisciplineCounts] = await Promise.all([
-    supabase
-      ? [
-          ...(await searchCoaches(supabase, {})),
-          ...searchMockCoaches({}),
-        ].slice(0, 4)
-      : placeholderCoaches.slice(0, 4).map(toCoachCardData),
-    getSkills(supabase),
-    getAttributes(supabase),
-    getDisciplineCoachCounts(supabase),
-  ]);
+  const [featured, skills, attributes, realDisciplineCounts] =
+    await Promise.all([
+      supabase
+        ? [
+            ...(await searchCoaches(supabase, {})),
+            ...searchMockCoaches({}),
+          ].slice(0, 4)
+        : placeholderCoaches.slice(0, 4).map(toCoachCardData),
+      getSkills(supabase),
+      getAttributes(supabase),
+      getDisciplineCoachCounts(supabase),
+    ]);
 
   // Real counts (mock + Supabase), most-populated first — "featured"
   // means "has real content to show", not an arbitrary fixed order.
   const disciplinesByCount = disciplines
     .map((d) => ({
       ...d,
-      count: (realDisciplineCounts[d.slug] ?? 0) + getMockCoachesByDiscipline(d.slug).length,
+      count:
+        (realDisciplineCounts[d.slug] ?? 0) +
+        getMockCoachesByDiscipline(d.slug).length,
     }))
     .sort((a, b) => b.count - a.count);
   const bentoDisciplines = disciplinesByCount.slice(0, 5);
