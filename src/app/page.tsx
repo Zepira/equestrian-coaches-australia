@@ -23,37 +23,48 @@ export default async function Home() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-bg">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-14">
-          <div className="lg:order-1">
-            <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-              Coaching, discipline by discipline
+      {/* Hero — full-bleed photo, the sash panel carries the headline, the
+          search card overlaps the seam between hero and page. */}
+      <section className="relative bg-ink">
+        <div className="relative h-[520px] overflow-hidden sm:h-[600px] lg:h-[660px]">
+          {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL, not worth next/image remote-pattern config yet */}
+          <img
+            src="https://images.unsplash.com/photo-1690112330355-300fa08844b7?auto=format&fit=crop&w=1600&q=85"
+            alt="A rider jumping a horse with mountains behind"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0">
+            <div className="sash h-full w-full" />
+          </div>
+          <div className="sash-content mx-auto flex h-full max-w-6xl flex-col justify-end px-4 pb-16 sm:px-6 sm:pb-20">
+            <div className="flex flex-wrap gap-2.5">
+              <span className="inline-flex items-center rounded-full bg-brass px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-brass-fg">
+                Every discipline
+              </span>
+              <span className="inline-flex items-center rounded-full border border-ink-fg/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink-fg">
+                Every state
+              </span>
             </div>
-            <h1 className="mt-6 max-w-xl text-5xl leading-[0.98] text-ink sm:text-6xl lg:text-[72px]">
+            <h1 className="mt-5 max-w-2xl text-5xl leading-[0.98] text-ink-fg sm:text-6xl lg:text-[68px]">
               Find your perfect riding coach, nearby.
             </h1>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted">
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-fg/85">
               Search verified coaches across Australia by discipline and location — liberty,
               bridleless, working equitation and every other discipline.
             </p>
-            <div className="mt-8 max-w-2xl">
-              <SearchBar skills={skills} attributes={attributes} />
-            </div>
-            <div className="mt-6 text-[15px] text-muted">
+          </div>
+        </div>
+
+        <div className="relative mx-auto -mt-16 max-w-4xl px-4 sm:-mt-20 sm:px-6">
+          <div className="rounded-[var(--radius-tile)] bg-surface p-4 shadow-[0_24px_60px_rgba(16,26,46,0.28)] sm:p-6">
+            <SearchBar skills={skills} attributes={attributes} />
+            <div className="mt-4 text-[15px] text-muted">
               <strong className="text-ink">{disciplines.length}</strong> disciplines listed, from
               dressage to liberty
             </div>
           </div>
-          <div className="sash order-first h-56 w-full sm:h-72 lg:order-2 lg:h-[480px]">
-            {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL, not worth next/image remote-pattern config yet */}
-            <img
-              src="https://images.unsplash.com/photo-1690112330355-300fa08844b7?auto=format&fit=crop&w=1200&q=85"
-              alt="A rider working a horse in an open yard"
-              className="h-full w-full object-cover"
-            />
-          </div>
         </div>
+        <div className="h-14 bg-bg sm:h-20" />
       </section>
 
       {/* Featured disciplines */}
@@ -75,17 +86,17 @@ export default async function Home() {
 
           <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
             {topDisciplines.map((d) => (
-              <a key={d.slug} href={`/disciplines/${d.slug}`} className="group">
-                <div className="h-64 bg-border sm:h-80">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL */}
-                  <img
-                    src={disciplinePhoto(d.slug)}
-                    alt={d.name}
-                    className="h-full w-full object-cover transition-opacity group-hover:opacity-90"
-                  />
+              <a key={d.slug} href={`/disciplines/${d.slug}`} className="group photo-caption block h-64 sm:h-80">
+                {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL */}
+                <img
+                  src={disciplinePhoto(d.slug)}
+                  alt={d.name}
+                  className="absolute inset-0 h-full w-full object-cover transition-opacity group-hover:opacity-90"
+                />
+                <div className="absolute inset-x-0 bottom-0 z-10 p-5">
+                  <h3 className="text-2xl font-medium text-ink-fg">{d.name}</h3>
+                  <p className="mt-1 text-[15px] leading-relaxed text-ink-fg/85">{d.blurb}</p>
                 </div>
-                <h3 className="mt-6 text-2xl font-medium text-ink">{d.name}</h3>
-                <p className="mt-1 text-[17px] leading-relaxed text-muted">{d.blurb}</p>
               </a>
             ))}
           </div>

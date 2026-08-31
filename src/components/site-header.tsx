@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 
 const navLinks = [
   { href: "/search", label: "Find a coach" },
+  { href: "/disciplines/dressage", label: "Disciplines" },
   { href: "/for-coaches", label: "For coaches" },
 ];
 
@@ -46,10 +47,14 @@ function AccountLinks({ auth, onNavigate }: { auth: AuthState; onNavigate?: () =
   if (!auth.loggedIn) {
     return (
       <>
-        <Link href="/login" onClick={onNavigate} className="text-[15px] font-medium text-fg hover:text-accent">
+        <Link
+          href="/login"
+          onClick={onNavigate}
+          className="text-[15px] font-medium text-ink-fg hover:text-ink-fg/70"
+        >
           Log in
         </Link>
-        <LinkButton href="/signup?role=coach" variant="brass" onClick={onNavigate} className="text-sm">
+        <LinkButton href="/signup?role=coach" onClick={onNavigate} className="text-sm">
           List your profile
         </LinkButton>
       </>
@@ -61,12 +66,12 @@ function AccountLinks({ auth, onNavigate }: { auth: AuthState; onNavigate?: () =
       <Link
         href={auth.role === "coach" ? "/dashboard" : "/account"}
         onClick={onNavigate}
-        className="text-[15px] font-medium text-fg hover:text-accent"
+        className="text-[15px] font-medium text-ink-fg hover:text-ink-fg/70"
       >
         {auth.role === "coach" ? "Dashboard" : "My account"}
       </Link>
       <form action="/auth/sign-out" method="post">
-        <button type="submit" className="text-[15px] font-medium text-fg hover:text-accent">
+        <button type="submit" className="text-[15px] font-medium text-ink-fg hover:text-ink-fg/70">
           Log out
         </button>
       </form>
@@ -79,11 +84,11 @@ export function SiteHeader() {
   const auth = useAuthState();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-bg/95 backdrop-blur">
+    <header className="sticky top-0 z-40 bg-ink text-ink-fg">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2.5 font-display text-[15px] font-semibold uppercase tracking-[0.16em] text-ink"
+          className="flex items-center gap-2.5 font-display text-[15px] font-semibold uppercase tracking-[0.16em] text-ink-fg"
           onClick={() => setOpen(false)}
         >
           <LogoMark className="h-6 w-6 shrink-0" />
@@ -93,7 +98,11 @@ export function SiteHeader() {
         {/* Desktop nav */}
         <nav className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="text-[15px] font-medium text-fg hover:text-accent">
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-[15px] font-medium text-ink-fg hover:text-ink-fg/70"
+            >
               {link.label}
             </Link>
           ))}
@@ -106,7 +115,7 @@ export function SiteHeader() {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-control)] text-fg md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-control)] text-ink-fg md:hidden"
         >
           <span className="relative block h-4 w-5">
             <span
@@ -130,14 +139,14 @@ export function SiteHeader() {
 
       {/* Mobile menu panel */}
       {open && (
-        <nav className="border-t border-border bg-surface px-4 pb-4 pt-2 md:hidden">
+        <nav className="border-t border-ink-fg/15 bg-ink px-4 pb-4 pt-2 md:hidden">
           <ul className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-[var(--radius-control)] px-2 py-3 text-[17px] font-medium text-fg hover:bg-accent-soft"
+                  className="block rounded-[var(--radius-control)] px-2 py-3 text-[17px] font-medium text-ink-fg hover:bg-ink-fg/10"
                 >
                   {link.label}
                 </Link>

@@ -22,20 +22,16 @@ export function CoachCard({ coach }: { coach: CoachCardData }) {
         aria-hidden
       />
       <div className="min-w-0">
-        <div className="flex items-baseline justify-between gap-2">
-          <div className="truncate font-display text-xl font-medium text-ink">{coach.name}</div>
-          {typeof coach.distanceKm === "number" && (
-            <span className="shrink-0 text-sm text-subtle">{Math.round(coach.distanceKm)} km</span>
-          )}
-        </div>
+        <div className="truncate font-display text-xl font-medium text-ink">{coach.name}</div>
         <div className="mt-1 text-sm text-subtle">
           {coach.suburb} {coach.state}
+          {typeof coach.distanceKm === "number" && ` · ${Math.round(coach.distanceKm)} km`}
         </div>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {coach.disciplineNames.map((name) => (
             <span
               key={name}
-              className="rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-ink"
+              className="rounded-full bg-shade px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ink"
             >
               {name}
             </span>
