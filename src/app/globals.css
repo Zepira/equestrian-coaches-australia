@@ -115,20 +115,25 @@ h4,
    container's box-tree children, so the scrim would otherwise cover it). */
 
 /* Hero sash accent — a toned-down echo of the design's own full-strength
-   diagonal band. Sits between the photo and the legibility gradient
-   above, so it's purely decorative: text contrast never depends on it,
-   only the gradient does, which is what keeps this safe at any viewport
-   width (see the .photo-caption comment above for why the design's
-   original full-strength version wasn't). Given a lower opacity than
-   the source design on purpose — a background accent, not the main
-   contrast device. */
+   diagonal band, reworked into a thin divider strip flush with the
+   bottom edge of the hero (no gap between it and the seam below), an
+   opaque solid colour rather than a translucent overlay — a small
+   finishing detail, not a contrast device. Sits above the legibility
+   gradient but below the copy (z-index 2 vs the gradient's 1 and the
+   copy's 10), so it never touches text. */
 .hero-sash {
   position: absolute;
-  inset: 0;
-  z-index: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: 12px;
   background: var(--color-accent);
-  opacity: 0.45;
-  clip-path: polygon(0% 22%, 100% 2%, 100% 20%, 0% 40%);
+}
+@media (min-width: 640px) {
+  .hero-sash {
+    height: 18px;
+  }
 }
 
 ::selection {
