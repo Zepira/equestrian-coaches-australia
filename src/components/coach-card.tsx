@@ -17,7 +17,7 @@ export function CoachCard({ coach }: { coach: CoachCardData }) {
   return (
     <Link href={`/coaches/${coach.slug}`} className="group flex flex-col gap-3">
       <div
-        className="h-40 w-full flex-none rounded-[var(--radius-tile)] bg-shade bg-cover bg-center transition-opacity group-hover:opacity-90 sm:h-56"
+        className="h-40 w-full flex-none bg-shade bg-cover bg-center transition-opacity group-hover:opacity-90 sm:h-56"
         style={coach.photoUrl ? { backgroundImage: `url(${coach.photoUrl})` } : undefined}
         aria-hidden
       />

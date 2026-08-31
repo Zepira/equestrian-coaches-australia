@@ -45,7 +45,7 @@ export default async function Home() {
               dressage to liberty
             </div>
           </div>
-          <div className="order-first h-56 w-full overflow-hidden rounded-[var(--radius-tile)] sm:h-72 lg:order-2 lg:h-[480px]">
+          <div className="sash order-first h-56 w-full sm:h-72 lg:order-2 lg:h-[480px]">
             {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL, not worth next/image remote-pattern config yet */}
             <img
               src="https://images.unsplash.com/photo-1690112330355-300fa08844b7?auto=format&fit=crop&w=1200&q=85"
@@ -76,7 +76,7 @@ export default async function Home() {
           <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
             {topDisciplines.map((d) => (
               <a key={d.slug} href={`/disciplines/${d.slug}`} className="group">
-                <div className="arch-crop h-64 bg-border sm:h-80">
+                <div className="h-64 bg-border sm:h-80">
                   {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL */}
                   <img
                     src={disciplinePhoto(d.slug)}

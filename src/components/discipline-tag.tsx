@@ -10,8 +10,8 @@ export function DisciplineTag({ slug, active = false }: { slug: string; active?:
       href={`/disciplines/${slug}`}
       className={`inline-flex items-center rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
         active
-          ? "border-accent bg-accent text-accent-fg"
-          : "border-border bg-surface text-fg hover:border-accent"
+          ? "border-brass bg-brass text-brass-fg"
+          : "border-border bg-surface text-fg hover:border-brass"
       }`}
     >
       {discipline.name}

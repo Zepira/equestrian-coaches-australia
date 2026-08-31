@@ -225,7 +225,7 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
         ]}
       />
       <div
-        className="h-48 w-full rounded-[var(--radius-tile)] bg-accent-soft bg-cover bg-center sm:h-72"
+        className="h-48 w-full bg-accent-soft bg-cover bg-center sm:h-72"
         style={coach.photoUrl ? { backgroundImage: `url(${coach.photoUrl})` } : undefined}
         aria-hidden
       />

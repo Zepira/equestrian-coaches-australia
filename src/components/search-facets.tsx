@@ -100,8 +100,8 @@ export function SearchFacets({
             aria-pressed={active}
             className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
               active
-                ? "border-accent bg-accent text-accent-fg"
-                : "border-border bg-surface text-fg hover:border-accent"
+                ? "border-brass bg-brass text-brass-fg"
+                : "border-border bg-surface text-fg hover:border-brass"
             }`}
           >
             {QUICK_ATTRIBUTE_LABELS[attr.slug] ?? attr.name}

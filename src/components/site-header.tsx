@@ -49,7 +49,7 @@ function AccountLinks({ auth, onNavigate }: { auth: AuthState; onNavigate?: () =
         <Link href="/login" onClick={onNavigate} className="text-[15px] font-medium text-fg hover:text-accent">
           Log in
         </Link>
-        <LinkButton href="/signup?role=coach" onClick={onNavigate} className="text-sm">
+        <LinkButton href="/signup?role=coach" variant="brass" onClick={onNavigate} className="text-sm">
           List your profile
         </LinkButton>
       </>
