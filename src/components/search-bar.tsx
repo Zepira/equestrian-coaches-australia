@@ -54,7 +54,7 @@ export function SearchBar({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <div className="flex flex-col gap-2 rounded-[4px] border border-border bg-surface p-2.5 shadow-[0_12px_30px_rgba(31,58,46,0.06)] sm:flex-row sm:items-stretch">
+      <div className="flex flex-col gap-2 rounded-[var(--radius-control)] border border-border bg-surface p-2.5 sm:flex-row sm:items-stretch">
         <label className="flex-1 px-2.5 py-1.5">
           <span className="mb-0.5 block text-xs font-semibold uppercase tracking-wide text-subtle">
             Discipline
@@ -86,7 +86,7 @@ export function SearchBar({
         </label>
         <button
           type="submit"
-          className="rounded-[var(--radius-control)] bg-ink px-8 py-3 text-[17px] font-semibold text-ink-fg transition-colors hover:opacity-90 sm:self-stretch"
+          className="rounded-[var(--radius-control)] bg-accent px-8 py-3 text-[17px] font-semibold text-accent-fg transition-colors hover:opacity-90 sm:self-stretch"
         >
           Find a coach
         </button>
@@ -122,10 +122,10 @@ export function SearchBar({
                 type="button"
                 onClick={() => toggleQuickAttribute(attr.slug)}
                 aria-pressed={active}
-                className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                className={`shrink-0 rounded-[var(--radius-control)] border px-4 py-2 text-sm font-medium transition-colors ${
                   active
-                    ? "border-brass bg-brass text-brass-fg"
-                    : "border-border bg-surface text-fg hover:border-brass"
+                    ? "pennant border-ink bg-ink text-ink-fg"
+                    : "border-border bg-surface text-fg hover:border-ink"
                 }`}
               >
                 {QUICK_ATTRIBUTE_LABELS[attr.slug] ?? attr.name}

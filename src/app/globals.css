@@ -73,50 +73,29 @@ h3,
 h4,
 .font-display {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 
-/* The sash — Blue Ribbon's one signature device. A single accent-coloured
-   diagonal band, -9° on desktop / -11° on mobile, laid over a photograph.
-   One diagonal, never two; photographs themselves stay sharp rectangles
-   (0 radius) — the diagonal is the only crop shape this direction uses.
-   --sash-height controls how much of the container it covers: the hero
-   uses a large panel (default, ~62%) to host the headline; .sash-thin is
-   a slim decorative ribbon for smaller photo treatments. */
-.sash {
-  position: relative;
-  overflow: hidden;
-  --sash-height: 62%;
-}
-.sash.sash-thin {
-  --sash-height: 22%;
-}
-.sash::after {
-  content: "";
-  position: absolute;
-  left: -10%;
-  right: -10%;
-  bottom: -6%;
-  height: var(--sash-height);
-  background: var(--color-accent);
-  transform-origin: bottom left;
-  transform: skewY(-9deg);
-}
-@media (max-width: 640px) {
-  .sash::after {
-    transform: skewY(-11deg);
-  }
-}
-/* Opt in content that must sit above the sash band (e.g. hero copy). */
-.sash-content {
-  position: relative;
-  z-index: 1;
+/* Pennant — the flag-notched tag/badge shape used for callout badges
+   ("Every discipline") and active filter states ("Horse available").
+   Blue Ribbon's own radius rule is a flat 4px on every interactive
+   element — a rounded-full pill was never actually correct here, it was
+   carried over from Paddock Edit's rounder language by mistake. Ordinary
+   pills (discipline tags, filter dropdowns) use plain rounded-[4px]
+   rectangles; only these callout badges get the extra notch. */
+.pennant {
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
 }
 
-/* Photo caption — the discipline-tile treatment. A gradient scrim at the
-   base of a full-bleed photo carrying a white title + one-line blurb
-   directly on the image, no card content below it. */
+/* Photo caption — the discipline-tile and hero treatment. A gradient
+   scrim at the base of a full-bleed photo carrying white text directly
+   on the image. Also used as the hero's own legibility scrim: an early
+   version used a full-width skewed accent-coloured panel instead, which
+   either failed to reach the text at wide viewports (skewY, shifts with
+   element width) or required constraining the whole hero to a max-width
+   to stay safe (clip-path) — a plain gradient has no such failure mode
+   at any viewport width, which is what the actual design uses too. */
 .photo-caption {
   position: relative;
   overflow: hidden;
@@ -127,6 +106,9 @@ h4,
   inset: 0;
   z-index: 1;
   background: linear-gradient(to top, rgb(16 26 46 / 0.85), rgb(16 26 46 / 0.05) 55%);
+}
+.photo-caption.photo-caption-hero::after {
+  background: linear-gradient(to top, rgb(16 26 46 / 0.92) 20%, rgb(16 26 46 / 0.55) 55%, rgb(16 26 46 / 0.15) 100%);
 }
 /* The caption text itself — apply alongside z-10 in markup so it paints
    above the ::after scrim (generated content paints last among a

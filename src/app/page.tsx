@@ -23,48 +23,45 @@ export default async function Home() {
 
   return (
     <>
-      {/* Hero — full-bleed photo, the sash panel carries the headline, the
-          search card overlaps the seam between hero and page. */}
-      <section className="relative bg-ink">
-        <div className="relative h-[520px] overflow-hidden sm:h-[600px] lg:h-[660px]">
+      {/* Hero — full-bleed photo with a gradient scrim, an oversized bold
+          headline overlapping the photo directly, and a plain (non-floating)
+          search row in the normal page flow below it. */}
+      <section className="bg-ink">
+        <div className="photo-caption photo-caption-hero relative min-h-[560px] sm:min-h-[560px] lg:min-h-[620px]">
           {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL, not worth next/image remote-pattern config yet */}
           <img
             src="https://images.unsplash.com/photo-1690112330355-300fa08844b7?auto=format&fit=crop&w=1600&q=85"
             alt="A rider jumping a horse with mountains behind"
             className="absolute inset-0 h-full w-full object-cover"
           />
-          <div className="absolute inset-0">
-            <div className="sash h-full w-full" />
-          </div>
-          <div className="sash-content mx-auto flex h-full max-w-6xl flex-col justify-end px-4 pb-16 sm:px-6 sm:pb-20">
-            <div className="flex flex-wrap gap-2.5">
-              <span className="inline-flex items-center rounded-full bg-brass px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-brass-fg">
+          <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-end px-4 py-10 sm:px-6 sm:pb-14">
+            <div className="flex flex-wrap gap-1.5">
+              <span className="pennant inline-flex items-center bg-brass px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-brass-fg">
                 Every discipline
               </span>
-              <span className="inline-flex items-center rounded-full border border-ink-fg/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink-fg">
+              <span className="pennant inline-flex items-center border border-ink-fg/50 bg-ink-fg/10 px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-ink-fg">
                 Every state
               </span>
             </div>
-            <h1 className="mt-5 max-w-2xl text-5xl leading-[0.98] text-ink-fg sm:text-6xl lg:text-[68px]">
+            <h1 className="mt-4 max-w-3xl text-4xl leading-[0.98] text-ink-fg sm:text-6xl lg:text-7xl xl:text-[80px]">
               Find your perfect riding coach, nearby.
             </h1>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-fg/85">
-              Search verified coaches across Australia by discipline and location — liberty,
-              bridleless, working equitation and every other discipline.
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-ink-fg/90">
+              Search coaches across Australia by discipline and location — liberty, bridleless,
+              working equitation and every other discipline.
             </p>
           </div>
         </div>
 
-        <div className="relative mx-auto -mt-16 max-w-4xl px-4 sm:-mt-20 sm:px-6">
-          <div className="rounded-[var(--radius-tile)] bg-surface p-4 shadow-[0_24px_60px_rgba(16,26,46,0.28)] sm:p-6">
+        <div className="bg-bg">
+          <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
             <SearchBar skills={skills} attributes={attributes} />
-            <div className="mt-4 text-[15px] text-muted">
+            <div className="mt-3 text-[15px] text-muted">
               <strong className="text-ink">{disciplines.length}</strong> disciplines listed, from
               dressage to liberty
             </div>
           </div>
         </div>
-        <div className="h-14 bg-bg sm:h-20" />
       </section>
 
       {/* Featured disciplines */}

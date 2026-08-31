@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LinkButton } from "@/components/ui/button";
-import { LogoMark } from "@/components/logo-mark";
 import { createClient } from "@/lib/supabase/client";
 
 const navLinks = [
@@ -86,13 +85,11 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 bg-ink text-ink-fg">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 font-display text-[15px] font-semibold uppercase tracking-[0.16em] text-ink-fg"
-          onClick={() => setOpen(false)}
-        >
-          <LogoMark className="h-6 w-6 shrink-0" />
-          Equestrian Coaches Australia
+        <Link href="/" className="flex items-baseline gap-3" onClick={() => setOpen(false)}>
+          <span className="font-display text-2xl font-bold text-ink-fg">ECA</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-fg/70">
+            Equestrian Coaches Australia
+          </span>
         </Link>
 
         {/* Desktop nav */}

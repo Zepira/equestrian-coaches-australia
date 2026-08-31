@@ -8,7 +8,7 @@ export function DisciplineTag({ slug, active = false }: { slug: string; active?:
   return (
     <Link
       href={`/disciplines/${slug}`}
-      className={`inline-flex items-center rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
+      className={`inline-flex items-center rounded-[var(--radius-control)] border px-3 py-1.5 text-sm font-medium transition-colors ${
         active
           ? "border-brass bg-brass text-brass-fg"
           : "border-border bg-surface text-fg hover:border-brass"

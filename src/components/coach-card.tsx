@@ -22,7 +22,7 @@ export function CoachCard({ coach }: { coach: CoachCardData }) {
         aria-hidden
       />
       <div className="min-w-0">
-        <div className="truncate font-display text-xl font-medium text-ink">{coach.name}</div>
+        <div className="truncate font-display text-xl text-ink">{coach.name}</div>
         <div className="mt-1 text-sm text-subtle">
           {coach.suburb} {coach.state}
           {typeof coach.distanceKm === "number" && ` · ${Math.round(coach.distanceKm)} km`}
@@ -31,7 +31,7 @@ export function CoachCard({ coach }: { coach: CoachCardData }) {
           {coach.disciplineNames.map((name) => (
             <span
               key={name}
-              className="rounded-full bg-shade px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ink"
+              className="rounded-[var(--radius-control)] bg-shade px-3 py-1 text-xs font-semibold uppercase tracking-wide text-ink"
             >
               {name}
             </span>
