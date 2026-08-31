@@ -269,7 +269,7 @@ Asked directly 28 Aug 2026: **no, not on day one.** ECA runs no lessons, owns no
 
 **Buy before whichever comes first:** (a) the first coach pays — a paying customer can claim you didn't deliver, ~month 7, the real trigger; (b) you stand at a show or expo — organisers almost always require a certificate of currency; (c) you assert anything about a coach beyond what they self-reported. **Get quotes now so the number is known; buy the policy in month 7.**
 
-**Cost to the starting line (partnership route): $1,668–3,668** — ABN and partnership TFN free, trading name $108, solicitor-drafted partnership agreement $1,500–3,000, domains $60, terms of service $0–500. Plus the $1,148 marketing tranche one = **$2,816–4,816 to end of month six.** Ongoing $400–900/yr.
+**Cost to the starting line (partnership route): $1,668–3,668** — ABN and partnership TFN free, trading name $108, solicitor-drafted partnership agreement $1,500–3,000, domains $60, terms of service $0–500. Plus the $1,448 marketing tranche one = **$3,116–5,116 to end of month six.** Ongoing $400–900/yr.
 
 **Get professionally checked:** an accountant on structure, **what moving into a company later would actually cost including stamp duty**, how to treat contributed work, and whether early losses can offset other income (non-commercial loss tests often block this for small side businesses); a solicitor on the partnership agreement — split, earn-over-time, binding limit, deadlock, exits, continuity, IP assignment. GST not required below $75k turnover (~580 coaches).
 
@@ -282,12 +282,25 @@ Full plan: **["The First 100 Coaches"](https://claude.ai/code/artifact/7e3f85dd-
 - **Paid ads cannot acquire coaches.** Meta can't target "is a riding coach"; reaching the ~500k AU equestrian-interest audience 5x at the $9.80 AU CPM benchmark costs ~$24,500 to find ~3,000 coaches, giving ~$272/coach best case. Do not run coach-acquisition ads. Google Search is worse — the intent doesn't exist.
 - **Coach acquisition is manual and free:** personalised one-to-one outreach **from Kim** (working instructor, existing following, deepest contact list — her name on the messages is the whole strategy), with Alana taking a share of the list where she has contacts, a referral loop (refer 2 → 3 months free), coach-as-distributor share kits, Facebook group participation, print in saddleries/pony clubs, and equestrian press. Total tooling budget: $0 — no cold-email sequencer.
 - **Rider traffic is a retention cost, not acquisition.** Coaches renew only if they got enquiries. SEO (already architected: SSR + 18.5k postcodes) is the main channel; paid rider traffic (Google Search local intent, ~$1.50–3.00 AU CPC) turns on month 7+ purely to keep coaches subscribed.
-- **Budget: A$5,108 year one**, two gated tranches — $1,148 committed (months 1–6), $3,960 released only if gates pass (months 7–12).
+- **Budget: A$5,408 year one**, two gated tranches — $1,448 committed (months 1–6), $3,960 released only if gates pass (months 7–12).
 - **Gates:** (1) week 12 — 25 complete published profiles in the beachhead region, under 12 = stop; (2) month 6 — 40+ coaches, 750+ rider sessions/mo, half of founders report an enquiry; (3) month 8 — founding-cohort paid conversion, 40%+ = release tranche two, under 25% = pivot to free listings + paid featured placement.
 - **Launch shape:** nationally available day one, marketing concentrated on one beachhead region (the one Kim teaches in) and led on Western/liberty/natural horsemanship — the disciplines EA doesn't accredit, which makes the pitch concrete and doubles as a press angle.
 - **Founding cohort:** first 25 get 12 months free, no card, price locked forever; coaches 26–100 get 6 months free with a **card required at signup** (trials with a card convert at 40–60% vs 15–25% without).
 - **Hard rules:** never pre-create unclaimed profiles from scraped data (build it, then email for permission — reputation is the whole asset in a community this small); Spam Act 2003 requires consent + sender ID + working unsubscribe (live 30 days, honoured within 5 working days), with inferred consent only covering conspicuously published *business* addresses where the message is relevant to that role.
 - **Biggest untested risk:** good coaches may already be full. If the first ten conversations say "I have a waitlist", the value proposition shifts from "get students" to "fill your clinics / be found when you move", and the $14.95 clinics tier becomes the main product rather than the upsell.
+### What competitors actually spend on marketing (researched 30 Aug 2026)
+
+Nobody publishes a budget, so this is what's observable. Written into section 3 of the marketing plan.
+
+- **Horse Deals: 35,436 monthly unique audience, 277,523 page views, 7.8 visits/user/month** (IPSOS IRIS Feb–Apr 2026, via ACM's brand page). **It is owned by ACM (Australian Community Media)** — its marketing is a line in a national publisher's budget, not a comparable startup number. **The calibration that matters:** the country's biggest equestrian site, 40 years old with a media group behind it, gets ~35k people a month. Our month-six target of 750 rider visits is ~2% of the market leader.
+- **Equestrian Hub:** ~10,000 monthly web visitors but **15,000 email subscribers** and 50,000 podcast downloads. **Hoofbeats:** 11,000 circulation / 22,000 readership, bi-monthly print.
+- **Nobody in this market buys paid social.** Meta's public Ad Library (AU, active) returns ~1,900 live ads on "equestrian", almost all product sellers — dropshipped saddle pads, horse jewellery, a Chinese stable manufacturer, a US ranch listing. **No Australian equestrian directory, marketplace or magazine is running Meta ads, Horse Deals included.** Independent confirmation of the CAC modelling: if it worked, the market leader would be doing it.
+- **But buying space with them is cheap.** Hoofbeats published rates: business card **$65**, eighth $190, quarter $295, full page $885; **website banners $26.60–$80/month**; mailing list rental $40–$150. Equestrian Hub sells newsletter placements to 15,000 subscribers (rates on request).
+
+**Plan change:** added **$300 to part one** for two equestrian-media tests (small Hoofbeats ad + Equestrian Hub newsletter placement), both aimed at coaches. A $65 ad reaches 22,000 horse people; even 0.1% replying is 22 conversations at ~$3 each, against $272/coach on Meta. **Year-one budget $5,108 → $5,408; part one $1,148 → $1,448; setup-plus-marketing to end of month six $2,816–4,816 → $3,116–5,116.**
+
+**Two findings that corroborate the retention thinking:** Equestrian Hub's email list (15k) is *larger* than its monthly traffic (10k) — the mailing list is the durable asset in this niche. And Horse Deals' 7.8 visits/month is classifieds behaviour, people returning to check for new listings. A static directory won't earn that; fresh clinic and event listings might.
+
 ### Rider retention — the goal Alana named (28 Aug 2026)
 
 **"The most important thing is that riders/horse owners keep coming back, whether it's for coaches, farriers etc."** That reframes a few things:
