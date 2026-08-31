@@ -33,8 +33,8 @@ export default async function Home() {
       {/* Hero — full-bleed photo with a gradient scrim, an oversized bold
           headline overlapping the photo directly, and a plain (non-floating)
           search row in the normal page flow below it. */}
-      <section className="mx-auto max-w-[1920px] bg-ink">
-        <div className="photo-caption photo-caption-hero relative min-h-[620px] sm:h-[65vh] sm:min-h-[480px] lg:h-[70vh] lg:max-h-[760px]">
+      <section className="bg-ink">
+        <div className="photo-caption photo-caption-hero relative min-h-[620px] sm:h-[65vh] sm:min-h-[480px] lg:h-[70vh]">
           {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL, not worth next/image remote-pattern config yet */}
           <img
             src="https://images.unsplash.com/photo-1512934772407-b292436089ee?auto=format&fit=crop&w=1600&q=85"
