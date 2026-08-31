@@ -207,6 +207,32 @@ export async function searchCoaches(
   }));
 }
 
+// One query, not one-per-discipline: real published-coach counts by
+// discipline slug, for the homepage/discipline-index bento grids. Merge
+// with getMockCoachesByDiscipline(slug).length for the same "real +
+// mock" total every other listing on the site already shows.
+export async function getDisciplineCoachCounts(
+  supabase: SupabaseClient | null
+): Promise<Record<string, number>> {
+  if (!supabase) return {};
+
+  const { data, error } = await supabase
+    .from("coach_terms")
+    .select("terms!inner(slug, kind), coach_profiles!inner(published)")
+    .eq("terms.kind", "discipline")
+    .eq("coach_profiles.published", true);
+
+  if (error || !data) return {};
+
+  const counts: Record<string, number> = {};
+  for (const row of data as unknown as { terms: { slug: string } | null }[]) {
+    const slug = row.terms?.slug;
+    if (!slug) continue;
+    counts[slug] = (counts[slug] ?? 0) + 1;
+  }
+  return counts;
+}
+
 function slugify(input: string) {
   return input
     .toLowerCase()

@@ -1,6 +1,6 @@
 import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
-import { DisciplineTag } from "@/components/discipline-tag";
+import { DisciplineBentoTeaser } from "@/components/discipline-bento";
 import { LinkButton } from "@/components/ui/button";
 import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
@@ -9,13 +9,14 @@ import {
   searchCoaches,
   getSkills,
   getAttributes,
+  getDisciplineCoachCounts,
 } from "@/lib/supabase/queries";
-import { searchMockCoaches, disciplinePhoto } from "@/lib/mock-coaches";
+import { searchMockCoaches, getMockCoachesByDiscipline } from "@/lib/mock-coaches";
 
 export default async function Home() {
   const supabase = await createClient();
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
-  const [featured, skills, attributes] = await Promise.all([
+  const [featured, skills, attributes, realDisciplineCounts] = await Promise.all([
     supabase
       ? [
           ...(await searchCoaches(supabase, {})),
@@ -24,9 +25,19 @@ export default async function Home() {
       : placeholderCoaches.slice(0, 4).map(toCoachCardData),
     getSkills(supabase),
     getAttributes(supabase),
+    getDisciplineCoachCounts(supabase),
   ]);
-  const topDisciplines = disciplines.slice(0, 3);
-  const moreDisciplines = disciplines.slice(3, 9);
+
+  // Real counts (mock + Supabase), most-populated first — "featured"
+  // means "has real content to show", not an arbitrary fixed order.
+  const disciplinesByCount = disciplines
+    .map((d) => ({
+      ...d,
+      count: (realDisciplineCounts[d.slug] ?? 0) + getMockCoachesByDiscipline(d.slug).length,
+    }))
+    .sort((a, b) => b.count - a.count);
+  const bentoDisciplines = disciplinesByCount.slice(0, 5);
+  const moreDisciplineNames = disciplinesByCount.slice(5, 8).map((d) => d.name);
 
   return (
     <>
@@ -91,38 +102,12 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
-            {topDisciplines.map((d) => (
-              <a
-                key={d.slug}
-                href={`/disciplines/${d.slug}`}
-                className="group photo-caption block h-64 sm:h-80"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL */}
-                <img
-                  src={disciplinePhoto(d.slug)}
-                  alt={d.name}
-                  className="absolute inset-0 h-full w-full object-cover transition-opacity group-hover:opacity-90"
-                />
-                <div className="absolute inset-x-0 bottom-0 z-10 p-5">
-                  <h3 className="text-2xl font-medium text-ink-fg">{d.name}</h3>
-                  <p className="mt-1 text-[15px] leading-relaxed text-ink-fg/85">
-                    {d.blurb}
-                  </p>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          <div className="mt-11 flex flex-col items-start justify-between gap-6 border-t border-border pt-8 sm:flex-row sm:items-center">
-            <div className="flex flex-wrap gap-2.5">
-              {moreDisciplines.map((d) => (
-                <DisciplineTag key={d.slug} slug={d.slug} />
-              ))}
-            </div>
-            <LinkButton href="/search" variant="ghost" className="shrink-0">
-              All disciplines →
-            </LinkButton>
+          <div className="mt-12">
+            <DisciplineBentoTeaser
+              disciplines={bentoDisciplines}
+              moreNames={moreDisciplineNames}
+              total={disciplines.length}
+            />
           </div>
         </div>
       </section>

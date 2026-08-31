@@ -138,6 +138,59 @@ h4,
   }
 }
 
+/* Discipline bento — the featured-disciplines grid. One large tile, two
+   medium tiles stacked beside it (matching its combined height), and a
+   row of three small tiles beneath. Mobile stacks everything in a
+   single column in DOM order — no grid-template-areas needed there,
+   plain block flow already does the right thing. */
+.discipline-bento {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .discipline-bento {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: minmax(200px, 1fr) minmax(200px, 1fr) minmax(160px, auto);
+    grid-template-areas:
+      "big big med1"
+      "big big med2"
+      "s1 s2 s3";
+  }
+  .discipline-bento .db-big {
+    grid-area: big;
+  }
+  .discipline-bento .db-med1 {
+    grid-area: med1;
+  }
+  .discipline-bento .db-med2 {
+    grid-area: med2;
+  }
+  .discipline-bento .db-s1 {
+    grid-area: s1;
+  }
+  .discipline-bento .db-s2 {
+    grid-area: s2;
+  }
+  .discipline-bento .db-s3 {
+    grid-area: s3;
+  }
+}
+
+/* Decorative brass accent behind the big bento tile's text — a smaller,
+   more understated echo of the hero sash idea, not a legibility device
+   (the gradient scrim alone handles that, same reasoning as the hero). */
+.discipline-bento-accent {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 45%;
+  height: 60%;
+  background: var(--color-brass);
+  opacity: 0.3;
+  clip-path: polygon(35% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
 ::selection {
   background: var(--color-ink);
   color: var(--color-ink-fg);

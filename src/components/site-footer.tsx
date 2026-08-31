@@ -23,7 +23,7 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link href="/disciplines/dressage" className="hover:text-ink-fg">
+              <Link href="/disciplines" className="hover:text-ink-fg">
                 Browse disciplines
               </Link>
             </li>

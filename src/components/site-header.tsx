@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 
 const navLinks = [
   { href: "/search", label: "Find a coach" },
-  { href: "/disciplines/dressage", label: "Disciplines" },
+  { href: "/disciplines", label: "Disciplines" },
   { href: "/for-coaches", label: "For coaches" },
 ];
 

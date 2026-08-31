@@ -7,6 +7,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
+    { url: `${siteUrl}/disciplines`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/search`, changeFrequency: "daily", priority: 0.9 },
     { url: `${siteUrl}/for-coaches`, changeFrequency: "monthly", priority: 0.5 },
   ];
