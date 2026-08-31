@@ -47,7 +47,7 @@ export default async function Home() {
               <span className="pennant inline-flex items-center bg-brass px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-brass-fg">
                 Every discipline
               </span>
-              <span className="pennant inline-flex items-center border border-ink-fg/50 bg-ink-fg/10 px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-ink-fg">
+              <span className="pennant inline-flex items-center bg-ink-fg/10 px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-ink-fg shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--color-ink-fg)_50%,transparent)]">
                 Every state
               </span>
             </div>

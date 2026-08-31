@@ -124,7 +124,7 @@ export function SearchBar({
                 aria-pressed={active}
                 className={`shrink-0 rounded-[var(--radius-control)] border px-4 py-2 text-sm font-medium transition-colors ${
                   active
-                    ? "pennant border-ink bg-ink text-ink-fg"
+                    ? "pennant border-transparent bg-ink text-ink-fg"
                     : "border-border bg-surface text-fg hover:border-ink"
                 }`}
               >
