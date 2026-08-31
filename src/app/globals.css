@@ -108,11 +108,28 @@ h4,
   background: linear-gradient(to top, rgb(16 26 46 / 0.85), rgb(16 26 46 / 0.05) 55%);
 }
 .photo-caption.photo-caption-hero::after {
-  background: linear-gradient(to top, rgb(16 26 46 / 0.92) 20%, rgb(16 26 46 / 0.55) 55%, rgb(16 26 46 / 0.15) 100%);
+  background: linear-gradient(to top, rgb(16 26 46 / 0.98) 38%, rgb(16 26 46 / 0.6) 65%, rgb(16 26 46 / 0.15) 100%);
 }
 /* The caption text itself — apply alongside z-10 in markup so it paints
    above the ::after scrim (generated content paints last among a
    container's box-tree children, so the scrim would otherwise cover it). */
+
+/* Hero sash accent — a toned-down echo of the design's own full-strength
+   diagonal band. Sits between the photo and the legibility gradient
+   above, so it's purely decorative: text contrast never depends on it,
+   only the gradient does, which is what keeps this safe at any viewport
+   width (see the .photo-caption comment above for why the design's
+   original full-strength version wasn't). Given a lower opacity than
+   the source design on purpose — a background accent, not the main
+   contrast device. */
+.hero-sash {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--color-accent);
+  opacity: 0.45;
+  clip-path: polygon(0% 22%, 100% 2%, 100% 20%, 0% 40%);
+}
 
 ::selection {
   background: var(--color-ink);

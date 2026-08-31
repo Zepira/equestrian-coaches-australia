@@ -27,14 +27,15 @@ export default async function Home() {
           headline overlapping the photo directly, and a plain (non-floating)
           search row in the normal page flow below it. */}
       <section className="bg-ink">
-        <div className="photo-caption photo-caption-hero relative min-h-[560px] sm:min-h-[560px] lg:min-h-[620px]">
+        <div className="photo-caption photo-caption-hero relative min-h-[620px] sm:min-h-[560px] lg:min-h-[620px]">
           {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL, not worth next/image remote-pattern config yet */}
           <img
-            src="https://images.unsplash.com/photo-1690112330355-300fa08844b7?auto=format&fit=crop&w=1600&q=85"
-            alt="A rider jumping a horse with mountains behind"
-            className="absolute inset-0 h-full w-full object-cover"
+            src="https://images.unsplash.com/photo-1512934772407-b292436089ee?auto=format&fit=crop&w=1600&q=85"
+            alt="A rider jumping a horse over a rail with mountains behind"
+            className="absolute inset-0 h-full w-full object-cover object-[50%_18%]"
           />
-          <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-end px-4 py-10 sm:px-6 sm:pb-14">
+          <div className="hero-sash" aria-hidden />
+          <div className="absolute inset-x-0 bottom-0 z-10 mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:pb-14">
             <div className="flex flex-wrap gap-1.5">
               <span className="pennant inline-flex items-center bg-brass px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-brass-fg">
                 Every discipline
