@@ -1,11 +1,15 @@
-import { SearchBar } from "@/components/search-bar";
+import { Hero } from "@/components/hero";
 import { CoachCard } from "@/components/coach-card";
 import { DisciplineTag } from "@/components/discipline-tag";
 import { LinkButton } from "@/components/ui/button";
 import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
-import { searchCoaches, getSkills, getAttributes } from "@/lib/supabase/queries";
+import {
+  searchCoaches,
+  getSkills,
+  getAttributes,
+} from "@/lib/supabase/queries";
 import { searchMockCoaches, disciplinePhoto } from "@/lib/mock-coaches";
 
 export default async function Home() {
@@ -13,7 +17,10 @@ export default async function Home() {
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const [featured, skills, attributes] = await Promise.all([
     supabase
-      ? [...(await searchCoaches(supabase, {})), ...searchMockCoaches({})].slice(0, 4)
+      ? [
+          ...(await searchCoaches(supabase, {})),
+          ...searchMockCoaches({}),
+        ].slice(0, 4)
       : placeholderCoaches.slice(0, 4).map(toCoachCardData),
     getSkills(supabase),
     getAttributes(supabase),
@@ -23,38 +30,7 @@ export default async function Home() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-bg">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-14">
-          <div className="lg:order-1">
-            <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-              Coaching, discipline by discipline
-            </div>
-            <h1 className="mt-6 max-w-xl text-5xl leading-[0.98] text-ink sm:text-6xl lg:text-[72px]">
-              Find your perfect riding coach, nearby.
-            </h1>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted">
-              Search verified coaches across Australia by discipline and location — liberty,
-              bridleless, working equitation and every other discipline.
-            </p>
-            <div className="mt-8 max-w-2xl">
-              <SearchBar skills={skills} attributes={attributes} />
-            </div>
-            <div className="mt-6 text-[15px] text-muted">
-              <strong className="text-ink">{disciplines.length}</strong> disciplines listed, from
-              dressage to liberty
-            </div>
-          </div>
-          <div className="order-first h-56 w-full overflow-hidden rounded-[var(--radius-tile)] sm:h-72 lg:order-2 lg:h-[480px]">
-            {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL, not worth next/image remote-pattern config yet */}
-            <img
-              src="https://images.unsplash.com/photo-1690112330355-300fa08844b7?auto=format&fit=crop&w=1200&q=85"
-              alt="A rider working a horse in an open yard"
-              className="h-full w-full object-cover"
-            />
-          </div>
-        </div>
-      </section>
+      <Hero skills={skills} attributes={attributes} />
 
       {/* Featured disciplines */}
       <section className="bg-shade">
@@ -69,7 +45,8 @@ export default async function Home() {
               </h2>
             </div>
             <p className="max-w-sm text-lg leading-relaxed text-muted">
-              Coaches are listed by the disciplines they actually teach, not by keyword.
+              Coaches are listed by the disciplines they actually teach, not by
+              keyword.
             </p>
           </div>
 
@@ -85,7 +62,9 @@ export default async function Home() {
                   />
                 </div>
                 <h3 className="mt-6 text-2xl font-medium text-ink">{d.name}</h3>
-                <p className="mt-1 text-[17px] leading-relaxed text-muted">{d.blurb}</p>
+                <p className="mt-1 text-[17px] leading-relaxed text-muted">
+                  {d.blurb}
+                </p>
               </a>
             ))}
           </div>
@@ -115,7 +94,11 @@ export default async function Home() {
                 Coaches taking riders now.
               </h2>
             </div>
-            <LinkButton href="/search" variant="ghost" className="hidden shrink-0 sm:inline-flex">
+            <LinkButton
+              href="/search"
+              variant="ghost"
+              className="hidden shrink-0 sm:inline-flex"
+            >
               See all coaches →
             </LinkButton>
           </div>
@@ -124,7 +107,11 @@ export default async function Home() {
               <CoachCard key={coach.slug} coach={coach} />
             ))}
           </div>
-          <LinkButton href="/search" variant="secondary" className="mt-8 w-full sm:hidden">
+          <LinkButton
+            href="/search"
+            variant="secondary"
+            className="mt-8 w-full sm:hidden"
+          >
             See all coaches
           </LinkButton>
         </div>
@@ -156,8 +143,12 @@ export default async function Home() {
             ].map((step) => (
               <div key={step.n} className="border-t border-ink-fg/35 pt-6">
                 <div className="text-2xl text-border">{step.n}</div>
-                <div className="mt-3 text-2xl font-medium text-ink-fg">{step.title}</div>
-                <p className="mt-2.5 text-[17px] leading-relaxed text-ink-fg/82">{step.body}</p>
+                <div className="mt-3 text-2xl font-medium text-ink-fg">
+                  {step.title}
+                </div>
+                <p className="mt-2.5 text-[17px] leading-relaxed text-ink-fg/82">
+                  {step.body}
+                </p>
               </div>
             ))}
           </div>
@@ -168,18 +159,25 @@ export default async function Home() {
       <section className="border-t border-border bg-bg">
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 px-4 py-14 sm:flex-row sm:items-center sm:px-6 sm:py-16">
           <div className="max-w-xl">
-            <h2 className="text-3xl leading-[1.05] text-ink sm:text-4xl">Coaching professionally?</h2>
+            <h2 className="text-3xl leading-[1.05] text-ink sm:text-4xl">
+              Coaching professionally?
+            </h2>
             <p className="mt-3 text-lg leading-relaxed text-muted">
-              List from <strong className="text-ink">$9.99 a month</strong> — bio, photo, location,
-              specialties, qualifications and testimonials.{" "}
-              <strong className="text-ink">$14.95</strong> adds your clinics and events.
+              List from <strong className="text-ink">$9.99 a month</strong> —
+              bio, photo, location, specialties, qualifications and
+              testimonials. <strong className="text-ink">$14.95</strong> adds
+              your clinics and events.
             </p>
           </div>
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
             <LinkButton href="/for-coaches" className="w-full sm:w-auto">
               List your coaching profile
             </LinkButton>
-            <LinkButton href="/for-coaches" variant="secondary" className="w-full sm:w-auto">
+            <LinkButton
+              href="/for-coaches"
+              variant="secondary"
+              className="w-full sm:w-auto"
+            >
               See pricing
             </LinkButton>
           </div>
