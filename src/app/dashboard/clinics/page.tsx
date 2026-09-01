@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Button, LinkButton } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/button";
+import { ClinicForm } from "@/components/clinic-form";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines } from "@/lib/supabase/queries";
 import { getSessionUser } from "@/lib/supabase/session";
@@ -93,74 +94,9 @@ export default async function ClinicsPage() {
 
       <section className="border-t border-border pt-6">
         <h2 className="text-lg font-semibold text-fg">List a new clinic</h2>
-        <form action={createClinic} className="mt-4 flex flex-col gap-4">
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-fg">Title</span>
-            <input
-              name="title"
-              type="text"
-              required
-              placeholder="e.g. Weekend Working Equitation Clinic"
-              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
-            />
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-fg">Description</span>
-            <textarea
-              name="description"
-              rows={3}
-              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
-            />
-          </label>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-1 block text-sm font-medium text-fg">Discipline</span>
-              <select
-                name="discipline_id"
-                className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
-              >
-                <option value="">Any discipline</option>
-                {disciplines.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block">
-              <span className="mb-1 block text-sm font-medium text-fg">Location</span>
-              <input
-                name="location_text"
-                type="text"
-                required
-                placeholder="e.g. Bendigo VIC"
-                className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
-              />
-            </label>
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-1 block text-sm font-medium text-fg">Start date</span>
-              <input
-                name="start_date"
-                type="date"
-                required
-                className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
-              />
-            </label>
-            <label className="block">
-              <span className="mb-1 block text-sm font-medium text-fg">End date (optional)</span>
-              <input
-                name="end_date"
-                type="date"
-                className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
-              />
-            </label>
-          </div>
-          <Button type="submit" className="self-start">
-            List clinic
-          </Button>
-        </form>
+        <div className="mt-4">
+          <ClinicForm action={createClinic} disciplines={disciplines} submitLabel="List clinic" />
+        </div>
       </section>
     </div>
   );

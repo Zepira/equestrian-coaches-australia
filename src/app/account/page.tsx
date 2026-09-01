@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button, LinkButton } from "@/components/ui/button";
+import { TermCheckboxGroup } from "@/components/term-checkbox-group";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines } from "@/lib/supabase/queries";
 import { getSessionUser } from "@/lib/supabase/session";
@@ -129,26 +130,13 @@ export default async function AccountPage() {
               className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted sm:max-w-xs"
             />
           </label>
-          <fieldset>
-            <legend className="mb-2 text-sm font-medium text-fg">Disciplines I follow</legend>
-            <div className="flex flex-wrap gap-2">
-              {disciplines.map((d) => (
-                <label
-                  key={d.id}
-                  className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-sm text-fg has-checked:border-accent has-checked:bg-accent-soft"
-                >
-                  <input
-                    type="checkbox"
-                    name="discipline"
-                    value={d.id}
-                    defaultChecked={followedIds.includes(d.id)}
-                    className="accent-current"
-                  />
-                  {d.name}
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <TermCheckboxGroup
+            legend="Disciplines I follow"
+            name="discipline"
+            terms={disciplines}
+            selectedIds={followedIds}
+            configured
+          />
           <Button type="submit" className="self-start">
             Save preferences
           </Button>
