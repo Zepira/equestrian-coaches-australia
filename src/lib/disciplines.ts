@@ -109,3 +109,19 @@ export const disciplines: Discipline[] = [
 export function getDisciplineBySlug(slug: string): Discipline | undefined {
   return disciplines.find((d) => d.slug === slug);
 }
+
+// Curated, not "top N by list order" — the homepage hero's "Popular"
+// row is meant to show a spread riders actually search for, not whichever
+// six happen to sit first in the taxonomy above.
+const POPULAR_DISCIPLINE_SLUGS = [
+  "dressage",
+  "show-jumping",
+  "western",
+  "liberty",
+  "working-equitation",
+  "bridleless",
+];
+
+export function getPopularDisciplines(): Discipline[] {
+  return POPULAR_DISCIPLINE_SLUGS.map(getDisciplineBySlug).filter((d): d is Discipline => Boolean(d));
+}

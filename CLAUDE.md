@@ -377,6 +377,19 @@ Full spec: **["How Riders Find Us"](https://claude.ai/code/artifact/e11731ff-7c5
 - [x] `Event` schema for clinics — not in the original spec, added anyway (Phase 9g above) since the data shape obviously fits
 - [x] Decide the coach enquiry method on `/coaches/[slug]` — resolved by giving coaches the choice (Phase 11 below): all of phone/email/Facebook/in-app form, each independently toggleable
 
+## Code style — clean code rules (added 2 Sep 2026)
+
+Applies to every file touched in this repo, not just new ones — when editing a file, leave it closer to these rules than you found it (Boy Scout Rule), but don't do a drive-by rewrite of unrelated code in the same commit.
+
+- **Naming.** Intention-revealing, not `data`/`info`/`manager`. Components and types are nouns (`CoachCard`, `SearchFilters`); functions/hooks are verbs (`resolveLocation`, `useScrolled`). No Hungarian notation, no cute abbreviations.
+- **Functions & components.** Small, one thing each, one level of abstraction. A component that mixes data-fetching, style-computation, and three unrelated UI regions is a signal to split it — extract the style logic into a hook, extract each visual region into its own component, keep the parent as a thin composition. Prefer 0–2 props/args; group related values into one object (or a hook's return type) instead of a long parameter list.
+- **Comments.** Explain *why*, not *what* — the code should say what. A comment justifying a non-obvious constraint (e.g. why an effect can't reset state synchronously) is good; a comment restating the next line is not. Never leave commented-out code — delete it, git history has it.
+- **No dead code.** Delete unused exports, props, and files in the same change that makes them unused — don't leave a component or hook orphaned "in case".
+- **DRY, but not premature.** Extract a shared hook/component once a second real usage needs the same logic, not speculatively. Don't build for a hypothetical future provider/variant that isn't asked for (YAGNI).
+- **Error handling.** Degrade gracefully and explicitly (the `isStripeConfigured`/`isResendConfigured`/mock-payments pattern already used throughout this codebase), don't silently swallow errors or return `null` where an empty array/object reads better at the call site.
+- **File organisation.** This repo keeps `src/components/` flat (feature-prefixed filenames, e.g. `site-header.tsx`, `account-links.tsx`) rather than nested per-component folders, and custom hooks live in `src/hooks/`. Match that convention rather than introducing a new one per file.
+- **Before calling a refactor done:** re-run `npx tsc --noEmit` and `npm run lint`, and re-verify the affected page(s) in the browser — a refactor that changes structure without changing behaviour still needs the same proof as a feature change.
+
 ## Working notes
 
 - This project folder is the shared context for Claude across sessions — update this file as decisions get made (chosen direction, finalised pricing, MVP scope, tech stack) so future sessions don't have to re-derive them from scratch.
