@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { disciplines as staticDisciplines } from "@/lib/disciplines";
+import { slugify } from "@/lib/slugify";
 
 const AU_STATES = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"];
 
@@ -205,14 +206,6 @@ export async function searchCoaches(
     attributeNames: namesByKindAndCoach.attribute.get(m.id) ?? [],
     photoUrl: photoById.get(m.id) ?? null,
   }));
-}
-
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
 }
 
 // Coaches get a coach_profiles row lazily, on their first visit to the

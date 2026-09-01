@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isGscConfigured, pagePerformance, queryPerformance, type GscRow } from "@/lib/search-console";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+import { SITE_URL } from "@/lib/site-url";
 
 export type DigestSection = { title: string; lines: string[] };
 
@@ -10,7 +9,7 @@ export type DigestSection = { title: string; lines: string[] };
 // pages, discipline+area pages, riding-instructors area pages, everything
 // else.
 function urlPattern(url: string): string {
-  const path = url.replace(siteUrl, "");
+  const path = url.replace(SITE_URL, "");
   if (/^\/coaches\//.test(path)) return "/coaches/[slug]";
   if (/^\/disciplines\/[^/]+\/[^/]+/.test(path)) return "/disciplines/[slug]/[area]";
   if (/^\/disciplines\//.test(path)) return "/disciplines/[slug]";
@@ -124,7 +123,7 @@ function performanceByPattern(rows: GscRow[]): DigestSection {
 // serves that got zero GSC impressions across the queried window. Spec:
 // "prune or merge any page with zero impressions after 90 days."
 async function pruneCandidates(supabase: SupabaseClient, rows: GscRow[]): Promise<DigestSection> {
-  const seenUrls = new Set(rows.map((r) => urlPattern(r.keys[0]) + "|" + r.keys[0].replace(siteUrl, "")));
+  const seenUrls = new Set(rows.map((r) => urlPattern(r.keys[0]) + "|" + r.keys[0].replace(SITE_URL, "")));
   const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
   const { data: pages } = await supabase

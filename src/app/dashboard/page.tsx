@@ -1,5 +1,6 @@
 import { Button, LinkButton } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { getSessionUser } from "@/lib/supabase/session";
 import { startCheckout } from "./billing/actions";
 
 export const metadata = { title: "Dashboard" };
@@ -22,9 +23,7 @@ export default async function DashboardPage({
   let published = false;
 
   if (supabase) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getSessionUser(supabase);
     if (user) {
       const { data } = await supabase
         .from("coach_profiles")

@@ -6,6 +6,7 @@
 // page.tsx, src/app/disciplines/[slug]/page.tsx,
 // src/app/coaches/[slug]/page.tsx). Nothing here ever touches the DB.
 import { getDisciplineBySlug } from "@/lib/disciplines";
+import { slugify } from "@/lib/slugify";
 
 export const MOCK_COACHES_ENABLED = true;
 
@@ -179,10 +180,6 @@ const HEADLINE_TEMPLATES = [
   (discipline: string, town: string) => `${discipline}, taught at your property or mine, based near ${town}.`,
   (discipline: string) => `From first lesson to competition-ready — ${discipline.toLowerCase()} coaching.`,
 ];
-
-function slugify(input: string) {
-  return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
 
 function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371;

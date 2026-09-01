@@ -3,6 +3,7 @@ import { Fraunces, Work_Sans } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { SITE_URL } from "@/lib/site-url";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -18,13 +19,12 @@ const workSans = Work_Sans({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const title = "Equestrian Coaches Australia";
 const description =
   "Find your perfect riding coach, nearby. Search verified coaches across Australia by discipline and location.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: title,
     template: `%s | ${title}`,

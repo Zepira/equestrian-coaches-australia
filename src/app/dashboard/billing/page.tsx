@@ -1,20 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { isMockPayments } from "@/lib/stripe";
+import { tierLabel, SUBSCRIPTION_STATUS_LABELS, type SubscriptionTier } from "@/lib/pricing";
+import { getSessionUser } from "@/lib/supabase/session";
 import { startCheckout, openBillingPortal, mockCancelSubscription } from "./actions";
 
 export const metadata = { title: "Billing" };
-
-const tierLabels: Record<string, string> = {
-  standard: "Standard — $9.99/mo",
-  standard_plus_clinics: "Standard + Clinics — $14.95/mo",
-};
-const statusLabels: Record<string, string> = {
-  inactive: "No active subscription",
-  active: "Active",
-  past_due: "Payment past due",
-  canceled: "Canceled",
-};
 
 export default async function BillingPage() {
   const supabase = await createClient();
@@ -22,9 +13,7 @@ export default async function BillingPage() {
   let tier: string | null = null;
 
   if (supabase) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getSessionUser(supabase);
     if (user) {
       const { data } = await supabase
         .from("coach_profiles")
@@ -54,9 +43,9 @@ export default async function BillingPage() {
       <div className="rounded-[var(--radius-tile)] border border-border bg-surface p-5">
         <div className="text-sm font-semibold uppercase tracking-wide text-muted">Current plan</div>
         <div className="mt-1 text-lg font-semibold text-fg">
-          {tier ? tierLabels[tier] : statusLabels[status]}
+          {tier ? tierLabel(tier as SubscriptionTier) : SUBSCRIPTION_STATUS_LABELS[status]}
         </div>
-        {tier && <p className="mt-1 text-sm text-muted">{statusLabels[status]}</p>}
+        {tier && <p className="mt-1 text-sm text-muted">{SUBSCRIPTION_STATUS_LABELS[status]}</p>}
       </div>
 
       {isActive ? (
@@ -78,12 +67,12 @@ export default async function BillingPage() {
         <div className="flex flex-col gap-3 sm:flex-row">
           <form action={startCheckout.bind(null, "standard")}>
             <Button type="submit" variant="secondary" className="w-full">
-              Choose Standard — $9.99/mo
+              Choose {tierLabel("standard")}
             </Button>
           </form>
           <form action={startCheckout.bind(null, "standard_plus_clinics")}>
             <Button type="submit" className="w-full">
-              Choose Standard + Clinics — $14.95/mo
+              Choose {tierLabel("standard_plus_clinics")}
             </Button>
           </form>
         </div>

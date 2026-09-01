@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { pillToggleClassName } from "@/lib/pill-styles";
 
 export type PillDropdownGroup = {
   key: string;
@@ -80,11 +81,7 @@ export function PillDropdown({
         type="button"
         onClick={() => (open ? setOpen(false) : handleOpen())}
         aria-expanded={open}
-        className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-          committedCount > 0
-            ? "border-accent bg-accent text-accent-fg"
-            : "border-border bg-surface text-fg hover:border-accent"
-        }`}
+        className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${pillToggleClassName(committedCount > 0)}`}
       >
         {label}
         {committedCount > 0 && ` · ${committedCount}`}

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe, isMockPayments, TIER_PRICE_IDS } from "@/lib/stripe";
 import { ensureCoachProfile } from "@/lib/supabase/queries";
+import { SITE_URL } from "@/lib/site-url";
 
 async function requireCoach() {
   const supabase = await createClient();
@@ -75,13 +76,12 @@ export async function startCheckout(tier: "standard" | "standard_plus_clinics") 
     await supabase.from("coach_profiles").update({ stripe_customer_id: customerId }).eq("id", userId);
   }
 
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${origin}/dashboard?checkout=success`,
-    cancel_url: `${origin}/dashboard/billing?checkout=cancelled`,
+    success_url: `${SITE_URL}/dashboard?checkout=success`,
+    cancel_url: `${SITE_URL}/dashboard/billing?checkout=cancelled`,
     metadata: { coach_id: userId, tier },
     subscription_data: { metadata: { coach_id: userId, tier } },
   });
@@ -112,10 +112,9 @@ export async function openBillingPortal() {
     .maybeSingle();
   if (!coach?.stripe_customer_id) throw new Error("No Stripe customer on file yet.");
 
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const session = await stripe.billingPortal.sessions.create({
     customer: coach.stripe_customer_id,
-    return_url: `${origin}/dashboard/billing`,
+    return_url: `${SITE_URL}/dashboard/billing`,
   });
 
   redirect(session.url);

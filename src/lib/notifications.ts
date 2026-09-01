@@ -1,5 +1,6 @@
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
+import { SITE_URL } from "@/lib/site-url";
 
 // Service-role client, not the request-scoped one — this runs after the
 // coach's own request context ends (fire-and-forget from createClinic)
@@ -41,7 +42,6 @@ export async function notifyRidersOfClinic(clinicId: string) {
 
   const coachSlug = (clinic as unknown as { coach_profiles: { slug: string } | null }).coach_profiles
     ?.slug;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const clinicDate = new Date(clinic.start_date).toLocaleDateString("en-AU", {
     day: "numeric",
     month: "long",
@@ -58,7 +58,7 @@ export async function notifyRidersOfClinic(clinicId: string) {
           from: NOTIFICATIONS_FROM,
           to: match.email,
           subject: `New clinic: ${clinic.title}`,
-          text: `${clinic.title}\n${clinicDate} · ${clinic.location_text}\n\nSee it here: ${siteUrl}${
+          text: `${clinic.title}\n${clinicDate} · ${clinic.location_text}\n\nSee it here: ${SITE_URL}${
             coachSlug ? `/coaches/${coachSlug}` : "/search"
           }`,
         });

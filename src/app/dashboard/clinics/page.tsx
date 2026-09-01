@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button, LinkButton } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines } from "@/lib/supabase/queries";
+import { getSessionUser } from "@/lib/supabase/session";
 import { createClinic, deleteClinic } from "./actions";
 
 export const metadata = { title: "Clinics" };
@@ -13,9 +14,7 @@ export default async function ClinicsPage() {
   const disciplines = await getDisciplines(supabase);
 
   if (supabase) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getSessionUser(supabase);
     if (user) {
       const { data: coach } = await supabase
         .from("coach_profiles")

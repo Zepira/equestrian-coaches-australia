@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button, LinkButton } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines } from "@/lib/supabase/queries";
+import { getSessionUser } from "@/lib/supabase/session";
 import { saveRiderPreferences, removeFavourite } from "./actions";
 
 export const metadata = { title: "My account", robots: { index: false, follow: false } };
@@ -24,9 +25,7 @@ export default async function AccountPage() {
   let favourites: Favourite[] = [];
 
   if (supabase) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getSessionUser(supabase);
     if (user) {
       const [{ data: prefs }, { data: favouriteRows }] = await Promise.all([
         supabase

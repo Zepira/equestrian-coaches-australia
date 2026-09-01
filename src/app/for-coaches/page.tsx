@@ -2,27 +2,27 @@ import { Button, LinkButton } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { isMockPayments } from "@/lib/stripe";
 import { startCheckout } from "@/app/dashboard/billing/actions";
+import { PRICING_TIERS } from "@/lib/pricing";
+import { getSessionUser } from "@/lib/supabase/session";
 
 export const metadata = {
   title: "For coaches",
-  description:
-    "List your coaching profile from $9.99 a month. Be found by riders searching by discipline and location, with no accreditation gatekeeping.",
+  description: `List your coaching profile from ${PRICING_TIERS.standard.price} a month. Be found by riders searching by discipline and location, with no accreditation gatekeeping.`,
 };
 
 const tiers = [
   {
-    name: "Standard",
-    price: "$9.99",
+    ...PRICING_TIERS.standard,
     tier: "standard" as const,
     features: [
       "Full profile — bio, photo, location",
       "Discipline tags, qualifications & testimonials",
       "Found in discipline + location search",
     ],
+    recommended: false,
   },
   {
-    name: "Standard + Clinics",
-    price: "$14.95",
+    ...PRICING_TIERS.standard_plus_clinics,
     tier: "standard_plus_clinics" as const,
     features: [
       "Everything in Standard",
@@ -38,9 +38,7 @@ export default async function ForCoachesPage() {
   let isLoggedInCoach = false;
 
   if (supabase) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getSessionUser(supabase);
     if (user) {
       const { data } = await supabase.from("profiles").select("role").eq("id", user.id).single();
       isLoggedInCoach = data?.role === "coach";
