@@ -3,8 +3,53 @@
 import { createClient } from "@/lib/supabase/server";
 import { joinedRelation } from "@/lib/supabase/joined-relation";
 import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
+import { logEvent } from "@/lib/events";
 
 export type EnquiryResult = { ok: boolean; message: string };
+
+// The mention prompt the contact block spec asks for, repeated in the
+// enquiry confirmation — a favour-to-the-coach framing, not a banner.
+// Coach gender is never collected, so this always says "them", never the
+// card's own gendered example ("let Jane know you found her...").
+function mentionPrompt(coachName: string): string {
+  const firstName = coachName.split(" ")[0];
+  return `When you get in touch, let ${firstName} know you found them on Equestrian Coaches Australia — it helps them see the listing is working.`;
+}
+
+// Re-reads a coach's phone/email straight from the DB and logs a
+// contact_reveal event — called by ContactRevealButton only for real
+// coaches (mock/placeholder coaches reveal their already-fake value
+// client-side with no server round-trip, see contact-reveal-button.tsx).
+// Never trusts anything about what's currently public from the client,
+// same defensive re-read shape as sendCoachEnquiry below.
+export async function revealContactChannel(
+  coachId: string,
+  channel: "phone" | "email"
+): Promise<string | null> {
+  const supabase = await createClient();
+  if (!supabase) return null;
+
+  const { data: coach } = await supabase
+    .from("coach_profiles")
+    .select("contact_email, contact_phone, show_contact_email, show_contact_phone")
+    .eq("id", coachId)
+    .eq("published", true)
+    .maybeSingle();
+  if (!coach) return null;
+
+  const value =
+    channel === "phone"
+      ? coach.show_contact_phone
+        ? coach.contact_phone
+        : null
+      : coach.show_contact_email
+        ? coach.contact_email
+        : null;
+  if (!value) return null;
+
+  await logEvent({ kind: "contact_reveal", coachId, channel });
+  return value;
+}
 
 // Pure — no I/O, just lifts the form's 4 fields off the raw FormData.
 function parseEnquiryFields(formData: FormData) {
@@ -55,7 +100,7 @@ export async function sendCoachEnquiry(
     });
     return {
       ok: true,
-      message: `Sent to ${mockCoachName}. They'll reply to ${riderEmail} directly.`,
+      message: `Sent to ${mockCoachName}. They'll reply to ${riderEmail} directly. ${mentionPrompt(mockCoachName)}`,
     };
   }
 
@@ -109,5 +154,12 @@ export async function sendCoachEnquiry(
     });
   }
 
-  return { ok: true, message: `Sent to ${coachName}. They'll reply to ${riderEmail} directly.` };
+  // "We log both paths" (spec) — contact_reveal covers the phone/email
+  // reveal path, this covers the form path.
+  await logEvent({ kind: "enquiry_sent", coachId, channel: "form" });
+
+  return {
+    ok: true,
+    message: `Sent to ${coachName}. They'll reply to ${riderEmail} directly. ${mentionPrompt(coachName)}`,
+  };
 }

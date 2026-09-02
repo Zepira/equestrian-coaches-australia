@@ -1,5 +1,6 @@
 import { LinkButton } from "@/components/ui/button";
 import { ContactForm } from "@/components/contact-form";
+import { ContactRevealButton } from "@/components/contact-reveal-button";
 
 type Contact = {
   email: string | null;
@@ -15,45 +16,62 @@ type Contact = {
  * to be computed twice in the page (once to decide whether to render the
  * channel row, again negated to decide whether to show the fallback note)
  * — collapsed to one boolean here.
+ *
+ * Phone/email are behind ContactRevealButton, not printed as plain links —
+ * `coachId` is the real coach_profiles id (null for mock/placeholder
+ * coaches), used to tell ContactRevealButton which reveal path to take.
  */
 export function CoachContactSection({
   contact,
   contactId,
+  coachId,
   coachName,
 }: {
   contact: Contact;
   contactId: string | null;
+  coachId: string | null;
   coachName: string;
 }) {
   const hasContactInfo = Boolean(contact.email || contact.phone || contact.facebookUrl);
+  const firstName = coachName.split(" ")[0];
 
   return (
     <section className="mt-10 rounded-[var(--radius-tile)] border border-border bg-surface p-5">
       <h2 className="text-lg font-semibold text-fg">Get in touch</h2>
 
       {hasContactInfo && (
-        <div className="mt-3 flex flex-wrap gap-4 text-[15px]">
-          {contact.phone && (
-            <a href={`tel:${contact.phone}`} className="font-medium text-accent hover:text-ink">
-              📞 {contact.phone}
-            </a>
-          )}
-          {contact.email && (
-            <a href={`mailto:${contact.email}`} className="font-medium text-accent hover:text-ink">
-              ✉️ {contact.email}
-            </a>
-          )}
-          {contact.facebookUrl && (
-            <a
-              href={contact.facebookUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-accent hover:text-ink"
-            >
-              Facebook →
-            </a>
-          )}
-        </div>
+        <>
+          <div className="mt-3 flex flex-wrap gap-4 text-[15px]">
+            {contact.phone && (
+              <ContactRevealButton
+                channel="phone"
+                coachId={coachId}
+                initialValue={coachId ? undefined : contact.phone}
+              />
+            )}
+            {contact.email && (
+              <ContactRevealButton
+                channel="email"
+                coachId={coachId}
+                initialValue={coachId ? undefined : contact.email}
+              />
+            )}
+            {contact.facebookUrl && (
+              <a
+                href={contact.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-accent hover:text-ink"
+              >
+                Facebook →
+              </a>
+            )}
+          </div>
+          <p className="mt-2 text-sm text-muted">
+            When you get in touch, let {firstName} know you found them on Equestrian Coaches
+            Australia — it helps them see the listing is working.
+          </p>
+        </>
       )}
 
       {contactId && contact.showContactForm ? (

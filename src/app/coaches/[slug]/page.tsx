@@ -338,7 +338,12 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
         </section>
       )}
 
-      <CoachContactSection contact={coach.contact} contactId={coach.contactId} coachName={coach.name} />
+      <CoachContactSection
+        contact={coach.contact}
+        contactId={coach.contactId}
+        coachId={coach.id}
+        coachName={coach.name}
+      />
     </div>
   );
 }
