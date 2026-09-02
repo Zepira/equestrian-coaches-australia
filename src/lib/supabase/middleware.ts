@@ -1,10 +1,41 @@
 import { createServerClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { joinedRelation } from "@/lib/supabase/joined-relation";
 
 const COACH_ROUTES = "/dashboard";
 const RIDER_ROUTES = "/account";
 const ADMIN_ROUTES = "/admin";
+
+// Slug trap redirect — /disciplines/[slug] and /disciplines/[slug]/[area]
+// are the only URLs a term slug appears in (disciplines are the only kind
+// that generates_pages today). term_id is the join key rather than
+// old_slug -> new_slug directly, so this resolves correctly no matter how
+// many times a term's been renamed since (see changeTermSlug,
+// src/app/admin/terms/actions.ts). An SEO concern, not an auth one — kept
+// as its own function so updateSession's auth/role gating below reads as
+// just that.
+async function redirectRenamedDisciplineSlug(
+  request: NextRequest,
+  supabase: SupabaseClient
+): Promise<NextResponse | null> {
+  const { pathname } = request.nextUrl;
+  const disciplineMatch = pathname.match(/^\/disciplines\/([^/]+)(\/.*)?$/);
+  if (!disciplineMatch) return null;
+
+  const [, oldSlug, rest = ""] = disciplineMatch;
+  const { data: history } = await supabase
+    .from("term_slug_history")
+    .select("terms(slug)")
+    .eq("kind", "discipline")
+    .eq("old_slug", oldSlug)
+    .maybeSingle();
+  const currentSlug = joinedRelation<{ slug: string }>(history, "terms")?.slug;
+  if (!currentSlug || currentSlug === oldSlug) return null;
+
+  return NextResponse.redirect(new URL(`/disciplines/${currentSlug}${rest}`, request.url), 301);
+}
 
 // Refreshes the Supabase session on every request and gates the coach
 // dashboard / rider account routes. Runs from src/middleware.ts.
@@ -40,26 +71,8 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Slug trap redirect — /disciplines/[slug] and /disciplines/[slug]/[area]
-  // are the only URLs a term slug appears in (disciplines are the only
-  // kind that generates_pages today). term_id is the join key rather than
-  // old_slug -> new_slug directly, so this resolves correctly no matter how
-  // many times a term's been renamed since (see changeTermSlug,
-  // src/app/admin/terms/actions.ts).
-  const disciplineMatch = pathname.match(/^\/disciplines\/([^/]+)(\/.*)?$/);
-  if (disciplineMatch) {
-    const [, oldSlug, rest = ""] = disciplineMatch;
-    const { data: history } = await supabase
-      .from("term_slug_history")
-      .select("terms(slug)")
-      .eq("kind", "discipline")
-      .eq("old_slug", oldSlug)
-      .maybeSingle();
-    const currentSlug = (history as unknown as { terms: { slug: string } | null } | null)?.terms?.slug;
-    if (currentSlug && currentSlug !== oldSlug) {
-      return NextResponse.redirect(new URL(`/disciplines/${currentSlug}${rest}`, request.url), 301);
-    }
-  }
+  const slugRedirect = await redirectRenamedDisciplineSlug(request, supabase);
+  if (slugRedirect) return slugRedirect;
 
   const needsAuth =
     pathname.startsWith(COACH_ROUTES) ||
