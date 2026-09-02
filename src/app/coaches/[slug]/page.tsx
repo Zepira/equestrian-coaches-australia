@@ -11,6 +11,7 @@ import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 import { getMockCoachBySlug, SKILL_NAMES, ATTRIBUTE_NAMES } from "@/lib/mock-coaches";
 import { getDisciplineBySlug } from "@/lib/disciplines";
 import { breadcrumbSchema, coachPersonSchema } from "@/lib/structured-data";
+import { logEvent } from "@/lib/events";
 
 export function generateStaticParams() {
   return placeholderCoaches.map((c) => ({ slug: c.slug }));
@@ -198,6 +199,10 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
   const { slug } = await params;
   const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
   if (!coach) notFound();
+
+  // Real coaches only — coach.id is null for mock/placeholder coaches
+  // (same convention CoachContactSection's contactId split already uses).
+  if (coach.id) await logEvent({ kind: "profile_view", coachId: coach.id });
 
   const disciplineNames = coach.disciplineSlugs
     .map((s) => getDisciplineBySlug(s)?.name)
