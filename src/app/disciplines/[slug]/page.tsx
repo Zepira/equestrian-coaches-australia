@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
-import { CoachCard } from "@/components/coach-card";
+import { CoachResultsGrid } from "@/components/coach-results-grid";
 import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines, searchCoaches } from "@/lib/supabase/queries";
@@ -62,17 +62,10 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
         {coaches.length} {discipline.name.toLowerCase()} coach{coaches.length === 1 ? "" : "es"} listed
       </p>
 
-      {coaches.length > 0 ? (
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {coaches.map((coach) => (
-            <CoachCard key={coach.slug} coach={coach} />
-          ))}
-        </div>
-      ) : (
-        <div className="mt-8 rounded-[var(--radius-tile)] border border-dashed border-border p-8 text-center text-muted">
-          No {discipline.name.toLowerCase()} coaches listed yet — check back soon.
-        </div>
-      )}
+      <CoachResultsGrid
+        coaches={coaches}
+        emptyState={`No ${discipline.name.toLowerCase()} coaches listed yet — check back soon.`}
+      />
     </div>
   );
 }

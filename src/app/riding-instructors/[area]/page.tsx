@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
-import { CoachCard } from "@/components/coach-card";
+import { CoachResultsGrid } from "@/components/coach-results-grid";
 import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
 import { searchCoaches } from "@/lib/supabase/queries";
 import { searchMockCoaches } from "@/lib/mock-coaches";
+import { mergeAndSortByDistance } from "@/lib/merge-coach-results";
 import { breadcrumbSchema, itemListSchema } from "@/lib/structured-data";
 
 // "riding instructor near me" catches far more search volume than any one
@@ -51,10 +52,10 @@ export default async function RidingInstructorsAreaPage({ params }: { params: Pr
   if (!page?.eligible) redirect(`/search?location=${encodeURIComponent(`${area.name} ${area.state}`)}`);
 
   const radiusKm = area.default_radius_km ?? 50;
-  const coaches = [
-    ...(await searchCoaches(supabase, { lat: area.lat, long: area.long, radiusKm })),
-    ...searchMockCoaches({ lat: area.lat, long: area.long, radiusKm }),
-  ].sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
+  const coaches = mergeAndSortByDistance(
+    await searchCoaches(supabase, { lat: area.lat, long: area.long, radiusKm }),
+    searchMockCoaches({ lat: area.lat, long: area.long, radiusKm })
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
@@ -84,11 +85,7 @@ export default async function RidingInstructorsAreaPage({ params }: { params: Pr
         {coaches.length} coach{coaches.length === 1 ? "" : "es"} listed
       </p>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {coaches.map((coach) => (
-          <CoachCard key={coach.slug} coach={coach} />
-        ))}
-      </div>
+      <CoachResultsGrid coaches={coaches} />
     </div>
   );
 }

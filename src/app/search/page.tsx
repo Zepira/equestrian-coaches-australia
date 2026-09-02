@@ -1,10 +1,11 @@
 import { SearchBar } from "@/components/search-bar";
-import { CoachCard } from "@/components/coach-card";
+import { CoachResultsGrid } from "@/components/coach-results-grid";
 import { SearchFacets } from "@/components/search-facets";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines, getSkills, getAttributes, resolveLocation, searchCoaches } from "@/lib/supabase/queries";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { searchMockCoaches } from "@/lib/mock-coaches";
+import { mergeAndSortByDistance } from "@/lib/merge-coach-results";
 import { logSearchEvent } from "@/lib/search-events";
 
 // noindex, follow — faceted URLs are the classic directory crawl-budget
@@ -56,10 +57,10 @@ export default async function SearchPage({
     results = await searchCoaches(supabase, { disciplineIds, skillIds, attributeIds, lat, long, radiusKm: 100 });
 
     // Mock data merge — see src/lib/mock-coaches.ts to remove.
-    results = [
-      ...results,
-      ...searchMockCoaches({ disciplineSlugs, skillSlugs, attributeSlugs, lat, long, radiusKm: 100 }),
-    ].sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
+    results = mergeAndSortByDistance(
+      results,
+      searchMockCoaches({ disciplineSlugs, skillSlugs, attributeSlugs, lat, long, radiusKm: 100 })
+    );
 
     // search_events — logged regardless of hit/miss, the zero-result rows
     // are the interesting ones (supply gap vs vocabulary gap).
@@ -112,17 +113,10 @@ export default async function SearchPage({
         {location && !locationNotFound ? ` near ${location}` : ""}
       </p>
 
-      {results.length > 0 ? (
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {results.map((coach) => (
-            <CoachCard key={coach.slug} coach={coach} />
-          ))}
-        </div>
-      ) : (
-        <div className="mt-8 rounded-[var(--radius-tile)] border border-dashed border-border p-8 text-center text-muted">
-          No coaches match that search yet. Try a different discipline, skill or a wider area.
-        </div>
-      )}
+      <CoachResultsGrid
+        coaches={results}
+        emptyState="No coaches match that search yet. Try a different discipline, skill or a wider area."
+      />
     </div>
   );
 }
