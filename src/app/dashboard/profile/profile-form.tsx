@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TermCheckboxGroup, type Term } from "@/components/term-checkbox-group";
+import { TextField } from "@/components/text-field";
+import { PhotoGallery } from "@/components/photo-gallery";
+import { TestimonialsSection } from "@/components/testimonials-section";
 import { saveProfile, deletePhoto, addTestimonial, deleteTestimonial } from "./actions";
 import { PhotoUploadForm } from "./photo-upload-form";
 
@@ -225,95 +228,22 @@ export function ProfileForm({
       )}
 
       <form action={saveProfile} className="flex flex-col gap-6">
-        <div>
-          <span className="mb-2 block text-sm font-medium text-fg">Profile photos</span>
-          <div className="flex flex-wrap gap-3">
-            {photos.map((photo) => (
-              <div key={photo.id} className="relative h-20 w-20">
-                {/* eslint-disable-next-line @next/next/no-img-element -- Supabase Storage URLs, not worth next/image config yet */}
-                <img
-                  src={photo.url}
-                  alt=""
-                  className="h-full w-full rounded-[var(--radius-control)] object-cover"
-                />
-                {/* formAction, not a nested <form> — this button already lives
-                    inside the outer <form action={saveProfile}>, and HTML
-                    forbids a <form> inside a <form> (it silently breaks:
-                    browsers hoist the inner one out, so the button ends up
-                    submitting whichever form the DOM parser decided on,
-                    unpredictable across browsers/devices). A submit button's
-                    own formAction overrides the enclosing form's action for
-                    just that button — the correct way to have two different
-                    server actions in one <form>. */}
-                <button
-                  type="submit"
-                  formAction={deletePhoto.bind(null, photo.id, photo.storage_path)}
-                  disabled={!configured}
-                  aria-label="Remove photo"
-                  className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-fg text-xs font-bold text-bg"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-            <div className="h-20 w-20 rounded-[var(--radius-control)] bg-accent-soft" aria-hidden />
-          </div>
-        </div>
+        <PhotoGallery photos={photos} configured={configured} onDeletePhoto={deletePhoto} />
 
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">Headline</span>
-          <input
-            name="headline"
-            type="text"
-            defaultValue={coach?.headline}
-            disabled={!configured}
-            placeholder="e.g. Working equitation, from first flatwork to your first competition."
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted disabled:opacity-60"
-          />
-        </label>
+        <TextField
+          label="Headline"
+          name="headline"
+          defaultValue={coach?.headline}
+          disabled={!configured}
+          placeholder="e.g. Working equitation, from first flatwork to your first competition."
+        />
 
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">Bio</span>
-          <textarea
-            name="bio"
-            rows={5}
-            defaultValue={coach?.bio}
-            disabled={!configured}
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
-          />
-        </label>
+        <TextField label="Bio" name="bio" multiline rows={5} defaultValue={coach?.bio} disabled={!configured} />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-fg">Suburb</span>
-            <input
-              name="suburb"
-              type="text"
-              defaultValue={coach?.suburb}
-              disabled={!configured}
-              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
-            />
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-fg">State</span>
-            <input
-              name="state"
-              type="text"
-              defaultValue={coach?.state}
-              disabled={!configured}
-              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
-            />
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-fg">Postcode</span>
-            <input
-              name="postcode"
-              type="text"
-              defaultValue={coach?.postcode}
-              disabled={!configured}
-              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
-            />
-          </label>
+          <TextField label="Suburb" name="suburb" defaultValue={coach?.suburb} disabled={!configured} />
+          <TextField label="State" name="state" defaultValue={coach?.state} disabled={!configured} />
+          <TextField label="Postcode" name="postcode" defaultValue={coach?.postcode} disabled={!configured} />
         </div>
 
         <DisciplinePicker
@@ -342,17 +272,15 @@ export function ProfileForm({
           configured={configured}
         />
 
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">Qualifications</span>
-          <textarea
-            name="qualifications"
-            rows={3}
-            defaultValue={coach?.qualifications?.join("\n")}
-            disabled={!configured}
-            placeholder="One per line — e.g. EA Level 1 Coach"
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted disabled:opacity-60"
-          />
-        </label>
+        <TextField
+          label="Qualifications"
+          name="qualifications"
+          multiline
+          rows={3}
+          defaultValue={coach?.qualifications?.join("\n")}
+          disabled={!configured}
+          placeholder="One per line — e.g. EA Level 1 Coach"
+        />
 
         <fieldset disabled={!configured} className="flex flex-col gap-4 border-t border-border pt-6">
           <div>
@@ -412,48 +340,12 @@ export function ProfileForm({
 
       <PhotoUploadForm configured={configured} />
 
-      <section className="border-t border-border pt-6">
-        <h2 className="text-lg font-semibold text-fg">Testimonials</h2>
-        <div className="mt-3 flex flex-col gap-3">
-          {testimonials.map((t) => (
-            <div key={t.id} className="flex items-start justify-between gap-3 rounded-[var(--radius-tile)] border border-border bg-surface p-4">
-              <div>
-                <p className="text-fg">&ldquo;{t.quote}&rdquo;</p>
-                <p className="mt-1 text-sm text-muted">— {t.author_name}</p>
-              </div>
-              <form action={deleteTestimonial.bind(null, t.id)}>
-                <button type="submit" className="text-sm text-danger">
-                  Remove
-                </button>
-              </form>
-            </div>
-          ))}
-        </div>
-
-        <form action={addTestimonial} className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
-          <label className="block flex-1">
-            <span className="mb-1 block text-sm font-medium text-fg">Rider name</span>
-            <input
-              name="author_name"
-              type="text"
-              disabled={!configured}
-              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
-            />
-          </label>
-          <label className="block flex-[2]">
-            <span className="mb-1 block text-sm font-medium text-fg">Quote</span>
-            <input
-              name="quote"
-              type="text"
-              disabled={!configured}
-              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
-            />
-          </label>
-          <Button type="submit" variant="secondary" disabled={!configured}>
-            Add
-          </Button>
-        </form>
-      </section>
+      <TestimonialsSection
+        testimonials={testimonials}
+        configured={configured}
+        onAddTestimonial={addTestimonial}
+        onDeleteTestimonial={deleteTestimonial}
+      />
     </div>
   );
 }

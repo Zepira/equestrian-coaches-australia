@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { DisciplineTag } from "@/components/discipline-tag";
-import { Button, LinkButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { FavouriteButton } from "@/components/favourite-button";
 import { JsonLd } from "@/components/json-ld";
-import { ContactForm } from "@/components/contact-form";
+import { CoachContactSection } from "@/components/coach-contact-section";
 import { createClient } from "@/lib/supabase/server";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 import { getMockCoachBySlug, SKILL_NAMES, ATTRIBUTE_NAMES } from "@/lib/mock-coaches";
@@ -47,6 +47,19 @@ type CoachView = {
 };
 
 const noContact = { email: null, phone: null, facebookUrl: null, showContactForm: false };
+
+type TermJoinRow = { terms: { slug: string; name: string; kind: string } | null };
+
+// coach_terms rows come back as one flat array across all three kinds
+// (discipline/skill/attribute) — this pulls out just one kind's slug or
+// name, replacing what was three near-identical
+// .map().filter().map() chains in getCoachFromDb below.
+function termsOfKind(rows: unknown[] | null, kind: string, field: "slug" | "name"): string[] {
+  return ((rows ?? []) as TermJoinRow[])
+    .map((r) => r.terms)
+    .filter((t): t is { slug: string; name: string; kind: string } => t !== null && t.kind === kind)
+    .map((t) => t[field]);
+}
 
 async function getCoachFromDb(slug: string): Promise<CoachView | null> {
   const supabase = await createClient();
@@ -95,18 +108,9 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
     long: coach.long,
     headline: coach.headline,
     bio: coach.bio,
-    disciplineSlugs: (disciplineRows ?? [])
-      .map((r) => (r as unknown as { terms: { slug: string; kind: string } | null }).terms)
-      .filter((t): t is { slug: string; kind: string } => Boolean(t) && t!.kind === "discipline")
-      .map((t) => t.slug),
-    skillNames: (disciplineRows ?? [])
-      .map((r) => (r as unknown as { terms: { name: string; kind: string } | null }).terms)
-      .filter((t): t is { name: string; kind: string } => Boolean(t) && t!.kind === "skill")
-      .map((t) => t.name),
-    attributeNames: (disciplineRows ?? [])
-      .map((r) => (r as unknown as { terms: { name: string; kind: string } | null }).terms)
-      .filter((t): t is { name: string; kind: string } => Boolean(t) && t!.kind === "attribute")
-      .map((t) => t.name),
+    disciplineSlugs: termsOfKind(disciplineRows, "discipline", "slug"),
+    skillNames: termsOfKind(disciplineRows, "skill", "name"),
+    attributeNames: termsOfKind(disciplineRows, "attribute", "name"),
     qualifications: coach.qualifications ?? [],
     testimonials: (testimonialRows ?? []).map((t) => ({ quote: t.quote, author: t.author_name })),
     clinics: (clinicRows ?? []).map((c) => ({
@@ -330,53 +334,7 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
         </section>
       )}
 
-      <section className="mt-10 rounded-[var(--radius-tile)] border border-border bg-surface p-5">
-        <h2 className="text-lg font-semibold text-fg">Get in touch</h2>
-
-        {(coach.contact.email || coach.contact.phone || coach.contact.facebookUrl) && (
-          <div className="mt-3 flex flex-wrap gap-4 text-[15px]">
-            {coach.contact.phone && (
-              <a href={`tel:${coach.contact.phone}`} className="font-medium text-accent hover:text-ink">
-                📞 {coach.contact.phone}
-              </a>
-            )}
-            {coach.contact.email && (
-              <a href={`mailto:${coach.contact.email}`} className="font-medium text-accent hover:text-ink">
-                ✉️ {coach.contact.email}
-              </a>
-            )}
-            {coach.contact.facebookUrl && (
-              <a
-                href={coach.contact.facebookUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-accent hover:text-ink"
-              >
-                Facebook →
-              </a>
-            )}
-          </div>
-        )}
-
-        {coach.contactId && coach.contact.showContactForm ? (
-          <div className="mt-5 border-t border-border pt-5">
-            <ContactForm coachId={coach.contactId} coachName={coach.name} />
-          </div>
-        ) : (
-          !coach.contact.email &&
-          !coach.contact.phone &&
-          !coach.contact.facebookUrl && (
-            <p className="mt-1 text-sm text-muted">
-              This coach hasn&apos;t published contact details yet — for now, try their listed
-              disciplines and location and search around for them directly.
-            </p>
-          )
-        )}
-
-        <LinkButton href="/search" variant="secondary" className="mt-5">
-          ← Back to search
-        </LinkButton>
-      </section>
+      <CoachContactSection contact={coach.contact} contactId={coach.contactId} coachName={coach.name} />
     </div>
   );
 }
