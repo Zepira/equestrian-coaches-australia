@@ -4,6 +4,7 @@ import { TermCheckboxGroup } from "@/components/term-checkbox-group";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines } from "@/lib/supabase/queries";
 import { getSessionUser } from "@/lib/supabase/session";
+import { joinedRelation } from "@/lib/supabase/joined-relation";
 import { saveRiderPreferences, removeFavourite } from "./actions";
 
 export const metadata = { title: "My account", robots: { index: false, follow: false } };
@@ -49,17 +50,13 @@ export default async function AccountPage() {
 
       favourites = (favouriteRows ?? [])
         .map((row) => {
-          const coach = (
-            row as unknown as {
-              coach_profiles: {
-                slug: string;
-                headline: string;
-                suburb: string;
-                state: string;
-                profiles: { name: string } | null;
-              } | null;
-            }
-          ).coach_profiles;
+          const coach = joinedRelation<{
+            slug: string;
+            headline: string;
+            suburb: string;
+            state: string;
+            profiles: { name: string } | null;
+          }>(row, "coach_profiles");
           if (!coach) return null;
           return {
             coachId: row.coach_id,

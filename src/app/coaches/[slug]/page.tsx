@@ -6,6 +6,7 @@ import { FavouriteButton } from "@/components/favourite-button";
 import { JsonLd } from "@/components/json-ld";
 import { CoachContactSection } from "@/components/coach-contact-section";
 import { createClient } from "@/lib/supabase/server";
+import { joinedRelation } from "@/lib/supabase/joined-relation";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 import { getMockCoachBySlug, SKILL_NAMES, ATTRIBUTE_NAMES } from "@/lib/mock-coaches";
 import { getDisciplineBySlug } from "@/lib/disciplines";
@@ -48,15 +49,13 @@ type CoachView = {
 
 const noContact = { email: null, phone: null, facebookUrl: null, showContactForm: false };
 
-type TermJoinRow = { terms: { slug: string; name: string; kind: string } | null };
-
 // coach_terms rows come back as one flat array across all three kinds
 // (discipline/skill/attribute) — this pulls out just one kind's slug or
 // name, replacing what was three near-identical
 // .map().filter().map() chains in getCoachFromDb below.
 function termsOfKind(rows: unknown[] | null, kind: string, field: "slug" | "name"): string[] {
-  return ((rows ?? []) as TermJoinRow[])
-    .map((r) => r.terms)
+  return (rows ?? [])
+    .map((r) => joinedRelation<{ slug: string; name: string; kind: string }>(r, "terms"))
     .filter((t): t is { slug: string; name: string; kind: string } => t !== null && t.kind === kind)
     .map((t) => t[field]);
 }
@@ -95,7 +94,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
         .limit(1),
     ]);
 
-  const profileName = (coach as unknown as { profiles: { name: string } | null }).profiles?.name;
+  const profileName = joinedRelation<{ name: string }>(coach, "profiles")?.name;
 
   return {
     id: coach.id,

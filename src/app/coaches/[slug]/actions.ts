@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { joinedRelation } from "@/lib/supabase/joined-relation";
 import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
 
 export type EnquiryResult = { ok: boolean; message: string };
@@ -83,8 +84,7 @@ export async function sendCoachEnquiry(
     return { ok: false, message: "This coach isn't taking enquiries through the site right now." };
   }
 
-  const coachName =
-    (coach as unknown as { profiles: { name: string } | null }).profiles?.name ?? "there";
+  const coachName = joinedRelation<{ name: string }>(coach, "profiles")?.name ?? "there";
 
   const resend = getResend();
   if (isResendConfigured && resend) {

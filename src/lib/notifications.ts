@@ -1,6 +1,7 @@
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
 import { SITE_URL } from "@/lib/site-url";
+import { joinedRelation } from "@/lib/supabase/joined-relation";
 
 // Service-role client, not the request-scoped one — this runs after the
 // coach's own request context ends (fire-and-forget from createClinic)
@@ -40,8 +41,7 @@ export async function notifyRidersOfClinic(clinicId: string) {
   }
   if (!matches || matches.length === 0) return { sent: 0, matched: 0 };
 
-  const coachSlug = (clinic as unknown as { coach_profiles: { slug: string } | null }).coach_profiles
-    ?.slug;
+  const coachSlug = joinedRelation<{ slug: string }>(clinic, "coach_profiles")?.slug;
   const clinicDate = new Date(clinic.start_date).toLocaleDateString("en-AU", {
     day: "numeric",
     month: "long",

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { TermKind } from "./terms";
+import { joinedRelation } from "@/lib/supabase/joined-relation";
 
 export type CoachSearchResult = {
   id: string;
@@ -65,7 +66,7 @@ export async function searchCoaches(
     attribute: new Map(),
   };
   for (const row of disciplineRows ?? []) {
-    const term = (row as unknown as { terms: { name: string; kind: TermKind } | null }).terms;
+    const term = joinedRelation<{ name: string; kind: TermKind }>(row, "terms");
     if (!term) continue;
     const byCoach = namesByKindAndCoach[term.kind];
     const list = byCoach.get(row.coach_id) ?? [];

@@ -3,6 +3,7 @@ import { DisciplineTag } from "@/components/discipline-tag";
 import { LinkButton } from "@/components/ui/button";
 import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
+import { joinedRelation } from "@/lib/supabase/joined-relation";
 import { breadcrumbSchema, clinicEventSchema } from "@/lib/structured-data";
 
 async function getClinic(id: string) {
@@ -31,10 +32,8 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
   const clinic = await getClinic(id);
   if (!clinic) notFound();
 
-  const discipline = (clinic as unknown as { terms: { slug: string; name: string } | null }).terms;
-  const coach = (
-    clinic as unknown as { coach_profiles: { slug: string; profiles: { name: string } | null } | null }
-  ).coach_profiles;
+  const discipline = joinedRelation<{ slug: string; name: string }>(clinic, "terms");
+  const coach = joinedRelation<{ slug: string; profiles: { name: string } | null }>(clinic, "coach_profiles");
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
