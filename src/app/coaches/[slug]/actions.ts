@@ -5,6 +5,20 @@ import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend"
 
 export type EnquiryResult = { ok: boolean; message: string };
 
+// Pure — no I/O, just lifts the form's 4 fields off the raw FormData.
+function parseEnquiryFields(formData: FormData) {
+  return {
+    coachId: String(formData.get("coach_id") ?? ""),
+    riderName: String(formData.get("rider_name") ?? "").trim(),
+    riderEmail: String(formData.get("rider_email") ?? "").trim(),
+    message: String(formData.get("message") ?? "").trim(),
+  };
+}
+
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 // Sends a rider's enquiry to the coach's contact email. Same
 // degrade-gracefully pattern as notifyRidersOfClinic: with no Resend key
 // set, the enquiry is logged server-side instead of sent — the form still
@@ -17,15 +31,12 @@ export async function sendCoachEnquiry(
   _prevState: EnquiryResult | null,
   formData: FormData
 ): Promise<EnquiryResult> {
-  const coachId = String(formData.get("coach_id") ?? "");
-  const riderName = String(formData.get("rider_name") ?? "").trim();
-  const riderEmail = String(formData.get("rider_email") ?? "").trim();
-  const message = String(formData.get("message") ?? "").trim();
+  const { coachId, riderName, riderEmail, message } = parseEnquiryFields(formData);
 
   if (!coachId || !riderName || !riderEmail || !message) {
     return { ok: false, message: "Please fill in every field." };
   }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(riderEmail)) {
+  if (!isValidEmail(riderEmail)) {
     return { ok: false, message: "That doesn't look like a valid email address." };
   }
 

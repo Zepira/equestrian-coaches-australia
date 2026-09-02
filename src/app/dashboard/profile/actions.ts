@@ -16,28 +16,65 @@ async function requireCoach() {
   return { supabase, userId: user.id };
 }
 
+// Pure — reads the profile form's ~15 fields off the raw FormData with no
+// I/O, so it's trivial to reason about (and test) independently of the
+// DB calls in saveProfile below.
+function parseProfileFields(formData: FormData) {
+  return {
+    headline: String(formData.get("headline") ?? ""),
+    bio: String(formData.get("bio") ?? ""),
+    suburb: String(formData.get("suburb") ?? ""),
+    state: String(formData.get("state") ?? ""),
+    postcode: String(formData.get("postcode") ?? ""),
+    qualifications: String(formData.get("qualifications") ?? "")
+      .split("\n")
+      .map((q) => q.trim())
+      .filter(Boolean),
+    disciplineIds: formData.getAll("discipline").map(String),
+    skillIds: formData.getAll("skill").map(String),
+    attributeIds: formData.getAll("attribute").map(String),
+    contactEmail: String(formData.get("contact_email") ?? "").trim(),
+    contactPhone: String(formData.get("contact_phone") ?? "").trim(),
+    facebookUrl: String(formData.get("facebook_url") ?? "").trim(),
+    showContactEmail: formData.get("show_contact_email") === "on",
+    showContactPhone: formData.get("show_contact_phone") === "on",
+    showFacebook: formData.get("show_facebook") === "on",
+    showContactForm: formData.get("show_contact_form") === "on",
+  };
+}
+
+// Pure — the term membership rows for one coach, disciplines keeping their
+// checked order as sort_order (spec: "lowest-ordered discipline is
+// primary"), skills/attributes unordered.
+function buildTermRows(coachId: string, disciplineIds: string[], skillIds: string[], attributeIds: string[]) {
+  return [
+    ...disciplineIds.map((term_id, sort_order) => ({ coach_id: coachId, term_id, sort_order })),
+    ...skillIds.map((term_id) => ({ coach_id: coachId, term_id, sort_order: 0 })),
+    ...attributeIds.map((term_id) => ({ coach_id: coachId, term_id, sort_order: 0 })),
+  ];
+}
+
 export async function saveProfile(formData: FormData) {
   const { supabase, userId } = await requireCoach();
 
-  const headline = String(formData.get("headline") ?? "");
-  const bio = String(formData.get("bio") ?? "");
-  const suburb = String(formData.get("suburb") ?? "");
-  const state = String(formData.get("state") ?? "");
-  const postcode = String(formData.get("postcode") ?? "");
-  const qualifications = String(formData.get("qualifications") ?? "")
-    .split("\n")
-    .map((q) => q.trim())
-    .filter(Boolean);
-  const disciplineIds = formData.getAll("discipline").map(String);
-  const skillIds = formData.getAll("skill").map(String);
-  const attributeIds = formData.getAll("attribute").map(String);
-  const contactEmail = String(formData.get("contact_email") ?? "").trim();
-  const contactPhone = String(formData.get("contact_phone") ?? "").trim();
-  const facebookUrl = String(formData.get("facebook_url") ?? "").trim();
-  const showContactEmail = formData.get("show_contact_email") === "on";
-  const showContactPhone = formData.get("show_contact_phone") === "on";
-  const showFacebook = formData.get("show_facebook") === "on";
-  const showContactForm = formData.get("show_contact_form") === "on";
+  const {
+    headline,
+    bio,
+    suburb,
+    state,
+    postcode,
+    qualifications,
+    disciplineIds,
+    skillIds,
+    attributeIds,
+    contactEmail,
+    contactPhone,
+    facebookUrl,
+    showContactEmail,
+    showContactPhone,
+    showFacebook,
+    showContactForm,
+  } = parseProfileFields(formData);
 
   // Geocode suburb/state/postcode into a point so radius search (phase 4)
   // can find this coach. Silently skipped if it doesn't resolve — the
@@ -81,11 +118,7 @@ export async function saveProfile(formData: FormData) {
   const { error: deleteError } = await supabase.from("coach_terms").delete().eq("coach_id", userId);
   if (deleteError) throw deleteError;
 
-  const termRows = [
-    ...disciplineIds.map((term_id, sort_order) => ({ coach_id: userId, term_id, sort_order })),
-    ...skillIds.map((term_id) => ({ coach_id: userId, term_id, sort_order: 0 })),
-    ...attributeIds.map((term_id) => ({ coach_id: userId, term_id, sort_order: 0 })),
-  ];
+  const termRows = buildTermRows(userId, disciplineIds, skillIds, attributeIds);
   if (termRows.length > 0) {
     const { error: insertError } = await supabase.from("coach_terms").insert(termRows);
     if (insertError) throw insertError;
