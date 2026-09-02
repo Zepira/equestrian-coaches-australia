@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { AdminAliasRow, type Alias } from "@/components/admin-alias-row";
 import { createClient } from "@/lib/supabase/server";
 import { addAlias, removeAlias } from "./actions";
 
@@ -16,13 +17,7 @@ export default async function AdminAliasesPage() {
     supabase.from("terms").select("id, name, kind").eq("active", true).order("kind").order("name"),
   ]);
 
-  const aliases = (aliasRows ?? []) as unknown as {
-    id: string;
-    alias: string;
-    source: string;
-    is_primary: boolean;
-    terms: { name: string; kind: string } | null;
-  }[];
+  const aliases = (aliasRows ?? []) as unknown as Alias[];
 
   return (
     <div className="flex flex-col gap-8">
@@ -36,28 +31,7 @@ export default async function AdminAliasesPage() {
         </p>
         <div className="mt-4 flex flex-col gap-1.5">
           {aliases.map((a) => (
-            <div
-              key={a.id}
-              className="flex items-center justify-between gap-3 rounded-[var(--radius-tile)] border border-border bg-surface px-3 py-2 text-sm"
-            >
-              <div className="min-w-0">
-                <span className="font-medium text-fg">{a.alias}</span>
-                <span className="text-muted"> → {a.terms?.name ?? "—"}</span>
-                {a.is_primary && (
-                  <span className="ml-2 rounded-full bg-accent-soft px-2 py-0.5 text-xs text-fg">
-                    primary
-                  </span>
-                )}
-              </div>
-              <div className="flex shrink-0 items-center gap-3">
-                <span className="text-xs uppercase tracking-wide text-muted">{a.source}</span>
-                <form action={removeAlias.bind(null, a.id)}>
-                  <button type="submit" className="text-sm text-danger">
-                    Remove
-                  </button>
-                </form>
-              </div>
-            </div>
+            <AdminAliasRow key={a.id} alias={a} onRemove={removeAlias.bind(null, a.id)} />
           ))}
         </div>
       </section>

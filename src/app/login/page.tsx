@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
+import { AuthNotConfiguredBanner } from "@/components/auth-not-configured-banner";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 function LoginForm() {
@@ -54,11 +55,7 @@ function LoginForm() {
     <>
       <h1 className="text-2xl font-bold text-fg">Log in</h1>
 
-      {!isSupabaseConfigured && (
-        <p className="mt-4 rounded-[var(--radius-control)] border border-border bg-accent-soft p-3 text-sm text-fg">
-          Auth isn&apos;t connected yet — this form is a preview until Supabase is set up.
-        </p>
-      )}
+      {!isSupabaseConfigured && <AuthNotConfiguredBanner />}
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <label className="block">

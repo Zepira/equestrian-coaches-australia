@@ -1,6 +1,46 @@
 import Link from "next/link";
 import { LogoMark } from "@/components/logo-mark";
 
+const FOOTER_COLUMNS: { heading: string; links: { href: string; label: string }[] }[] = [
+  {
+    heading: "Riders",
+    links: [
+      { href: "/search", label: "Find a coach" },
+      { href: "/disciplines/dressage", label: "Browse disciplines" },
+      { href: "/account", label: "My account" },
+    ],
+  },
+  {
+    heading: "Coaches",
+    links: [
+      { href: "/for-coaches", label: "List your profile" },
+      { href: "/for-coaches", label: "Pricing" },
+      { href: "/dashboard", label: "Coach dashboard" },
+    ],
+  },
+  {
+    heading: "About",
+    links: [{ href: "/login", label: "Log in" }],
+  },
+];
+
+function FooterColumn({ heading, links }: (typeof FOOTER_COLUMNS)[number]) {
+  return (
+    <div className="text-[15px]">
+      <div className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-border">{heading}</div>
+      <ul className="flex flex-col gap-2.5 text-ink-fg/82">
+        {links.map((link) => (
+          <li key={link.label}>
+            <Link href={link.href} className="hover:text-ink-fg">
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function SiteFooter() {
   return (
     <footer className="mt-auto bg-ink text-ink-fg">
@@ -14,56 +54,9 @@ export function SiteFooter() {
             Find the coach who teaches exactly what you ride, wherever you are in Australia.
           </p>
         </div>
-        <div className="text-[15px]">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-border">Riders</div>
-          <ul className="flex flex-col gap-2.5 text-ink-fg/82">
-            <li>
-              <Link href="/search" className="hover:text-ink-fg">
-                Find a coach
-              </Link>
-            </li>
-            <li>
-              <Link href="/disciplines/dressage" className="hover:text-ink-fg">
-                Browse disciplines
-              </Link>
-            </li>
-            <li>
-              <Link href="/account" className="hover:text-ink-fg">
-                My account
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className="text-[15px]">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-border">Coaches</div>
-          <ul className="flex flex-col gap-2.5 text-ink-fg/82">
-            <li>
-              <Link href="/for-coaches" className="hover:text-ink-fg">
-                List your profile
-              </Link>
-            </li>
-            <li>
-              <Link href="/for-coaches" className="hover:text-ink-fg">
-                Pricing
-              </Link>
-            </li>
-            <li>
-              <Link href="/dashboard" className="hover:text-ink-fg">
-                Coach dashboard
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className="text-[15px]">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-border">About</div>
-          <ul className="flex flex-col gap-2.5 text-ink-fg/82">
-            <li>
-              <Link href="/login" className="hover:text-ink-fg">
-                Log in
-              </Link>
-            </li>
-          </ul>
-        </div>
+        {FOOTER_COLUMNS.map((column) => (
+          <FooterColumn key={column.heading} {...column} />
+        ))}
       </div>
       <div className="border-t border-ink-fg/25 px-4 py-6 text-sm text-ink-fg/60 sm:px-6">
         <div className="mx-auto flex max-w-6xl flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
