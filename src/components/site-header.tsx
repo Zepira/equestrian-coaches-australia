@@ -70,31 +70,59 @@ function useAuthState(): AuthState {
   return state;
 }
 
-function AccountLinks({ auth, onNavigate }: { auth: AuthState; onNavigate?: () => void }) {
-  const linkClass = "site-header__link text-[15px] font-medium";
+function AccountLinks({
+  auth,
+  onNavigate,
+  mobile = false,
+}: {
+  auth: AuthState;
+  onNavigate?: () => void;
+  mobile?: boolean;
+}) {
+  // Mobile renders inside the same <ul> as the plain nav links (site-header's
+  // "Mobile menu panel" block below) — match their exact row styling instead
+  // of the desktop bar's compact inline link, or these look like a different,
+  // smaller kind of control tacked onto the end of the menu.
+  const linkClass = mobile
+    ? "block rounded-[var(--radius-control)] px-2 py-3 text-[17px] font-medium text-fg hover:bg-accent-soft"
+    : "site-header__link text-[15px] font-medium";
+  const Item = mobile ? "li" : "span";
+
   if (!auth.loggedIn) {
     return (
       <>
-        <Link href="/login" onClick={onNavigate} className={linkClass}>
-          Log in
-        </Link>
-        <LinkButton href="/signup?role=coach" onClick={onNavigate} className="text-sm">
-          List your profile
-        </LinkButton>
+        <Item>
+          <Link href="/login" onClick={onNavigate} className={linkClass}>
+            Log in
+          </Link>
+        </Item>
+        <Item>
+          <LinkButton
+            href="/signup?role=coach"
+            onClick={onNavigate}
+            className={mobile ? "mt-1 w-full justify-center text-sm" : "text-sm"}
+          >
+            List your profile
+          </LinkButton>
+        </Item>
       </>
     );
   }
 
   return (
     <>
-      <Link href={auth.role === "coach" ? "/dashboard" : "/account"} onClick={onNavigate} className={linkClass}>
-        {auth.role === "coach" ? "Dashboard" : "My account"}
-      </Link>
-      <form action="/auth/sign-out" method="post">
-        <button type="submit" className={linkClass}>
-          Log out
-        </button>
-      </form>
+      <Item>
+        <Link href={auth.role === "coach" ? "/dashboard" : "/account"} onClick={onNavigate} className={linkClass}>
+          {auth.role === "coach" ? "Dashboard" : "My account"}
+        </Link>
+      </Item>
+      <Item>
+        <form action="/auth/sign-out" method="post">
+          <button type="submit" className={mobile ? `w-full text-left ${linkClass}` : linkClass}>
+            Log out
+          </button>
+        </form>
+      </Item>
     </>
   );
 }
@@ -197,10 +225,8 @@ export function SiteHeader() {
                 </Link>
               </li>
             ))}
+            <AccountLinks auth={auth} onNavigate={() => setOpen(false)} mobile />
           </ul>
-          <div className="mt-2 flex flex-col gap-1">
-            <AccountLinks auth={auth} onNavigate={() => setOpen(false)} />
-          </div>
         </nav>
       )}
     </header>
