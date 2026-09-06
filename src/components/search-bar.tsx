@@ -18,9 +18,13 @@ export function SearchBar({
   defaultLocation = "",
   skills = [],
   attributes = [],
+  tone = "light",
 }: {
   defaultDiscipline?: string;
   defaultLocation?: string;
+  /** "dark" restyles the refine pills for the ink hero background. The
+   *  search panel itself is a cream plate in both tones. */
+  tone?: "light" | "dark";
   // Optional — only the homepage hero passes real skill/attribute term
   // lists in, so the "Skills & setup" row only renders there. Everything
   // picked here is uncommitted until "Find a coach" is clicked (unlike the
@@ -35,6 +39,11 @@ export function SearchBar({
   const [location, setLocation] = useState(defaultLocation);
   const [skillSlugs, setSkillSlugs] = useState<string[]>([]);
   const [attributeSlugs, setAttributeSlugs] = useState<string[]>([]);
+
+  const idlePill =
+    tone === "dark"
+      ? "border-ink-fg/50 bg-ink-fg/10 text-ink-fg backdrop-blur-[2px] hover:border-ink-fg"
+      : "border-border bg-surface text-fg hover:border-accent";
 
   const quickAttributes = attributes.filter((a) => QUICK_ATTRIBUTE_SLUGS.includes(a.slug));
 
@@ -54,8 +63,13 @@ export function SearchBar({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <div className="flex flex-col gap-2 rounded-[4px] border border-border bg-surface p-2.5 shadow-[0_12px_30px_rgba(31,58,46,0.06)] sm:flex-row sm:items-stretch">
-        <label className="flex-1 px-2.5 py-1.5">
+      {/* Below `sm`, when the fields wrap into a stacked column, each one is
+          its OWN bordered field — not one shared surface with the border
+          hidden. At `sm` and up they merge back into a single connected
+          block (shared border/background, a hairline divider between them)
+          the way a horizontal search bar reads. */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-0 sm:rounded-[4px] sm:border sm:border-border sm:bg-surface sm:p-2.5 sm:shadow-[0_12px_30px_rgba(31,58,46,0.06)]">
+        <label className="rounded-[4px] border border-border bg-surface px-3 py-2 shadow-[0_12px_30px_rgba(31,58,46,0.06)] sm:flex-1 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-2.5 sm:py-1.5 sm:shadow-none">
           <span className="mb-0.5 block text-xs font-semibold uppercase tracking-wide text-subtle">
             Discipline
           </span>
@@ -73,7 +87,7 @@ export function SearchBar({
           </select>
         </label>
         <div className="hidden w-px bg-border sm:block" />
-        <label className="flex-1 px-2.5 py-1.5">
+        <label className="rounded-[4px] border border-border bg-surface px-3 py-2 shadow-[0_12px_30px_rgba(31,58,46,0.06)] sm:flex-1 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-2.5 sm:py-1.5 sm:shadow-none">
           <span className="mb-0.5 block text-xs font-semibold uppercase tracking-wide text-subtle">
             Suburb or postcode
           </span>
@@ -86,7 +100,7 @@ export function SearchBar({
         </label>
         <button
           type="submit"
-          className="rounded-[var(--radius-control)] bg-ink px-8 py-3 text-[17px] font-semibold text-ink-fg transition-colors hover:opacity-90 sm:self-stretch"
+          className="rounded-[var(--radius-control)] bg-accent px-8 py-3 text-[17px] font-semibold text-accent-fg transition-colors hover:bg-accent-hover sm:self-stretch"
         >
           Find a coach
         </button>
@@ -108,6 +122,7 @@ export function SearchBar({
                 options: attributes.map((t) => ({ value: t.slug, label: t.name })),
               },
             ]}
+            idleClassName={idlePill}
             selected={{ s: skillSlugs, a: attributeSlugs }}
             onApply={(next) => {
               setSkillSlugs(next.s ?? []);
@@ -125,7 +140,7 @@ export function SearchBar({
                 className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                   active
                     ? "border-accent bg-accent text-accent-fg"
-                    : "border-border bg-surface text-fg hover:border-accent"
+                    : idlePill
                 }`}
               >
                 {QUICK_ATTRIBUTE_LABELS[attr.slug] ?? attr.name}

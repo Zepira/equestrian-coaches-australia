@@ -21,13 +21,18 @@ export function PillDropdown({
   groups,
   selected,
   onApply,
+  idleClassName = "border-border bg-surface text-fg hover:border-accent",
 }: {
   label: string;
   groups: PillDropdownGroup[];
   selected: Record<string, string[]>;
   onApply: (next: Record<string, string[]>) => void;
+  /** Trigger classes used when nothing is selected. Override to sit the
+   *  pill on a dark background (see SearchBar's `tone` prop). */
+  idleClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [dropUp, setDropUp] = useState(false);
   const [draft, setDraft] = useState(selected);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -37,6 +42,11 @@ export function PillDropdown({
   // pick from a previous open/close doesn't linger.
   function handleOpen() {
     setDraft(selected);
+    // The panel is ~360px tall. Sitting near the bottom of the viewport — as
+    // it does inside the homepage hero — it would otherwise open straight
+    // past the fold, so flip it above the pill when there isn't room below.
+    const r = containerRef.current?.getBoundingClientRect();
+    setDropUp(!!r && window.innerHeight - r.bottom < 380 && r.top > 380);
     setOpen(true);
   }
 
@@ -83,7 +93,7 @@ export function PillDropdown({
         className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
           committedCount > 0
             ? "border-accent bg-accent text-accent-fg"
-            : "border-border bg-surface text-fg hover:border-accent"
+            : idleClassName
         }`}
       >
         {label}
@@ -101,7 +111,11 @@ export function PillDropdown({
       </button>
 
       {open && (
-        <div className="absolute left-0 z-30 mt-2 w-72 rounded-[var(--radius-tile)] border border-border bg-surface p-4 shadow-[0_16px_40px_rgba(31,58,46,0.16)]">
+        <div
+          className={`absolute left-0 z-30 w-72 rounded-[var(--radius-tile)] border border-border bg-surface p-4 shadow-[0_16px_40px_rgba(31,58,46,0.16)] ${
+            dropUp ? "bottom-full mb-2" : "mt-2"
+          }`}
+        >
           <div className="flex max-h-72 flex-col gap-4 overflow-y-auto">
             {groups.map((g) => (
               <div key={g.key}>

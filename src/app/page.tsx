@@ -1,3 +1,4 @@
+import { Hero } from "@/components/hero";
 import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
 import { DisciplineTag } from "@/components/discipline-tag";
@@ -23,38 +24,17 @@ export default async function Home() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-bg">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-14">
-          <div className="lg:order-1">
-            <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-              Coaching, discipline by discipline
-            </div>
-            <h1 className="mt-6 max-w-xl text-5xl leading-[0.98] text-ink sm:text-6xl lg:text-[72px]">
-              Find your perfect riding coach, nearby.
-            </h1>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted">
-              Search verified coaches across Australia by discipline and location — liberty,
-              bridleless, working equitation and every other discipline.
-            </p>
-            <div className="mt-8 max-w-2xl">
-              <SearchBar skills={skills} attributes={attributes} />
-            </div>
-            <div className="mt-6 text-[15px] text-muted">
-              <strong className="text-ink">{disciplines.length}</strong> disciplines listed, from
-              dressage to liberty
-            </div>
-          </div>
-          <div className="order-first h-56 w-full overflow-hidden rounded-[var(--radius-tile)] sm:h-72 lg:order-2 lg:h-[480px]">
-            {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL, not worth next/image remote-pattern config yet */}
-            <img
-              src="https://images.unsplash.com/photo-1690112330355-300fa08844b7?auto=format&fit=crop&w=1200&q=85"
-              alt="A rider working a horse in an open yard"
-              className="h-full w-full object-cover"
-            />
-          </div>
-        </div>
-      </section>
+      <Hero
+        eyebrow="Coaching, discipline by discipline"
+        title="Find your perfect riding coach, nearby."
+        lead="Search coaches across Australia by discipline and location — dressage to bridleless, city arenas to bush tracks."
+        stats={[
+          { value: String(disciplines.length), label: "disciplines listed" },
+          { value: "Free", label: "for riders, always" },
+        ]}
+      >
+        <SearchBar skills={skills} attributes={attributes} tone="dark" />
+      </Hero>
 
       {/* Featured disciplines */}
       <section className="bg-shade">
@@ -76,7 +56,7 @@ export default async function Home() {
           <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
             {topDisciplines.map((d) => (
               <a key={d.slug} href={`/disciplines/${d.slug}`} className="group">
-                <div className="arch-crop h-64 bg-border sm:h-80">
+                <div className="arch-crop aspect-square bg-border">
                   {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL */}
                   <img
                     src={disciplinePhoto(d.slug)}
