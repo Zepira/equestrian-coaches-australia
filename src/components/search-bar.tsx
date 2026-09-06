@@ -68,15 +68,15 @@ export function SearchBar({
           hidden. At `sm` and up they merge back into a single connected
           block (shared border/background, a hairline divider between them)
           the way a horizontal search bar reads. */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-0 sm:rounded-[4px] sm:border sm:border-border sm:bg-surface sm:p-2.5 sm:shadow-[0_12px_30px_rgba(31,58,46,0.06)]">
-        <label className="rounded-[4px] border border-border bg-surface px-3 py-2 shadow-[0_12px_30px_rgba(31,58,46,0.06)] sm:flex-1 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-2.5 sm:py-1.5 sm:shadow-none">
+      <div className="flex flex-col gap-1.5 sm:flex-row sm:items-stretch sm:gap-0 sm:rounded-[4px] sm:border sm:border-border sm:bg-surface sm:p-2.5 sm:shadow-[0_12px_30px_rgba(31,58,46,0.06)]">
+        <label className="rounded-[4px] border border-border bg-surface px-3 py-1.5 shadow-[0_12px_30px_rgba(31,58,46,0.06)] sm:flex-1 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-2.5 sm:py-1.5 sm:shadow-none">
           <span className="mb-0.5 block text-xs font-semibold uppercase tracking-wide text-subtle">
             Discipline
           </span>
           <select
             value={discipline}
             onChange={(e) => setDiscipline(e.target.value)}
-            className="w-full appearance-none bg-transparent py-1 text-[17px] text-ink outline-none"
+            className="w-full appearance-none bg-transparent py-0.5 text-[17px] text-ink outline-none"
           >
             <option value="">Any discipline</option>
             {disciplines.map((d) => (
@@ -87,7 +87,7 @@ export function SearchBar({
           </select>
         </label>
         <div className="hidden w-px bg-border sm:block" />
-        <label className="rounded-[4px] border border-border bg-surface px-3 py-2 shadow-[0_12px_30px_rgba(31,58,46,0.06)] sm:flex-1 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-2.5 sm:py-1.5 sm:shadow-none">
+        <label className="rounded-[4px] border border-border bg-surface px-3 py-1.5 shadow-[0_12px_30px_rgba(31,58,46,0.06)] sm:flex-1 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-2.5 sm:py-1.5 sm:shadow-none">
           <span className="mb-0.5 block text-xs font-semibold uppercase tracking-wide text-subtle">
             Suburb or postcode
           </span>
@@ -95,12 +95,12 @@ export function SearchBar({
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="e.g. Bendigo VIC"
-            className="w-full bg-transparent py-1 text-[17px] text-ink placeholder:text-subtle outline-none"
+            className="w-full bg-transparent py-0.5 text-[17px] text-ink placeholder:text-subtle outline-none"
           />
         </label>
         <button
           type="submit"
-          className="rounded-[var(--radius-control)] bg-accent px-8 py-3 text-[17px] font-semibold text-accent-fg transition-colors hover:bg-accent-hover sm:self-stretch"
+          className="rounded-[var(--radius-control)] bg-accent px-8 py-2.5 text-[17px] font-semibold text-accent-fg transition-colors hover:bg-accent-hover sm:self-stretch"
         >
           Find a coach
         </button>

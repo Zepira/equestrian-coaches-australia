@@ -4,22 +4,18 @@ import type { ReactNode } from "react";
  * Full-bleed hero with an art-directed background photograph.
  * Layout, scrim and type scale all live in `.hero` in src/app/globals.css.
  *
- * The `<picture>` below is real art direction, not just a resolution ladder:
- * each `<source>` serves a *different crop*, because the horse leaves frame
- * if you centre-crop one wide photo down to a phone. `next/image` cannot do
- * this — it always renders exactly one `<img>` with no per-breakpoint crop —
- * so this is hand-built markup pointed at the files
+ * One crop at every width now — the "wide" overlay crop (horse pinned hard
+ * right, sky and treeline clear across the top for the floating header).
+ * This used to be three crops (`wide`/`bandWide`/`bandNarrow`) switched by
+ * `media` for a phone-only "band" layout; unified along with `.hero` itself,
+ * see the doc comment there. `next/image` can't do even this one crop's
+ * responsive-but-art-directed job on its own (no per-breakpoint crop prop),
+ * so this stays hand-built markup pointed at the files
  * `scripts/build-hero-images.mjs` generates.
  *
- * Source order matters: the browser takes the FIRST `<source>` whose `media`
- * and `type` both match, so the widest-condition crop is listed first and the
- * formats run most-efficient-first (AVIF → WebP → the `<img>` JPEG fallback).
- * The media conditions mirror the `.hero` layout switch exactly.
+ * Source order: AVIF before WebP before the `<img>` JPEG fallback — the
+ * browser takes the first `<source>` whose `type` it can decode.
  */
-
-const OVERLAY =
-  "(min-width: 1100px), (min-width: 600px) and (max-height: 899px)";
-const BAND_WIDE = "(min-width: 600px)";
 
 function srcset(crop: string, widths: number[], ext: string) {
   return widths.map((w) => `/hero/${crop}-${w}.${ext} ${w}w`).join(", ");
@@ -27,8 +23,6 @@ function srcset(crop: string, widths: number[], ext: string) {
 
 const CROPS = {
   wide: [768, 1024, 1280, 1536],
-  bandWide: [640, 1024, 1360, 1720],
-  bandNarrow: [400, 600, 828, 1140],
 };
 
 export function Hero({
@@ -53,51 +47,17 @@ export function Hero({
     <section className="hero">
       <div className="hero__media">
         <picture>
-          <source
-            media={OVERLAY}
-            type="image/avif"
-            srcSet={srcset("wide", CROPS.wide, "avif")}
-            sizes="100vw"
-          />
-          <source
-            media={OVERLAY}
-            type="image/webp"
-            srcSet={srcset("wide", CROPS.wide, "webp")}
-            sizes="100vw"
-          />
-
-          <source
-            media={BAND_WIDE}
-            type="image/avif"
-            srcSet={srcset("band-wide", CROPS.bandWide, "avif")}
-            sizes="100vw"
-          />
-          <source
-            media={BAND_WIDE}
-            type="image/webp"
-            srcSet={srcset("band-wide", CROPS.bandWide, "webp")}
-            sizes="100vw"
-          />
-
-          <source
-            type="image/avif"
-            srcSet={srcset("band-narrow", CROPS.bandNarrow, "avif")}
-            sizes="100vw"
-          />
-          <source
-            type="image/webp"
-            srcSet={srcset("band-narrow", CROPS.bandNarrow, "webp")}
-            sizes="100vw"
-          />
+          <source type="image/avif" srcSet={srcset("wide", CROPS.wide, "avif")} sizes="100vw" />
+          <source type="image/webp" srcSet={srcset("wide", CROPS.wide, "webp")} sizes="100vw" />
 
           {/* Plain <img>, deliberately: next/image renders a single <img> and
-              cannot switch crops per breakpoint. See the note at the top of
+              has no per-breakpoint crop prop. See the note at the top of
               this file. */}
           <img
-            src="/hero/band-narrow-828.jpg"
+            src="/hero/wide-1280.jpg"
             alt={alt ?? ""}
-            width={828}
-            height={501}
+            width={1280}
+            height={853}
             fetchPriority="high"
             loading="eager"
             decoding="async"

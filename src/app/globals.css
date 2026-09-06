@@ -130,22 +130,24 @@ h4,
    Full-bleed hero with background image
    Daiquiri component: 05-components/hero-full-bleed-image.md
 
-   Two layouts, one photograph, no JavaScript:
+   One layout at every width: the photo fills the whole hero edge to edge,
+   the header floats over it transparent, and the text sits over the photo
+   behind a gradient scrim. The horse is composed hard right in the source
+   crop so the quiet zone (low-detail paddock and treeline) stays clear for
+   the text column.
 
-     SPLIT   (base — phones, and any narrow-but-tall window)
-             photo is a band across the top, text sits below it on ink.
-             The text and the horse physically cannot overlap.
-
-     OVERLAY (wide, or wide-and-short)
-             photo fills the whole hero, text sits over the left of it
-             behind a gradient scrim. The horse is composed hard right so
-             the quiet zone stays on low-detail paddock and treeline.
-
-   The switch is one media query. `split` is the base because it is the
-   mobile-first case AND the tall-tablet case; overlay is the exception:
-
-     overlay  =  (min-width: 1100px)
-              OR (min-width: 600px) and (max-height: 899px)
+   This used to be two layouts — a phone-only "split" with the photo as a
+   band above solid-ink text, because floating the header over the old
+   band crop measured 3.78:1 on the wordmark (the horse filled almost the
+   whole band, right where the header sits). Unified once the crop itself
+   changed: the wide/overlay crop keeps the top of frame clear (sky and
+   treeline, not the horse), so the header's own contrast plate is enough
+   at every width — nothing phone-specific left to special-case. Below
+   600px the text column stays full-width (there's no spare room beside
+   the photo the way there is once the column narrows to 58%), and the
+   scrim switches from a left-to-right pin to a bottom-weighted wash so it
+   still reads correctly under text that spans the full screen — see the
+   two `--hero-scrim` definitions below.
 
    Everything tunable is a custom property on `.hero`, so re-skinning this
    for another project is editing the block below, not the markup.
@@ -153,44 +155,42 @@ h4,
 
 .hero {
   /* ── layout ─────────────────────────────────────────────────────────── */
-  /* Height the site header takes out of the viewport. In the split layout the
-     header is a solid in-flow bar ABOVE the photo, so it costs us its height;
-     in the overlay layout it floats over the photograph and costs us nothing.
-     Zeroed in the overlay block below. */
-  --hero-header: var(--header-h);
+  /* The header always floats over the photo now — see the doc comment
+     above — so it never costs the hero any height at any width. */
+  --hero-header: 0px;
   --hero-max: var(--content-max); /* shared content rail, see :root above */
   --hero-gutter: var(--content-gutter);
-  --hero-col: 100%; /* text column width — narrowed in the overlay layout */
-  /* Photo band height (split layout only). The vw term is deliberate and
-     load-bearing: 61vw is 100/1.65, the band-narrow crop's own aspect ratio,
-     so at phone widths the band is exactly tall enough to show the whole
-     photograph and the horse is never cropped at all — no object-position
-     guesswork. Clamped so it can't run away on a 599px-wide window.
-     Floored at 40svh: the vw term alone only tracks WIDTH, so on a narrower
-     phone the band shrank in absolute px while the hero's own height (still
-     forced to the full viewport a few lines down) did not — the photo
-     dropped under 30% of the hero on a 360px-wide screen. max() guarantees
-     the photo at least 40% of the screen regardless of how narrow it gets. */
-  --hero-band: max(clamp(13rem, 61vw, 22rem), 40svh);
+  /* Text column width. Full-width below 600px (no spare room beside the
+     photo worth carving out); narrowed once there is, see the media query
+     below. */
+  --hero-col: 100%;
   /* Vertical rhythm keys off viewport HEIGHT, not width — a 1440x800 window
      has exactly as much horizontal room as a 1440x1000 one and far less
      vertical, and it is the vertical that runs out. */
   --hero-gap: clamp(0.75rem, 2.2svh, 1.75rem);
 
   /* ── photograph ─────────────────────────────────────────────────────── */
-  /* Focal point, as object-position. Split centres the horse in a shallow
-     band; overlay pushes it right, clear of the text column. */
-  --hero-focus: 50% 32%;
-  /* Split layout, two washes. Top: a light settle under the floating header —
-     it does NOT have to carry the header's text contrast, the header brings
-     its own plate (see site-header.tsx), which is what keeps this legible no
-     matter which photograph goes in. Bottom: fades to the exact colour of the
-     ink field below (var(--color-ink), not a generic dark overlay), so the
-     photo dissolves into that section instead of cutting to it — the
-     transition device, in place of a rule line at the seam. */
-  --hero-scrim:
-    linear-gradient(180deg, rgb(13 24 18 / 0.28) 0%, rgb(13 24 18 / 0) 45%),
-    linear-gradient(0deg, var(--color-ink) 0%, rgb(31 58 46 / 0) 22%);
+  /* Focal point, as object-position: pushes the horse right, clear of the
+     text column, at every width. On a narrow phone `object-fit: cover`
+     crops a tall image down to a tight vertical slice around this x — the
+     full photo HEIGHT still shows (nothing crops top/bottom there), so the
+     horse never goes missing, just tighter-framed. */
+  --hero-focus: 86% 52%;
+  /* Bottom-weighted wash, not pinned to one side: below 600px the text
+     column is full-width, so a left-to-right gradient would leave the
+     right edge of every line sitting on whatever brightness the photo
+     happens to have there. A uniform-across-the-width, dark-at-the-bottom
+     wash is safe regardless of the photograph — 0.84 alpha black over pure
+     white still lands under rgb(40,40,40), comfortably AA behind cream
+     text — so this doesn't need remeasuring if the photo ever changes.
+     Replaced by the pinned version from 600px up, once the column narrows
+     and leaves the photo's own quiet zone doing more of the work. */
+  --hero-scrim: linear-gradient(
+    180deg,
+    rgb(13 24 18 / 0.34) 0%,
+    rgb(13 24 18 / 0.55) 45%,
+    rgb(13 24 18 / 0.84) 100%
+  );
 
   /* ── type ───────────────────────────────────────────────────────────── */
   /* clamp() middle terms always carry a rem component so the headline still
@@ -205,16 +205,24 @@ h4,
 
   position: relative;
   display: grid;
-  grid-template-rows: var(--hero-band) 1fr;
+  grid-template-rows: 1fr;
+  min-height: 100vh; /* fallback for ~5% of browsers */
+  min-height: 100svh; /* svh, not dvh: dvh resizes the hero while the mobile
+        toolbar hides on scroll */
   background: var(--color-ink);
   color: var(--color-ink-fg);
 }
 
-/* Only the media clips. The hero itself must not, or the search filter
-   dropdown inside it gets cut off at the section boundary. */
+/* The photo is out of flow entirely, not a grid item: `height: 100%` on an
+   image inside an auto-height track resolves to auto, so the photo's own
+   3:2 ratio would silently become the hero's height instead of the other
+   way around — a 1440x900 window got a 950px hero and pushed the stats row
+   below the fold before this was absolute. Only the media clips, never the
+   hero itself, or the search filter dropdown inside it gets cut off at the
+   section boundary. */
 .hero__media {
-  grid-row: 1;
-  position: relative;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
 }
 
@@ -242,15 +250,16 @@ h4,
 .hero__body {
   position: relative;
   z-index: 2;
-  grid-row: 2;
+  grid-area: 1 / 1;
   display: flex;
   /* Centred, not bottom-aligned: the stack reads as one balanced block in the
-     space it has rather than being pushed against the lower edge. In the
-     overlay layout the top padding also reserves the floating header, so
-     "centred" means centred in the area BELOW the bar, not in the raw
-     viewport — which is what actually looks level. */
+     space it has rather than being pushed against the lower edge. The top
+     padding also reserves the floating header, so "centred" means centred
+     in the area BELOW the bar, not in the raw viewport — which is what
+     actually looks level. */
   align-items: center;
-  padding: clamp(1.25rem, 4vh, 2.5rem) var(--hero-gutter) clamp(1.75rem, 5vh, 3rem);
+  padding: calc(var(--header-h) + clamp(1.25rem, 4vh, 2.5rem)) var(--hero-gutter)
+    clamp(1.75rem, 5vh, 3rem);
 }
 
 .hero__inner {
@@ -309,49 +318,28 @@ h4,
   font-weight: 500;
 }
 
-/* ── gutters and rail, by width ───────────────────────────────────────── */
+/* From 600px: the lead paragraph fits back in regardless of column width. */
 @media (min-width: 600px) {
-  /* Split layout on a tablet has far more height to fill than a phone, so
-     the photo band grows with it rather than sitting as a thin strip above
-     a large empty field of ink. */
-  .hero {
-    --hero-band: clamp(16rem, 38svh, 32rem);
-    /* The full-viewport floor lives here, not in the base rule — it's meant
-       for tablet-split and every overlay/desktop case (both of which are
-       always >= 600px wide), not for phones. See the note on --hero-band
-       above and on .hero's base rule for why phones size to content instead. */
-    min-height: calc(100vh - var(--hero-header)); /* fallback for ~5% of browsers */
-    min-height: calc(100svh - var(--hero-header)); /* svh, not dvh: dvh resizes
-        the hero while the mobile toolbar hides on scroll */
-  }
-
   .hero__lead {
     display: block;
   }
 }
 
-/* Second headline range, continuous with the first at 1280px (both 104px):
-   104px @1280 → 156px @2100. Only ever reached in the overlay layout. */
-@media (min-width: 1280px) {
-  .hero {
-    --hero-h1-fluid: clamp(6.5rem, 1.43rem + 6.34vw, 9.75rem);
-  }
-}
-
-/* ── OVERLAY layout ───────────────────────────────────────────────────── */
+/* Narrower text column + pinned scrim — NOT just "min-width: 600px": a
+   tablet in portrait (e.g. 768x1024) is wide enough to match a plain
+   600px breakpoint but not wide enough to fit the search bar's three
+   inline fields into a 58% column without crushing them. Same compound
+   condition as the old overlay/split switch used before the header and
+   photo went full-bleed everywhere — kept here specifically because it's
+   still solving a real fit problem, not a legibility one. */
 @media (min-width: 1100px), (min-width: 600px) and (max-height: 899px) {
   .hero {
-    grid-template-rows: 1fr;
-    /* The header floats over the photograph here, so the hero owns the whole
-       viewport and the picture runs edge to edge behind the bar. */
-    --hero-header: 0px;
     --hero-col: 58%;
-    /* Horse sits at ~69–93% of the frame's width. 86% pins it right, well
-       clear of a 58% text column. */
-    --hero-focus: 86% 52%;
     /* Darkest on the left where the text is, clearing to almost nothing on
-       the right so the horse keeps its golden-hour rim light. Plus a short
-       top wash so the header edge stays legible against the treeline. */
+       the right so the horse keeps its golden-hour rim light — safe once
+       the column above is narrow enough that text never reaches the
+       lighter zone. Plus a short top wash so the header edge stays
+       legible against the treeline. */
     --hero-scrim: linear-gradient(
         90deg,
         rgb(13 24 18 / 0.78) 0%,
@@ -361,24 +349,13 @@ h4,
       ),
       linear-gradient(180deg, rgb(13 24 18 / 0.42) 0%, rgb(13 24 18 / 0) 26%);
   }
+}
 
-  /* The photo comes out of flow entirely. It must NOT be a grid item here:
-     `height: 100%` on an image inside an auto-height track resolves to auto,
-     so the photo's own 3:2 ratio silently becomes the hero's height — a
-     1440x900 window got a 950px hero and pushed its own stats row below the
-     fold. Taking the media out of flow makes min-height the only thing
-     sizing the hero. */
-  .hero__media {
-    position: absolute;
-    inset: 0;
-  }
-
-  .hero__body {
-    grid-area: 1 / 1;
-    /* Only the overlay layout puts text in the same band as the floating
-       header, so only it needs to reserve that space. In the split layout the
-       header sits over the photo and the body starts below it already. */
-    padding-top: calc(var(--header-h) + clamp(1.25rem, 4vh, 2.5rem));
+/* Second headline range, continuous with the first at 1280px (both 104px):
+   104px @1280 → 156px @2100. */
+@media (min-width: 1280px) {
+  .hero {
+    --hero-h1-fluid: clamp(6.5rem, 1.43rem + 6.34vw, 9.75rem);
   }
 }
 
@@ -446,18 +423,9 @@ h4,
    Site header
    Solid cream bar by default. On a route that opens with a full-bleed hero
    it floats over the photograph instead, transparent at the top of the page
-   and cross-fading to the solid bar once you scroll.
-
-   The layout question — "is the hero actually full-bleed right now?" — is
-   answered in CSS, not JavaScript, using the SAME media condition as the
-   `.hero` overlay block above and the first `<source media>` in
-   src/components/hero.tsx. Keep all three in step: if they drift, the header
-   goes transparent over a photo that is no longer behind it.
-
-   That split matters on phones. There the hero is the split layout, the photo
-   is a band the header sits ABOVE, and the horse is white: floating the header
-   over it measured 3.78:1 on the wordmark, failing AA. Below the overlay
-   breakpoint the header stays the solid in-flow bar.
+   and cross-fading to the solid bar once you scroll — at every width now,
+   phones included (the hero is full-bleed everywhere, see the doc comment
+   on `.hero` above for why phones didn't used to get this).
 
    JavaScript supplies one thing only: data-solid, set once the page has
    scrolled (or the mobile menu is open, which needs an opaque bar above it).
@@ -514,30 +482,28 @@ h4,
   z-index: -1;
 }
 
-@media (min-width: 1100px), (min-width: 600px) and (max-height: 899px) {
-  /* Fixed, not sticky, and regardless of scroll position: sticky would still
-     take up space in the flow, and the hero has to start at y = 0 for the
-     photograph to run underneath the bar. */
-  .site-header[data-overlay="true"] {
-    position: fixed;
-    inset-inline: 0;
-    top: 0;
-  }
+/* Fixed, not sticky, and regardless of scroll position: sticky would still
+   take up space in the flow, and the hero has to start at y = 0 for the
+   photograph to run underneath the bar. */
+.site-header[data-overlay="true"] {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+}
 
-  .site-header[data-overlay="true"][data-solid="false"] {
-    --hdr-fg: rgb(246 241 231 / 0.92);
-    --hdr-mark: var(--color-ink-fg);
-    --hdr-tagline: rgb(246 241 231 / 0.65);
-    --hdr-plate: 1;
+.site-header[data-overlay="true"][data-solid="false"] {
+  --hdr-fg: rgb(246 241 231 / 0.92);
+  --hdr-mark: var(--color-ink-fg);
+  --hdr-tagline: rgb(246 241 231 / 0.65);
+  --hdr-plate: 1;
 
-    border-bottom-color: rgb(246 241 231 / 0.2);
-    background: transparent;
-    backdrop-filter: none;
-  }
+  border-bottom-color: rgb(246 241 231 / 0.2);
+  background: transparent;
+  backdrop-filter: none;
+}
 
-  .site-header[data-overlay="true"][data-solid="false"] .site-header__link:hover {
-    color: var(--color-ink-fg);
-  }
+.site-header[data-overlay="true"][data-solid="false"] .site-header__link:hover {
+  color: var(--color-ink-fg);
 }
 
 @media (prefers-reduced-motion: reduce) {
