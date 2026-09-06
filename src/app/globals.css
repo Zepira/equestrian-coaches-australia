@@ -34,6 +34,16 @@
      itself against the space actually left over. */
   --header-h: 4rem;
 
+  /* The notch/Dynamic Island/status bar and the home-indicator gesture bar.
+     Zero on anything without a safe area (desktop, most Android phones,
+     any browser without viewport-fit=cover) — safe to use everywhere
+     unconditionally, never just for iOS. Requires viewport-fit=cover on
+     the viewport meta tag (see src/app/layout.tsx) or these are always 0,
+     because Safari never extends the page into the safe area to inset
+     from in the first place. */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
   /* Shared content rail — the max-width + side gutter every full-bleed
      section (header, hero, footer) aligns its inner content to, so they
      all read as one column no matter how wide the viewport gets. Escalated
@@ -206,9 +216,19 @@ h4,
   position: relative;
   display: grid;
   grid-template-rows: 1fr;
-  min-height: 100vh; /* fallback for ~5% of browsers */
-  min-height: 100svh; /* svh, not dvh: dvh resizes the hero while the mobile
-        toolbar hides on scroll */
+  /* Each unit overrides the last where the browser supports it — vh is the
+     universal fallback, svh is the guaranteed-visible floor (toolbar fully
+     expanded), dvh is the browser's actual current viewport, live-updated
+     as a toolbar like Safari's URL bar shows or hides on scroll. Using dvh
+     here is deliberate: it's what lets the hero (and the content inside
+     it, see .hero__body below) actually grow to fill the extra space once
+     the toolbar collapses, instead of staying pinned to the worst case
+     forever. The tradeoff is a resize as that toolbar animates — accepted
+     on purpose so the bottom of the hero can track the true edge of the
+     visible screen. */
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
   background: var(--color-ink);
   color: var(--color-ink-fg);
 }
@@ -256,10 +276,24 @@ h4,
      space it has rather than being pushed against the lower edge. The top
      padding also reserves the floating header, so "centred" means centred
      in the area BELOW the bar, not in the raw viewport — which is what
-     actually looks level. */
+     actually looks level. Bottom-anchored instead below 600px, see the
+     media query further down: a phone's dynamic toolbar means there's
+     genuinely variable extra room at the bottom once it collapses (this is
+     what min-height: 100dvh on .hero is for), and the point of that room
+     is for the search card to use it, not to re-centre a shorter stack
+     inside a taller box. --safe-top/--safe-bottom (env(safe-area-inset-*),
+     see :root) keep both ends clear of a device's actual hardware —
+     status bar/notch/Dynamic Island at the top, home-indicator gesture bar
+     at the bottom — not just the browser's own chrome. */
   align-items: center;
-  padding: calc(var(--header-h) + clamp(1.25rem, 4vh, 2.5rem)) var(--hero-gutter)
-    clamp(1.75rem, 5vh, 3rem);
+  padding: calc(var(--header-h) + var(--safe-top) + clamp(1.25rem, 4vh, 2.5rem)) var(--hero-gutter)
+    calc(clamp(1.75rem, 5vh, 3rem) + var(--safe-bottom));
+}
+
+@media (max-width: 599px) {
+  .hero__body {
+    align-items: flex-end;
+  }
 }
 
 .hero__inner {
@@ -440,6 +474,12 @@ h4,
   position: sticky;
   top: 0;
   z-index: 40;
+  /* Padding, not margin: background/border paint on the padding box, so
+     this pushes the wordmark/nav down clear of a notch or the Dynamic
+     Island without leaving a gap of bare page background above the
+     header — the header's own background (or, transparent + floating,
+     the plate below) still runs flush to the true top of the screen. */
+  padding-top: var(--safe-top);
   border-bottom: 1px solid var(--color-border);
   background: color-mix(in srgb, var(--color-bg) 95%, transparent);
   backdrop-filter: blur(8px);
@@ -474,7 +514,7 @@ h4,
   position: absolute;
   inset-inline: 0;
   top: 0;
-  height: calc(var(--header-h) * 2);
+  height: calc((var(--header-h) + var(--safe-top)) * 2);
   opacity: var(--hdr-plate);
   background: linear-gradient(180deg, rgb(13 24 18 / 0.7) 0%, rgb(13 24 18 / 0.34) 50%, rgb(13 24 18 / 0) 100%);
   pointer-events: none;

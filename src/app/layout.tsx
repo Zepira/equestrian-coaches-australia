@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Work_Sans } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
@@ -22,6 +22,19 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const title = "Equestrian Coaches Australia";
 const description =
   "Find your perfect riding coach, nearby. Search verified coaches across Australia by discipline and location.";
+
+// `viewport-fit: cover` is what lets the hero photo and the header's own
+// background paint underneath the iOS status bar / notch / Dynamic Island
+// instead of Safari letterboxing the page inside the "safe area" and
+// showing its own white chrome behind it. Content itself still has to
+// opt back IN to that space deliberately via env(safe-area-inset-*) — see
+// `.site-header`/`.hero__body` in globals.css — or text would render
+// underneath the notch instead of just the background.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
