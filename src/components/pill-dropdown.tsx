@@ -112,8 +112,8 @@ export function PillDropdown({
 
       {open && (
         <div
-          className={`absolute left-0 z-30 w-72 rounded-[var(--radius-tile)] border border-border bg-surface p-4 shadow-[0_16px_40px_rgba(31,58,46,0.16)] ${
-            dropUp ? "bottom-full mb-2" : "mt-2"
+          className={`dropdown-panel absolute left-0 z-30 w-72 rounded-[var(--radius-tile)] border border-border bg-surface p-4 shadow-[0_16px_40px_rgba(31,58,46,0.16)] ${
+            dropUp ? "bottom-full mb-2 origin-bottom" : "mt-2 origin-top"
           }`}
         >
           <div className="flex max-h-72 flex-col gap-4 overflow-y-auto">

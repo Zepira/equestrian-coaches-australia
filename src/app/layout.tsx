@@ -65,6 +65,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`h-full antialiased ${fraunces.variable} ${workSans.variable}`}>
       <body className="flex min-h-full flex-col bg-bg text-fg">
+        {/* .reveal (src/app/globals.css) fades real content in as it scrolls
+            into view — a scroll-reveal component has to start that content
+            at opacity: 0 in the server-rendered HTML for the fade-in to
+            exist at all, which only actually shows anything once the
+            IntersectionObserver in src/components/reveal.tsx runs. This is
+            the one-line insurance for whenever it doesn't: JS disabled, or
+            failing to hydrate. Never leaves real, SEO-relevant content
+            (discipline blurbs, coach cards) permanently invisible. */}
+        <noscript>
+          <style>{".reveal { opacity: 1 !important; transform: none !important; }"}</style>
+        </noscript>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--radius-control)] focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-fg"

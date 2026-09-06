@@ -104,6 +104,23 @@ body {
   font-family: var(--font-sans);
 }
 
+/* One universal switch for every animation/transition added below (scroll
+   reveals, hover lifts, the hero's Ken Burns drift, dropdown open) — belt
+   and suspenders alongside the couple of animation-specific reduced-motion
+   rules already in this file (.hero itself, the mobile menu icon). Anyone
+   with the OS-level "reduce motion" preference set gets the exact same
+   layout and states, just instantly rather than eased into. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 * {
   font-variation-settings: "SOFT" 0, "WONK" 0;
 }
@@ -134,6 +151,119 @@ h4,
 ::selection {
   background: var(--color-ink);
   color: var(--color-ink-fg);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Motion — kept to a few small, understated touches: a fade-up as content
+   scrolls into view, a hover lift on cards/tiles, a soft press on buttons,
+   the hero's headline settling in on load with a slow drift on the photo
+   behind it, and the filter dropdown panel opening rather than appearing.
+   Every one of these is decorative, never load-bearing — the reduced-
+   motion reset above already turns them all off at once for anyone who
+   asked for that; .reveal additionally never leaves real content stuck
+   invisible if JavaScript fails, see the component and the <noscript>
+   override in layout.tsx.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hover lift — cards and tiles that link somewhere, not static content. A
+   translate rather than a shadow-only change reads as "this responds to
+   you" without being flashy. */
+.lift {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.lift:hover {
+  transform: translateY(-3px);
+}
+
+/* A soft press, not a bounce — inline with the "understated" brief. Applied
+   to Button/LinkButton's shared base class, so it's automatically on every
+   button in the app rather than opted into per instance. */
+.press {
+  transition: transform 0.15s ease;
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+/* Hero headline/search settling in on load. Deliberately NOT on the
+   photograph itself — animating the LCP element delays how soon it reads
+   as "loaded", trading a real performance/perception cost for a cosmetic
+   one. The photo gets its own much slower, purely decorative drift
+   instead (.hero__img below), which doesn't affect first paint at all. */
+@keyframes hero-settle {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hero__col > * {
+  animation: hero-settle 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero__col > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.hero__col > *:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.hero__col > *:nth-child(3) {
+  animation-delay: 0.25s;
+}
+.hero__col > *:nth-child(4) {
+  animation-delay: 0.35s;
+}
+.hero__col > *:nth-child(5) {
+  animation-delay: 0.45s;
+}
+
+/* A very slow, small drift on the photo — 24s to travel 3% of its own
+   size, which reads as "alive" rather than as a slideshow effect. Runs
+   once forward and holds, not a back-and-forth loop, so it never draws
+   attention back to itself after the first look. */
+@keyframes ken-burns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.035);
+  }
+}
+.hero__img {
+  animation: ken-burns 24s ease-out both;
+}
+
+/* The filter dropdown opens rather than appears. Short and quick — this is
+   a UI control being used repeatedly during one search, not a moment to
+   linger on. */
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.dropdown-panel {
+  animation: dropdown-in 0.16s ease-out both;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════

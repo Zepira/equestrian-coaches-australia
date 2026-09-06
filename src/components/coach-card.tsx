@@ -15,12 +15,16 @@ export type CoachCardData = {
 
 export function CoachCard({ coach }: { coach: CoachCardData }) {
   return (
-    <Link href={`/coaches/${coach.slug}`} className="group flex flex-col gap-3">
+    <Link href={`/coaches/${coach.slug}`} className="lift group flex flex-col gap-3">
       <div
-        className="h-40 w-full flex-none rounded-[var(--radius-tile)] bg-shade bg-cover bg-center transition-opacity group-hover:opacity-90 sm:h-56"
-        style={coach.photoUrl ? { backgroundImage: `url(${coach.photoUrl})` } : undefined}
+        className="h-40 w-full flex-none overflow-hidden rounded-[var(--radius-tile)] bg-shade sm:h-56"
         aria-hidden
-      />
+      >
+        <div
+          className="h-full w-full bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
+          style={coach.photoUrl ? { backgroundImage: `url(${coach.photoUrl})` } : undefined}
+        />
+      </div>
       <div className="min-w-0">
         <div className="flex items-baseline justify-between gap-2">
           <div className="truncate font-display text-xl font-medium text-ink">{coach.name}</div>
