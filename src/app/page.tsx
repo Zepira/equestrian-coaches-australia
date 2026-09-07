@@ -3,13 +3,14 @@ import { Hero } from "@/components/hero";
 import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
 import { DisciplineTag } from "@/components/discipline-tag";
+import { DisciplineMasonry } from "@/components/discipline-masonry";
 import { LinkButton } from "@/components/ui/button";
 import { Reveal } from "@/components/reveal";
 import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
 import { searchCoaches, getSkills, getAttributes } from "@/lib/supabase/queries";
-import { searchMockCoaches, disciplinePhoto } from "@/lib/mock-coaches";
+import { searchMockCoaches } from "@/lib/mock-coaches";
 
 // Overrides the root layout's cream themeColor (src/app/layout.tsx) — this
 // is the one route whose own top edge is the dark hero, not the cream
@@ -48,58 +49,6 @@ export default async function Home() {
         <SearchBar skills={skills} attributes={attributes} tone="dark" />
       </Hero>
 
-      {/* Featured disciplines */}
-      <section className="bg-shade">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
-          <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-            <div>
-              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-                Featured disciplines
-              </div>
-              <h2 className="mt-4 max-w-xl text-4xl leading-[1.05] text-ink sm:text-5xl">
-                Start with the discipline you ride.
-              </h2>
-            </div>
-            <p className="max-w-sm text-lg leading-relaxed text-muted">
-              Coaches are listed by the disciplines they actually teach, not by keyword.
-            </p>
-          </Reveal>
-
-          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
-            {topDisciplines.map((d, i) => (
-              <Reveal key={d.slug} delay={i * 100}>
-                <a href={`/disciplines/${d.slug}`} className="lift group block">
-                  <div className="arch-crop aspect-square overflow-hidden bg-border">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- external Unsplash URL */}
-                    <img
-                      src={disciplinePhoto(d.slug)}
-                      alt={d.name}
-                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                    />
-                  </div>
-                  <h3 className="mt-6 text-2xl font-medium text-ink">{d.name}</h3>
-                  <p className="mt-1 text-[17px] leading-relaxed text-muted">{d.blurb}</p>
-                </a>
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal
-            delay={150}
-            className="mt-11 flex flex-col items-start justify-between gap-6 border-t border-border pt-8 sm:flex-row sm:items-center"
-          >
-            <div className="flex flex-wrap gap-2.5">
-              {moreDisciplines.map((d) => (
-                <DisciplineTag key={d.slug} slug={d.slug} />
-              ))}
-            </div>
-            <LinkButton href="/search" variant="ghost" className="shrink-0">
-              All disciplines →
-            </LinkButton>
-          </Reveal>
-        </div>
-      </section>
-
       {/* Featured coaches */}
       <section className="bg-bg">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
@@ -126,6 +75,60 @@ export default async function Home() {
           <LinkButton href="/search" variant="secondary" className="mt-8 w-full sm:hidden">
             See all coaches
           </LinkButton>
+        </div>
+      </section>
+
+      {/* Featured disciplines */}
+      <section className="bg-shade">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+            <div>
+              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+                Featured disciplines
+              </div>
+              <h2 className="mt-4 max-w-xl text-4xl leading-[1.05] text-ink sm:text-5xl">
+                Start with the discipline you ride.
+              </h2>
+            </div>
+            <p className="max-w-sm text-lg leading-relaxed text-muted">
+              Coaches are listed by the disciplines they actually teach, not by keyword.
+            </p>
+          </Reveal>
+
+          <Reveal delay={100} className="mt-12">
+            <DisciplineMasonry disciplines={topDisciplines} />
+          </Reveal>
+
+          <Reveal
+            delay={150}
+            className="mt-11 flex flex-col items-start justify-between gap-6 border-t border-border pt-8 sm:flex-row sm:items-center"
+          >
+            <div className="flex flex-wrap gap-2.5">
+              {moreDisciplines.map((d) => (
+                <DisciplineTag key={d.slug} slug={d.slug} />
+              ))}
+            </div>
+            <LinkButton href="/search" variant="ghost" className="shrink-0">
+              All disciplines →
+            </LinkButton>
+          </Reveal>
+
+          {/* Coach CTA — sits directly under the disciplines it's meant to
+              follow on from, not stranded at the very bottom of the page. */}
+          <Reveal
+            delay={200}
+            className="mt-11 flex flex-col items-start justify-between gap-6 rounded-[var(--radius-tile)] bg-ink px-6 py-8 sm:flex-row sm:items-center sm:px-10"
+          >
+            <p className="max-w-xl text-[15px] leading-relaxed text-ink-fg/90 sm:text-base">
+              <strong className="text-ink-fg">Coaches:</strong>{" "}
+              <strong className="text-ink-fg">$9.99 a month</strong> for a full profile — bio, photo,
+              location, specialties, qualifications and testimonials.{" "}
+              <strong className="text-ink-fg">$14.95</strong> adds your clinics and events.
+            </p>
+            <LinkButton href="/for-coaches" className="w-full shrink-0 sm:w-auto">
+              List your coaching profile
+            </LinkButton>
+          </Reveal>
         </div>
       </section>
 
@@ -165,28 +168,6 @@ export default async function Home() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Coach CTA */}
-      <section className="border-t border-border bg-bg">
-        <Reveal className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 px-4 py-14 sm:flex-row sm:items-center sm:px-6 sm:py-16">
-          <div className="max-w-xl">
-            <h2 className="text-3xl leading-[1.05] text-ink sm:text-4xl">Coaching professionally?</h2>
-            <p className="mt-3 text-lg leading-relaxed text-muted">
-              List from <strong className="text-ink">$9.99 a month</strong> — bio, photo, location,
-              specialties, qualifications and testimonials.{" "}
-              <strong className="text-ink">$14.95</strong> adds your clinics and events.
-            </p>
-          </div>
-          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-            <LinkButton href="/for-coaches" className="w-full sm:w-auto">
-              List your coaching profile
-            </LinkButton>
-            <LinkButton href="/for-coaches" variant="secondary" className="w-full sm:w-auto">
-              See pricing
-            </LinkButton>
-          </div>
-        </Reveal>
       </section>
     </>
   );

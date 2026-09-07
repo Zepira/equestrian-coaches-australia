@@ -15,11 +15,13 @@ export type CoachCardData = {
 
 export function CoachCard({ coach }: { coach: CoachCardData }) {
   return (
-    <Link href={`/coaches/${coach.slug}`} className="lift group flex flex-col gap-3">
-      <div
-        className="h-40 w-full flex-none overflow-hidden rounded-[var(--radius-tile)] bg-shade sm:h-56"
-        aria-hidden
-      >
+    <Link href={`/coaches/${coach.slug}`} className="group flex flex-col gap-3">
+      {/* .lift lives on the photo alone, not the whole card — the card's
+          text sits in normal flow below it, so lifting the whole <Link>
+          on hover would drag the name/tags/headline up with the photo,
+          reading as the text itself bouncing rather than the photo
+          responding to you. */}
+      <div className="lift arch-crop aspect-square w-full bg-shade" aria-hidden>
         <div
           className="h-full w-full bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
           style={coach.photoUrl ? { backgroundImage: `url(${coach.photoUrl})` } : undefined}

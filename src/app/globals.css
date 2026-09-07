@@ -166,6 +166,62 @@ h4,
   overflow: hidden;
 }
 
+/* Discipline masonry — the featured-disciplines tile, a different signature
+   from the arch crop above: a full sharp-cornered rectangle with the title
+   and blurb overlaid directly on the photo behind a gradient scrim, not a
+   caption underneath it. Two variants, matched to where each sits in the
+   grid: `.tile-top` (the large tile) anchors text top-left over a
+   diagonal wash with a small decorative accent shape in the clear corner;
+   `.tile-bottom` (the two smaller tiles) anchors text bottom-left over a
+   plain bottom-up wash, the more familiar caption reading. */
+.tile-caption {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-tile);
+}
+.tile-caption img {
+  transition: transform 0.5s ease;
+}
+.tile-caption:hover img {
+  transform: scale(1.05);
+}
+.tile-caption::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.tile-bottom::after {
+  background: linear-gradient(180deg, rgb(31 58 46 / 0) 35%, rgb(31 58 46 / 0.88) 100%);
+}
+.tile-top::after {
+  background: linear-gradient(
+    135deg,
+    rgb(31 58 46 / 0.88) 0%,
+    rgb(31 58 46 / 0.5) 40%,
+    rgb(31 58 46 / 0) 68%
+  );
+}
+/* Sits behind the text (z-index 2, below), above the scrim (z-index 1) —
+   only in the clear corner the diagonal wash leaves open, so it reads as
+   a material detail on the photo rather than competing with the title
+   for contrast. */
+.tile-accent {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  width: 46%;
+  height: 60%;
+  background: var(--color-accent);
+  opacity: 0.3;
+  clip-path: polygon(32% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+.tile-caption__body {
+  position: relative;
+  z-index: 2;
+}
+
 ::selection {
   background: var(--color-ink);
   color: var(--color-ink-fg);
