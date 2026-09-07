@@ -104,6 +104,24 @@ body {
   font-family: var(--font-sans);
 }
 
+/* iOS Safari paints <html>'s own background — not whatever's actually in
+   normal document flow underneath it — in the safe-area inset strip
+   behind the notch/Dynamic Island (and the equivalent elastic-overscroll
+   region at the bottom). That's true regardless of how correctly the hero
+   itself extends full-bleed: on "/" the hero sits directly below that
+   strip, so leaving <html> at its default cream here is exactly what
+   reads as a white gap above an otherwise correctly-positioned header.
+   data-overlay-route (set before first paint by the inline script in
+   layout.tsx, kept in sync across client-side navigation by SiteHeader)
+   answers the same "does this route open with a full-bleed hero" question
+   the header's own transparent state already asks. */
+html {
+  background: var(--color-bg);
+}
+html[data-overlay-route="true"] {
+  background: var(--color-ink);
+}
+
 /* One universal switch for every animation/transition added below (scroll
    reveals, hover lifts, the hero's Ken Burns drift, dropdown open) — belt
    and suspenders alongside the couple of animation-specific reduced-motion

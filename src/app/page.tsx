@@ -1,3 +1,4 @@
+import type { Viewport } from "next";
 import { Hero } from "@/components/hero";
 import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
@@ -9,6 +10,16 @@ import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
 import { searchCoaches, getSkills, getAttributes } from "@/lib/supabase/queries";
 import { searchMockCoaches, disciplinePhoto } from "@/lib/mock-coaches";
+
+// Overrides the root layout's cream themeColor (src/app/layout.tsx) — this
+// is the one route whose own top edge is the dark hero, not the cream
+// header every other page opens with.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#1f3a2e",
+};
 
 export default async function Home() {
   const supabase = await createClient();

@@ -137,6 +137,14 @@ export function SiteHeader() {
   // The mobile menu panel needs an opaque bar above it, so opening it forces
   // the solid state just as scrolling does.
   const solid = scrolled || open;
+
+  // Keeps <html data-overlay-route> (globals.css, iOS safe-area background —
+  // see the comment there) correct across client-side navigation, which the
+  // blocking inline script in layout.tsx only handles for the very first
+  // load of the page.
+  useEffect(() => {
+    document.documentElement.dataset.overlayRoute = String(overlayRoute);
+  }, [overlayRoute]);
   const linkClass = "site-header__link text-[15px] font-medium";
 
   return (

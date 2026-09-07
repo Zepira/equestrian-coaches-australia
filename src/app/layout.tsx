@@ -34,6 +34,11 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // Tints Safari's own chrome (status bar / bottom bar) to match the page.
+  // Overridden to the hero's ink green on "/" itself — see the `viewport`
+  // export in src/app/page.tsx — since that's the one route where the
+  // page's own top edge is dark, not this cream ground colour.
+  themeColor: "#f6f1e7",
 };
 
 export const metadata: Metadata = {
@@ -63,8 +68,38 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`h-full antialiased ${fraunces.variable} ${workSans.variable}`}>
+    <html
+      lang="en"
+      className={`h-full antialiased ${fraunces.variable} ${workSans.variable}`}
+      // The inline script below sets data-overlay-route on this element
+      // before React hydrates, same "runs before paint, outside React's
+      // model" pattern as a dark-mode FOUC-prevention script — React has
+      // no way to know the attribute is expected, so without this it logs
+      // a hydration mismatch every time despite nothing being wrong.
+      suppressHydrationWarning
+    >
       <body className="flex min-h-full flex-col bg-bg text-fg">
+        {/* Sets data-overlay-route on <html> before first paint — the same
+            "does this route open with a full-bleed hero" question
+            SiteHeader answers client-side via usePathname (and keeps
+            correct across client-side navigation, which this script
+            doesn't see, only running once on the initial load). Without
+            it, the very first paint of "/" would render with <html>'s
+            default cream background for one frame — see the
+            `html[data-overlay-route]` rule in globals.css for why that
+            background matters at all: iOS Safari's safe-area inset strip
+            (behind the notch/Dynamic Island) paints <html>'s own
+            background there, not whatever's in normal document flow.
+            First child of <body>, not a hand-written <head> — Next's App
+            Router owns <head> itself via the metadata/viewport APIs above,
+            and a plain <script> child of <body> is the documented, well-
+            supported way to run something this early (the same pattern
+            next-themes' own FOUC-prevention script uses). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.dataset.overlayRoute = location.pathname === "/";`,
+          }}
+        />
         {/* .reveal (src/app/globals.css) fades real content in as it scrolls
             into view — a scroll-reveal component has to start that content
             at opacity: 0 in the server-rendered HTML for the fade-in to
