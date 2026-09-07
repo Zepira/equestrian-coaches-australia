@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { HeroParallax } from "@/components/hero-parallax";
+import { CountUp } from "@/components/count-up";
 
 /**
  * Full-bleed hero with an art-directed background photograph.
@@ -45,6 +47,7 @@ export function Hero({
 }) {
   return (
     <section className="hero">
+      <HeroParallax />
       <div className="hero__media">
         <picture>
           <source type="image/avif" srcSet={srcset("wide", CROPS.wide, "avif")} sizes="100vw" />
@@ -76,14 +79,17 @@ export function Hero({
             {children}
             {stats && stats.length > 0 && (
               <dl className="hero__stats">
-                {stats.map((s) => (
-                  <div key={s.label}>
-                    <dt className="sr-only">{s.label}</dt>
-                    <dd>
-                      <strong>{s.value}</strong> {s.label}
-                    </dd>
-                  </div>
-                ))}
+                {stats.map((s) => {
+                  const numeric = /^\d+$/.test(s.value);
+                  return (
+                    <div key={s.label}>
+                      <dt className="sr-only">{s.label}</dt>
+                      <dd>
+                        <strong>{numeric ? <CountUp value={Number(s.value)} /> : s.value}</strong> {s.label}
+                      </dd>
+                    </div>
+                  );
+                })}
               </dl>
             )}
           </div>

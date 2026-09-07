@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LinkButton } from "@/components/ui/button";
+import { Magnetic } from "@/components/magnetic";
 import { Monogram } from "@/components/monogram";
 import { createClient } from "@/lib/supabase/client";
 
@@ -25,18 +26,40 @@ const navLinks = [
  */
 const OVERLAY_ROUTES = ["/"];
 
-/** True once the page has scrolled past a few pixels. */
-function useScrolled(threshold = 8) {
+/**
+ * `scrolled`: true once the page has scrolled past a few pixels (the
+ * existing opaque-background trigger). `hidden`: true while actively
+ * scrolling DOWN, well clear of the top — the header slides away rather
+ * than following the rider down the page, and reappears the instant they
+ * scroll back up even a little, not only once they're back at the very
+ * top. A small per-tick delta threshold (not just "did y increase")
+ * ignores the sub-pixel jitter most trackpads/momentum scrolling produce,
+ * which otherwise flickers the header in and out on a scroll that's
+ * actually holding still.
+ */
+function useHeaderVisibility(threshold = 8) {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > threshold);
+    let lastY = window.scrollY;
+
+    function onScroll() {
+      const y = window.scrollY;
+      setScrolled(y > threshold);
+
+      const delta = y - lastY;
+      if (y > 160 && delta > 4) setHidden(true);
+      else if (delta < -4 || y < 160) setHidden(false);
+      lastY = y;
+    }
+
     onScroll(); // a reload part-way down the page starts scrolled
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [threshold]);
 
-  return scrolled;
+  return { scrolled, hidden };
 }
 
 type AuthState = { loggedIn: boolean; role: "rider" | "coach" | null };
@@ -97,13 +120,23 @@ function AccountLinks({
           </Link>
         </Item>
         <Item>
-          <LinkButton
-            href="/signup?role=coach"
-            onClick={onNavigate}
-            className={mobile ? "mt-1 w-full justify-center text-sm" : "text-sm"}
-          >
-            List your profile
-          </LinkButton>
+          {mobile ? (
+            <LinkButton
+              href="/signup?role=coach"
+              onClick={onNavigate}
+              className="mt-1 w-full justify-center text-sm"
+            >
+              List your profile
+            </LinkButton>
+          ) : (
+            // Magnetic only on the desktop bar — a touch device has no
+            // pointer to react to, so this would be inert weight there.
+            <Magnetic>
+              <LinkButton href="/signup?role=coach" onClick={onNavigate} className="text-sm">
+                List your profile
+              </LinkButton>
+            </Magnetic>
+          )}
         </Item>
       </>
     );
@@ -131,12 +164,15 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const auth = useAuthState();
   const pathname = usePathname();
-  const scrolled = useScrolled();
+  const { scrolled, hidden } = useHeaderVisibility();
 
   const overlayRoute = OVERLAY_ROUTES.includes(pathname);
   // The mobile menu panel needs an opaque bar above it, so opening it forces
   // the solid state just as scrolling does.
   const solid = scrolled || open;
+  // Never hide while the menu is open — a bar that vanishes out from under
+  // an open panel reads as broken, not restrained.
+  const reallyHidden = hidden && !open;
 
   // Keeps <html data-overlay-route> (globals.css, iOS safe-area background —
   // see the comment there) correct across client-side navigation, which the
@@ -148,7 +184,7 @@ export function SiteHeader() {
   const linkClass = "site-header__link text-[15px] font-medium";
 
   return (
-    <header className="site-header" data-overlay={overlayRoute} data-solid={solid}>
+    <header className="site-header" data-overlay={overlayRoute} data-solid={solid} data-hidden={reallyHidden}>
       <div className="site-header__plate" aria-hidden />
       {/* Two nested boxes, matching the hero's OWN box model exactly
           (.hero__body -> .hero__inner in globals.css) rather than one div

@@ -6,6 +6,7 @@ import { DisciplineTag } from "@/components/discipline-tag";
 import { DisciplineMasonry } from "@/components/discipline-masonry";
 import { LinkButton } from "@/components/ui/button";
 import { Reveal } from "@/components/reveal";
+import { Magnetic } from "@/components/magnetic";
 import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
@@ -54,7 +55,7 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
           <Reveal className="flex items-end justify-between gap-4">
             <div>
-              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+              <div className="eyebrow-line text-sm font-semibold uppercase tracking-[0.2em] text-accent">
                 Featured coaches
               </div>
               <h2 className="mt-4 text-4xl leading-[1.05] text-ink sm:text-5xl">
@@ -83,7 +84,7 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
           <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <div>
-              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+              <div className="eyebrow-line text-sm font-semibold uppercase tracking-[0.2em] text-accent">
                 Featured disciplines
               </div>
               <h2 className="mt-4 max-w-xl text-4xl leading-[1.05] text-ink sm:text-5xl">
@@ -125,9 +126,11 @@ export default async function Home() {
               location, specialties, qualifications and testimonials.{" "}
               <strong className="text-ink-fg">$14.95</strong> adds your clinics and events.
             </p>
-            <LinkButton href="/for-coaches" className="w-full shrink-0 sm:w-auto">
-              List your coaching profile
-            </LinkButton>
+            <Magnetic className="w-full shrink-0 sm:w-auto">
+              <LinkButton href="/for-coaches" className="w-full sm:w-auto">
+                List your coaching profile
+              </LinkButton>
+            </Magnetic>
           </Reveal>
         </div>
       </section>
