@@ -243,7 +243,8 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
                   >
                     <span className="self-start rounded-[10px] bg-shade py-[7px] text-center wide:rounded-[8px] wide:bg-ink-fg/10 wide:py-1.5">
                       <span className="block font-display text-[24px] leading-none text-ink wide:text-[22px] wide:text-ink-fg">{c.day}</span>
-                      <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.1em] text-subtle wide:text-ink-fg/60">{c.mon}</span>
+                      {/* canvas: cream at .6 — 3.7:1 at 10px, under AA; .75 measures 5.4:1 */}
+                      <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.1em] text-subtle wide:text-ink-fg/75">{c.mon}</span>
                     </span>
                     <span>
                       <span className="block font-display text-[18px] leading-[1.1] text-ink wide:text-ink-fg">{c.title}</span>

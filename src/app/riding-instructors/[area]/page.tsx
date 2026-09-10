@@ -69,8 +69,8 @@ export default async function RidingInstructorsAreaPage({ params }: { params: Pr
             : []),
         ]}
       />
-      <h1 className="font-display text-[38px] leading-none text-ink wide:text-[56px] wide:leading-[0.98]">
-        Riding instructors in {area.name}, {area.state}
+      <h1 className="font-display text-[38px] leading-none -tracking-[0.01em] text-ink wide:text-[56px] wide:leading-[0.98] wide:-tracking-[0.02em]">
+        Riding instructors in <em className="italic text-accent">{area.name}</em>, {area.state}
       </h1>
       <p className="mt-2 max-w-xl text-muted">
         Coaches across every discipline serving {area.name} and nearby areas.

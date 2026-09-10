@@ -33,6 +33,18 @@ export function EnquirySheet({
     heading.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
+      // Trap Tab inside the dialog: wrap from the last focusable to the first
+      // and back, so keyboard users can't tab out to the page underneath.
+      if (e.key === "Tab") {
+        const dialog = heading.current?.closest<HTMLElement>("[role=dialog]");
+        if (!dialog) return;
+        const items = [...dialog.querySelectorAll<HTMLElement>("a[href], button, input, select, textarea, [tabindex]:not([tabindex='-1'])")].filter((el) => !el.hasAttribute("disabled") && el.getClientRects().length > 0);
+        if (items.length === 0) return;
+        const first = items[0], last = items[items.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+        if (e.shiftKey && (active === first || !dialog.contains(active))) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && (active === last || !dialog.contains(active))) { e.preventDefault(); first.focus(); }
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => {

@@ -17,9 +17,11 @@ const settle = (pg) => pg.waitForLoadState("networkidle", { timeout: 8000 }).cat
 const args = process.argv.slice(2);
 const route = "/" + String(args[0] ?? "").replace(/^[A-Za-z]:[\\/].*?(?=\/|$)/, "").replace(/^\/+/, "");
 const width = Number(args[1]);
-const selectors = args.slice(2).filter((a) => !a.startsWith("--") && a !== args[args.indexOf("--scroll") + 1] && a !== args[args.indexOf("--base") + 1]);
+const selectors = args.slice(2).filter((a) => !a.startsWith("--") && a !== args[args.indexOf("--scroll") + 1] && a !== args[args.indexOf("--base") + 1] && a !== args[args.indexOf("--login") + 1]);
 const scrollY = args.includes("--scroll") ? Number(args[args.indexOf("--scroll") + 1]) : 0;
 const base = args.includes("--base") ? args[args.indexOf("--base") + 1] : "http://localhost:3000";
+// --login email:password — sign in through /login first (dashboard, account).
+const login = args.includes("--login") ? args[args.indexOf("--login") + 1] : null;
 
 const lum = ([r, g, b]) => {
   const f = (c) => {
@@ -35,6 +37,14 @@ const ratio = (a, b) => {
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width, height: width < 600 ? 844 : 800 } });
+if (login) {
+  const [email, password] = login.split(":");
+  await page.goto(base + "/login", { waitUntil: "load" });
+  await page.locator("input[type=email], input[name=email]").first().fill(email);
+  await page.locator("input[type=password]").first().fill(password);
+  await page.locator("form button[type=submit]").first().click();
+  await page.waitForTimeout(3000);
+}
 await page.goto(base + route, { waitUntil: "load" }); await settle(page);
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(2500);
@@ -51,16 +61,27 @@ for (const sel of selectors) {
     failed++;
     continue;
   }
+  await el.evaluate((node) => node.scrollIntoView({ block: "center", behavior: "instant" }));
+  await page.waitForTimeout(300);
   const info = await el.evaluate((node) => {
     const cs = getComputedStyle(node);
     const r = node.getBoundingClientRect();
-    const m = cs.color.match(/[\d.]+/g).map(Number);
+    // Tailwind v4 opacity modifiers compute to color-mix()/oklab strings; let
+    // the canvas normalise whatever syntax it is to rgba().
+    // Chrome serialises modern syntaxes (oklab(), color(srgb …)) verbatim,
+    // so don't parse the string — paint it over black and over white and
+    // read the pixels back: the difference gives alpha, black gives the rgb.
+    const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+    const probe = (bg) => { ctx.fillStyle = bg; ctx.fillRect(0, 0, 1, 1); ctx.fillStyle = cs.color; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3); };
+    const onB = probe("#000"), onW = probe("#fff");
+    const alpha = Math.max(0, Math.min(1, 1 - (onW[0] + onW[1] + onW[2] - onB[0] - onB[1] - onB[2]) / (3 * 255)));
+    const m = [...(alpha > 0 ? onB.map((c) => Math.min(255, Math.round(c / alpha))) : [0, 0, 0]), Number(alpha.toFixed(3))];
     // Sample the content box only: a pill's own hairline border and padding
     // are inside the bounding box but never behind the glyphs.
     const px = (v) => parseFloat(v) || 0;
     const l = px(cs.borderLeftWidth) + px(cs.paddingLeft), t = px(cs.borderTopWidth) + px(cs.paddingTop);
     const rr = px(cs.borderRightWidth) + px(cs.paddingRight), b = px(cs.borderBottomWidth) + px(cs.paddingBottom);
-    return { box: { x: r.left + l, y: r.top + t, w: r.width - l - rr, h: r.height - t - b }, color: m, fontSize: cs.fontSize, weight: cs.fontWeight, text: node.textContent.trim().slice(0, 40) };
+    return { box: { x: r.left + l, y: r.top + t, w: r.width - l - rr, h: r.height - t - b }, color: m.slice(0, 3), alpha: m[3] ?? 1, fontSize: cs.fontSize, weight: cs.fontWeight, text: node.textContent.trim().slice(0, 40) };
   });
   // Hide the text (keep layout), shoot the box, restore.
   await el.evaluate((node) => {
@@ -106,7 +127,9 @@ for (const sel of selectors) {
     },
     [`data:image/png;base64,${buf.toString("base64")}`, textIsLight]
   );
-  const r = ratio(lum(info.color), lum(worst));
+  // Translucent text (e.g. text-ink-fg/70) paints as a blend with what is behind it.
+  const painted = info.alpha < 1 ? info.color.map((c, i) => Math.round(c * info.alpha + worst[i] * (1 - info.alpha))) : info.color;
+  const r = ratio(lum(painted), lum(worst));
   // WCAG AA: 4.5:1 for normal text, 3:1 for large text (≥ 24px, or ≥ 18.66px bold).
   const px = parseFloat(info.fontSize);
   const large = px >= 24 || (px >= 18.66 && Number(info.weight) >= 700);

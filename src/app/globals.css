@@ -172,6 +172,11 @@ html[data-overlay-route="true"] {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  /* Scroll reveals: no fade-up at all — content is simply there. */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* Every heading is Instrument Serif at weight 400 — the face has no bold,

@@ -146,6 +146,7 @@ export function SearchBar({
       <span className="sr-only">Suburb or postcode</span>
       <input
         ref={inputRef}
+        name="location"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
         placeholder="Suburb or postcode"
@@ -164,6 +165,7 @@ export function SearchBar({
     <label className="relative order-3 flex min-w-0 flex-1 items-center rounded-[9px] bg-surface px-3.5 text-fg wide:order-2 wide:rounded-[10px] wide:px-4">
       <span className="sr-only">Discipline</span>
       <select
+        name="d"
         value={discipline}
         onChange={(e) => setDiscipline(e.target.value)}
         className="w-full appearance-none bg-transparent py-[13px] pr-[18px] text-[16px] text-fg outline-none wide:py-4 wide:text-[18px]"
@@ -191,7 +193,7 @@ export function SearchBar({
   );
 
   return (
-    <form onSubmit={submit} className={`flex flex-wrap gap-1.5 p-2 ${shell}`} aria-label="Find a coach">
+    <form action="/search" method="get" onSubmit={submit} className={`flex flex-wrap gap-1.5 p-2 ${shell}`} aria-label="Find a coach">
       {locationField}
       {chips}
       {disciplineField}

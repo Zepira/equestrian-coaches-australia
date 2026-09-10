@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { inputClass } from "@/components/ui/field";
 
 // Plain password <input> plus a "Show"/"Hide" toggle — same visual chrome
 // as every other text input in the app, just with a text button inside the
@@ -25,14 +26,12 @@ export function PasswordInput({
         type={visible ? "text" : "password"}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 pr-16 text-fg ${
-          props.className ?? ""
-        }`}
+        className={`${inputClass} pr-16 ${props.className ?? ""}`}
       />
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
-        className="absolute inset-y-0 right-0 px-3 text-sm font-medium text-accent"
+        className="absolute inset-y-0 right-0 px-3.5 text-[13px] font-medium text-accent"
         aria-label={visible ? "Hide password" : "Show password"}
       >
         {visible ? "Hide" : "Show"}

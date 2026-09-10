@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { inputClass, labelClass } from "@/components/ui/field";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines } from "@/lib/supabase/queries";
 import { updateClinic } from "../../actions";
@@ -28,33 +29,36 @@ export default async function EditClinicPage({ params }: { params: Promise<{ id:
   if (!clinic) notFound();
 
   return (
-    <form action={updateClinic.bind(null, id)} className="flex flex-col gap-4">
+    <div className="fade-in">
+      <h1 className="font-display text-[40px] leading-none -tracking-[0.02em] text-ink wide:text-[56px] wide:leading-[0.98] wide:-tracking-[0.025em]">Edit clinic</h1>
+      <p className="mt-2 text-[15px] leading-[1.5] text-muted">Changes go live straight away on the clinic page and your profile.</p>
+    <form action={updateClinic.bind(null, id)} className="mt-6 flex flex-col gap-4 rounded-[18px] border border-border bg-surface p-4 wide:p-6">
       <label className="block">
-        <span className="mb-1 block text-sm font-medium text-fg">Title</span>
+        <span className={labelClass}>Title</span>
         <input
           name="title"
           type="text"
           required
           defaultValue={clinic.title}
-          className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
+          className={inputClass}
         />
       </label>
       <label className="block">
-        <span className="mb-1 block text-sm font-medium text-fg">Description</span>
+        <span className={labelClass}>Description</span>
         <textarea
           name="description"
           rows={3}
           defaultValue={clinic.description}
-          className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
+          className={inputClass}
         />
       </label>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">Discipline</span>
+          <span className={labelClass}>Discipline</span>
           <select
             name="discipline_id"
             defaultValue={clinic.discipline_id ?? ""}
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
+            className={inputClass}
           >
             <option value="">Any discipline</option>
             {disciplines.map((d) => (
@@ -65,40 +69,41 @@ export default async function EditClinicPage({ params }: { params: Promise<{ id:
           </select>
         </label>
         <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">Location</span>
+          <span className={labelClass}>Location</span>
           <input
             name="location_text"
             type="text"
             required
             defaultValue={clinic.location_text}
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
+            className={inputClass}
           />
         </label>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">Start date</span>
+          <span className={labelClass}>Start date</span>
           <input
             name="start_date"
             type="date"
             required
             defaultValue={clinic.start_date}
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
+            className={inputClass}
           />
         </label>
         <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">End date (optional)</span>
+          <span className={labelClass}>End date (optional)</span>
           <input
             name="end_date"
             type="date"
             defaultValue={clinic.end_date ?? ""}
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
+            className={inputClass}
           />
         </label>
       </div>
-      <Button type="submit" className="self-start">
+      <Button type="submit" className="h-12 self-start px-6 text-[15px]">
         Save changes
       </Button>
     </form>
+    </div>
   );
 }

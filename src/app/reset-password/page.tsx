@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/password-input";
+import { AuthShell } from "@/components/auth-shell";
+import { labelClass } from "@/components/ui/field";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 // Reached only via the link in the reset email — /auth/callback exchanges
@@ -78,38 +80,32 @@ export default function ResetPasswordPage() {
 
   if (status === "expired") {
     return (
-      <div className="mx-auto max-w-sm px-4 py-12 text-center sm:px-6">
-        <h1 className="text-2xl font-bold text-fg">Link expired</h1>
-        <p className="mt-2 text-sm text-muted">
-          This reset link is no longer valid — links only work once and expire after a while.
-        </p>
-        <Link href="/forgot-password" className="mt-4 inline-block font-medium text-accent">
+      <AuthShell eyebrow="Account" title="Link expired" lead="This reset link is no longer valid — links only work once and expire after a while.">
+        <Link href="/forgot-password" className="inline-flex h-12 items-center rounded-[var(--radius-pill)] border border-ink px-5 text-[15px] font-medium text-ink">
           Request a new link
         </Link>
-      </div>
+      </AuthShell>
     );
   }
 
   return (
-    <div className="mx-auto max-w-sm px-4 py-12 sm:px-6">
-      <h1 className="text-2xl font-bold text-fg">Set a new password</h1>
-
-      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+    <AuthShell eyebrow="Account" title="Set a new password" lead="At least eight characters. You'll be signed in once it's saved.">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">New password</span>
+          <span className={labelClass}>New password</span>
           <PasswordInput value={password} onChange={setPassword} minLength={8} required />
         </label>
         <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">Confirm new password</span>
+          <span className={labelClass}>Confirm new password</span>
           <PasswordInput value={confirmPassword} onChange={setConfirmPassword} minLength={8} required />
         </label>
 
-        {error && <p className="text-sm text-danger">{error}</p>}
+        {error && <p role="alert" className="text-[13.5px] text-accent">{error}</p>}
 
-        <Button type="submit" disabled={loading || done} className="mt-2 w-full">
+        <Button type="submit" disabled={loading || done} className="mt-1 h-12 w-full text-[15px]">
           {loading ? "Saving…" : "Set new password"}
         </Button>
       </form>
-    </div>
+    </AuthShell>
   );
 }

@@ -27,7 +27,7 @@ export default async function AdminAliasesPage() {
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <h2 className="text-lg font-semibold text-fg">
+        <h2 className="font-display text-[26px] leading-none text-ink">
           {aliases.length} alias{aliases.length === 1 ? "" : "es"}
         </h2>
         <p className="mt-1 text-sm text-muted">
@@ -38,7 +38,7 @@ export default async function AdminAliasesPage() {
           {aliases.map((a) => (
             <div
               key={a.id}
-              className="flex items-center justify-between gap-3 rounded-[var(--radius-tile)] border border-border bg-surface px-3 py-2 text-sm"
+              className="flex items-center justify-between gap-3 rounded-[14px] border border-border bg-surface px-3 py-2 text-sm"
             >
               <div className="min-w-0">
                 <span className="font-medium text-fg">{a.alias}</span>
@@ -63,14 +63,14 @@ export default async function AdminAliasesPage() {
       </section>
 
       <section className="border-t border-border pt-6">
-        <h2 className="text-lg font-semibold text-fg">Add an alias</h2>
+        <h2 className="font-display text-[26px] leading-none text-ink">Add an alias</h2>
         <form action={addAlias} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium text-fg">Term</span>
             <select
               name="term_id"
               required
-              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
+              className="w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-fg"
             >
               {(terms ?? []).map((t) => (
                 <option key={t.id} value={t.id}>
@@ -85,7 +85,7 @@ export default async function AdminAliasesPage() {
               name="alias"
               required
               placeholder="e.g. flatwork coach"
-              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
+              className="w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
             />
           </label>
           <Button type="submit">Add</Button>

@@ -51,7 +51,9 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
             : []),
         ]}
       />
-      <h1 className="font-display text-[38px] leading-none text-ink wide:text-[56px] wide:leading-[0.98]">{discipline.name} coaches</h1>
+      <h1 className="font-display text-[38px] leading-none -tracking-[0.01em] text-ink wide:text-[56px] wide:leading-[0.98] wide:-tracking-[0.02em]">
+        <em className="italic text-accent">{discipline.name}</em> coaches
+      </h1>
       <p className="mt-2 max-w-xl text-muted">{discipline.blurb}</p>
 
       <div className="mt-6">
@@ -69,7 +71,7 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
           ))}
         </div>
       ) : (
-        <div className="mt-8 rounded-[var(--radius-tile)] border border-dashed border-border p-8 text-center text-muted">
+        <div className="mt-8 rounded-[16px] border border-dashed border-[#d9cdb6] p-8 text-center text-[15px] text-muted">
           No {discipline.name.toLowerCase()} coaches listed yet — check back soon.
         </div>
       )}

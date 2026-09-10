@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { AuthShell } from "@/components/auth-shell";
+import { inputClass, labelClass } from "@/components/ui/field";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export default function ForgotPasswordPage() {
@@ -45,51 +47,46 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="mx-auto max-w-sm px-4 py-12 sm:px-6">
+    <AuthShell
+      eyebrow="Account"
+      title={sent ? "Check your email" : "Reset your password"}
+      lead={sent ? <>We sent a reset link to <strong className="font-medium text-ink">{email}</strong>. It works once.</> : "Enter the email on your account and we'll send you a link to set a new password."}
+      footer={
+        <Link href="/login" className="font-medium text-accent">
+          Back to log in
+        </Link>
+      }
+    >
       {sent ? (
-        <div className="rounded-[var(--radius-tile)] border border-border bg-surface p-5 text-center">
-          <p className="text-fg">Check your email for a reset link.</p>
-          <p className="mt-1 text-sm text-muted">We sent it to {email}.</p>
-        </div>
+        <p className="text-[14px] leading-[1.5] text-muted">Nothing there after a minute? Check spam — and if that address has no account, nothing is sent.</p>
       ) : (
         <>
-          <h1 className="text-2xl font-bold text-fg">Reset your password</h1>
-          <p className="mt-2 text-sm text-muted">
-            Enter the email on your account and we&apos;ll send you a link to set a new password.
-          </p>
-
           {!isSupabaseConfigured && (
-            <p className="mt-4 rounded-[var(--radius-control)] border border-border bg-accent-soft p-3 text-sm text-fg">
+            <p className="mb-4 rounded-[12px] border border-border bg-shade px-3.5 py-3 text-[13.5px] leading-[1.5] text-muted">
               Auth isn&apos;t connected yet — this form is a preview until Supabase is set up.
             </p>
           )}
 
-          <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <label className="block">
-              <span className="mb-1 block text-sm font-medium text-fg">Email</span>
+              <span className={labelClass}>Email</span>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
+                className={inputClass}
                 required
               />
             </label>
 
-            {error && <p className="text-sm text-danger">{error}</p>}
+            {error && <p role="alert" className="text-[13.5px] text-accent">{error}</p>}
 
-            <Button type="submit" disabled={loading} className="mt-2 w-full">
+            <Button type="submit" disabled={loading} className="mt-1 h-12 w-full text-[15px]">
               {loading ? "Sending…" : "Send reset link"}
             </Button>
           </form>
         </>
       )}
-
-      <p className="mt-6 text-center text-sm text-muted">
-        <Link href="/login" className="font-medium text-accent">
-          Back to log in
-        </Link>
-      </p>
-    </div>
+    </AuthShell>
   );
 }

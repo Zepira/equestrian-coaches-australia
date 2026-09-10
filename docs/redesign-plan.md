@@ -233,12 +233,12 @@ Copy is already right (the canvas was lifted from the current page). This is a r
 
 ### R9 — Everything without a canvas, then the whole-site sweep
 
-- [ ] `/login`, `/signup`, `/forgot-password`, `/reset-password`: light header, display headings, new inputs (12 px radius, hairline, terracotta focus), pill buttons. No layout change.
-- [ ] `/clinics/[id]`: light header, date block, organiser card, the profile's enquiry aside reused for "Ask about this clinic" (`want = clinic` pre-selected).
-- [ ] `/disciplines/[slug]` and the area pages: hero-less; display h1 with the italic emphasis pattern, R4 result cards, footer.
-- [ ] `/not-found`, `/admin/*`, `/dashboard/clinics/[id]/edit`: token inheritance only, checked for anything that broke when the radii and fonts changed.
-- [ ] `metadata` descriptions unchanged; `sitemap`, `robots`, structured data re-verified.
-- [ ] `CLAUDE.md`: Phase 10's Paddock token notes updated to point here; Phases 17/20 marked superseded; a new "Phase 21 — Golden Hour redesign" entry summarising R0–R9 with what was measured.
+- [x] `/login`, `/signup`, `/forgot-password`, `/reset-password`: light header, display headings, new inputs (12 px radius, hairline, terracotta focus), pill buttons. No layout change.
+- [x] `/clinics/[id]`: light header, date block, organiser card, the profile's enquiry aside reused for "Ask about this clinic" (`want = clinic` pre-selected).
+- [x] `/disciplines/[slug]` and the area pages: hero-less; display h1 with the italic emphasis pattern, R4 result cards, footer.
+- [x] `/not-found`, `/admin/*`, `/dashboard/clinics/[id]/edit`: token inheritance only, checked for anything that broke when the radii and fonts changed.
+- [x] `metadata` descriptions unchanged; `sitemap`, `robots`, structured data re-verified.
+- [x] `CLAUDE.md`: Phase 10's Paddock token notes updated to point here; Phases 17/20 marked superseded; a new "Phase 21 — Golden Hour redesign" entry summarising R0–R9 with what was measured.
 
 **Validation (whole site):**
 - Walk every route in the site map at 390 and 1280 with console open: zero errors, zero hydration warnings under `next start`.
@@ -248,6 +248,10 @@ Copy is already right (the canvas was lifted from the current page). This is a r
 - Lighthouse-style checks by hand: LCP element on `/` and `/for-coaches` is the hero image; total hero payload under 200 KB; fonts `display: swap`.
 - Accessibility: every interactive control keyboard-reachable; sheet/dialog focus trapped; colour contrast on every new dark surface measured (peach on `#1f3a2e` for 13 px text is the tight one — it must clear 4.5:1 or the size goes up).
 - Final side-by-side gallery: `docs/design-reference/final/` with app vs frame for all 16 frames, and a written list of every remaining deviation with the reason.
+
+**Done 10 Sep 2026.** No-canvas pages: `AuthShell` (`src/components/auth-shell.tsx`) frames login / signup / forgot / reset with the rider account's page head (eyebrow, display h1, lead, cream card) and `src/components/ui/field.tsx` owns the one input + uppercase label every no-canvas form uses (auth, clinic edit, admin); `PasswordInput` inherits it. `/clinics/[id]` rebuilt: eyebrow, date block + display title, details tiles (where / places left / discipline), the hosting coach's arch card, and "Ask about this clinic" — the profile's `ContactForm` with `want` pre-set to clinic, shown only when the coach is published, has the form on and isn't closed. `/not-found` is the display treatment ("Nothing *here*."); `/disciplines/[slug]`, `/disciplines/[slug]/[area]` and `/riding-instructors/[area]` carry the italic-accent emphasis in the h1 (their cards were already R4's). Admin and the clinic edit form got the display heading, the new inputs and the 12/14px radii. Sweep grep: no `font-bold` on any heading, no Fraunces / Work Sans reference, `radius-tile` / `radius-control` only remain as the aliases in `globals.css` and in `location-autocomplete.tsx` / `media-upload-form.tsx` (both resolve to the new values).
+
+**Whole-site sweep** — `scripts/design-reference/site-sweep.mjs`, run against `next build && next start` (dev overlays add warnings production never shows): **76/76**. Every route in the site map at 390 and 1280 (15 public incl. the 404, 6 coach, 2 rider): status, zero console errors, zero page errors, zero hydration warnings, no horizontal overflow, header + footer + description on every public page. Viewport matrix 320×568 → 2560×1440 on `/`, `/search`, a coach profile and `/for-coaches`: no overflow, h1 and header inside at all eight sizes. Reduced motion: every `[data-reveal]` visible at once (this needed a real fix — the reset only zeroed durations, so below-the-fold content stayed at opacity 0 until scrolled; `globals.css` now forces reveals visible under `prefers-reduced-motion`), marquee stopped. No-JS: h1, coach links and reveals visible on five routes, and the home search is a real GET form (another real fix — `SearchBar` had only an `onSubmit`, so without JS the button did nothing; it now posts `location` + `d` to `/search`). LCP is the hero `<img>` on `/` (measured at 390×844 — Chrome excludes an image that fills the whole viewport from LCP, which the 100svh desktop hero does, so at 1280 the metric legitimately falls to the h1) and on `/for-coaches`; one hero file fetched, 44 KB / 82 KB, every webfont `display: swap`. Keyboard: the enquiry sheet now **traps focus** (a third real fix — it moved focus in and back but Tab walked out to the page after eight stops) and Escape returns focus to the bar; `TakingStudentsControl` gained roving tabindex + arrow keys (it was a radiogroup in name only); every visible control on `/search` is tabbable. Sitemap lists the real coach and not the mock one, robots disallows the private routes, JSON-LD parses on coach (Person + BreadcrumbList), discipline (ItemList + BreadcrumbList) and clinic (Event + BreadcrumbList) pages, `/search` is noindex. Contrast on the new dark surfaces with `contrast-check.mjs` (which now reads the painted pixel for `oklab()`/`color-mix()` text colours instead of parsing the string, composites translucent text, scrolls the target into view, and takes `--login`): dashboard chart eyebrow 6.85:1, trend line 7.61:1, month labels 4.46:1 → raised from `/55` to `/65`; account "Coming up near you" 6.85:1, row line 5.48:1, month `Oct` 3.73:1 at the canvas's `.6` → `.75` (4.82:1); Awaiting-reply pill 4.59:1; plan rail 7.56:1. Final gallery: `node scripts/design-reference/build-final-gallery.mjs` → `docs/design-reference/final/index.html`, all 12 built frames beside the app captures, with §5 rendered as the deviations list (1b Journal and 1c Night Arena listed as not built). `CLAUDE.md` updated per the last checkbox.
 
 ---
 
@@ -273,7 +277,9 @@ Copy is already right (the canvas was lifted from the current page). This is a r
 - **Map** — canvas is a placeholder; the app plots real PostGIS results on OSM tiles.
 - **Dashboard tabs** — canvas uses client state; the app uses real routes so links, refresh and back/forward work. Visually identical.
 - **Delete my account** — the canvas is a bare link; the app confirms first.
-- **Pages without a canvas** (§1 last row) get the tokens and the header/footer, nothing invented.
+- **Pages without a canvas** (§1 last row) get the tokens and the header/footer, nothing invented — auth pages share the rider account's page head (`AuthShell`), the clinic page is the dashboard clinic card + the profile's enquiry aside.
+- **Two canvas opacities fail AA and were raised** — the rider account's month label (`Oct`, 10px cream at .6 on the ink card = 3.7:1 → .75 = 4.8:1) and the dashboard chart's month labels (cream at .55 = 4.46:1 → .65). Same colours, slightly more opaque.
+- **Reduced motion shows scroll-reveal content immediately** rather than fading it in at 0.01ms; the canvases have no reduced-motion state.
 
 ---
 

@@ -35,15 +35,28 @@ export function TakingStudentsControl({ value, compact = false }: { value: Takin
     });
   };
 
+  // WAI-ARIA radiogroup: one tab stop (the checked option), arrows move
+  // and select, so the control works from the keyboard like a native radio.
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const dir = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+    if (!dir) return;
+    e.preventDefault();
+    const idx = OPTIONS.findIndex((o) => o.k === current);
+    const next = OPTIONS[(idx + dir + OPTIONS.length) % OPTIONS.length];
+    pick(next.k);
+    (e.currentTarget.querySelectorAll<HTMLButtonElement>("[role=radio]")[OPTIONS.indexOf(next)])?.focus();
+  };
+
   return (
     <div>
-      <div className="grid grid-cols-3 gap-1 rounded-[var(--radius-pill)] bg-shade p-1" role="radiogroup" aria-label="Taking new students?" data-pending={pending}>
+      <div className="grid grid-cols-3 gap-1 rounded-[var(--radius-pill)] bg-shade p-1" role="radiogroup" aria-label="Taking new students?" data-pending={pending} onKeyDown={onKeyDown}>
         {OPTIONS.map((o) => (
           <button
             key={o.k}
             type="button"
             role="radio"
             aria-checked={current === o.k}
+            tabIndex={current === o.k ? 0 : -1}
             onClick={() => pick(o.k)}
             className={`rounded-[var(--radius-pill)] font-medium transition-colors duration-[250ms] ${compact ? "py-2 text-[13px]" : "py-2.5 text-[14px]"} ${current === o.k ? "bg-ink text-ink-fg" : "bg-transparent text-ink"}`}
           >
