@@ -126,6 +126,24 @@ export const SKILL_NAMES: Record<string, string> = {
   "rider-biomechanics": "Rider biomechanics & position",
 };
 
+// One-line detail under each setup tile on the profile (canvas: "Own arena
+// — 60 × 20 m, all-weather surface"), keyed by attribute slug.
+const SETUP_DETAILS: Record<string, string> = {
+  "own-arena": "60 × 20 m, all-weather surface",
+  "indoor-arena": "Covered 40 × 20 m, lights",
+  "horses-available": "Two schoolmasters for lessons",
+  "xc-course-on-site": "Full course to 95 cm",
+  "agistment-available": "Paddock and yard options",
+  "beginners-welcome": "First lesson to first show",
+  "children-juniors": "From age seven",
+  "adults-only": "Adult riders only",
+  "nervous-riders": "Quiet horses, no pressure",
+  "ndis-registered": "Plan-managed and self-managed",
+  "group-lessons": "Groups of up to four",
+  "weekend-availability": "Saturdays and Sunday mornings",
+  "ea-accredited": "EA Level 1",
+};
+
 // A varied but deterministic setup mix — every mock coach gets 1–2 of
 // these, cycling through so the "setup" facet has real coverage to filter
 // on rather than every coach looking identical.
@@ -209,6 +227,11 @@ export type MockCoach = {
   qualifications: string[];
   tier: "standard" | "standard_plus_clinics";
   photoUrl: string;
+  takingStudents: "yes" | "waitlist" | "no";
+  travelRadiusKm: number | null;
+  yearsCoaching: number;
+  /** Attribute name → one-line detail, matching coach_terms.detail. */
+  setupDetails: Record<string, string>;
   contact: {
     email: string | null;
     phone: string | null;
@@ -294,6 +317,18 @@ export const mockCoaches: MockCoach[] = Array.from({ length: COACH_COUNT }, (_, 
     qualifications: QUALIFICATIONS_BY_DISCIPLINE[primaryDiscipline] ?? [],
     tier: i % 5 < 2 ? "standard_plus_clinics" : "standard",
     photoUrl: photoFor(primaryDiscipline),
+    // Mostly taking students, a few on a waitlist, one in ten closed —
+    // enough that every profile state shows up somewhere in the roster.
+    takingStudents: i % 10 === 9 ? "no" : i % 5 === 3 ? "waitlist" : "yes",
+    // Radius varies 0 (own place only) / 30 / 60 / 100 so "Based in" vs
+    // "Travels to" and the radius line both get exercised.
+    travelRadiusKm: [0, 30, 60, 100][i % 4],
+    yearsCoaching: years,
+    setupDetails: Object.fromEntries(
+      attributeSlugs
+        .map((a) => [ATTRIBUTE_NAMES[a] ?? a, SETUP_DETAILS[a]])
+        .filter((pair): pair is [string, string] => Boolean(pair[1]))
+    ),
     contact: mockContact(i, slug),
   };
 });

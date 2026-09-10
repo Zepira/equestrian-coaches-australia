@@ -6,6 +6,7 @@ import { getDisciplines, getSkills, getAttributes, resolveLocation, searchCoache
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { searchMockCoaches } from "@/lib/mock-coaches";
 import { logSearchEvent } from "@/lib/search-events";
+import { logImpressions } from "@/lib/coach-events";
 
 // noindex, follow — faceted URLs are the classic directory crawl-budget
 // disaster (spec: "What earns a page"). /disciplines/[slug] is the
@@ -60,6 +61,10 @@ export default async function SearchPage({
       ...results,
       ...searchMockCoaches({ disciplineSlugs, skillSlugs, attributeSlugs, lat, long, radiusKm: 100 }),
     ].sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
+
+    // coach_events.impression — one per real coach in the result set,
+    // deduped per visitor per day (mock coaches are skipped by the logger).
+    await logImpressions(results.map((r) => ("id" in r && r.id ? r.id : "")).filter(Boolean));
 
     // search_events — logged regardless of hit/miss, the zero-result rows
     // are the interesting ones (supply gap vs vocabulary gap).

@@ -10,6 +10,7 @@ import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 import { getMockCoachBySlug, SKILL_NAMES, ATTRIBUTE_NAMES } from "@/lib/mock-coaches";
 import { getDisciplineBySlug } from "@/lib/disciplines";
 import { breadcrumbSchema, coachPersonSchema } from "@/lib/structured-data";
+import { logView } from "@/lib/coach-events";
 
 export function generateStaticParams() {
   return placeholderCoaches.map((c) => ({ slug: c.slug }));
@@ -39,6 +40,11 @@ type CoachView = {
   photoUrl: string | null;
   videoUrl: string | null;
   canListClinics: boolean;
+  takingStudents: "yes" | "waitlist" | "no";
+  travelRadiusKm: number | null;
+  yearsCoaching: number | null;
+  /** Attribute name → the coach's own one-line detail, when they wrote one. */
+  setupDetails: Record<string, string>;
   contact: {
     email: string | null;
     phone: string | null;
@@ -56,7 +62,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
   const { data: coach } = await supabase
     .from("coach_profiles")
     .select(
-      "id, headline, bio, suburb, state, lat, long, qualifications, subscription_tier, video_url, published, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form, profiles!coach_profiles_id_fkey(name)"
+      "id, headline, bio, suburb, state, lat, long, qualifications, subscription_tier, video_url, published, taking_students, travel_radius_km, years_coaching, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form, profiles!coach_profiles_id_fkey(name)"
     )
     .eq("slug", slug)
     .eq("published", true)
@@ -67,7 +73,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
     await Promise.all([
       supabase
         .from("coach_terms")
-        .select("terms(slug, name, kind)")
+        .select("detail, terms(slug, name, kind)")
         .eq("coach_id", coach.id),
       supabase.from("testimonials").select("quote, author_name").eq("coach_id", coach.id),
       supabase
@@ -121,6 +127,15 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
       : null,
     videoUrl: coach.video_url,
     canListClinics: coach.subscription_tier === "standard_plus_clinics",
+    takingStudents: (coach.taking_students as CoachView["takingStudents"]) ?? "yes",
+    travelRadiusKm: coach.travel_radius_km ?? null,
+    yearsCoaching: coach.years_coaching ?? null,
+    setupDetails: Object.fromEntries(
+      (disciplineRows ?? [])
+        .map((r) => r as unknown as { detail: string | null; terms: { name: string; kind: string } | null })
+        .filter((r) => r.terms?.kind === "attribute" && r.detail)
+        .map((r) => [r.terms!.name, r.detail as string])
+    ),
     contact: {
       email: coach.show_contact_email && coach.contact_email ? coach.contact_email : null,
       phone: coach.show_contact_phone && coach.contact_phone ? coach.contact_phone : null,
@@ -154,6 +169,10 @@ function getCoachFromMock(slug: string): CoachView | null {
     photoUrl: coach.photoUrl,
     videoUrl: null,
     canListClinics: coach.tier === "standard_plus_clinics",
+    takingStudents: coach.takingStudents,
+    travelRadiusKm: coach.travelRadiusKm,
+    yearsCoaching: coach.yearsCoaching,
+    setupDetails: coach.setupDetails,
     contact: coach.contact,
   };
 }
@@ -181,6 +200,10 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
     photoUrl: null,
     videoUrl: null,
     canListClinics: coach.tier === "standard_plus_clinics",
+    takingStudents: "yes",
+    travelRadiusKm: null,
+    yearsCoaching: null,
+    setupDetails: {},
     contact: noContact,
   };
 }
@@ -199,6 +222,7 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
   const { slug } = await params;
   const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
   if (!coach) notFound();
+  if (coach.id) await logView(coach.id); // real coaches only; deduped per visitor per day
 
   const disciplineNames = coach.disciplineSlugs
     .map((s) => getDisciplineBySlug(s)?.name)
