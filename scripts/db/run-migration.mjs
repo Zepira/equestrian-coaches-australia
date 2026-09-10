@@ -5,9 +5,10 @@
 //   node run-migration.mjs --query "<sql>"       run an ad-hoc statement
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import pg from "pg";
 
-const ROOT = new URL("../..", import.meta.url).pathname.replace(/^/([A-Za-z]:)/, "$1");
+const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 const env = Object.fromEntries(
   readFileSync(resolve(ROOT, ".env"), "utf8")
     .split(/\r?\n/)

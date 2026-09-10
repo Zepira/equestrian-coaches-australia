@@ -15,6 +15,10 @@
 // the wider viewport matrix.
 
 import { chromium } from "playwright";
+// "load", then up to 8s of network quiet — a page with a live map or a
+// long-polling dev connection never reaches a strict networkidle.
+const settle = (pg) => pg.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => {});
+
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
@@ -76,13 +80,20 @@ async function main() {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width, height: width < 600 ? 844 : 800 }, deviceScaleFactor: 1 });
   const errors = [];
-  page.on("console", (m) => { if (m.type() === "error" || m.type() === "warning") errors.push(`[console.${m.type()}] ${m.text()}`); });
+  page.on("console", (m) => {
+    // Headless Chromium's GPU driver chatter on a WebGL map is not a page error.
+    if (/GL Driver Message|WebGL-0x/.test(m.text())) return;
+    if (m.type() === "error" || m.type() === "warning") errors.push(`[console.${m.type()}] ${m.text()}`);
+  });
   page.on("pageerror", (e) => errors.push(`[pageerror] ${e.message}`));
   page.on("response", (r) => { if (r.status() >= 400) errors.push(`[http ${r.status()}] ${r.url()}`); });
 
-  await page.goto(base + route, { waitUntil: "networkidle" });
+  await page.goto(base + route, { waitUntil: "load" }); await settle(page);
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(2500);
+  // A page with a map needs its style + fitBounds animation to finish
+  // before the screenshot means anything.
+  if ((await page.locator(".maplibregl-map").count()) > 0) await page.waitForTimeout(3000);
 
   const stem = `${label}--${width}`;
   await page.screenshot({ path: join(OUT, `${stem}--viewport.png`) });

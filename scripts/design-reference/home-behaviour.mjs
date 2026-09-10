@@ -6,6 +6,10 @@
 //   node scripts/design-reference/home-behaviour.mjs [--base http://localhost:3000]
 
 import { chromium } from "playwright";
+// "load", then up to 8s of network quiet — a page with a live map or a
+// long-polling dev connection never reaches a strict networkidle.
+const settle = (pg) => pg.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => {});
+
 
 const base = process.argv.includes("--base") ? process.argv[process.argv.indexOf("--base") + 1] : "http://localhost:3000";
 let failed = 0;
@@ -19,7 +23,7 @@ const browser = await chromium.launch();
 // ── 1. reveal + parallax + wordcycle at 390 ────────────────────────────
 {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(base + "/", { waitUntil: "networkidle" });
+  await page.goto(base + "/", { waitUntil: "load" }); await settle(page);
   await page.evaluate(() => document.fonts.ready);
 
   const initial = await page.evaluate(() =>
@@ -64,7 +68,7 @@ const browser = await chromium.launch();
 
   // wordcycle: the visible word at 1s, 3s, 5s after load should step
   // dressage → western → liberty
-  await page.reload({ waitUntil: "networkidle" });
+  await page.reload({ waitUntil: "load" }); await settle(page);
   const visibleAt = async () =>
     page.evaluate(() =>
       [...document.querySelectorAll(".hero__cycle > span")]
@@ -83,7 +87,7 @@ const browser = await chromium.launch();
 // ── 2. live search card ────────────────────────────────────────────────
 {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-  await page.goto(base + "/", { waitUntil: "networkidle" });
+  await page.goto(base + "/", { waitUntil: "load" }); await settle(page);
   const input = page.locator(".hero__search input");
   await input.fill("Bend");
   await page.waitForTimeout(700);
@@ -113,7 +117,7 @@ const browser = await chromium.launch();
 // ── 3. viewport matrix: no horizontal scroll, header legible, hero intact ─
 for (const [w, h] of [[320, 568], [375, 667], [390, 844], [768, 1024], [1024, 768], [1280, 800], [1440, 900], [1600, 700], [1920, 1080], [2560, 1440]]) {
   const page = await browser.newPage({ viewport: { width: w, height: h } });
-  await page.goto(base + "/", { waitUntil: "networkidle" });
+  await page.goto(base + "/", { waitUntil: "load" }); await settle(page);
   const r = await page.evaluate(() => ({
     overflow: document.documentElement.scrollWidth > window.innerWidth,
     heroH: document.querySelector(".hero").getBoundingClientRect().height,
@@ -131,7 +135,7 @@ for (const [w, h] of [[320, 568], [375, 667], [390, 844], [768, 1024], [1024, 76
 {
   const ctx = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
   const page = await ctx.newPage();
-  await page.goto(base + "/", { waitUntil: "networkidle" });
+  await page.goto(base + "/", { waitUntil: "load" }); await settle(page);
   await page.waitForTimeout(300);
   const r = await page.evaluate(() => ({
     rise: getComputedStyle(document.querySelector(".rise-word")).animationDuration,
@@ -165,7 +169,7 @@ for (const [w, h] of [[320, 568], [375, 667], [390, 844], [768, 1024], [1024, 76
   page.on("request", (q) => {
     if (q.url().includes("/hero/")) heroReqs.push(q.url().split("/").pop());
   });
-  await page.goto(base + "/", { waitUntil: "networkidle" });
+  await page.goto(base + "/", { waitUntil: "load" }); await settle(page);
   const img = await page.evaluate(() => {
     const i = document.querySelector(".hero__img");
     return { fp: i.getAttribute("fetchpriority"), loading: i.getAttribute("loading"), src: i.currentSrc.split("/").pop() };

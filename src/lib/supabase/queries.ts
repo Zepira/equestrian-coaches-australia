@@ -123,6 +123,10 @@ export type CoachSearchResult = {
   skillNames: string[];
   attributeNames: string[];
   photoUrl: string | null;
+  lat: number | null;
+  long: number | null;
+  takingStudents: "yes" | "waitlist" | "no";
+  travelRadiusKm: number | null;
 };
 
 export type SearchFilters = {
@@ -155,7 +159,7 @@ export async function searchCoaches(
 
   const ids = matches.map((m: { id: string }) => m.id);
 
-  const [{ data: profileRows }, { data: disciplineRows }, { data: photoRows }] = await Promise.all([
+  const [{ data: profileRows }, { data: disciplineRows }, { data: photoRows }, { data: coachRows }] = await Promise.all([
     supabase.from("profiles").select("id, name").in("id", ids),
     supabase
       .from("coach_terms")
@@ -166,8 +170,10 @@ export async function searchCoaches(
       .select("coach_id, storage_path")
       .in("coach_id", ids)
       .order("sort_order"),
+    supabase.from("coach_profiles").select("id, lat, long, taking_students, travel_radius_km").in("id", ids),
   ]);
 
+  const coachById = new Map((coachRows ?? []).map((c) => [c.id as string, c]));
   const nameById = new Map((profileRows ?? []).map((p) => [p.id, p.name as string]));
   const namesByKindAndCoach: Record<TermKind, Map<string, string[]>> = {
     discipline: new Map(),
@@ -204,6 +210,10 @@ export async function searchCoaches(
     skillNames: namesByKindAndCoach.skill.get(m.id) ?? [],
     attributeNames: namesByKindAndCoach.attribute.get(m.id) ?? [],
     photoUrl: photoById.get(m.id) ?? null,
+    lat: (coachById.get(m.id)?.lat as number | null) ?? null,
+    long: (coachById.get(m.id)?.long as number | null) ?? null,
+    takingStudents: ((coachById.get(m.id)?.taking_students as "yes" | "waitlist" | "no" | undefined) ?? "yes"),
+    travelRadiusKm: (coachById.get(m.id)?.travel_radius_km as number | null) ?? null,
   }));
 }
 

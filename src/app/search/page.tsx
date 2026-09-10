@@ -1,6 +1,5 @@
-import { SearchBar } from "@/components/search-bar";
-import { CoachCard } from "@/components/coach-card";
-import { SearchFacets } from "@/components/search-facets";
+import { SearchResults } from "@/components/search-results";
+import type { CoachResultData } from "@/components/coach-result-card";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines, getSkills, getAttributes, resolveLocation, searchCoaches } from "@/lib/supabase/queries";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
@@ -18,12 +17,18 @@ export const metadata = {
   robots: { index: false, follow: true },
 };
 
+const RADII = [25, 50, 75, 100, 125, 150];
+
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ d?: string; s?: string; a?: string; location?: string }>;
+  searchParams: Promise<{ d?: string; s?: string; a?: string; location?: string; r?: string; new?: string; edit?: string }>;
 }) {
-  const { d = "", s = "", a = "", location = "" } = await searchParams;
+  const sp = await searchParams;
+  const { d = "", s = "", a = "", location = "" } = sp;
+  const radiusKm = RADII.includes(Number(sp.r)) ? Number(sp.r) : 50;
+  const onlyTaking = sp.new === "1";
+  const editing = sp.edit === "1";
   const disciplineSlugs = d.split(",").filter(Boolean);
   const skillSlugs = s.split(",").filter(Boolean);
   const attributeSlugs = a.split(",").filter(Boolean);
@@ -34,7 +39,9 @@ export default async function SearchPage({
     getAttributes(supabase),
   ]);
 
-  let results;
+  let results: CoachResultData[];
+  let origin: { lat: number; long: number } | null = null;
+  let searchTown: string | null = null;
   let locationNotFound = false;
 
   if (supabase) {
@@ -49,22 +56,23 @@ export default async function SearchPage({
       if (resolved) {
         lat = resolved.lat;
         long = resolved.long;
+        origin = { lat, long };
+        searchTown = resolved.suburb.toLowerCase().replace(/(^|[\s'-])([a-z])/g, (m: string, sep: string, c: string) => sep + c.toUpperCase());
       } else {
         locationNotFound = true;
       }
     }
 
-    results = await searchCoaches(supabase, { disciplineIds, skillIds, attributeIds, lat, long, radiusKm: 100 });
+    const real = await searchCoaches(supabase, { disciplineIds, skillIds, attributeIds, lat, long, radiusKm });
 
     // Mock data merge — see src/lib/mock-coaches.ts to remove.
-    results = [
-      ...results,
-      ...searchMockCoaches({ disciplineSlugs, skillSlugs, attributeSlugs, lat, long, radiusKm: 100 }),
-    ].sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
+    results = [...real, ...searchMockCoaches({ disciplineSlugs, skillSlugs, attributeSlugs, lat, long, radiusKm })]
+      .filter((c) => !onlyTaking || c.takingStudents === "yes")
+      .sort((x, y) => (x.distanceKm ?? Infinity) - (y.distanceKm ?? Infinity));
 
     // coach_events.impression — one per real coach in the result set,
     // deduped per visitor per day (mock coaches are skipped by the logger).
-    await logImpressions(results.map((r) => ("id" in r && r.id ? r.id : "")).filter(Boolean));
+    await logImpressions(real.map((r) => r.id));
 
     // search_events — logged regardless of hit/miss, the zero-result rows
     // are the interesting ones (supply gap vs vocabulary gap).
@@ -73,13 +81,11 @@ export default async function SearchPage({
       locationText: location || null,
       lat,
       lng: long,
-      radiusKm: 100,
+      radiusKm,
       resultCount: results.length,
     });
   } else {
     // Placeholder filtering — used only when Supabase isn't configured.
-    // No skill/attribute data on placeholder coaches, so those facets are
-    // a no-op here rather than filtering everything out.
     results = placeholderCoaches
       .filter((coach) => {
         const matchesDiscipline =
@@ -92,42 +98,15 @@ export default async function SearchPage({
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <h1 className="text-2xl font-bold text-fg sm:text-3xl">Find a coach</h1>
-      <div className="mt-4">
-        <SearchBar defaultDiscipline={disciplineSlugs[0] ?? ""} defaultLocation={location} tone="plain" />
-      </div>
-
-      {/* Multi-select facets — OR within a facet, AND across facets, e.g.
-          "dressage or show jumping" AND "confidence building" AND "own arena".
-          Pill dropdowns, not every option rendered flat — the discipline
-          list alone is ~19 options, skills+setup another ~47. */}
-      <div className="mt-6">
-        <SearchFacets disciplines={disciplines} skills={skills} attributes={attributes} />
-      </div>
-
-      {locationNotFound && (
-        <p className="mt-6 rounded-[var(--radius-control)] border border-border bg-accent-soft p-3 text-sm text-fg">
-          Couldn&apos;t find &ldquo;{location}&rdquo; — showing results for any location instead.
-        </p>
-      )}
-
-      <p className="mt-6 text-sm text-muted">
-        {results.length} coach{results.length === 1 ? "" : "es"} found
-        {location && !locationNotFound ? ` near ${location}` : ""}
-      </p>
-
-      {results.length > 0 ? (
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {results.map((coach) => (
-            <CoachCard key={coach.slug} coach={coach} />
-          ))}
-        </div>
-      ) : (
-        <div className="mt-8 rounded-[var(--radius-tile)] border border-dashed border-border p-8 text-center text-muted">
-          No coaches match that search yet. Try a different discipline, skill or a wider area.
-        </div>
-      )}
-    </div>
+    <SearchResults
+      results={results}
+      origin={origin}
+      searchTown={searchTown}
+      locationText={location}
+      radiusKm={radiusKm}
+      editing={editing}
+      disciplineSlug={disciplineSlugs[0] ?? ""}
+      locationNotFound={locationNotFound}
+    />
   );
 }

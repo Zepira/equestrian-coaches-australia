@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
-import { CoachCard } from "@/components/coach-card";
+import { CoachResultCard } from "@/components/coach-result-card";
 import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
 import { searchCoaches } from "@/lib/supabase/queries";
@@ -69,7 +69,7 @@ export default async function RidingInstructorsAreaPage({ params }: { params: Pr
             : []),
         ]}
       />
-      <h1 className="text-2xl font-bold text-fg sm:text-3xl">
+      <h1 className="font-display text-[38px] leading-none text-ink wide:text-[56px] wide:leading-[0.98]">
         Riding instructors in {area.name}, {area.state}
       </h1>
       <p className="mt-2 max-w-xl text-muted">
@@ -84,9 +84,9 @@ export default async function RidingInstructorsAreaPage({ params }: { params: Pr
         {coaches.length} coach{coaches.length === 1 ? "" : "es"} listed
       </p>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         {coaches.map((coach) => (
-          <CoachCard key={coach.slug} coach={coach} />
+          <CoachResultCard key={coach.slug} coach={coach} />
         ))}
       </div>
     </div>

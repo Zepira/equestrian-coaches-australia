@@ -357,6 +357,10 @@ export type MockCoachCard = {
   attributeNames: string[];
   photoUrl: string;
   distanceKm: number | null;
+  lat: number;
+  long: number;
+  takingStudents: "yes" | "waitlist" | "no";
+  travelRadiusKm: number | null;
 };
 
 function toCard(coach: MockCoach, distanceKm: number | null): MockCoachCard {
@@ -371,6 +375,10 @@ function toCard(coach: MockCoach, distanceKm: number | null): MockCoachCard {
     attributeNames: coach.attributeSlugs.map((s) => ATTRIBUTE_NAMES[s] ?? s),
     photoUrl: coach.photoUrl,
     distanceKm,
+    lat: coach.lat,
+    long: coach.long,
+    takingStudents: coach.takingStudents,
+    travelRadiusKm: coach.travelRadiusKm,
   };
 }
 

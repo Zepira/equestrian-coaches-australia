@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
     // Claude Design canvas export (Golden Hour redesign source of truth) —
     // ships its own React runtime (support.js), not app source.
     ".claude/**",
+    // MapLibre worker files copied into public/ at dev/build time.
+    "public/vendor/**",
   ]),
 ]);
 

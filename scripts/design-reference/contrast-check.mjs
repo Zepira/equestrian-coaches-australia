@@ -9,6 +9,10 @@
 // Exit 1 if any element falls under 4.5:1.
 
 import { chromium } from "playwright";
+// "load", then up to 8s of network quiet — a page with a live map or a
+// long-polling dev connection never reaches a strict networkidle.
+const settle = (pg) => pg.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => {});
+
 
 const args = process.argv.slice(2);
 const route = "/" + String(args[0] ?? "").replace(/^[A-Za-z]:[\\/].*?(?=\/|$)/, "").replace(/^\/+/, "");
@@ -31,7 +35,7 @@ const ratio = (a, b) => {
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width, height: width < 600 ? 844 : 800 } });
-await page.goto(base + route, { waitUntil: "networkidle" });
+await page.goto(base + route, { waitUntil: "load" }); await settle(page);
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(2500);
 if (scrollY) {

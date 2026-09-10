@@ -378,19 +378,53 @@ html[data-overlay-route="true"] {
   transform: none;
 }
 
-/* Still used by the (pre-redesign) filter dropdown until Phase R4 retires it. */
-@keyframes dropdown-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+/* ── Search results map (canvas: Search Results) ─────────────────────── */
+.map-origin {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 4px rgb(180 85 58 / 0.25);
+}
+.map-origin::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--color-accent);
+  animation: ring 2.2s ease-out infinite;
+}
+.map-pin {
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font: 600 13px var(--font-sans);
+  color: var(--color-ink-fg);
+  background: var(--color-ink);
+  box-shadow: 0 8px 20px rgb(31 58 46 / 0.2);
+  cursor: pointer;
+  white-space: nowrap;
+  animation: pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+@media (min-width: 1100px) {
+  .map-pin {
+    padding: 7px 11px;
   }
 }
-.dropdown-panel {
-  animation: dropdown-in 0.16s ease-out both;
+.map-pin[data-active="true"] {
+  background: var(--color-accent);
+}
+.maplibregl-ctrl-attrib {
+  font: 400 10px var(--font-sans);
+  background: rgb(246 241 231 / 0.8) !important;
+  color: var(--color-subtle);
+}
+.maplibregl-ctrl-attrib a {
+  color: var(--color-subtle);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -682,6 +716,8 @@ html[data-overlay-route="true"] {
 
 /* ── ink ─────────────────────────────────────────────────────────────── */
 .site-header[data-variant="ink"] {
+  height: auto; /* phones stack the search summary + chips under the bar */
+  border-bottom-width: 0;
   --hdr-fg: var(--color-ink-fg);
   --hdr-muted: rgb(246 241 231 / 0.7);
   --hdr-bg: var(--color-ink);

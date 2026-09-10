@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Wordmark } from "@/components/wordmark";
+import { SearchChips } from "@/components/search-chips";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -80,7 +81,7 @@ function useAuthState(): AuthState {
 }
 
 /** "Bendigo VIC · Dressage · within 50 km" in the ink header on /search. */
-function SearchSummary() {
+function SearchSummary({ className = "" }: { className?: string }) {
   const params = useSearchParams();
   const location = params.get("location") ?? "";
   const disciplines = (params.get("d") ?? "")
@@ -88,10 +89,13 @@ function SearchSummary() {
     .filter(Boolean)
     .map((s) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
   const radius = params.get("r") ?? "50";
+  const edit = new URLSearchParams(params.toString());
+  edit.set("edit", "1");
   return (
     <Link
-      href={`/#search`}
-      className="flex min-w-0 flex-1 items-center gap-2.5 rounded-[var(--radius-input)] bg-surface px-4 py-2.5 text-[16px] text-fg md:max-w-[620px]"
+      href={`/search?${edit.toString()}`}
+      scroll={false}
+      className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-[var(--radius-input)] bg-surface px-4 py-2.5 text-[16px] text-fg md:max-w-[620px] ${className}`}
     >
       <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-accent" />
       <span className="min-w-0 flex-1 truncate">
@@ -168,7 +172,7 @@ export function SiteHeader() {
 
         {isSearch && (
           <Suspense fallback={<span className="flex-1" />}>
-            <SearchSummary />
+            <SearchSummary className="hidden md:flex" />
           </Suspense>
         )}
 
@@ -245,6 +249,17 @@ export function SiteHeader() {
           </button>
         </div>
       </div>
+
+      {/* /search on phones: the summary pill and the filter chips live in
+          the sticky ink bar, per the canvas, so one thumb can work them. */}
+      {isSearch && (
+        <div className="px-[18px] pb-3.5 md:hidden">
+          <Suspense fallback={null}>
+            <SearchSummary className="mt-0" />
+            <SearchChips rail className="-mx-[18px] mt-2.5 px-[18px]" />
+          </Suspense>
+        </div>
+      )}
 
       {open && (
         <nav className="site-header__menu md:hidden" aria-label="Primary">
