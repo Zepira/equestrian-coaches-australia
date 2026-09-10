@@ -102,7 +102,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Script
           id="overlay-route"
           strategy="beforeInteractive"
-        >{`document.documentElement.dataset.overlayRoute = String(location.pathname === "/");`}</Script>
+        >{`document.documentElement.dataset.overlayRoute = String(["/", "/for-coaches"].includes(location.pathname));`}</Script>
         {/* .reveal (src/app/globals.css) fades real content in as it scrolls
             into view — a scroll-reveal component has to start that content
             at opacity: 0 in the server-rendered HTML for the fade-in to

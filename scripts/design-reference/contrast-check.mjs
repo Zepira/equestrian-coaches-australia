@@ -60,7 +60,7 @@ for (const sel of selectors) {
     const px = (v) => parseFloat(v) || 0;
     const l = px(cs.borderLeftWidth) + px(cs.paddingLeft), t = px(cs.borderTopWidth) + px(cs.paddingTop);
     const rr = px(cs.borderRightWidth) + px(cs.paddingRight), b = px(cs.borderBottomWidth) + px(cs.paddingBottom);
-    return { box: { x: r.left + l, y: r.top + t, w: r.width - l - rr, h: r.height - t - b }, color: m, fontSize: cs.fontSize, text: node.textContent.trim().slice(0, 40) };
+    return { box: { x: r.left + l, y: r.top + t, w: r.width - l - rr, h: r.height - t - b }, color: m, fontSize: cs.fontSize, weight: cs.fontWeight, text: node.textContent.trim().slice(0, 40) };
   });
   // Hide the text (keep layout), shoot the box, restore.
   await el.evaluate((node) => {
@@ -107,9 +107,12 @@ for (const sel of selectors) {
     [`data:image/png;base64,${buf.toString("base64")}`, textIsLight]
   );
   const r = ratio(lum(info.color), lum(worst));
-  const ok = r >= 4.5;
+  // WCAG AA: 4.5:1 for normal text, 3:1 for large text (≥ 24px, or ≥ 18.66px bold).
+  const px = parseFloat(info.fontSize);
+  const large = px >= 24 || (px >= 18.66 && Number(info.weight) >= 700);
+  const ok = r >= (large ? 3 : 4.5);
   if (!ok) failed++;
-  console.log(`${ok ? "ok  " : "FAIL"} ${r.toFixed(2)}:1  ${sel}  "${info.text}" ${info.fontSize} text rgb(${info.color.slice(0, 3)}) vs worst-case bg rgb(${worst})`);
+  console.log(`${ok ? "ok  " : "FAIL"} ${r.toFixed(2)}:1${large ? " (large, 3:1)" : ""}  ${sel}  "${info.text}" ${info.fontSize} text rgb(${info.color.slice(0, 3)}) vs worst-case bg rgb(${worst})`);
 }
 await browser.close();
 process.exit(failed ? 1 : 0);

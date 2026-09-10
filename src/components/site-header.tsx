@@ -26,8 +26,7 @@ import { createClient } from "@/lib/supabase/client";
  */
 type Variant = "overlay" | "ink" | "light";
 
-// "/for-coaches" joins this list in Phase R6, once it has its full-bleed hero.
-const OVERLAY_ROUTES = ["/"];
+const OVERLAY_ROUTES = ["/", "/for-coaches"];
 
 /**
  * Coach profiles: on phones the page paints its own "← Results / ♡" bar

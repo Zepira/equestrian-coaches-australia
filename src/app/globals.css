@@ -640,9 +640,76 @@ html[data-overlay-route="true"] {
 .marquee {
   animation: marquee 40s linear infinite;
 }
+.marquee--slow {
+  animation-duration: 45s;
+}
 @media (min-width: 1100px) {
   .marquee {
     animation-duration: 55s;
+  }
+  .marquee--slow {
+    animation-duration: 60s;
+  }
+}
+
+/* ── /for-coaches hero (canvas 2a/2b): 700 / 720px tall, the portrait
+      master's focal point, seven rising words, two CTAs. ─────────────── */
+.hero--coaches {
+  height: min(700px, 100svh);
+}
+.hero--coaches .hero__img {
+  object-position: 50% 30%;
+}
+.hero--coaches .hero__scrim {
+  background: linear-gradient(
+    180deg,
+    rgb(13 24 18 / 0.3) 0%,
+    rgb(13 24 18 / 0.1) 20%,
+    rgb(13 24 18 / 0.6) 40%,
+    rgb(13 24 18 / 0.92) 58%,
+    rgb(20 40 31 / 1) 100%
+  );
+}
+.hero--coaches .hero__body {
+  padding-bottom: calc(30px + var(--safe-bottom));
+}
+.hero--coaches .hero__col {
+  gap: 16px;
+}
+.hero--coaches .hero__h1 {
+  font-size: 52px;
+}
+.hero--coaches .hero__lead {
+  font-size: 16px;
+  line-height: 1.5;
+}
+@media (min-width: 1100px) {
+  .hero--coaches {
+    height: 720px; /* the canvas's fixed frame height, not the viewport */
+  }
+  .hero--coaches .hero__img {
+    object-position: 60% 40%;
+  }
+  .hero--coaches .hero__scrim {
+    background:
+      linear-gradient(90deg, rgb(13 24 18 / 0.88) 0%, rgb(13 24 18 / 0.65) 45%, rgb(13 24 18 / 0.2) 75%, rgb(13 24 18 / 0.1) 100%),
+      linear-gradient(180deg, rgb(13 24 18 / 0.35) 0%, rgb(13 24 18 / 0) 25%, rgb(13 24 18 / 0) 70%, rgb(20 40 31 / 0.9) 100%);
+  }
+  .hero--coaches .hero__body {
+    padding: 100px 48px 56px;
+  }
+  .hero--coaches .hero__col {
+    width: 700px;
+    gap: 26px;
+  }
+  .hero--coaches .hero__h1 {
+    font-size: 92px;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+  }
+  .hero--coaches .hero__lead {
+    max-width: 56ch;
+    font-size: 19px;
   }
 }
 

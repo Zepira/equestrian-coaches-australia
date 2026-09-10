@@ -1,8 +1,20 @@
-import { LinkButton } from "@/components/ui/button";
+import type { Viewport } from "next";
+import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { Accordion } from "@/components/accordion";
 import { MonthlyEmailExample } from "@/components/for-coaches/monthly-email-example";
-import { disciplinePhoto } from "@/lib/mock-coaches";
+import { PromiseTicker } from "@/components/for-coaches/promise-ticker";
+import { Plans, type Tier } from "@/components/for-coaches/plans";
+import { RiseWords } from "@/components/hero";
+import { Parallax } from "@/components/hero-parallax";
+
+// Dark hero at the top of this route too — see the same export on "/".
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#14281f",
+};
 
 export const metadata = {
   title: "For coaches",
@@ -49,26 +61,38 @@ const WHAT_WE_DO: { title: string; body: string }[] = [
   },
 ];
 
-type Tier = {
-  key: string;
-  name: string;
-  monthly: string;
-  yearly: string;
-  tagline: string;
-  featured?: boolean;
-};
-
 const TIERS: Tier[] = [
-  { key: "listed", name: "Listed", monthly: "$9.99/mo", yearly: "$99/yr", tagline: "For most coaches" },
+  {
+    key: "listed",
+    name: "Listed",
+    monthly: "$9.99",
+    yearly: "$99",
+    tagline: "For most coaches",
+    summary:
+      "Everything a coach needs to be found and reached: an indexed profile, area and discipline listings, enquiries, testimonials and the monthly numbers email.",
+    cta: "Join as a founding coach",
+  },
   {
     key: "spotlight",
     name: "Spotlight",
-    monthly: "$24.95/mo",
-    yearly: "$249/yr",
+    monthly: "$24.95",
+    yearly: "$249",
     tagline: "For coaches building a book",
     featured: true,
+    summary:
+      "Everything in Listed, plus a featured slot on your area pages, instant enquiry alerts, search-query insights, an intro video and unlimited events.",
+    cta: "Choose Spotlight",
   },
-  { key: "clinic", name: "Clinic", monthly: "$49.95/mo", yearly: "$499/yr", tagline: "For coaches who are already full" },
+  {
+    key: "clinic",
+    name: "Clinic",
+    monthly: "$49.95",
+    yearly: "$499",
+    tagline: "For coaches who are already full",
+    summary:
+      "Everything in Spotlight, plus your events pushed to riders statewide, waitlist capture, benchmarks and up to three locations.",
+    cta: "Choose Clinic",
+  },
 ];
 
 const EVERY_TIER = [
@@ -148,237 +172,144 @@ const FAQ_ITEMS = [
   },
 ];
 
-function Check() {
-  return (
-    <span className="text-accent" aria-label="Included">
-      ✓
-    </span>
-  );
-}
-
-function Dash() {
-  return (
-    <span className="text-subtle" aria-hidden="true">
-      —
-    </span>
-  );
-}
+const WIDTHS = [768, 1024, 1280, 1536, 1920];
+const srcset = (crop: string, ext: string, widths: number[]) => widths.map((w) => `/hero/${crop}-${w}.${ext} ${w}w`).join(", ");
 
 export default function ForCoachesPage() {
   return (
     <div>
-      {/* 1. Hero */}
-      <section className="border-b border-border bg-shade">
-        <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 sm:py-28">
-          <h1 className="font-display text-4xl leading-tight text-fg sm:text-5xl">
-            You&rsquo;ll know exactly what your listing did.
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-[17px] leading-relaxed text-muted">
-            Most directories take your money and show you nothing. We email you every month with
-            how many riders saw your profile, how many clicked to call, and how many got in
-            touch — including the months when the answer is none.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <LinkButton href="/signup?role=coach" variant="primary">
-              Join as a founding coach
-            </LinkButton>
-            <LinkButton href="#included" variant="secondary">
-              See what&rsquo;s included
-            </LinkButton>
+      {/* ── 1. Hero ─────────────────────────────────────────────────────── */}
+      <section className="hero hero--coaches">
+        <Parallax />
+        <div className="hero__media" data-parallax>
+          <picture>
+            <source type="image/avif" srcSet={srcset("for-coaches", "avif", WIDTHS)} sizes="100vw" />
+            <source type="image/webp" srcSet={srcset("for-coaches", "webp", WIDTHS)} sizes="100vw" />
+            <img src="/hero/for-coaches-1280.jpg" alt="" width={1280} height={1280} fetchPriority="high" loading="eager" decoding="async" className="hero__img" />
+          </picture>
+        </div>
+        <div className="hero__scrim" aria-hidden />
+        <div className="hero__body">
+          <div className="hero__col">
+            <p className="hero__eyebrow fade-in" style={{ animationDelay: "0.1s" }}>
+              For coaches
+            </p>
+            <h1 className="hero__h1">
+              <RiseWords words={["You'll", "know", "exactly", "what", "your", "listing", "did."]} emphasis={[2]} />
+            </h1>
+            <p className="hero__lead fade-in" style={{ animationDelay: "0.7s" }}>
+              Most directories take your money and show you nothing. We email you every month with how many riders saw your profile, how many clicked to call, and how many got in touch — including the months when the answer is none.
+            </p>
+            <div className="fade-in flex flex-col gap-2 wide:flex-row wide:gap-2.5" style={{ animationDelay: "0.85s" }}>
+              <Link href="/signup?role=coach&plan=founding" className="block rounded-[10px] bg-accent px-[26px] py-[15px] text-center text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:py-4">
+                Join as a founding coach
+              </Link>
+              <Link href="#included" className="block rounded-[10px] border border-ink-fg/40 px-[26px] py-3.5 text-center text-[16px] font-medium text-ink-fg transition-colors duration-[250ms] hover:bg-ink-fg/10 wide:py-[15px]">
+                See what&rsquo;s included
+              </Link>
+            </div>
           </div>
         </div>
       </section>
+      <PromiseTicker />
 
-      {/* Founding offer — moved up under the hero. Photo band, not flat
-          cream, so it reads as a distinct moment rather than a repeat of
-          the hero above it. */}
-      <section
-        className="relative overflow-hidden bg-ink bg-cover bg-center py-24 sm:py-28"
-        style={{ backgroundImage: `url(${disciplinePhoto("pony-club", 1600)})` }}
-      >
-        <div
-          aria-hidden="true"
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgb(13 24 18 / .78), rgb(13 24 18 / .70) 40%, rgb(13 24 18 / .82))",
-          }}
-        />
-        <div className="relative mx-auto max-w-2xl px-4 text-center sm:px-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-accent">
-            Founding coaches
-          </p>
-          <h2 className="mt-4 font-display text-3xl text-ink-fg sm:text-4xl">
-            Every coach who signs up in our first six months
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-[17px] leading-relaxed text-ink-fg/85">
-            gets Spotlight free for six months, and $9.99 locked in for as long as they stay —
-            even after the price goes up for everyone else. In return we ask for a complete
-            profile: a photo, a real bio, your disciplines tagged and your location set.
-            You&rsquo;re making an empty directory look alive, and that&rsquo;s worth something to
-            us.
-          </p>
-          <LinkButton href="/signup?role=coach&plan=founding" variant="primary" className="mt-10">
-            Claim a founding spot
-          </LinkButton>
-        </div>
-      </section>
+      {/* ── 2. Founding + the monthly email ─────────────────────────────── */}
+      <div className="mx-auto wide:max-w-[1184px] wide:px-12 wide:pt-[88px]">
+        <Reveal className="wide:grid wide:grid-cols-2 wide:items-center wide:gap-14">
+          <section className="founding relative overflow-hidden bg-ink-deep px-[18px] py-16 text-ink-fg wide:flex wide:min-h-[560px] wide:flex-col wide:justify-end wide:rounded-[20px] wide:px-11 wide:py-[52px]">
+            <picture>
+              <source type="image/avif" srcSet={srcset("founding", "avif", [640, 1024, 1400])} sizes="(min-width: 1100px) 560px, 100vw" />
+              <source type="image/webp" srcSet={srcset("founding", "webp", [640, 1024, 1400])} sizes="(min-width: 1100px) 560px, 100vw" />
+              <img src="/hero/founding-1024.jpg" alt="" loading="lazy" decoding="async" className="founding__img absolute inset-0 h-full w-full object-cover opacity-35 wide:opacity-40" />
+            </picture>
+            <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,24,18,.55),rgba(13,24,18,.85))] wide:bg-[linear-gradient(180deg,rgba(13,24,18,.2),rgba(13,24,18,.9)_70%)]" />
+            <div className="relative">
+              <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-peach wide:tracking-[0.2em]">Founding coaches</p>
+              <h2 className="mt-3 text-[38px] leading-none -tracking-[0.02em] wide:mt-3.5 wide:text-[46px]">
+                Every coach who signs up in our first <em className="text-peach">six months</em>
+              </h2>
+              <p className="mt-4 text-[16px] leading-[1.55] text-ink-fg/85 wide:mt-[18px]">
+                gets Spotlight free for six months, and $9.99 locked in for as long as they stay — even after the price goes up for everyone else. In return we ask for a complete profile: a photo, a real bio, your disciplines tagged and your location set. You&rsquo;re making an empty directory look alive, and that&rsquo;s worth something to us.
+              </p>
+              <Link href="/signup?role=coach&plan=founding" className="mt-[22px] inline-block rounded-[10px] bg-accent px-[22px] py-3.5 text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:mt-6 wide:px-6">
+                Claim a founding spot
+              </Link>
+            </div>
+          </section>
 
-      {/* 2. The monthly email, shown */}
-      <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6 sm:py-24">
-        <Reveal>
-          <h2 className="text-center font-display text-3xl text-fg">The monthly email, shown</h2>
+          <section className="px-[18px] pt-14 wide:px-0 wide:pt-0">
+            <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-accent wide:tracking-[0.2em]">Every month, good or quiet</p>
+            <h2 className="mt-2.5 text-[38px] leading-none -tracking-[0.02em] text-ink wide:mt-3 wide:text-[46px]">The monthly email, shown</h2>
+            <div className="mt-6">
+              <MonthlyEmailExample />
+            </div>
+          </section>
         </Reveal>
-        <Reveal>
-          <div className="mt-10">
-            <MonthlyEmailExample />
-          </div>
-        </Reveal>
-      </section>
+      </div>
 
-      {/* 3. What we actually do */}
-      <section id="included" className="border-t border-border bg-shade">
-        <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 sm:py-24">
-          <Reveal>
-            <h2 className="text-center font-display text-3xl text-fg">
-              What we actually do to bring riders to you
+      {/* ── 3. What we actually do ──────────────────────────────────────── */}
+      <Reveal as="section" className="mt-14 bg-ink text-ink-fg wide:mt-[88px]">
+        <div id="included" className="mx-auto max-w-[1184px] scroll-mt-20 px-[18px] py-14 wide:grid wide:grid-cols-[1fr_1.5fr] wide:items-start wide:gap-16 wide:px-12 wide:py-[88px]">
+          <div className="wide:sticky wide:top-[100px]">
+            <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-ink-fg/60 wide:tracking-[0.2em]">What&rsquo;s included</p>
+            <h2 className="mt-3 text-[38px] leading-none -tracking-[0.02em] wide:mt-4 wide:text-[60px] wide:leading-[0.98] wide:-tracking-[0.025em]">
+              What we actually do to bring <em className="text-peach">riders</em> to you
             </h2>
-          </Reveal>
-          <div className="mt-12 divide-y divide-border border-t border-b border-border">
-            {WHAT_WE_DO.map((row) => (
-              <Reveal key={row.title}>
-                <div className="grid gap-2 py-7 sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8">
-                  <div className="font-display text-[17px] text-fg">{row.title}</div>
-                  <div className="text-[15px] leading-relaxed text-muted">{row.body}</div>
+            <p className="mt-[22px] hidden text-[16px] font-medium text-peach wide:block">All of that happens whether you&rsquo;re on Listed or Clinic.</p>
+          </div>
+          <div className="mt-7 flex flex-col border-t border-ink-fg/20 wide:mt-0">
+            {WHAT_WE_DO.map((row, i) => (
+              <div key={row.title} className="grid grid-cols-[36px_1fr] gap-2.5 border-b border-ink-fg/20 py-[18px] wide:grid-cols-[48px_1fr] wide:gap-4 wide:py-[22px]">
+                <span className="pt-0.5 font-display text-[22px] italic leading-none text-peach wide:text-[26px]">{String(i + 1).padStart(2, "0")}</span>
+                <div>
+                  <div className="font-display text-[21px] leading-[1.15] wide:text-[25px]">{row.title}</div>
+                  <p className="mt-1.5 text-[14.5px] leading-[1.5] text-ink-fg/75 wide:mt-2 wide:max-w-[60ch] wide:text-[15.5px]">{row.body}</p>
                 </div>
-              </Reveal>
+              </div>
             ))}
           </div>
-          <p className="mt-10 text-center text-sm font-medium text-fg">
-            All of that happens whether you&rsquo;re on Listed or Clinic.
-          </p>
+          <p className="mt-[22px] text-[15px] font-medium text-peach wide:hidden">All of that happens whether you&rsquo;re on Listed or Clinic.</p>
         </div>
-      </section>
+      </Reveal>
 
-      {/* 4. The three tiers */}
-      <section className="mx-auto max-w-5xl px-4 py-20 sm:px-6 sm:py-24">
-        <Reveal>
-          <h2 className="text-center font-display text-3xl text-fg">Pick a plan</h2>
-        </Reveal>
-        <Reveal>
-          <p className="mx-auto mt-4 max-w-2xl text-center text-[15px] text-muted">
-            Annual is ten months&rsquo; price. Change plan any time, both directions — a coach
-            running a clinic in March goes up for March and back down in April.
-          </p>
-        </Reveal>
+      {/* ── 4. Plans + comparison ───────────────────────────────────────── */}
+      <Reveal>
+        <Plans tiers={TIERS} rows={COMPARISON_ROWS} />
+      </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-7 sm:grid-cols-3">
-          {TIERS.map((tier) => (
-            <Reveal key={tier.key}>
-              <div
-                className={`flex h-full flex-col rounded-[var(--radius-tile)] border p-8 ${
-                  tier.featured ? "border-accent bg-accent-soft" : "border-border bg-surface"
-                }`}
-              >
-                {tier.featured && (
-                  <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-accent">
-                    Most popular
-                  </div>
-                )}
-                <div className="font-display text-xl text-fg">{tier.name}</div>
-                <div className="mt-1.5 text-sm text-subtle">{tier.tagline}</div>
-                <div className="mt-5">
-                  <div className="font-display text-3xl text-fg">{tier.monthly}</div>
-                  <div className="mt-1 text-sm text-muted">or {tier.yearly}</div>
-                </div>
-                <LinkButton
-                  href={`/signup?role=coach&plan=${tier.key}`}
-                  variant={tier.featured ? "primary" : "secondary"}
-                  className="mt-8"
-                >
-                  {tier.key === "listed"
-                    ? "Join as a founding coach"
-                    : `Choose ${tier.name}`}
-                </LinkButton>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-
-        <p className="mt-6 text-center text-sm text-fg">
-          Listed comes with everything a coach needs to be found and reached — it isn&rsquo;t a
-          cut-down plan. Travel radius is the same on every tier, not a paid feature.
+      {/* ── 5. No commission ────────────────────────────────────────────── */}
+      <Reveal as="section" className="mx-[18px] mt-14 rounded-[16px] bg-ink-deep px-6 py-9 text-center text-ink-fg wide:mx-0 wide:mt-[88px] wide:rounded-none wide:px-12 wide:py-24">
+        <p className="mx-auto font-display text-[34px] leading-[1.02] -tracking-[0.02em] wide:max-w-[18ch] wide:text-[64px] wide:leading-none wide:-tracking-[0.025em]">
+          We never take a <em className="text-peach">percentage</em> of a lesson.
         </p>
+        <p className="mx-auto mt-3.5 text-[15px] leading-[1.5] text-ink-fg/80 wide:mt-[22px] wide:max-w-[48ch] wide:text-[18px]">
+          A flat monthly fee and nothing else, forever. What a rider pays you is between you and them.
+        </p>
+      </Reveal>
 
-        {/* Full comparison table */}
-        <div className="mt-14 overflow-x-auto">
-          <table className="w-full min-w-[640px] border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="py-4 pr-4 text-left font-display text-base font-normal text-fg">
-                  Feature
-                </th>
-                <th className="px-3 py-4 text-center font-display text-base font-normal text-fg">
-                  Listed
-                </th>
-                <th className="px-3 py-4 text-center font-display text-base font-normal text-accent">
-                  Spotlight
-                </th>
-                <th className="px-3 py-4 text-center font-display text-base font-normal text-fg">
-                  Clinic
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {COMPARISON_ROWS.map((row) => (
-                <tr key={row.label} className="border-b border-border">
-                  <td className="py-4 pr-4 text-fg">{row.label}</td>
-                  <td className="px-3 py-4 text-center">{row.listed ? <Check /> : <Dash />}</td>
-                  <td className="px-3 py-4 text-center bg-accent-soft/40">
-                    {row.spotlight ? <Check /> : <Dash />}
-                  </td>
-                  <td className="px-3 py-4 text-center">{row.clinic ? <Check /> : <Dash />}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* 5. No commission */}
-      <section className="bg-ink py-20">
-        <div className="mx-auto max-w-2xl px-4 text-center sm:px-6">
-          <p className="font-display text-2xl leading-snug text-ink-fg sm:text-3xl">
-            We never take a percentage of a lesson.
-          </p>
-          <p className="mt-4 text-[17px] text-ink-fg/85">
-            A flat monthly fee and nothing else, forever. What a rider pays you is between you and
-            them.
-          </p>
-        </div>
-      </section>
-
-      {/* 6. FAQ */}
-      <section className="mx-auto max-w-2xl px-4 py-20 sm:px-6 sm:py-24">
-        <Reveal>
-          <h2 className="text-center font-display text-3xl text-fg">Questions</h2>
-        </Reveal>
-        <div className="mt-10">
-          <Accordion items={FAQ_ITEMS} />
-        </div>
-
-        {/* Feedback — not an FAQ item, its own closing note under the accordion */}
-        <Reveal>
-          <div className="mt-10 rounded-[var(--radius-tile)] border border-border bg-shade p-6 text-center">
-            <p className="font-display text-lg text-fg">Tell us what to fix</p>
-            <p className="mt-2 text-[15px] leading-relaxed text-muted">
-              This site is new and we&rsquo;d rather hear what&rsquo;s not working from you than
-              guess. If something&rsquo;s confusing, missing, or just annoying, tell Kim or Alana
-              directly — every founding coach gets a direct line to us, not a support ticket.
+      {/* ── 6. FAQ + feedback ───────────────────────────────────────────── */}
+      <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] py-14 wide:grid wide:grid-cols-[1fr_1.6fr] wide:items-start wide:gap-16 wide:px-12 wide:py-[88px]">
+        <div className="wide:sticky wide:top-[100px]">
+          <h2 className="text-[38px] leading-none -tracking-[0.02em] text-ink wide:text-[64px] wide:leading-[0.98] wide:-tracking-[0.025em]">Questions</h2>
+          <div className="feedback mt-8 hidden rounded-[16px] bg-shade px-6 py-[26px] wide:block">
+            <p className="font-display text-[26px] leading-[1.1] text-ink">Tell us what to fix</p>
+            <p className="mt-2.5 text-[15px] leading-[1.55] text-muted">
+              This site is new and we&rsquo;d rather hear what&rsquo;s not working from you than guess. If something&rsquo;s confusing, missing, or just annoying, tell Kim or Alana directly — every founding coach gets a direct line to us, not a support ticket.
             </p>
           </div>
-        </Reveal>
-      </section>
+        </div>
+        <div>
+          <div className="mt-5 wide:mt-0">
+            <Accordion items={FAQ_ITEMS} />
+          </div>
+          <div className="feedback mt-7 rounded-[16px] bg-shade px-5 py-6 wide:hidden">
+            <p className="font-display text-[24px] leading-[1.1] text-ink">Tell us what to fix</p>
+            <p className="mt-2.5 text-[14.5px] leading-[1.55] text-muted">
+              This site is new and we&rsquo;d rather hear what&rsquo;s not working from you than guess. If something&rsquo;s confusing, missing, or just annoying, tell Kim or Alana directly — every founding coach gets a direct line to us, not a support ticket.
+            </p>
+          </div>
+        </div>
+      </Reveal>
     </div>
   );
 }
