@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Wordmark } from "@/components/wordmark";
 import { SearchChips } from "@/components/search-chips";
+import { BackToResults } from "@/components/back-to-results";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -27,11 +28,16 @@ type Variant = "overlay" | "ink" | "light";
 
 // "/for-coaches" joins this list in Phase R6, once it has its full-bleed hero.
 const OVERLAY_ROUTES = ["/"];
-const OVERLAY_MOBILE_PREFIXES = ["/coaches/"];
 
-function variantFor(pathname: string): { variant: Variant; scope?: "mobile" } {
+/**
+ * Coach profiles: on phones the page paints its own "← Results / ♡" bar
+ * over the photograph (canvas: Coach Profile mobile), so this header hides
+ * below 768px; on desktop it is the light bar with "← Back to results"
+ * beside the wordmark.
+ */
+function variantFor(pathname: string): { variant: Variant; coachProfile?: boolean } {
   if (OVERLAY_ROUTES.includes(pathname)) return { variant: "overlay" };
-  if (OVERLAY_MOBILE_PREFIXES.some((p) => pathname.startsWith(p))) return { variant: "overlay", scope: "mobile" };
+  if (pathname.startsWith("/coaches/")) return { variant: "light", coachProfile: true };
   if (pathname === "/search") return { variant: "ink" };
   return { variant: "light" };
 }
@@ -133,15 +139,17 @@ export function SiteHeader() {
   const auth = useAuthState();
   const pathname = usePathname();
   const scrolled = useScrolled();
-  const { variant, scope } = variantFor(pathname);
+  const { variant, coachProfile } = variantFor(pathname);
   const solid = scrolled || open;
   const close = () => setOpen(false);
 
   // <html data-overlay-route> — iOS paints <html>'s own background behind
   // the notch; on overlay routes that has to be ink, see globals.css.
   useEffect(() => {
-    document.documentElement.dataset.overlayRoute = String(variant === "overlay" && !scope);
-  }, [variant, scope]);
+    // A coach profile opens with a full-bleed photo on phones, so the notch
+    // strip is dark there too.
+    document.documentElement.dataset.overlayRoute = String(variant === "overlay" || Boolean(coachProfile));
+  }, [variant, coachProfile]);
 
   const firstName = auth.name?.split(" ")[0] ?? null;
   const accountHref = auth.role === "coach" ? "/dashboard" : "/account";
@@ -151,7 +159,7 @@ export function SiteHeader() {
     <header
       className="site-header"
       data-variant={variant}
-      data-overlay-scope={scope}
+      data-coach-profile={coachProfile ? "true" : undefined}
       data-solid={variant === "overlay" ? solid : undefined}
     >
       <div className="site-header__inner">
@@ -163,12 +171,15 @@ export function SiteHeader() {
         >
           <Wordmark size={26} className="md:hidden" />
           <Wordmark size={30} className="hidden md:inline" />
-          {!isSearch && (
+          {!isSearch && !coachProfile && (
             <span className="site-header__muted hidden text-[12px] font-medium uppercase tracking-[0.16em] lg:inline">
               Equestrian Coaches Australia
             </span>
           )}
         </Link>
+        {coachProfile && (
+          <BackToResults label="Back to results" className="site-header__muted -ml-2 mr-auto hidden text-[14px] font-medium md:inline" />
+        )}
 
         {isSearch && (
           <Suspense fallback={<span className="flex-1" />}>
@@ -179,7 +190,7 @@ export function SiteHeader() {
         {/* Desktop nav */}
         <nav className="hidden items-center gap-7 text-[15px] font-medium md:flex" aria-label="Primary">
           {!isSearch &&
-            NAV.map((l) => {
+            NAV.filter((l) => !coachProfile || l.label !== "Disciplines").map((l) => {
               const current = pathname === l.href || (l.match ? pathname.startsWith(l.match) : false);
               return (
                 <Link

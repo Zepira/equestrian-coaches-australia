@@ -1,57 +1,100 @@
 "use client";
 
-import { useActionState } from "react";
-import { Button } from "@/components/ui/button";
-import { sendCoachEnquiry, type EnquiryResult } from "@/app/coaches/[slug]/actions";
+import { useActionState, useState } from "react";
+import { sendCoachEnquiry, type EnquiryResult, type EnquiryWant } from "@/app/coaches/[slug]/actions";
 
-export function ContactForm({ coachId, coachName }: { coachId: string; coachName?: string }) {
-  const [state, formAction, pending] = useActionState<EnquiryResult | null, FormData>(
-    sendCoachEnquiry,
-    null
-  );
+const WANTS: { value: EnquiryWant; label: string }[] = [
+  { value: "regular", label: "Regular lessons" },
+  { value: "one_off", label: "One-off" },
+  { value: "clinic", label: "Clinic" },
+];
+
+/**
+ * The enquiry form (canvas: "Message Isabella") — name, email or mobile,
+ * what they want (three chips, single choice), message, "Send enquiry",
+ * and the reassurance line. Shared by the desktop aside and the phone
+ * bottom sheet. Success replaces the form in place.
+ */
+export function ContactForm({
+  coachId,
+  coachName,
+  firstName,
+  onSent,
+  defaultWant = "regular",
+}: {
+  coachId: string;
+  coachName?: string;
+  firstName: string;
+  onSent?: () => void;
+  defaultWant?: EnquiryWant;
+}) {
+  const [state, formAction, pending] = useActionState<EnquiryResult | null, FormData>(sendCoachEnquiry, null);
+  const [want, setWant] = useState<EnquiryWant>(defaultWant);
 
   if (state?.ok) {
-    return <p className="text-[15px] text-fg">{state.message}</p>;
+    if (onSent) onSent();
+    return (
+      <p className="rounded-[12px] bg-shade p-4 text-[15px] leading-[1.5] text-fg" role="status">
+        {state.message}
+      </p>
+    );
   }
 
+  const input =
+    "w-full rounded-[12px] border border-border bg-white px-3.5 py-3.5 text-[16px] text-fg placeholder:text-subtle focus:border-accent focus:outline-none wide:py-[13px] wide:text-[15px]";
+
   return (
-    <form action={formAction} className="flex flex-col gap-3">
+    <form action={formAction} className="flex flex-col gap-2.5">
       <input type="hidden" name="coach_id" value={coachId} />
+      <input type="hidden" name="want" value={want} />
       {coachName && <input type="hidden" name="mock_coach_name" value={coachName} />}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">Your name</span>
-          <input
-            name="rider_name"
-            type="text"
-            required
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
-          />
-        </label>
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium text-fg">Your email</span>
-          <input
-            name="rider_email"
-            type="email"
-            required
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
-          />
-        </label>
+      <label className="block">
+        <span className="sr-only">Your name</span>
+        <input name="rider_name" type="text" required placeholder="Your name" autoComplete="name" className={input} />
+      </label>
+      <label className="block">
+        <span className="sr-only">Email or mobile</span>
+        <input name="rider_contact" type="text" required placeholder="Email or mobile" autoComplete="email" className={input} />
+      </label>
+      <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="What are you after?">
+        {WANTS.map((w) => {
+          const on = w.value === want;
+          return (
+            <button
+              key={w.value}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              onClick={() => setWant(w.value)}
+              className={`rounded-[var(--radius-pill)] border px-3 py-[7px] text-[13px] font-medium transition-colors duration-200 ${on ? "border-accent text-accent" : "border-border text-fg"}`}
+            >
+              {w.label}
+            </button>
+          );
+        })}
       </div>
       <label className="block">
-        <span className="mb-1 block text-sm font-medium text-fg">Message</span>
+        <span className="sr-only">Message</span>
         <textarea
           name="message"
-          rows={4}
           required
-          placeholder="Tell them what you're after — discipline, experience level, when you're free."
-          className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg placeholder:text-muted"
+          placeholder="A line about you and your horse, and what you'd like help with"
+          className={`${input} h-[110px] resize-none leading-[1.4] wide:h-[120px]`}
         />
       </label>
-      {state && !state.ok && <p className="text-sm text-danger">{state.message}</p>}
-      <Button type="submit" disabled={pending} className="self-start">
+      {state && !state.ok && (
+        <p className="text-sm text-danger" role="alert">
+          {state.message}
+        </p>
+      )}
+      <button
+        type="submit"
+        disabled={pending}
+        className="h-[54px] rounded-[var(--radius-pill)] bg-accent text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover disabled:opacity-60 wide:h-[52px] wide:text-[15px]"
+      >
         {pending ? "Sending…" : "Send enquiry"}
-      </Button>
+      </button>
+      <p className="text-center text-[12px] text-subtle">Goes straight to {firstName}. We never share your details.</p>
     </form>
   );
 }

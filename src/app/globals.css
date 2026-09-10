@@ -378,6 +378,24 @@ html[data-overlay-route="true"] {
   transform: none;
 }
 
+/* ── Coach profile (canvas: Coach Profile) ───────────────────────────── */
+.coach-profile {
+  position: relative;
+}
+.coach-photo__img {
+  animation: kb 10s cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+/* The phone enquiry bar: sticky at the bottom, fading up from the page
+   ground so content scrolls out underneath it. */
+.enquiry-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  margin-top: -92px;
+  padding: 12px 18px calc(18px + var(--safe-bottom));
+  background: linear-gradient(180deg, rgb(246 241 231 / 0), var(--color-bg) 40%);
+}
+
 /* ── Search results map (canvas: Search Results) ─────────────────────── */
 .map-origin {
   position: relative;
@@ -755,21 +773,14 @@ html[data-overlay-route="true"] {
   background: var(--color-ink-fg);
   color: var(--color-ink);
 }
-/* "overlay on phones, light on desktop" — the coach profile. */
+/* Coach profile: phones get the page's own bar over the photograph. */
+.site-header[data-coach-profile="true"] {
+  display: none;
+}
 @media (min-width: 768px) {
-  .site-header[data-variant="overlay"][data-overlay-scope="mobile"] {
-    position: sticky;
-    --hdr-fg: var(--color-ink);
-    --hdr-muted: var(--color-subtle);
+  .site-header[data-coach-profile="true"] {
+    display: block;
     --hdr-bg: rgb(246 241 231 / 0.86);
-    --hdr-line: rgb(34 32 28 / 0.08);
-    --hdr-outline: var(--color-ink);
-    background-image: none;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  .site-header[data-variant="overlay"][data-overlay-scope="mobile"] .site-header__link:hover {
-    color: var(--color-accent);
   }
 }
 
