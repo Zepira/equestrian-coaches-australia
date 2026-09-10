@@ -55,7 +55,7 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
       <p className="mt-2 max-w-xl text-muted">{discipline.blurb}</p>
 
       <div className="mt-6">
-        <SearchBar defaultDiscipline={slug} />
+        <SearchBar defaultDiscipline={slug} tone="plain" />
       </div>
 
       <p className="mt-6 text-sm text-muted">

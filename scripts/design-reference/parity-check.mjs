@@ -91,12 +91,22 @@ async function main() {
   // unrolled canvas capture).
   await page.evaluate(() => {
     document.querySelectorAll("[data-reveal], .reveal").forEach((el) => {
+      el.dataset.prevStyle = el.getAttribute("style") ?? "";
       el.style.opacity = "1";
       el.style.transform = "none";
       el.style.transition = "none";
     });
   });
   await page.screenshot({ path: join(OUT, `${stem}--full.png`), fullPage: true });
+  // Put the reveal styles back so the dump and the assertions below see the
+  // page's real transitions, not the screenshot override.
+  await page.evaluate(() => {
+    document.querySelectorAll("[data-reveal], .reveal").forEach((el) => {
+      if (el.dataset.prevStyle) el.setAttribute("style", el.dataset.prevStyle);
+      else el.removeAttribute("style");
+      el.dataset.reveal = "in";
+    });
+  });
   const dump = await page.evaluate(DUMP);
   dump.route = route;
   await writeFile(join(OUT, `${stem}.json`), JSON.stringify(dump, null, 1));
@@ -107,11 +117,34 @@ async function main() {
     const assertions = JSON.parse(await readFile(resolve(assertFile), "utf8"));
     const rows = [];
     for (const a of assertions) {
-      const loc = page.locator(a.selector).first();
-      const count = await page.locator(a.selector).count();
+      const all = page.locator(a.selector);
+      const count = await all.count();
+      // First VISIBLE match — responsive twins (`hidden wide:inline`) mean
+      // the first DOM match can be the one display:none'd at this width.
+      let loc = all.first();
+      for (let i = 0; i < count; i++) {
+        const cand = all.nth(i);
+        if (await cand.evaluate((el) => el.getClientRects().length > 0)) { loc = cand; break; }
+      }
       if (count === 0) { rows.push([a.selector, a.prop ?? "text", a.expect ?? a.text, "(not found)", "FAIL"]); failed++; continue; }
       let actual;
-      if (a.text !== undefined) actual = (await loc.innerText()).trim();
+      // textContent, not innerText: innerText applies text-transform, and the
+      // canvases write eyebrows in sentence case + CSS uppercase.
+      if (a.text !== undefined)
+        actual = (
+          await loc.evaluate((el) => {
+            // Visible text nodes only (skips display:none responsive twins).
+            const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+            let out = "";
+            for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+              const p = n.parentElement;
+              if (p && p.getClientRects().length > 0) out += n.textContent;
+            }
+            return out;
+          })
+        )
+          .replace(/\s+/g, " ")
+          .trim();
       else actual = await loc.evaluate((el, p) => getComputedStyle(el)[p], a.prop);
       let want = a.expect ?? a.text;
       // Colours: Tailwind v4 emits oklab()/color-mix() for opacity modifiers,

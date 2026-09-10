@@ -13,47 +13,37 @@ export type CoachCardData = {
   distanceKm?: number | null;
 };
 
-export function CoachCard({ coach }: { coach: CoachCardData }) {
+/**
+ * The featured-coach card from canvas 1a: a 4:5 arch-topped photo with a
+ * blurred ink "N km · Town" badge in its corner, the name in Instrument
+ * Serif, the disciplines in terracotta, then the headline. 250px wide in
+ * the phone rail; a grid cell on desktop, lifting 6px on hover.
+ */
+export function CoachCard({ coach, className = "" }: { coach: CoachCardData; className?: string }) {
+  const badge =
+    typeof coach.distanceKm === "number"
+      ? `${Math.round(coach.distanceKm)} km · ${coach.suburb} ${coach.state}`
+      : `${coach.suburb} ${coach.state}`;
   return (
-    <Link href={`/coaches/${coach.slug}`} className="group flex flex-col gap-3">
-      {/* .lives on the photo alone, not the whole card — the card's
-          text sits in normal flow below it, soing the whole <Link>
-          on hover would drag the name/tags/headline up with the photo,
-          reading as the text itself bouncing rather than the photo
-          responding to you. */}
-      <div className="arch-crop aspect-square w-full bg-shade" aria-hidden>
-        <div
-          className="h-full w-full bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
-          style={coach.photoUrl ? { backgroundImage: `url(${coach.photoUrl})` } : undefined}
-        />
+    <Link
+      href={`/coaches/${coach.slug}`}
+      className={`flex flex-col gap-3 text-inherit transition-transform duration-500 ease-[cubic-bezier(.16,1,.3,1)] wide:gap-3.5 wide:hover:-translate-y-1.5 ${className}`}
+    >
+      <div className="relative aspect-[4/5] overflow-hidden rounded-t-[125px] rounded-b-[10px] bg-shade wide:rounded-t-[999px] wide:rounded-b-[12px]">
+        {coach.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={coach.photoUrl} alt="" className="block h-full w-full object-cover" loading="lazy" />
+        ) : null}
+        <span className="absolute bottom-3 left-3 rounded-[var(--radius-pill)] bg-ink-deep/82 px-2.5 py-[5px] text-[12px] font-medium text-ink-fg backdrop-blur-[6px] wide:bottom-3.5 wide:left-3.5 wide:px-[11px] wide:py-1.5">
+          {badge}
+        </span>
       </div>
       <div className="min-w-0">
-        <div className="flex items-baseline justify-between gap-2">
-          <div className="truncate font-display text-xl font-medium text-ink">{coach.name}</div>
-          {typeof coach.distanceKm === "number" && (
-            <span className="shrink-0 text-sm text-subtle">{Math.round(coach.distanceKm)} km</span>
-          )}
+        <div className="font-display text-[24px] leading-[1.05] text-ink wide:text-[28px] wide:leading-[1.02]">
+          {coach.name}
         </div>
-        <div className="mt-1 text-sm text-subtle">
-          {coach.suburb} {coach.state}
-        </div>
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {coach.disciplineNames.map((name) => (
-            <span
-              key={name}
-              className="rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-ink"
-            >
-              {name}
-            </span>
-          ))}
-        </div>
-        <p className="mt-2 line-clamp-2 text-sm text-muted">{coach.headline}</p>
-        {(coach.skillNames?.length || coach.attributeNames?.length) && (
-          <p className="mt-1.5 line-clamp-1 text-xs text-subtle">
-            {[...(coach.skillNames ?? []), ...(coach.attributeNames ?? [])].slice(0, 3).join(" · ")}
-          </p>
-        )}
-        <div className="mt-2 text-sm font-semibold text-accent">View profile →</div>
+        <div className="mt-[5px] text-[13px] font-medium text-accent">{coach.disciplineNames.join(" · ")}</div>
+        <p className="mt-2 text-[14px] leading-[1.45] text-muted wide:text-[15px]">{coach.headline}</p>
       </div>
     </Link>
   );

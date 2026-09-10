@@ -14,6 +14,26 @@ export type LocationSuggestion = {
 // against (public select policy, no auth needed) — this just narrows what
 // a rider types before they submit, so a "Bendigo" typo never reaches
 // resolveLocation() as "Bendio" in the first place.
+// Towns a rider is far more likely to mean than an alphabetical neighbour:
+// "Bend" should offer Bendigo before Bend Of Islands. Capitals, the regional
+// centres the mock roster uses, and the larger towns; everything else ranks
+// by name length (shorter = more likely the whole name was typed).
+const MAJOR_TOWNS = new Set(
+  [
+    "Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Hobart", "Darwin", "Canberra",
+    "Bendigo", "Ballarat", "Geelong", "Shepparton", "Warrnambool", "Mildura", "Wodonga", "Traralgon",
+    "Toowoomba", "Cairns", "Rockhampton", "Gympie", "Townsville", "Mackay", "Bundaberg", "Gold Coast",
+    "Tamworth", "Orange", "Wagga Wagga", "Dubbo", "Armidale", "Newcastle", "Wollongong", "Bathurst",
+    "Albury", "Goulburn", "Lismore", "Coffs Harbour", "Port Macquarie",
+    "Mount Barker", "Mount Gambier", "Murray Bridge", "Port Lincoln", "Whyalla",
+    "Bunbury", "Albany", "Kalgoorlie", "Geraldton", "Busselton", "Mandurah",
+    "Launceston", "Devonport", "Burnie", "Alice Springs", "Katherine",
+  ].map((t) => t.toLowerCase())
+);
+
+const titleCase = (s: string) =>
+  s.toLowerCase().replace(/(^|[\s'-])([a-z])/g, (m, sep, c) => sep + c.toUpperCase());
+
 export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get("q")?.trim() ?? "";
   if (q.length < 2) return NextResponse.json({ suggestions: [] });
@@ -26,24 +46,26 @@ export async function GET(req: NextRequest) {
     .from("postcodes")
     .select("suburb, state, postcode")
     .or(isNumeric ? `postcode.ilike.${q}%` : `suburb.ilike.${q}%`)
-    .order("suburb")
-    .limit(30);
+    .limit(200);
 
   const seen = new Set<string>();
-  const suggestions: LocationSuggestion[] = [];
+  const all: LocationSuggestion[] = [];
   for (const row of data ?? []) {
-    const key = `${row.suburb}|${row.state}`;
+    const suburb = titleCase(row.suburb);
+    const key = `${suburb}|${row.state}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    suggestions.push({
-      label: `${row.suburb} ${row.state} ${row.postcode}`,
-      value: `${row.suburb} ${row.state}`,
-      suburb: row.suburb,
+    all.push({
+      label: `${suburb} ${row.state} ${row.postcode}`,
+      value: `${suburb} ${row.state}`,
+      suburb,
       state: row.state,
       postcode: row.postcode,
     });
-    if (suggestions.length >= 8) break;
   }
+  const rank = (s: LocationSuggestion) =>
+    (MAJOR_TOWNS.has(s.suburb.toLowerCase()) ? 0 : 1000) + s.suburb.length;
+  all.sort((a, b) => rank(a) - rank(b) || a.suburb.localeCompare(b.suburb));
 
-  return NextResponse.json({ suggestions });
+  return NextResponse.json({ suggestions: all.slice(0, 8) });
 }

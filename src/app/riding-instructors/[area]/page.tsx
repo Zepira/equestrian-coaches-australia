@@ -77,7 +77,7 @@ export default async function RidingInstructorsAreaPage({ params }: { params: Pr
       </p>
 
       <div className="mt-6">
-        <SearchBar defaultLocation={`${area.name} ${area.state}`} />
+        <SearchBar defaultLocation={`${area.name} ${area.state}`} tone="plain" />
       </div>
 
       <p className="mt-6 text-sm text-muted">

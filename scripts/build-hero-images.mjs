@@ -15,8 +15,6 @@
  *
  *   wide         overlay layout — text sits over the left of the photo,
  *                horse is composed hard right so the two never collide
- *   band-wide    split layout, tablet — photo is a band above the text
- *   band-narrow  split layout, phone — same idea, tighter band
  *
  * Ladder widths follow Next.js's default deviceSizes where the master allows.
  * None of them upscale: a width larger than the master is skipped, so the
@@ -33,8 +31,6 @@ const OUT = "public/hero";
  *  roughly 20KB (Cloud Four's heuristic), which is content-dependent. */
 const CROPS = {
   wide: { widths: [768, 1024, 1280, 1536], fallback: 1280 },
-  "band-wide": { widths: [640, 1024, 1360, 1720], fallback: 1024 },
-  "band-narrow": { widths: [400, 600, 828, 1140], fallback: 828 },
 };
 
 const QUALITY = { avif: 55, webp: 74, jpeg: 80 };

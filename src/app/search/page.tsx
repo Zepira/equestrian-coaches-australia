@@ -90,7 +90,7 @@ export default async function SearchPage({
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <h1 className="text-2xl font-bold text-fg sm:text-3xl">Find a coach</h1>
       <div className="mt-4">
-        <SearchBar defaultDiscipline={disciplineSlugs[0] ?? ""} defaultLocation={location} />
+        <SearchBar defaultDiscipline={disciplineSlugs[0] ?? ""} defaultLocation={location} tone="plain" />
       </div>
 
       {/* Multi-select facets — OR within a facet, AND across facets, e.g.

@@ -98,6 +98,11 @@
   }
 }
 
+@theme {
+  /* The canvases' mobile/desktop switch — `wide:` in Tailwind. */
+  --breakpoint-wide: 1100px;
+}
+
 @theme inline {
   --color-bg: var(--color-bg);
   --color-surface: var(--color-surface);
@@ -172,20 +177,25 @@ html[data-overlay-route="true"] {
 /* Every heading is Instrument Serif at weight 400 — the face has no bold,
    and the canvases never fake one. Emphasis inside a heading is italic
    (peach on dark, terracotta on light). */
-h1,
-h2,
-h3,
-h4,
-.font-display {
-  font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.02em;
-}
-h1 em,
-h2 em,
-h3 em,
-.font-display em {
-  font-style: italic;
+/* In @layer base so a per-element utility (wide:-tracking-[…], text-[…])
+   can still override it — an unlayered rule would beat Tailwind's layered
+   utilities regardless of specificity. */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+  h1 em,
+  h2 em,
+  h3 em,
+  .font-display em {
+    font-style: italic;
+  }
 }
 
 /* Hidden scrollbar for horizontal snap rows (coach card rails, chip rows). */
@@ -194,75 +204,6 @@ h3 em,
 }
 .hs::-webkit-scrollbar {
   display: none;
-}
-
-/* Arch crop — the discipline photo signature, per the original design spec
-   (design-preview/index.html): "radius = half width... 200px radius on a
-   400px-tall frame" — an absolute circular radius on a near-square box, not
-   a squashed ellipse. The box MUST be square for that radius to read as a
-   true semicircle rather than a flat dome — pair this class with
-   `aspect-square` (see src/app/page.tsx) rather than a fixed height, so the
-   50%/50% split here is genuinely a circle at every grid-track width, not
-   just at whatever width happened to match a hardcoded height. */
-.arch-crop {
-  border-radius: 50% 50% var(--radius-tile) var(--radius-tile) / 50% 50% 2% 2%;
-  overflow: hidden;
-}
-
-/* Discipline masonry — the featured-disciplines tile, a different signature
-   from the arch crop above: a full sharp-cornered rectangle with the title
-   and blurb overlaid directly on the photo behind a gradient scrim, not a
-   caption underneath it. Two variants, matched to where each sits in the
-   grid: `.tile-top` (the large tile) anchors text top-left over a
-   diagonal wash with a small decorative accent shape in the clear corner;
-   `.tile-bottom` (the two smaller tiles) anchors text bottom-left over a
-   plain bottom-up wash, the more familiar caption reading. */
-.tile-caption {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-tile);
-}
-.tile-caption img {
-  transition: transform 0.5s ease;
-}
-.tile-caption:hover img {
-  transform: scale(1.05);
-}
-.tile-caption::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-.tile-bottom::after {
-  background: linear-gradient(180deg, rgb(31 58 46 / 0) 35%, rgb(31 58 46 / 0.88) 100%);
-}
-.tile-top::after {
-  background: linear-gradient(
-    135deg,
-    rgb(31 58 46 / 0.88) 0%,
-    rgb(31 58 46 / 0.5) 40%,
-    rgb(31 58 46 / 0) 68%
-  );
-}
-/* Sits behind the text (z-index 2, below), above the scrim (z-index 1) —
-   only in the clear corner the diagonal wash leaves open, so it reads as
-   a material detail on the photo rather than competing with the title
-   for contrast. */
-.tile-accent {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
-  width: 46%;
-  height: 60%;
-  background: var(--color-accent);
-  opacity: 0.3;
-  clip-path: polygon(32% 0%, 100% 0%, 100% 100%, 0% 100%);
-}
-.tile-caption__body {
-  position: relative;
-  z-index: 2;
 }
 
 ::selection {
@@ -453,311 +394,205 @@ h3 em,
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   Full-bleed hero with background image
-   Daiquiri component: 05-components/hero-full-bleed-image.md
+   Hero — canvas "ECA Redesign › 1a Golden Hour", both frames.
 
-   One layout at every width: the photo fills the whole hero edge to edge,
-   the header floats over it transparent, and the text sits over the photo
-   behind a gradient scrim. The horse is composed hard right in the source
-   crop so the quiet zone (low-detail paddock and treeline) stays clear for
-   the text column.
+   Phones (below `wide`, 1100px): 780px tall, photo focal 78% 0%, a
+   five-stop vertical scrim fading into the ink ground, text stack
+   bottom-anchored with 18px sides. Desktop: 800px tall, focal 80% 50%, a
+   horizontal + vertical scrim pair, a 640px column vertically centred
+   with 100px reserved above for the floating header.
 
-   This used to be two layouts — a phone-only "split" with the photo as a
-   band above solid-ink text, because floating the header over the old
-   band crop measured 3.78:1 on the wordmark (the horse filled almost the
-   whole band, right where the header sits). Unified once the crop itself
-   changed: the wide/overlay crop keeps the top of frame clear (sky and
-   treeline, not the horse), so the header's own contrast plate is enough
-   at every width — nothing phone-specific left to special-case. Below
-   600px the text column stays full-width (there's no spare room beside
-   the photo the way there is once the column narrows to 58%), and the
-   scrim switches from a left-to-right pin to a bottom-weighted wash so it
-   still reads correctly under text that spans the full screen — see the
-   two `--hero-scrim` definitions below.
-
-   Everything tunable is a custom property on `.hero`, so re-skinning this
-   for another project is editing the block below, not the markup.
+   The photo wrapper is out of flow and oversized upward by 10–12% so the
+   parallax translate (0.28 × scrollY, ≤ 260px) never exposes its top edge.
+   Heights are the canvases' own; on a very short phone the hero shrinks to
+   the viewport so the search card stays reachable.
    ═══════════════════════════════════════════════════════════════════════ */
 
 .hero {
-  /* ── layout ─────────────────────────────────────────────────────────── */
-  /* The header always floats over the photo now — see the doc comment
-     above — so it never costs the hero any height at any width. */
-  --hero-header: 0px;
-  --hero-max: var(--content-max); /* shared content rail, see :root above */
-  --hero-gutter: var(--content-gutter);
-  /* Text column width. Full-width below 600px (no spare room beside the
-     photo worth carving out); narrowed once there is, see the media query
-     below. */
-  --hero-col: 100%;
-  /* Vertical rhythm keys off viewport HEIGHT, not width — a 1440x800 window
-     has exactly as much horizontal room as a 1440x1000 one and far less
-     vertical, and it is the vertical that runs out. */
-  --hero-gap: clamp(0.75rem, 2.2svh, 1.75rem);
-
-  /* ── photograph ─────────────────────────────────────────────────────── */
-  /* Focal point, as object-position: pushes the horse right, clear of the
-     text column, at every width. On a narrow phone `object-fit: cover`
-     crops a tall image down to a tight vertical slice around this x — the
-     full photo HEIGHT still shows (nothing crops top/bottom there), so the
-     horse never goes missing, just tighter-framed. */
-  --hero-focus: 86% 52%;
-  /* Bottom-weighted wash, not pinned to one side: below 600px the text
-     column is full-width, so a left-to-right gradient would leave the
-     right edge of every line sitting on whatever brightness the photo
-     happens to have there. A uniform-across-the-width, dark-at-the-bottom
-     wash is safe regardless of the photograph — 0.84 alpha black over pure
-     white still lands under rgb(40,40,40), comfortably AA behind cream
-     text — so this doesn't need remeasuring if the photo ever changes.
-     Replaced by the pinned version from 600px up, once the column narrows
-     and leaves the photo's own quiet zone doing more of the work. */
-  --hero-scrim: linear-gradient(
-    180deg,
-    rgb(13 24 18 / 0.34) 0%,
-    rgb(13 24 18 / 0.55) 45%,
-    rgb(13 24 18 / 0.84) 100%
-  );
-
-  /* ── type ───────────────────────────────────────────────────────────── */
-  /* clamp() middle terms always carry a rem component so the headline still
-     scales under browser zoom (WCAG 1.4.4). 44px @360 → 104px @1280. */
-  --hero-h1-fluid: clamp(2.75rem, 1.28rem + 6.52vw, 6.5rem);
-  /* ...then cap it against viewport height as well, with a 44px floor, so a
-     short window shrinks the headline instead of pushing the search bar
-     below the fold. This is what the design mock was doing in JavaScript. */
-  --hero-h1: min(var(--hero-h1-fluid), max(2.75rem, 12svh));
-  --hero-lead: clamp(1.0625rem, 0.95rem + 0.5vw, 1.375rem);
-  --hero-eyebrow: clamp(0.8125rem, 0.77rem + 0.2vw, 1.0625rem);
-
   position: relative;
-  display: grid;
-  grid-template-rows: 1fr;
-  /* Each unit overrides the last where the browser supports it — vh is the
-     universal fallback, svh is the guaranteed-visible floor (toolbar fully
-     expanded), dvh is the browser's actual current viewport, live-updated
-     as a toolbar like Safari's URL bar shows or hides on scroll. Using dvh
-     here is deliberate: it's what lets the hero (and the content inside
-     it, see .hero__body below) actually grow to fill the extra space once
-     the toolbar collapses, instead of staying pinned to the worst case
-     forever. The tradeoff is a resize as that toolbar animates — accepted
-     on purpose so the bottom of the hero can track the true edge of the
-     visible screen. */
-  min-height: 100vh;
-  min-height: 100svh;
-  min-height: 100dvh;
-  background: var(--color-ink);
+  height: min(780px, 100svh);
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--color-ink-deep);
   color: var(--color-ink-fg);
 }
 
-/* The photo is out of flow entirely, not a grid item: `height: 100%` on an
-   image inside an auto-height track resolves to auto, so the photo's own
-   3:2 ratio would silently become the hero's height instead of the other
-   way around — a 1440x900 window got a 950px hero and pushed the stats row
-   below the fold before this was absolute. Only the media clips, never the
-   hero itself, or the search filter dropdown inside it gets cut off at the
-   section boundary. */
 .hero__media {
   position: absolute;
-  inset: 0;
-  overflow: hidden;
+  inset: -10% 0 0 0;
+  will-change: transform;
 }
-
 .hero__media picture {
   display: block;
   height: 100%;
 }
-
 .hero__img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: var(--hero-focus);
+  object-position: 78% 0%;
+  animation: kb 14s cubic-bezier(0.2, 0.6, 0.2, 1) both;
 }
 
-/* A flat, known colour plate between photo and text. Contrast is measured
-   against this, never against the photograph — the photograph can change. */
 .hero__scrim {
   position: absolute;
   inset: 0;
-  background: var(--hero-scrim);
+  background: linear-gradient(
+    180deg,
+    rgb(13 24 18 / 0.25) 0%,
+    rgb(13 24 18 / 0.05) 22%,
+    rgb(13 24 18 / 0.55) 42%,
+    rgb(13 24 18 / 0.9) 58%,
+    rgb(20 40 31 / 1) 100%
+  );
 }
 
 .hero__body {
-  position: relative;
-  z-index: 2;
-  grid-area: 1 / 1;
+  position: absolute;
+  inset: 0;
   display: flex;
-  /* Centred, not bottom-aligned: the stack reads as one balanced block in the
-     space it has rather than being pushed against the lower edge. The top
-     padding also reserves the floating header, so "centred" means centred
-     in the area BELOW the bar, not in the raw viewport — which is what
-     actually looks level. Bottom-anchored instead below 600px, see the
-     media query further down: a phone's dynamic toolbar means there's
-     genuinely variable extra room at the bottom once it collapses (this is
-     what min-height: 100dvh on .hero is for), and the point of that room
-     is for the search card to use it, not to re-centre a shorter stack
-     inside a taller box. --safe-top/--safe-bottom (env(safe-area-inset-*),
-     see :root) keep both ends clear of a device's actual hardware —
-     status bar/notch/Dynamic Island at the top, home-indicator gesture bar
-     at the bottom — not just the browser's own chrome. */
-  align-items: center;
-  padding: calc(var(--header-h) + var(--safe-top) + clamp(1.25rem, 4vh, 2.5rem)) var(--hero-gutter)
-    calc(clamp(1.75rem, 5vh, 3rem) + var(--safe-bottom));
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 18px calc(22px + var(--safe-bottom));
 }
-
-@media (max-width: 599px) {
-  .hero__body {
-    align-items: flex-end;
-  }
-}
-
-.hero__inner {
-  width: 100%;
-  max-width: var(--hero-max);
-  margin-inline: auto;
-}
-
 .hero__col {
   display: flex;
-  max-width: var(--hero-col);
   flex-direction: column;
-  gap: var(--hero-gap);
-}
-
-.hero__h1 {
-  max-width: 15ch;
-  font-size: var(--hero-h1);
-  font-weight: 400;
-  line-height: 0.96;
-  letter-spacing: -0.025em;
-  text-wrap: pretty;
+  gap: 18px;
 }
 
 .hero__eyebrow {
-  font-size: var(--hero-eyebrow);
-  letter-spacing: 0.22em;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgb(246 241 231 / 0.82);
+  color: rgb(246 241 231 / 0.75);
 }
 
-/* Hidden on phones: the headline plus the search form already fill the
-   first screen there, and the lead is the one element that can go without
-   losing anything the rider needs. Restored from 600px up. */
+.hero__h1 {
+  font-size: 54px;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+
+/* The cycling discipline word: one line's worth of height, each candidate
+   stacked absolutely and stepping through `wordcycle` two seconds apart. */
+.hero__cycle {
+  display: block;
+  position: relative;
+  height: 1.05em;
+  overflow: hidden;
+  font-style: italic;
+  color: var(--color-peach);
+}
+.hero__cycle > span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: wordcycle 16s infinite both;
+}
+
 .hero__lead {
-  display: none;
-  max-width: 52ch;
-  font-size: var(--hero-lead);
-  line-height: 1.5;
-  color: rgb(246 241 231 / 0.88);
-}
-
-.hero__stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1rem, 3vw, 2.75rem);
-  padding-top: clamp(0.75rem, 2vh, 1.5rem);
-  border-top: 1px solid rgb(246 241 231 / 0.24);
-  font-size: 1rem;
+  font-size: 17px;
+  line-height: 1.45;
   color: rgb(246 241 231 / 0.85);
 }
 
+.hero__arrow {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+  font-size: 12px;
+  color: rgb(246 241 231 / 0.5);
+  animation: bob 2.4s ease-in-out infinite;
+}
+
+.hero__stats {
+  display: none; /* phones get the ↓ instead; flex from `wide` below */
+  gap: 36px;
+  font-size: 15px;
+  color: rgb(246 241 231 / 0.75);
+}
 .hero__stats strong {
   font-family: var(--font-display);
-  font-size: 1.375rem;
-  font-weight: 500;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--color-ink-fg);
 }
 
-/* From 600px: the lead paragraph fits back in regardless of column width. */
-@media (min-width: 600px) {
-  .hero__lead {
-    display: block;
-  }
-}
-
-/* Narrower text column + pinned scrim — NOT just "min-width: 600px": a
-   tablet in portrait (e.g. 768x1024) is wide enough to match a plain
-   600px breakpoint but not wide enough to fit the search bar's three
-   inline fields into a 58% column without crushing them. Same compound
-   condition as the old overlay/split switch used before the header and
-   photo went full-bleed everywhere — kept here specifically because it's
-   still solving a real fit problem, not a legibility one. */
-@media (min-width: 1100px), (min-width: 600px) and (max-height: 899px) {
+@media (min-width: 1100px) {
   .hero {
-    --hero-col: 58%;
-    /* Darkest on the left where the text is, clearing to almost nothing on
-       the right so the horse keeps its golden-hour rim light — safe once
-       the column above is narrow enough that text never reaches the
-       lighter zone. Plus a short top wash so the header edge stays
-       legible against the treeline. */
-    --hero-scrim: linear-gradient(
+    height: clamp(800px, 100svh, 1040px);
+  }
+  .hero__media {
+    inset: -12% 0 0 0;
+  }
+  .hero__img {
+    object-position: 80% 50%;
+    animation-duration: 16s;
+  }
+  .hero__scrim {
+    background:
+      linear-gradient(
         90deg,
-        rgb(13 24 18 / 0.78) 0%,
-        rgb(13 24 18 / 0.64) 40%,
-        rgb(13 24 18 / 0.26) 64%,
-        rgb(13 24 18 / 0.1) 100%
+        rgb(13 24 18 / 0.86) 0%,
+        rgb(13 24 18 / 0.6) 42%,
+        rgb(13 24 18 / 0.15) 70%,
+        rgb(13 24 18 / 0.05) 100%
       ),
-      linear-gradient(180deg, rgb(13 24 18 / 0.42) 0%, rgb(13 24 18 / 0) 26%);
+      linear-gradient(180deg, rgb(13 24 18 / 0.35) 0%, rgb(13 24 18 / 0) 25%, rgb(13 24 18 / 0) 70%, rgb(20 40 31 / 0.9) 100%);
   }
-}
-
-/* Second headline range, continuous with the first at 1280px (both 104px):
-   104px @1280 → 156px @2100. */
-@media (min-width: 1280px) {
-  .hero {
-    --hero-h1-fluid: clamp(6.5rem, 1.43rem + 6.34vw, 9.75rem);
+  .hero__body {
+    justify-content: center;
+    padding: 100px 48px 56px;
   }
-}
-
-/* ── Crop bias by how letterboxed the hero box actually is ────────────── */
-/* The horse occupies 52% of the photo's height. `object-fit: cover` in a box
-   wider than the photo's own 1.5:1 throws away the top and bottom, so past a
-   point the legs fall out of frame — measured, not guessed: a 1600x700 window
-   was cutting the hooves at 105% of the viewport.
-   Visible source height as a fraction is (boxH / boxW) x 1.5, so the fix is to
-   slide the crop window down as the box gets wider. Aspect-ratio queries are
-   the right tool because this is purely a ratio problem, not a size one.
-   Beyond about 2.9:1 there is physically less image height left than the horse
-   needs (0.52 of the frame) — no focal point can save it, so bias back up to
-   keep the head and body and let the legs go, which is the better failure. */
-@media (min-width: 600px) and (min-aspect-ratio: 16 / 9) {
-  .hero {
-    --hero-focus: 86% 62%;
+  .hero__col {
+    width: 640px;
+    max-width: 100%;
+    gap: 26px;
   }
-}
-@media (min-width: 600px) and (min-aspect-ratio: 11 / 5) {
-  .hero {
-    --hero-focus: 86% 72%;
+  .hero__eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: rgb(246 241 231 / 0.72);
   }
-}
-@media (min-width: 600px) and (min-aspect-ratio: 29 / 10) {
-  .hero {
-    --hero-focus: 86% 46%;
+  .hero__h1 {
+    font-size: 96px;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
   }
-}
-
-/* ── Short-and-wide (landscape phones, short desktop windows) ─────────── */
-/* Overlay is already on here. Shrink the headline and drop the lead so the
-   whole stack still fits without pushing the search bar off-screen. */
-@media (max-height: 700px) and (min-width: 600px) {
-  .hero {
-    --hero-h1-fluid: clamp(2rem, 1rem + 3.4vw, 3.5rem);
-    --hero-col: 62%;
-  }
-
   .hero__lead {
+    max-width: 44ch;
+    font-size: 20px;
+  }
+  .hero__arrow {
     display: none;
   }
-}
-
-/* Very short windows (a landscape phone). Drop the stat row too so the whole
-   hero — photograph, headline and search — still fits without scrolling. */
-@media (max-height: 500px) and (min-width: 600px) {
   .hero__stats {
-    display: none;
+    display: flex;
   }
 }
 
+/* Wider than the canvas: keep the column at the shared content rail. */
+@media (min-width: 1280px) {
+  .hero__body {
+    padding-inline: max(48px, calc((100% - 1184px) / 2 + 48px));
+  }
+}
+
+/* The marquee track: two copies of the run side by side, translating by
+   exactly one copy's width. */
+.marquee {
+  animation: marquee 40s linear infinite;
+}
+@media (min-width: 1100px) {
+  .marquee {
+    animation-duration: 55s;
+  }
+}
 
 /* ═══════════════════════════════════════════════════════════════════════
    Site header — three variants, one per kind of page, chosen by route in
