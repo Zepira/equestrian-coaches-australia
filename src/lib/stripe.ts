@@ -16,7 +16,13 @@ export function getStripe(): Stripe | null {
   return new Stripe(process.env.STRIPE_SECRET_KEY!);
 }
 
-export const TIER_PRICE_IDS: Record<"standard" | "standard_plus_clinics", string | undefined> = {
-  standard: process.env.NEXT_PUBLIC_STRIPE_PRICE_STANDARD,
-  standard_plus_clinics: process.env.NEXT_PUBLIC_STRIPE_PRICE_CLINICS,
+import type { Tier } from "@/lib/tiers";
+
+// Stripe Price IDs per plan (monthly). Yearly prices get their own IDs
+// once the settings table exists — see CLAUDE.md "Configuration over
+// hardcoding" for why display price and price ID must be stored as a pair.
+export const TIER_PRICE_IDS: Record<Tier, string | undefined> = {
+  listed: process.env.NEXT_PUBLIC_STRIPE_PRICE_LISTED,
+  spotlight: process.env.NEXT_PUBLIC_STRIPE_PRICE_SPOTLIGHT,
+  clinic: process.env.NEXT_PUBLIC_STRIPE_PRICE_CLINIC,
 };

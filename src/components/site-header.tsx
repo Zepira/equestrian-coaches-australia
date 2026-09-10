@@ -52,10 +52,10 @@ function useScrolled(threshold = 8) {
   return scrolled;
 }
 
-type AuthState = { loggedIn: boolean; role: "rider" | "coach" | null; name: string | null };
+type AuthState = { loggedIn: boolean; role: "rider" | "coach" | null; name: string | null; coachSlug: string | null; avatarUrl: string | null };
 
 function useAuthState(): AuthState {
-  const [state, setState] = useState<AuthState>({ loggedIn: false, role: null, name: null });
+  const [state, setState] = useState<AuthState>({ loggedIn: false, role: null, name: null, coachSlug: null, avatarUrl: null });
 
   useEffect(() => {
     const supabase = createClient();
@@ -63,11 +63,18 @@ function useAuthState(): AuthState {
 
     async function load(client: NonNullable<typeof supabase>, userId: string) {
       const { data } = await client.from("profiles").select("role, name").eq("id", userId).single();
-      setState({
-        loggedIn: true,
-        role: (data?.role as "rider" | "coach") ?? null,
-        name: (data?.name as string | null) ?? null,
-      });
+      const role = (data?.role as "rider" | "coach") ?? null;
+      let coachSlug: string | null = null;
+      let avatarUrl: string | null = null;
+      if (role === "coach") {
+        const [{ data: cp }, { data: photo }] = await Promise.all([
+          client.from("coach_profiles").select("slug").eq("id", userId).maybeSingle(),
+          client.from("coach_photos").select("storage_path").eq("coach_id", userId).order("sort_order").limit(1).maybeSingle(),
+        ]);
+        coachSlug = (cp?.slug as string | undefined) ?? null;
+        if (photo?.storage_path) avatarUrl = client.storage.from("coach-photos").getPublicUrl(photo.storage_path).data.publicUrl;
+      }
+      setState({ loggedIn: true, role, name: (data?.name as string | null) ?? null, coachSlug, avatarUrl });
     }
 
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -77,7 +84,7 @@ function useAuthState(): AuthState {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) load(supabase, session.user.id);
-      else setState({ loggedIn: false, role: null, name: null });
+      else setState({ loggedIn: false, role: null, name: null, coachSlug: null, avatarUrl: null });
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -115,8 +122,16 @@ function SearchSummary({ className = "" }: { className?: string }) {
   );
 }
 
-function Avatar({ name }: { name: string | null }) {
+function Avatar({ name, src }: { name: string | null; src?: string | null }) {
   const initial = (name ?? "?").trim().charAt(0).toUpperCase() || "?";
+  if (src) {
+    return (
+      <span aria-hidden className="block h-9 w-9 overflow-hidden rounded-full bg-shade">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt="" className="h-full w-full object-cover object-[50%_25%]" />
+      </span>
+    );
+  }
   return (
     <span
       aria-hidden
@@ -153,6 +168,11 @@ export function SiteHeader() {
   const firstName = auth.name?.split(" ")[0] ?? null;
   const accountHref = auth.role === "coach" ? "/dashboard" : "/account";
   const isSearch = variant === "ink";
+  // Dashboard mode (canvas: Dashboards): "Coach dashboard" tagline, a
+  // "View public profile" pill and the coach's avatar + first name instead
+  // of the public nav.
+  const isDashboard = pathname.startsWith("/dashboard");
+  const profileHref = auth.coachSlug ? `/coaches/${auth.coachSlug}` : "/dashboard/profile";
 
   return (
     <header
@@ -172,7 +192,7 @@ export function SiteHeader() {
           <Wordmark size={30} className="hidden md:inline" />
           {!isSearch && !coachProfile && (
             <span className="site-header__muted hidden text-[12px] font-medium uppercase tracking-[0.16em] lg:inline">
-              Equestrian Coaches Australia
+              {isDashboard ? "Coach dashboard" : "Equestrian Coaches Australia"}
             </span>
           )}
         </Link>
@@ -186,8 +206,21 @@ export function SiteHeader() {
           </Suspense>
         )}
 
+        {isDashboard ? (
+          <div className="flex items-center gap-2.5 md:gap-[22px]">
+            <Link href={profileHref} className="site-header__outline whitespace-nowrap rounded-[var(--radius-pill)] px-3 py-[7px] text-[13px] font-medium md:px-4 md:py-2 md:text-[15px]">
+              <span className="md:hidden">View profile</span>
+              <span className="hidden md:inline">View public profile</span>
+            </Link>
+            <Link href="/dashboard" className="site-header__link flex items-center gap-2.5 text-[15px] font-medium" aria-label={firstName ?? "Dashboard"}>
+              <Avatar name={auth.name} src={auth.avatarUrl} />
+              <span className="hidden md:inline">{firstName}</span>
+            </Link>
+          </div>
+        ) : null}
+
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-7 text-[15px] font-medium md:flex" aria-label="Primary">
+        <nav className={`hidden items-center gap-7 text-[15px] font-medium md:flex ${isDashboard ? "md:hidden" : ""}`} aria-label="Primary">
           {!isSearch &&
             NAV.filter((l) => !coachProfile || l.label !== "Disciplines").map((l) => {
               const current = pathname === l.href || (l.match ? pathname.startsWith(l.match) : false);
@@ -237,7 +270,7 @@ export function SiteHeader() {
         </nav>
 
         {/* Phone: "Log in" + round burger */}
-        <div className="flex items-center gap-3.5 md:hidden">
+        <div className={`${isDashboard ? "hidden" : "flex"} items-center gap-3.5 md:hidden`}>
           {auth.loggedIn ? (
             <Link href={accountHref} aria-label={firstName ?? "My account"} onClick={close}>
               <Avatar name={auth.name} />

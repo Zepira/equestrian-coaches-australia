@@ -67,6 +67,7 @@ export default async function ProfileEditPage() {
       selectedTermIds={(selected ?? []).map((s) => s.term_id)}
       photos={photosWithUrls}
       testimonials={testimonials ?? []}
+      coachSlug={coach.slug}
     />
   );
 }

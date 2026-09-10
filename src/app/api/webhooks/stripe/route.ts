@@ -13,9 +13,10 @@ function serviceClient() {
   );
 }
 
-const TIER_BY_PRICE_ENV: Record<string, "standard" | "standard_plus_clinics"> = {
-  [process.env.NEXT_PUBLIC_STRIPE_PRICE_STANDARD ?? ""]: "standard",
-  [process.env.NEXT_PUBLIC_STRIPE_PRICE_CLINICS ?? ""]: "standard_plus_clinics",
+const TIER_BY_PRICE_ENV: Record<string, "listed" | "spotlight" | "clinic"> = {
+  [process.env.NEXT_PUBLIC_STRIPE_PRICE_LISTED ?? ""]: "listed",
+  [process.env.NEXT_PUBLIC_STRIPE_PRICE_SPOTLIGHT ?? ""]: "spotlight",
+  [process.env.NEXT_PUBLIC_STRIPE_PRICE_CLINIC ?? ""]: "clinic",
 };
 
 function statusFromStripe(status: Stripe.Subscription.Status): "active" | "past_due" | "canceled" | "inactive" {

@@ -225,7 +225,7 @@ export type MockCoach = {
   skillSlugs: string[];
   attributeSlugs: string[];
   qualifications: string[];
-  tier: "standard" | "standard_plus_clinics";
+  tier: "listed" | "spotlight" | "clinic";
   photoUrl: string;
   takingStudents: "yes" | "waitlist" | "no";
   travelRadiusKm: number | null;
@@ -315,7 +315,7 @@ export const mockCoaches: MockCoach[] = Array.from({ length: COACH_COUNT }, (_, 
     skillSlugs,
     attributeSlugs,
     qualifications: QUALIFICATIONS_BY_DISCIPLINE[primaryDiscipline] ?? [],
-    tier: i % 5 < 2 ? "standard_plus_clinics" : "standard",
+    tier: i % 5 === 0 ? "clinic" : i % 5 === 1 ? "spotlight" : "listed",
     photoUrl: photoFor(primaryDiscipline),
     // Mostly taking students, a few on a waitlist, one in ten closed —
     // enough that every profile state shows up somewhere in the roster.

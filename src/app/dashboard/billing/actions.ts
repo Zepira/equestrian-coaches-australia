@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe, isMockPayments, TIER_PRICE_IDS } from "@/lib/stripe";
 import { ensureCoachProfile } from "@/lib/supabase/queries";
+import { isTier, type Tier } from "@/lib/tiers";
 
 async function requireCoach() {
   const supabase = await createClient();
@@ -33,7 +34,8 @@ async function requireCoach() {
 // session for the chosen tier, and sends them there. Publishing the
 // profile happens in the webhook once payment actually succeeds — never
 // here, so a user can't grant themselves a free listing by hitting cancel.
-export async function startCheckout(tier: "standard" | "standard_plus_clinics") {
+export async function startCheckout(tier: Tier) {
+  if (!isTier(tier)) throw new Error("Unknown plan.");
   const { supabase, userId, email } = await requireCoach();
 
   // No Stripe account exists yet (business/ownership structure still being
@@ -119,6 +121,23 @@ export async function openBillingPortal() {
   });
 
   redirect(session.url);
+}
+
+// Change plan, both directions, any time (CLAUDE.md: a coach goes up to
+// Clinic for their clinic month and back down after). In mock mode the
+// tier flips in the DB; with real Stripe the Customer Portal handles the
+// proration, so we send them there.
+export async function changePlan(tier: Tier) {
+  if (!isTier(tier)) throw new Error("Unknown plan.");
+  const { supabase, userId } = await requireCoach();
+  if (isMockPayments) {
+    await supabase
+      .from("coach_profiles")
+      .update({ subscription_tier: tier, subscription_status: "active", published: true, updated_at: new Date().toISOString() })
+      .eq("id", userId);
+    redirect("/dashboard/billing?changed=1");
+  }
+  await openBillingPortal();
 }
 
 // Mock-mode-only stand-in for what Stripe's Customer Portal would do —

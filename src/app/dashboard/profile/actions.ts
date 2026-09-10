@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { resolveLocation } from "@/lib/supabase/queries";
+import { hasVideo } from "@/lib/tiers";
 
 async function requireCoach() {
   const supabase = await createClient();
@@ -16,28 +17,21 @@ async function requireCoach() {
   return { supabase, userId: user.id };
 }
 
-// Video is a paid-tier perk (pricing copy promises it on Spotlight), but
-// `subscription_tier` is still the pre-revision two-value enum
-// ('standard'/'standard_plus_clinics') — there's no 'spotlight' value to
-// check yet, that needs the pending 3-tier billing migration (see
-// 0017_coach_video.sql). Gating on "any active paid subscription" is the
-// honest interim rule: it still blocks unpublished/free coaches, and
-// upgrading the gate to a real tier check later is a one-line change here,
-// not a rewrite.
+// Video is a Spotlight / Clinic perk (0019_tiers.sql; src/lib/tiers.ts).
 async function requireVideoTierCoach() {
   const { supabase, userId } = await requireCoach();
 
   const { data: coach } = await supabase
     .from("coach_profiles")
-    .select("subscription_status, video_storage_path")
+    .select("subscription_status, subscription_tier, video_storage_path")
     .eq("id", userId)
     .maybeSingle();
 
-  if (coach?.subscription_status !== "active") {
-    throw new Error("Video is available on paid plans — subscribe in Billing to add one.");
+  if (!hasVideo(coach?.subscription_tier, coach?.subscription_status)) {
+    throw new Error("Intro video is included on Spotlight and Clinic — change plan in Billing to add one.");
   }
 
-  return { supabase, userId, existingVideoPath: coach.video_storage_path as string | null };
+  return { supabase, userId, existingVideoPath: (coach?.video_storage_path as string | null) ?? null };
 }
 
 export async function saveProfile(formData: FormData) {
@@ -62,6 +56,10 @@ export async function saveProfile(formData: FormData) {
   const showContactPhone = formData.get("show_contact_phone") === "on";
   const showFacebook = formData.get("show_facebook") === "on";
   const showContactForm = formData.get("show_contact_form") === "on";
+  const travelRadiusRaw = String(formData.get("travel_radius_km") ?? "").replace(/[^\d]/g, "");
+  const travelRadiusKm = travelRadiusRaw === "" ? null : Math.min(1000, Math.max(0, Number(travelRadiusRaw)));
+  const yearsRaw = String(formData.get("years_coaching") ?? "").replace(/[^\d]/g, "");
+  const yearsCoaching = yearsRaw === "" ? null : Math.min(80, Math.max(0, Number(yearsRaw)));
 
   // Geocode suburb/state/postcode into a point so radius search (phase 4)
   // can find this coach. Silently skipped if it doesn't resolve — the
@@ -84,6 +82,9 @@ export async function saveProfile(formData: FormData) {
       show_contact_phone: showContactPhone && Boolean(contactPhone),
       show_facebook: showFacebook && Boolean(facebookUrl),
       show_contact_form: showContactForm,
+      travel_radius_km: travelRadiusKm,
+      travels_to_rider: (travelRadiusKm ?? 0) > 0,
+      years_coaching: yearsCoaching,
       ...(resolved
         ? {
             location: `SRID=4326;POINT(${resolved.long} ${resolved.lat})`,
@@ -116,6 +117,7 @@ export async function saveProfile(formData: FormData) {
   }
 
   revalidatePath("/dashboard/profile");
+  revalidatePath("/dashboard");
 }
 
 export async function uploadPhoto(formData: FormData) {

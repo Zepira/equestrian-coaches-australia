@@ -33,6 +33,9 @@ const width = Number(args[1] ?? 390);
 const assertFile = args.find((a, i) => i >= 2 && a.endsWith(".json"));
 const label = args.includes("--label") ? args[args.indexOf("--label") + 1] : route.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || "home";
 const base = args.includes("--base") ? args[args.indexOf("--base") + 1] : "http://localhost:3000";
+// --login email:password — sign in through the real /login form first, for
+// auth-gated routes (dashboard, account).
+const login = args.includes("--login") ? args[args.indexOf("--login") + 1] : null;
 
 if (!route) {
   console.error("route required");
@@ -88,6 +91,14 @@ async function main() {
   page.on("pageerror", (e) => errors.push(`[pageerror] ${e.message}`));
   page.on("response", (r) => { if (r.status() >= 400) errors.push(`[http ${r.status()}] ${r.url()}`); });
 
+  if (login) {
+    const [email, password] = login.split(":");
+    await page.goto(base + "/login", { waitUntil: "load" });
+    await page.locator("input[type=email], input[name=email]").first().fill(email);
+    await page.locator("input[type=password]").first().fill(password);
+    await page.locator("form button[type=submit]").first().click();
+    await page.waitForTimeout(3000);
+  }
   await page.goto(base + route, { waitUntil: "load" }); await settle(page);
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(2500);
@@ -136,6 +147,16 @@ async function main() {
       for (let i = 0; i < count; i++) {
         const cand = all.nth(i);
         if (await cand.evaluate((el) => el.getClientRects().length > 0)) { loc = cand; break; }
+      }
+      // `absent: true` — no VISIBLE match at this width (hidden wrappers keep
+      // their children's own computed `display`, so check rendering instead).
+      if (a.absent) {
+        let visible = 0;
+        for (let i = 0; i < count; i++) if (await all.nth(i).evaluate((el) => el.getClientRects().length > 0)) visible++;
+        const ok = visible === 0;
+        if (!ok) failed++;
+        rows.push([a.selector, "absent", "0 visible", `${visible} visible`, ok ? "ok" : "FAIL"]);
+        continue;
       }
       if (count === 0) { rows.push([a.selector, a.prop ?? "text", a.expect ?? a.text, "(not found)", "FAIL"]); failed++; continue; }
       let actual;

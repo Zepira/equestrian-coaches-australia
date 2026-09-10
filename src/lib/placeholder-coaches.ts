@@ -12,7 +12,7 @@ export type PlaceholderCoach = {
   state: string;
   disciplines: string[]; // discipline slugs
   qualifications: string[];
-  tier: "standard" | "standard_plus_clinics";
+  tier: "listed" | "spotlight" | "clinic";
   testimonials: { quote: string; author: string }[];
   clinics: { title: string; date: string; location: string }[];
 };
@@ -27,7 +27,7 @@ export const placeholderCoaches: PlaceholderCoach[] = [
     state: "QLD",
     disciplines: ["working-equitation", "dressage"],
     qualifications: ["EA Level 1 Coach", "Working Equitation Australia accredited"],
-    tier: "standard_plus_clinics",
+    tier: "clinic",
     testimonials: [
       {
         quote: "Marnie worked out why I'd been avoiding canter for a year, and started there instead.",
@@ -47,7 +47,7 @@ export const placeholderCoaches: PlaceholderCoach[] = [
     state: "QLD",
     disciplines: ["bridleless", "natural-horsemanship"],
     qualifications: ["Certified Natural Horsemanship Instructor"],
-    tier: "standard",
+    tier: "listed",
     testimonials: [],
     clinics: [],
   },
@@ -60,7 +60,7 @@ export const placeholderCoaches: PlaceholderCoach[] = [
     state: "SA",
     disciplines: ["bridleless"],
     qualifications: ["EA Level 2 Coach"],
-    tier: "standard_plus_clinics",
+    tier: "clinic",
     testimonials: [
       {
         quote:
@@ -79,7 +79,7 @@ export const placeholderCoaches: PlaceholderCoach[] = [
     state: "NSW",
     disciplines: ["working-equitation"],
     qualifications: ["Working Equitation Australia accredited"],
-    tier: "standard",
+    tier: "listed",
     testimonials: [],
     clinics: [],
   },

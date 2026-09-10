@@ -12,6 +12,7 @@ import { getMockCoachBySlug, SKILL_NAMES, ATTRIBUTE_NAMES } from "@/lib/mock-coa
 import { getDisciplineBySlug } from "@/lib/disciplines";
 import { breadcrumbSchema, coachPersonSchema } from "@/lib/structured-data";
 import { logView } from "@/lib/coach-events";
+import { canListClinics } from "@/lib/tiers";
 
 export function generateStaticParams() {
   return placeholderCoaches.map((c) => ({ slug: c.slug }));
@@ -129,7 +130,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
       ? supabase.storage.from("coach-photos").getPublicUrl(photoRows[0].storage_path).data.publicUrl
       : null,
     videoUrl: coach.video_url,
-    canListClinics: coach.subscription_tier === "standard_plus_clinics",
+    canListClinics: canListClinics(coach.subscription_tier, "active"),
     takingStudents: (coach.taking_students as CoachView["takingStudents"]) ?? "yes",
     travelRadiusKm: coach.travel_radius_km ?? null,
     yearsCoaching: coach.years_coaching ?? null,
@@ -171,7 +172,7 @@ function getCoachFromMock(slug: string): CoachView | null {
     clinics: [],
     photoUrl: coach.photoUrl,
     videoUrl: null,
-    canListClinics: coach.tier === "standard_plus_clinics",
+    canListClinics: coach.tier !== "listed",
     takingStudents: coach.takingStudents,
     travelRadiusKm: coach.travelRadiusKm,
     yearsCoaching: coach.yearsCoaching,
@@ -207,7 +208,7 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
     clinics: coach.clinics.map((c) => ({ ...c, id: null, placesLeft: null })),
     photoUrl: null,
     videoUrl: null,
-    canListClinics: coach.tier === "standard_plus_clinics",
+    canListClinics: coach.tier !== "listed",
     takingStudents: "yes",
     travelRadiusKm: null,
     yearsCoaching: null,
