@@ -229,7 +229,7 @@ export default function ForCoachesPage() {
         <Reveal>
           <h2 className="text-center font-display text-3xl text-fg">The monthly email, shown</h2>
         </Reveal>
-        <Reveal delay={80}>
+        <Reveal>
           <div className="mt-10">
             <MonthlyEmailExample />
           </div>
@@ -245,8 +245,8 @@ export default function ForCoachesPage() {
             </h2>
           </Reveal>
           <div className="mt-12 divide-y divide-border border-t border-b border-border">
-            {WHAT_WE_DO.map((row, i) => (
-              <Reveal key={row.title} delay={i * 40}>
+            {WHAT_WE_DO.map((row) => (
+              <Reveal key={row.title}>
                 <div className="grid gap-2 py-7 sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8">
                   <div className="font-display text-[17px] text-fg">{row.title}</div>
                   <div className="text-[15px] leading-relaxed text-muted">{row.body}</div>
@@ -265,7 +265,7 @@ export default function ForCoachesPage() {
         <Reveal>
           <h2 className="text-center font-display text-3xl text-fg">Pick a plan</h2>
         </Reveal>
-        <Reveal delay={60}>
+        <Reveal>
           <p className="mx-auto mt-4 max-w-2xl text-center text-[15px] text-muted">
             Annual is ten months&rsquo; price. Change plan any time, both directions — a coach
             running a clinic in March goes up for March and back down in April.
@@ -273,8 +273,8 @@ export default function ForCoachesPage() {
         </Reveal>
 
         <div className="mt-12 grid grid-cols-1 gap-7 sm:grid-cols-3">
-          {TIERS.map((tier, i) => (
-            <Reveal key={tier.key} delay={i * 80}>
+          {TIERS.map((tier) => (
+            <Reveal key={tier.key}>
               <div
                 className={`flex h-full flex-col rounded-[var(--radius-tile)] border p-8 ${
                   tier.featured ? "border-accent bg-accent-soft" : "border-border bg-surface"
@@ -368,7 +368,7 @@ export default function ForCoachesPage() {
         </div>
 
         {/* Feedback — not an FAQ item, its own closing note under the accordion */}
-        <Reveal delay={60}>
+        <Reveal>
           <div className="mt-10 rounded-[var(--radius-tile)] border border-border bg-shade p-6 text-center">
             <p className="font-display text-lg text-fg">Tell us what to fix</p>
             <p className="mt-2 text-[15px] leading-relaxed text-muted">

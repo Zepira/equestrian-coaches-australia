@@ -22,7 +22,9 @@ const ROOT = resolve(import.meta.dirname, "../..");
 const OUT = join(ROOT, "docs/design-reference/app");
 
 const args = process.argv.slice(2);
-const route = args[0];
+// Git Bash on Windows rewrites a leading "/" argument into a filesystem
+// path; accept the route with or without it (and strip such a rewrite).
+const route = "/" + String(args[0] ?? "").replace(/^[A-Za-z]:[\/].*?(?=\/|$)/, "").replace(/^\/+/, "");
 const width = Number(args[1] ?? 390);
 const assertFile = args.find((a, i) => i >= 2 && a.endsWith(".json"));
 const label = args.includes("--label") ? args[args.indexOf("--label") + 1] : route.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || "home";
@@ -76,6 +78,7 @@ async function main() {
   const errors = [];
   page.on("console", (m) => { if (m.type() === "error" || m.type() === "warning") errors.push(`[console.${m.type()}] ${m.text()}`); });
   page.on("pageerror", (e) => errors.push(`[pageerror] ${e.message}`));
+  page.on("response", (r) => { if (r.status() >= 400) errors.push(`[http ${r.status()}] ${r.url()}`); });
 
   await page.goto(base + route, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
@@ -110,7 +113,20 @@ async function main() {
       let actual;
       if (a.text !== undefined) actual = (await loc.innerText()).trim();
       else actual = await loc.evaluate((el, p) => getComputedStyle(el)[p], a.prop);
-      const want = a.expect ?? a.text;
+      let want = a.expect ?? a.text;
+      // Colours: Tailwind v4 emits oklab()/color-mix() for opacity modifiers,
+      // which paint identically to the canvas's rgba(). Compare the pixel
+      // a browser actually paints, not the string.
+      if (a.prop && /color/i.test(a.prop) && a.text === undefined) {
+        const toRgba = (v) => page.evaluate((val) => {
+          const c = document.createElement("canvas"); c.width = c.height = 1;
+          const ctx = c.getContext("2d"); ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = val; ctx.fillRect(0, 0, 1, 1);
+          const [r, g, b, al] = ctx.getImageData(0, 0, 1, 1).data;
+          return `rgba(${r}, ${g}, ${b}, ${(al / 255).toFixed(2)})`;
+        }, v);
+        actual = await toRgba(actual);
+        want = await toRgba(want);
+      }
       const ok = a.contains ? String(actual).includes(want) : String(actual) === String(want);
       if (!ok) failed++;
       rows.push([a.selector, a.prop ?? "text", want, actual, ok ? "ok" : "FAIL"]);

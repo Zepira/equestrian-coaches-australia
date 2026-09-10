@@ -1,53 +1,45 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
-// Fades a section up into place the first time it scrolls into view. Server-
-// rendered content stays fully visible in the initial HTML either way — the
-// "hidden" state only ever exists as a CSS class, and .reveal itself is
-// forced back to opacity: 1 for prefers-reduced-motion and no-JS (see the
-// <noscript> override in layout.tsx) — a rider whose JS fails to hydrate,
-// or a crawler that doesn't run it, still gets the real content up front,
-// never content permanently stuck at opacity: 0.
+/**
+ * The canvases' `[data-reveal]` scroll-in: a block starts 20px (24px on
+ * desktop) low at opacity 0 and settles over .9s once 12% of it is on
+ * screen — one IntersectionObserver per block, fires once. Styles live in
+ * globals.css (`[data-reveal]` / `[data-reveal="in"]`).
+ *
+ * Server-rendered content is always in the HTML; the hidden state is CSS
+ * only, and both the <noscript> override in layout.tsx and the reduced-
+ * motion reset force it visible when JS doesn't run — real content never
+ * stays at opacity 0.
+ */
 export function Reveal({
   children,
-  delay = 0,
   className = "",
+  as: Tag = "div",
 }: {
   children: ReactNode;
-  /** Stagger, in ms — for a row of siblings revealing in sequence. */
-  delay?: number;
   className?: string;
+  as?: "div" | "section";
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [shown, setShown] = useState(false);
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    // threshold: 0 + a generous bottom rootMargin — this is a "settle into
-    // place shortly after it's on screen" effect, not a scroll-scrubbed
-    // reveal that makes a rider wait for content to arrive.
-    const observer = new IntersectionObserver(
+    const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setShown(true);
-          observer.disconnect();
+          el.dataset.reveal = "in";
+          io.disconnect();
         }
       },
-      { threshold: 0, rootMargin: "0px 0px -10% 0px" }
+      { threshold: 0.12 }
     );
-    observer.observe(el);
-    return () => observer.disconnect();
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
-  return (
-    <div
-      ref={ref}
-      className={`reveal ${shown ? "reveal-in" : ""} ${className}`}
-      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
-    >
-      {children}
-    </div>
-  );
+  // @ts-expect-error — ref typed for the union; both tags accept HTMLElement refs
+  return <Tag ref={ref} data-reveal className={className}>{children}</Tag>;
 }

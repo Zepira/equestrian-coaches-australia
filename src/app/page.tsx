@@ -6,7 +6,6 @@ import { DisciplineTag } from "@/components/discipline-tag";
 import { DisciplineMasonry } from "@/components/discipline-masonry";
 import { LinkButton } from "@/components/ui/button";
 import { Reveal } from "@/components/reveal";
-import { Magnetic } from "@/components/magnetic";
 import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
@@ -55,7 +54,7 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
           <Reveal className="flex items-end justify-between gap-4">
             <div>
-              <div className="eyebrow-line text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
                 Featured coaches
               </div>
               <h2 className="mt-4 text-4xl leading-[1.05] text-ink sm:text-5xl">
@@ -67,8 +66,8 @@ export default async function Home() {
             </LinkButton>
           </Reveal>
           <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((coach, i) => (
-              <Reveal key={coach.slug} delay={i * 80}>
+            {featured.map((coach) => (
+              <Reveal key={coach.slug}>
                 <CoachCard coach={coach} />
               </Reveal>
             ))}
@@ -84,7 +83,7 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
           <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <div>
-              <div className="eyebrow-line text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
                 Featured disciplines
               </div>
               <h2 className="mt-4 max-w-xl text-4xl leading-[1.05] text-ink sm:text-5xl">
@@ -96,12 +95,11 @@ export default async function Home() {
             </p>
           </Reveal>
 
-          <Reveal delay={100} className="mt-12">
+          <Reveal className="mt-12">
             <DisciplineMasonry disciplines={topDisciplines} />
           </Reveal>
 
           <Reveal
-            delay={150}
             className="mt-11 flex flex-col items-start justify-between gap-6 border-t border-border pt-8 sm:flex-row sm:items-center"
           >
             <div className="flex flex-wrap gap-2.5">
@@ -117,7 +115,6 @@ export default async function Home() {
           {/* Coach CTA — sits directly under the disciplines it's meant to
               follow on from, not stranded at the very bottom of the page. */}
           <Reveal
-            delay={200}
             className="mt-11 flex flex-col items-start justify-between gap-6 rounded-[var(--radius-tile)] bg-ink px-6 py-8 sm:flex-row sm:items-center sm:px-10"
           >
             <p className="max-w-xl text-[15px] leading-relaxed text-ink-fg/90 sm:text-base">
@@ -126,11 +123,9 @@ export default async function Home() {
               location, specialties, qualifications and testimonials. Plans for coaches building a
               book or running clinics too.
             </p>
-            <Magnetic className="w-full shrink-0 sm:w-auto">
-              <LinkButton href="/for-coaches" className="w-full sm:w-auto">
+            <LinkButton href="/for-coaches" className="w-full sm:w-auto">
                 List your coaching profile
               </LinkButton>
-            </Magnetic>
           </Reveal>
         </div>
       </section>
@@ -160,8 +155,8 @@ export default async function Home() {
                 title: "Contact them direct",
                 body: "No commission, no booking fee. You deal with your coach, the way riders always have.",
               },
-            ].map((step, i) => (
-              <Reveal key={step.n} delay={i * 100}>
+            ].map((step) => (
+              <Reveal key={step.n}>
                 <div className="border-t border-ink-fg/35 pt-6">
                   <div className="text-2xl text-border">{step.n}</div>
                   <div className="mt-3 text-2xl font-medium text-ink-fg">{step.title}</div>

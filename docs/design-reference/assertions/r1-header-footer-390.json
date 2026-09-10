@@ -1,0 +1,22 @@
+[
+  { "selector": "header.site-header", "prop": "height", "expect": "60px" },
+  { "selector": "header.site-header a[aria-label] span.font-display.md\\:hidden", "prop": "fontSize", "expect": "26px" },
+  { "selector": "header.site-header a[aria-label] span.font-display.md\\:hidden", "prop": "fontFamily", "expect": "Instrument Serif", "contains": true },
+  { "selector": "header.site-header .site-header__burger", "prop": "width", "expect": "40px" },
+  { "selector": "header.site-header .site-header__burger", "prop": "height", "expect": "40px" },
+  { "selector": "header.site-header .site-header__burger", "prop": "borderRadius", "expect": "999px" },
+  { "selector": "header.site-header .site-header__burger span", "prop": "width", "expect": "16px" },
+  { "selector": "header.site-header .site-header__burger span", "prop": "height", "expect": "1.5px" },
+  { "selector": "header.site-header > div > div > a.site-header__link", "text": "Log in" },
+  { "selector": "header.site-header > div > div > a.site-header__link", "prop": "fontSize", "expect": "14px" },
+  { "selector": "footer", "prop": "backgroundColor", "expect": "rgb(20, 40, 31)" },
+  { "selector": "footer span.font-display.md\\:hidden", "prop": "fontSize", "expect": "40px" },
+  { "selector": "footer p", "prop": "fontSize", "expect": "14px" },
+  { "selector": "footer p", "prop": "maxWidth", "expect": "280px" },
+  { "selector": "footer div.uppercase", "prop": "fontSize", "expect": "11px" },
+  { "selector": "footer div.uppercase + a", "prop": "lineHeight", "expect": "28.5px" },
+  { "selector": "footer > div > div:last-child", "prop": "fontSize", "expect": "12px" },
+  { "selector": "footer > div > div:last-child", "prop": "borderTopWidth", "expect": "1px" },
+  { "selector": "body", "prop": "fontFamily", "expect": "Hanken Grotesk", "contains": true },
+  { "selector": "h1", "prop": "fontFamily", "expect": "Instrument Serif", "contains": true }
+]

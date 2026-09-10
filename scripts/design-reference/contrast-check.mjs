@@ -1,0 +1,111 @@
+// Worst-case contrast of a text element against whatever is actually painted
+// behind it — photograph, gradient scrim, header plate, all composited by
+// the browser. Hides the element's own text, screenshots its box, finds the
+// brightest (or, for dark text, darkest) pixel, and reports the WCAG ratio
+// against the element's text colour.
+//
+//   node scripts/design-reference/contrast-check.mjs <route> <width> <selector> [<selector> …] [--scroll N] [--base url]
+//
+// Exit 1 if any element falls under 4.5:1.
+
+import { chromium } from "playwright";
+
+const args = process.argv.slice(2);
+const route = "/" + String(args[0] ?? "").replace(/^[A-Za-z]:[\\/].*?(?=\/|$)/, "").replace(/^\/+/, "");
+const width = Number(args[1]);
+const selectors = args.slice(2).filter((a) => !a.startsWith("--") && a !== args[args.indexOf("--scroll") + 1] && a !== args[args.indexOf("--base") + 1]);
+const scrollY = args.includes("--scroll") ? Number(args[args.indexOf("--scroll") + 1]) : 0;
+const base = args.includes("--base") ? args[args.indexOf("--base") + 1] : "http://localhost:3000";
+
+const lum = ([r, g, b]) => {
+  const f = (c) => {
+    c /= 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+};
+const ratio = (a, b) => {
+  const [hi, lo] = [Math.max(a, b), Math.min(a, b)];
+  return (hi + 0.05) / (lo + 0.05);
+};
+
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width, height: width < 600 ? 844 : 800 } });
+await page.goto(base + route, { waitUntil: "networkidle" });
+await page.evaluate(() => document.fonts.ready);
+await page.waitForTimeout(2500);
+if (scrollY) {
+  await page.evaluate((y) => window.scrollTo(0, y), scrollY);
+  await page.waitForTimeout(600);
+}
+
+let failed = 0;
+for (const sel of selectors) {
+  const el = page.locator(sel).first();
+  if ((await el.count()) === 0) {
+    console.log(`${sel}: not found`);
+    failed++;
+    continue;
+  }
+  const info = await el.evaluate((node) => {
+    const cs = getComputedStyle(node);
+    const r = node.getBoundingClientRect();
+    const m = cs.color.match(/[\d.]+/g).map(Number);
+    // Sample the content box only: a pill's own hairline border and padding
+    // are inside the bounding box but never behind the glyphs.
+    const px = (v) => parseFloat(v) || 0;
+    const l = px(cs.borderLeftWidth) + px(cs.paddingLeft), t = px(cs.borderTopWidth) + px(cs.paddingTop);
+    const rr = px(cs.borderRightWidth) + px(cs.paddingRight), b = px(cs.borderBottomWidth) + px(cs.paddingBottom);
+    return { box: { x: r.left + l, y: r.top + t, w: r.width - l - rr, h: r.height - t - b }, color: m, fontSize: cs.fontSize, text: node.textContent.trim().slice(0, 40) };
+  });
+  // Hide the text (keep layout), shoot the box, restore.
+  await el.evaluate((node) => {
+    node.dataset.prevColor = node.style.color;
+    node.style.transition = "none";
+    node.style.color = "transparent";
+    node.style.textShadow = "none";
+    node.querySelectorAll("*").forEach((c) => { c.style.transition = "none"; c.style.color = "transparent"; });
+  });
+  await page.waitForTimeout(80);
+  const buf = await page.screenshot({ clip: { x: info.box.x, y: info.box.y, width: Math.max(1, info.box.w), height: Math.max(1, info.box.h) } });
+  await el.evaluate((node) => {
+    node.style.color = node.dataset.prevColor || "";
+    node.style.transition = "";
+    node.querySelectorAll("*").forEach((c) => { c.style.transition = ""; c.style.color = ""; });
+  });
+  const textIsLight = lum(info.color) > 0.4;
+  const worst = await page.evaluate(
+    async ([dataUrl, light]) => {
+      const img = new Image();
+      img.src = dataUrl;
+      await img.decode();
+      const c = document.createElement("canvas");
+      c.width = img.width;
+      c.height = img.height;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const d = ctx.getImageData(0, 0, c.width, c.height).data;
+      let best = null;
+      let bestL = light ? -1 : 2;
+      for (let i = 0; i < d.length; i += 4) {
+        const f = (v) => {
+          v /= 255;
+          return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+        };
+        const L = 0.2126 * f(d[i]) + 0.7152 * f(d[i + 1]) + 0.0722 * f(d[i + 2]);
+        if (light ? L > bestL : L < bestL) {
+          bestL = L;
+          best = [d[i], d[i + 1], d[i + 2]];
+        }
+      }
+      return best;
+    },
+    [`data:image/png;base64,${buf.toString("base64")}`, textIsLight]
+  );
+  const r = ratio(lum(info.color), lum(worst));
+  const ok = r >= 4.5;
+  if (!ok) failed++;
+  console.log(`${ok ? "ok  " : "FAIL"} ${r.toFixed(2)}:1  ${sel}  "${info.text}" ${info.fontSize} text rgb(${info.color.slice(0, 3)}) vs worst-case bg rgb(${worst})`);
+}
+await browser.close();
+process.exit(failed ? 1 : 0);

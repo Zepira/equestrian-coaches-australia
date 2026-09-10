@@ -1,275 +1,295 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { LinkButton } from "@/components/ui/button";
-import { Magnetic } from "@/components/magnetic";
-import { Monogram } from "@/components/monogram";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { Wordmark } from "@/components/wordmark";
 import { createClient } from "@/lib/supabase/client";
 
-const navLinks = [
-  { href: "/search", label: "Find a coach" },
-  { href: "/for-coaches", label: "For coaches" },
-];
-
 /**
- * Routes whose first section is a full-bleed hero the header floats over.
- * Add a route here when you give it one — the transparent state is only
- * legible over a dark photograph, so it has to be opt-in.
+ * Header from the Golden Hour canvases. Three variants, resolved from the
+ * route (see `variantFor`), styled in `.site-header[data-variant]` in
+ * globals.css:
  *
- * This flag only says "this route HAS a hero". Whether the hero is currently
- * rendering full-bleed is a viewport question, and it is answered in CSS
- * (`.site-header[data-overlay]` in globals.css) against the same media
- * condition the hero itself uses — so the two can never disagree, and there is
- * no hydration flash from measuring the viewport in JavaScript.
+ *   overlay  floats over a full-bleed hero (home, for-coaches; coach
+ *            profile on phones only — `data-overlay-scope="mobile"` lets the
+ *            CSS switch that one to the light bar from 768px)
+ *   ink      solid green with the search summary pill (search results)
+ *   light    translucent cream (everything else)
+ *
+ * JavaScript supplies one bit: `data-solid`, true once the page has scrolled
+ * (or the phone menu is open), which cross-fades an overlay header to the
+ * light bar — the one deviation from the canvases, which keep the gradient
+ * at every scroll position. Nothing hides on scroll.
  */
+type Variant = "overlay" | "ink" | "light";
+
+// "/for-coaches" joins this list in Phase R6, once it has its full-bleed hero.
 const OVERLAY_ROUTES = ["/"];
+const OVERLAY_MOBILE_PREFIXES = ["/coaches/"];
 
-/**
- * `scrolled`: true once the page has scrolled past a few pixels (the
- * existing opaque-background trigger). `hidden`: true while actively
- * scrolling DOWN, well clear of the top — the header slides away rather
- * than following the rider down the page, and reappears the instant they
- * scroll back up even a little, not only once they're back at the very
- * top. A small per-tick delta threshold (not just "did y increase")
- * ignores the sub-pixel jitter most trackpads/momentum scrolling produce,
- * which otherwise flickers the header in and out on a scroll that's
- * actually holding still.
- */
-function useHeaderVisibility(threshold = 8) {
+function variantFor(pathname: string): { variant: Variant; scope?: "mobile" } {
+  if (OVERLAY_ROUTES.includes(pathname)) return { variant: "overlay" };
+  if (OVERLAY_MOBILE_PREFIXES.some((p) => pathname.startsWith(p))) return { variant: "overlay", scope: "mobile" };
+  if (pathname === "/search") return { variant: "ink" };
+  return { variant: "light" };
+}
+
+function useScrolled(threshold = 8) {
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
-
   useEffect(() => {
-    let lastY = window.scrollY;
-
-    function onScroll() {
-      const y = window.scrollY;
-      setScrolled(y > threshold);
-
-      const delta = y - lastY;
-      if (y > 160 && delta > 4) setHidden(true);
-      else if (delta < -4 || y < 160) setHidden(false);
-      lastY = y;
-    }
-
-    onScroll(); // a reload part-way down the page starts scrolled
+    const onScroll = () => setScrolled(window.scrollY > threshold);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [threshold]);
-
-  return { scrolled, hidden };
+  return scrolled;
 }
 
-type AuthState = { loggedIn: boolean; role: "rider" | "coach" | null };
+type AuthState = { loggedIn: boolean; role: "rider" | "coach" | null; name: string | null };
 
 function useAuthState(): AuthState {
-  const [state, setState] = useState<AuthState>({ loggedIn: false, role: null });
+  const [state, setState] = useState<AuthState>({ loggedIn: false, role: null, name: null });
 
   useEffect(() => {
     const supabase = createClient();
-    if (!supabase) return; // not pointed at a live Supabase project yet
+    if (!supabase) return;
 
-    async function loadRole(client: NonNullable<typeof supabase>, userId: string) {
-      const { data } = await client.from("profiles").select("role").eq("id", userId).single();
-      setState({ loggedIn: true, role: (data?.role as "rider" | "coach") ?? null });
+    async function load(client: NonNullable<typeof supabase>, userId: string) {
+      const { data } = await client.from("profiles").select("role, name").eq("id", userId).single();
+      setState({
+        loggedIn: true,
+        role: (data?.role as "rider" | "coach") ?? null,
+        name: (data?.name as string | null) ?? null,
+      });
     }
 
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) loadRole(supabase, user.id);
+      if (user) load(supabase, user.id);
     });
-
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) loadRole(supabase, session.user.id);
-      else setState({ loggedIn: false, role: null });
+      if (session?.user) load(supabase, session.user.id);
+      else setState({ loggedIn: false, role: null, name: null });
     });
-
     return () => subscription.unsubscribe();
   }, []);
 
   return state;
 }
 
-function AccountLinks({
-  auth,
-  onNavigate,
-  mobile = false,
-}: {
-  auth: AuthState;
-  onNavigate?: () => void;
-  mobile?: boolean;
-}) {
-  // Mobile renders inside the same <ul> as the plain nav links (site-header's
-  // "Mobile menu panel" block below) — match their exact row styling instead
-  // of the desktop bar's compact inline link, or these look like a different,
-  // smaller kind of control tacked onto the end of the menu.
-  const linkClass = mobile
-    ? "block rounded-[var(--radius-control)] px-2 py-3 text-[17px] font-medium text-fg hover:bg-accent-soft"
-    : "site-header__link text-[15px] font-medium";
-  const Item = mobile ? "li" : "span";
-
-  if (!auth.loggedIn) {
-    return (
-      <>
-        <Item>
-          <Link href="/login" onClick={onNavigate} className={linkClass}>
-            Log in
-          </Link>
-        </Item>
-        <Item>
-          {mobile ? (
-            <LinkButton
-              href="/signup?role=coach"
-              onClick={onNavigate}
-              className="mt-1 w-full justify-center text-sm"
-            >
-              List your profile
-            </LinkButton>
-          ) : (
-            // Magnetic only on the desktop bar — a touch device has no
-            // pointer to react to, so this would be inert weight there.
-            <Magnetic>
-              <LinkButton href="/signup?role=coach" onClick={onNavigate} className="text-sm">
-                List your profile
-              </LinkButton>
-            </Magnetic>
-          )}
-        </Item>
-      </>
-    );
-  }
-
+/** "Bendigo VIC · Dressage · within 50 km" in the ink header on /search. */
+function SearchSummary() {
+  const params = useSearchParams();
+  const location = params.get("location") ?? "";
+  const disciplines = (params.get("d") ?? "")
+    .split(",")
+    .filter(Boolean)
+    .map((s) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
+  const radius = params.get("r") ?? "50";
   return (
-    <>
-      <Item>
-        <Link href={auth.role === "coach" ? "/dashboard" : "/account"} onClick={onNavigate} className={linkClass}>
-          {auth.role === "coach" ? "Dashboard" : "My account"}
-        </Link>
-      </Item>
-      <Item>
-        <form action="/auth/sign-out" method="post">
-          <button type="submit" className={mobile ? `w-full text-left ${linkClass}` : linkClass}>
-            Log out
-          </button>
-        </form>
-      </Item>
-    </>
+    <Link
+      href={`/#search`}
+      className="flex min-w-0 flex-1 items-center gap-2.5 rounded-[var(--radius-input)] bg-surface px-4 py-2.5 text-[16px] text-fg md:max-w-[620px]"
+    >
+      <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-accent" />
+      <span className="min-w-0 flex-1 truncate">
+        {location || "Anywhere in Australia"}
+        <span className="text-subtle">
+          {disciplines.length ? ` · ${disciplines.join(", ")}` : ""}
+          <span className="hidden md:inline"> · within {radius} km</span>
+        </span>
+      </span>
+      <span className="shrink-0 text-[13px] font-medium text-accent">Edit</span>
+    </Link>
   );
 }
+
+function Avatar({ name }: { name: string | null }) {
+  const initial = (name ?? "?").trim().charAt(0).toUpperCase() || "?";
+  return (
+    <span
+      aria-hidden
+      className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-[16px] text-ink-fg"
+    >
+      {initial}
+    </span>
+  );
+}
+
+const NAV = [
+  { href: "/search", label: "Find a coach" },
+  { href: "/disciplines/dressage", label: "Disciplines", match: "/disciplines" },
+  { href: "/for-coaches", label: "For coaches" },
+];
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const auth = useAuthState();
   const pathname = usePathname();
-  const { scrolled, hidden } = useHeaderVisibility();
-
-  const overlayRoute = OVERLAY_ROUTES.includes(pathname);
-  // The mobile menu panel needs an opaque bar above it, so opening it forces
-  // the solid state just as scrolling does.
+  const scrolled = useScrolled();
+  const { variant, scope } = variantFor(pathname);
   const solid = scrolled || open;
-  // Never hide while the menu is open — a bar that vanishes out from under
-  // an open panel reads as broken, not restrained.
-  const reallyHidden = hidden && !open;
+  const close = () => setOpen(false);
 
-  // Keeps <html data-overlay-route> (globals.css, iOS safe-area background —
-  // see the comment there) correct across client-side navigation, which the
-  // blocking inline script in layout.tsx only handles for the very first
-  // load of the page.
+  // <html data-overlay-route> — iOS paints <html>'s own background behind
+  // the notch; on overlay routes that has to be ink, see globals.css.
   useEffect(() => {
-    document.documentElement.dataset.overlayRoute = String(overlayRoute);
-  }, [overlayRoute]);
-  const linkClass = "site-header__link text-[15px] font-medium";
+    document.documentElement.dataset.overlayRoute = String(variant === "overlay" && !scope);
+  }, [variant, scope]);
+
+  const firstName = auth.name?.split(" ")[0] ?? null;
+  const accountHref = auth.role === "coach" ? "/dashboard" : "/account";
+  const isSearch = variant === "ink";
 
   return (
-    <header className="site-header" data-overlay={overlayRoute} data-solid={solid} data-hidden={reallyHidden}>
-      <div className="site-header__plate" aria-hidden />
-      {/* Two nested boxes, matching the hero's OWN box model exactly
-          (.hero__body -> .hero__inner in globals.css) rather than one div
-          doing both jobs at once. That distinction matters past ~1800px:
-          the hero pads its full-width body by --content-gutter and THEN
-          centres a --content-max column inside what's left, so on a very
-          wide screen the column's left edge sits at (viewport-max)/2 — the
-          gutter is "spent" evenly on both sides, not stacked with the
-          centering. A single div with both maxWidth and paddingInline (the
-          previous version here) constrains the padding INSIDE that width,
-          which centers the padded box a full gutter further right than the
-          hero's column — content_max is the same in both, but the two box
-          models don't produce the same left edge. */}
-      <div style={{ paddingInline: "var(--content-gutter)" }}>
-        <div
-          className="mx-auto flex h-[var(--header-h)] items-center justify-between"
-          style={{ maxWidth: "var(--content-max)" }}
+    <header
+      className="site-header"
+      data-variant={variant}
+      data-overlay-scope={scope}
+      data-solid={variant === "overlay" ? solid : undefined}
+    >
+      <div className="site-header__inner">
+        <Link
+          href="/"
+          className="flex items-baseline gap-3.5"
+          aria-label="Equestrian Coaches Australia — home"
+          onClick={close}
         >
-          <Link
-            href="/"
-            className="flex items-center"
-            aria-label="Equestrian Coaches Australia — home"
-            onClick={() => setOpen(false)}
-          >
-            <Monogram className="site-header__mark" />
-            <span className="site-header__tagline ml-3 hidden text-xs font-medium uppercase tracking-[0.2em] sm:inline">
+          <Wordmark size={26} className="md:hidden" />
+          <Wordmark size={30} className="hidden md:inline" />
+          {!isSearch && (
+            <span className="site-header__muted hidden text-[12px] font-medium uppercase tracking-[0.16em] lg:inline">
               Equestrian Coaches Australia
             </span>
-          </Link>
+          )}
+        </Link>
+
+        {isSearch && (
+          <Suspense fallback={<span className="flex-1" />}>
+            <SearchSummary />
+          </Suspense>
+        )}
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className={linkClass}>
-              {link.label}
+        <nav className="hidden items-center gap-7 text-[15px] font-medium md:flex" aria-label="Primary">
+          {!isSearch &&
+            NAV.map((l) => {
+              const current = pathname === l.href || (l.match ? pathname.startsWith(l.match) : false);
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="site-header__link"
+                  aria-current={current ? "page" : undefined}
+                >
+                  {l.label}
+                </Link>
+              );
+            })}
+          {isSearch && (
+            <Link href="/for-coaches" className="site-header__link">
+              For coaches
             </Link>
-          ))}
-          <AccountLinks auth={auth} />
+          )}
+          {auth.loggedIn ? (
+            <>
+              <Link href={accountHref} className="site-header__link flex items-center gap-2.5">
+                <Avatar name={auth.name} />
+                {firstName ?? (auth.role === "coach" ? "Dashboard" : "My account")}
+              </Link>
+              <form action="/auth/sign-out" method="post">
+                <button type="submit" className="site-header__link">
+                  Log out
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="site-header__link">
+                Log in
+              </Link>
+              {!isSearch && (
+                <Link
+                  href="/signup?role=coach"
+                  className="site-header__outline rounded-[var(--radius-pill)] px-[18px] py-2.5 hover:bg-ink hover:text-ink-fg"
+                >
+                  List your profile
+                </Link>
+              )}
+            </>
+          )}
         </nav>
 
-        {/* Mobile menu toggle */}
-        <button
-          type="button"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-          className="site-header__mark flex h-10 w-10 items-center justify-center rounded-[var(--radius-control)] md:hidden"
-        >
-          <span className="relative block h-4 w-5">
-            <span
-              className={`absolute left-0 top-0 block h-0.5 w-5 bg-current transition-transform ${
-                open ? "translate-y-[7px] rotate-45" : ""
-              }`}
-            />
-            <span
-              className={`absolute left-0 top-[7px] block h-0.5 w-5 bg-current transition-opacity ${
-                open ? "opacity-0" : ""
-              }`}
-            />
-            <span
-              className={`absolute left-0 top-[14px] block h-0.5 w-5 bg-current transition-transform ${
-                open ? "-translate-y-[7px] -rotate-45" : ""
-              }`}
-            />
-          </span>
+        {/* Phone: "Log in" + round burger */}
+        <div className="flex items-center gap-3.5 md:hidden">
+          {auth.loggedIn ? (
+            <Link href={accountHref} aria-label={firstName ?? "My account"} onClick={close}>
+              <Avatar name={auth.name} />
+            </Link>
+          ) : (
+            <Link href="/login" className="site-header__link text-[14px] font-medium" onClick={close}>
+              Log in
+            </Link>
+          )}
+          <button
+            type="button"
+            className="site-header__burger"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span />
+            <span />
           </button>
         </div>
       </div>
 
-      {/* Mobile menu panel */}
       {open && (
-        <nav className="border-t border-border bg-surface px-4 pb-4 pt-2 md:hidden">
-          <ul className="flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <li key={link.href}>
+        <nav className="site-header__menu md:hidden" aria-label="Primary">
+          <ul className="flex flex-col">
+            {NAV.map((l) => (
+              <li key={l.href}>
                 <Link
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="block rounded-[var(--radius-control)] px-2 py-3 text-[17px] font-medium text-fg hover:bg-accent-soft"
+                  href={l.href}
+                  onClick={close}
+                  className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
                 >
-                  {link.label}
+                  {l.label}
                 </Link>
               </li>
             ))}
-            <AccountLinks auth={auth} onNavigate={() => setOpen(false)} mobile />
+            {auth.loggedIn ? (
+              <>
+                <li>
+                  <Link
+                    href={accountHref}
+                    onClick={close}
+                    className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
+                  >
+                    {auth.role === "coach" ? "Dashboard" : "My account"}
+                  </Link>
+                </li>
+                <li>
+                  <form action="/auth/sign-out" method="post">
+                    <button type="submit" className="block w-full py-3.5 text-left text-[15px] font-medium text-subtle">
+                      Log out
+                    </button>
+                  </form>
+                </li>
+              </>
+            ) : (
+              <li className="pt-4">
+                <Link
+                  href="/signup?role=coach"
+                  onClick={close}
+                  className="block rounded-[var(--radius-soft)] bg-ink py-[15px] text-center text-[16px] font-semibold text-ink-fg"
+                >
+                  List your profile
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       )}
