@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/password-input";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 function LoginForm() {
@@ -27,27 +28,37 @@ function LoginForm() {
       setError("Auth isn't connected yet — Supabase project pending (build plan, phase 2).");
       return;
     }
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (signInError) {
+    // Everything below can throw outright (network failure, bad Supabase
+    // URL/key, CORS) rather than resolve with an { error } field — without
+    // this try/catch that left setLoading/setError never called at all: no
+    // error, no spinner reset, the form just silently sits there looking
+    // like nothing happened. Every exit path below always runs setLoading.
+    try {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (signInError) {
+        setError(signInError.message);
+        return;
+      }
+
+      let next = explicitNext;
+      if (!next) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", data.user.id)
+          .single();
+        next = profile?.role === "coach" ? "/dashboard" : "/account";
+      }
+
+      router.push(next);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong logging in — try again.");
+    } finally {
       setLoading(false);
-      setError(signInError.message);
-      return;
     }
-
-    let next = explicitNext;
-    if (!next) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .single();
-      next = profile?.role === "coach" ? "/dashboard" : "/account";
-    }
-
-    setLoading(false);
-    router.push(next);
-    router.refresh();
   }
 
   return (
@@ -73,13 +84,13 @@ function LoginForm() {
         </label>
         <label className="block">
           <span className="mb-1 block text-sm font-medium text-fg">Password</span>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
-            required
-          />
+          <PasswordInput value={password} onChange={setPassword} required />
+          {/* Comes after the password input in the DOM (not beside its
+              label) so tab order is email -> password -> show/hide -> this,
+              not email -> this -> password. */}
+          <Link href="/forgot-password" className="mt-1.5 inline-block text-sm font-medium text-accent">
+            Forgot password?
+          </Link>
         </label>
 
         {error && <p className="text-sm text-danger">{error}</p>}

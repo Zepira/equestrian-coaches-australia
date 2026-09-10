@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/password-input";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 function SignupForm() {
@@ -33,31 +34,39 @@ function SignupForm() {
     }
     const next = isCoach ? `/dashboard${tier ? `?tier=${tier}` : ""}` : "/account";
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { role, name },
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-      },
-    });
+    // Same reasoning as login: a thrown exception here (network failure,
+    // bad Supabase URL/key, CORS) rather than a returned { error } would
+    // otherwise skip every line below, including setLoading(false) — form
+    // just sits there with no feedback.
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { role, name },
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        },
+      });
 
-    setLoading(false);
+      if (signUpError) {
+        setError(signUpError.message);
+        return;
+      }
 
-    if (signUpError) {
-      setError(signUpError.message);
-      return;
+      // Email confirmation is on by default in Supabase — session is null
+      // until the rider/coach clicks the link.
+      if (data.user && !data.session) {
+        setCheckEmail(true);
+        return;
+      }
+
+      router.push(next);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong creating your account — try again.");
+    } finally {
+      setLoading(false);
     }
-
-    // Email confirmation is on by default in Supabase — session is null
-    // until the rider/coach clicks the link.
-    if (data.user && !data.session) {
-      setCheckEmail(true);
-      return;
-    }
-
-    router.push(next);
-    router.refresh();
   }
 
   if (checkEmail) {
@@ -109,14 +118,7 @@ function SignupForm() {
         </label>
         <label className="block">
           <span className="mb-1 block text-sm font-medium text-fg">Password</span>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            minLength={8}
-            className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg"
-            required
-          />
+          <PasswordInput value={password} onChange={setPassword} minLength={8} required />
         </label>
 
         {error && <p className="text-sm text-danger">{error}</p>}

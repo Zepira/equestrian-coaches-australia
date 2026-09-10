@@ -49,21 +49,27 @@ async function compressImage(file: File): Promise<File> {
   }
 }
 
+// One button, not two steps. Previously this was "Choose file" (opens the
+// native picker) then a separate "Upload" button you had to remember to
+// click afterwards — confusing, and easy to pick a file and walk away
+// thinking it was done. Now the file input is visually hidden; the visible
+// button just calls its .click() to open the picker, and selecting a file
+// (onChange) uploads immediately, no second click.
 export function PhotoUploadForm({ configured }: { configured: boolean }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<"idle" | "processing" | "uploading">("idle");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const file = inputRef.current?.files?.[0];
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
     if (!file) return;
 
     setError(null);
 
     if (file.size > MAX_SOURCE_BYTES) {
       setError("That file's too large — please choose a photo under 25MB.");
+      if (inputRef.current) inputRef.current.value = "";
       return;
     }
 
@@ -77,38 +83,45 @@ export function PhotoUploadForm({ configured }: { configured: boolean }) {
     startTransition(async () => {
       try {
         await uploadPhoto(formData);
-        if (inputRef.current) inputRef.current.value = "";
       } catch (err) {
         setError(err instanceof Error ? err.message : "Upload failed — please try again.");
       } finally {
         setStatus("idle");
+        if (inputRef.current) inputRef.current.value = "";
       }
     });
   }
 
   const busy = status !== "idle" || isPending;
+  const label = status === "processing" ? "Preparing…" : status === "uploading" || isPending ? "Uploading…" : "Add a photo";
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3 border-t border-border pt-6">
-      <label className="block">
-        <span className="mb-1 block text-sm font-medium text-fg">Add a photo</span>
+    <div className="flex flex-col gap-1.5 border-t border-border pt-6">
+      <div>
         <input
           ref={inputRef}
+          id="photo-file-input"
           name="photo"
           type="file"
           accept="image/*"
           disabled={!configured || busy}
-          className="text-sm text-fg disabled:opacity-60"
+          onChange={handleFileChange}
+          className="hidden"
         />
-        <span className="mt-1 block text-xs text-muted">
-          Works from your camera or photo library on your phone, or a file on desktop — resized
-          automatically before upload.
-        </span>
-      </label>
-      <Button type="submit" variant="secondary" disabled={!configured || busy}>
-        {status === "processing" ? "Preparing…" : status === "uploading" || isPending ? "Uploading…" : "Upload"}
-      </Button>
-      {error && <p className="w-full text-sm text-danger">{error}</p>}
-    </form>
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={!configured || busy}
+          onClick={() => inputRef.current?.click()}
+        >
+          {label}
+        </Button>
+      </div>
+      <p className="max-w-xs text-xs text-muted">
+        Works from your camera or photo library on your phone, or a file on desktop — resized
+        automatically before upload.
+      </p>
+      {error && <p className="text-sm text-danger">{error}</p>}
+    </div>
   );
 }

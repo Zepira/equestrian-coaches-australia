@@ -123,8 +123,8 @@ export default async function Home() {
             <p className="max-w-xl text-[15px] leading-relaxed text-ink-fg/90 sm:text-base">
               <strong className="text-ink-fg">Coaches:</strong>{" "}
               <strong className="text-ink-fg">$9.99 a month</strong> for a full profile — bio, photo,
-              location, specialties, qualifications and testimonials.{" "}
-              <strong className="text-ink-fg">$14.95</strong> adds your clinics and events.
+              location, specialties, qualifications and testimonials. Plans for coaches building a
+              book or running clinics too.
             </p>
             <Magnetic className="w-full shrink-0 sm:w-auto">
               <LinkButton href="/for-coaches" className="w-full sm:w-auto">

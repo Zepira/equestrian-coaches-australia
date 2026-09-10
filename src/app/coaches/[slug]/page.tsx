@@ -37,6 +37,7 @@ type CoachView = {
   testimonials: { quote: string; author: string }[];
   clinics: { id: string | null; title: string; date: string; location: string }[];
   photoUrl: string | null;
+  videoUrl: string | null;
   canListClinics: boolean;
   contact: {
     email: string | null;
@@ -55,7 +56,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
   const { data: coach } = await supabase
     .from("coach_profiles")
     .select(
-      "id, headline, bio, suburb, state, lat, long, qualifications, subscription_tier, published, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form, profiles!coach_profiles_id_fkey(name)"
+      "id, headline, bio, suburb, state, lat, long, qualifications, subscription_tier, video_url, published, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form, profiles!coach_profiles_id_fkey(name)"
     )
     .eq("slug", slug)
     .eq("published", true)
@@ -118,6 +119,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
     photoUrl: photoRows?.[0]
       ? supabase.storage.from("coach-photos").getPublicUrl(photoRows[0].storage_path).data.publicUrl
       : null,
+    videoUrl: coach.video_url,
     canListClinics: coach.subscription_tier === "standard_plus_clinics",
     contact: {
       email: coach.show_contact_email && coach.contact_email ? coach.contact_email : null,
@@ -150,6 +152,7 @@ function getCoachFromMock(slug: string): CoachView | null {
     testimonials: [],
     clinics: [],
     photoUrl: coach.photoUrl,
+    videoUrl: null,
     canListClinics: coach.tier === "standard_plus_clinics",
     contact: coach.contact,
   };
@@ -176,6 +179,7 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
     testimonials: coach.testimonials,
     clinics: coach.clinics.map((c) => ({ ...c, id: null })),
     photoUrl: null,
+    videoUrl: null,
     canListClinics: coach.tier === "standard_plus_clinics",
     contact: noContact,
   };
@@ -253,6 +257,12 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
 
       <p className="mt-6 text-lg text-fg">{coach.headline}</p>
       <p className="mt-3 text-muted">{coach.bio}</p>
+
+      {coach.videoUrl && (
+        <section className="mt-8">
+          <video src={coach.videoUrl} controls className="w-full max-w-lg rounded-[var(--radius-tile)]" />
+        </section>
+      )}
 
       {(coach.skillNames.length > 0 || coach.attributeNames.length > 0) && (
         <section className="mt-8">

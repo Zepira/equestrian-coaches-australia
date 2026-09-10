@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { disciplines } from "@/lib/disciplines";
 import { PillDropdown } from "@/components/pill-dropdown";
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 
 type Term = { slug: string; name: string };
 
@@ -91,11 +92,11 @@ export function SearchBar({
           <span className="mb-0.5 block text-xs font-semibold uppercase tracking-wide text-subtle">
             Suburb or postcode
           </span>
-          <input
+          <LocationAutocomplete
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={setLocation}
             placeholder="e.g. Bendigo VIC"
-            className="w-full bg-transparent py-0.5 text-[17px] text-ink placeholder:text-subtle outline-none"
+            inputClassName="w-full bg-transparent py-0.5 text-[17px] text-ink placeholder:text-subtle outline-none"
           />
         </label>
         <button

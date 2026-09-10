@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { saveProfile, deletePhoto, addTestimonial, deleteTestimonial } from "./actions";
-import { PhotoUploadForm } from "./photo-upload-form";
+import { saveProfile, addTestimonial, deleteTestimonial } from "./actions";
+import { MediaUploadForm } from "./media-upload-form";
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 
 type Term = { id: string; slug: string; name: string; blurb?: string };
 type Coach = {
@@ -20,6 +21,8 @@ type Coach = {
   show_contact_phone: boolean;
   show_facebook: boolean;
   show_contact_form: boolean;
+  subscription_status: string;
+  video_url: string | null;
 } | null;
 type Photo = { id: string; url: string; storage_path: string };
 type Testimonial = { id: string; author_name: string; quote: string };
@@ -255,6 +258,13 @@ export function ProfileForm({
   photos: Photo[];
   testimonials: Testimonial[];
 }) {
+  // Controlled only so picking a suburb from the autocomplete can also
+  // fill state/postcode alongside it — still plain named inputs under the
+  // hood, submitted the same way saveProfile already reads them.
+  const [suburb, setSuburb] = useState(coach?.suburb ?? "");
+  const [state, setState] = useState(coach?.state ?? "");
+  const [postcode, setPostcode] = useState(coach?.postcode ?? "");
+
   return (
     <div className="flex flex-col gap-10">
       {!configured && (
@@ -264,42 +274,14 @@ export function ProfileForm({
         </p>
       )}
 
-      <form action={saveProfile} className="flex flex-col gap-6">
-        <div>
-          <span className="mb-2 block text-sm font-medium text-fg">Profile photos</span>
-          <div className="flex flex-wrap gap-3">
-            {photos.map((photo) => (
-              <div key={photo.id} className="relative h-20 w-20">
-                {/* eslint-disable-next-line @next/next/no-img-element -- Supabase Storage URLs, not worth next/image config yet */}
-                <img
-                  src={photo.url}
-                  alt=""
-                  className="h-full w-full rounded-[var(--radius-control)] object-cover"
-                />
-                {/* formAction, not a nested <form> — this button already lives
-                    inside the outer <form action={saveProfile}>, and HTML
-                    forbids a <form> inside a <form> (it silently breaks:
-                    browsers hoist the inner one out, so the button ends up
-                    submitting whichever form the DOM parser decided on,
-                    unpredictable across browsers/devices). A submit button's
-                    own formAction overrides the enclosing form's action for
-                    just that button — the correct way to have two different
-                    server actions in one <form>. */}
-                <button
-                  type="submit"
-                  formAction={deletePhoto.bind(null, photo.id, photo.storage_path)}
-                  disabled={!configured}
-                  aria-label="Remove photo"
-                  className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-fg text-xs font-bold text-bg"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-            <div className="h-20 w-20 rounded-[var(--radius-control)] bg-accent-soft" aria-hidden />
-          </div>
-        </div>
+      <MediaUploadForm
+        configured={configured}
+        photos={photos}
+        videoUrl={coach?.video_url ?? null}
+        videoActive={coach?.subscription_status === "active"}
+      />
 
+      <form action={saveProfile} className="flex flex-col gap-6">
         <label className="block">
           <span className="mb-1 block text-sm font-medium text-fg">Headline</span>
           <input
@@ -326,20 +308,29 @@ export function ProfileForm({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-fg">Suburb</span>
-            <input
-              name="suburb"
-              type="text"
-              defaultValue={coach?.suburb}
+            <LocationAutocomplete
+              value={suburb}
+              onChange={setSuburb}
+              onSelect={(s) => {
+                setSuburb(s.suburb);
+                setState(s.state);
+                setPostcode(s.postcode);
+              }}
               disabled={!configured}
-              className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
+              inputClassName="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
             />
+            {/* LocationAutocomplete's own input has no `name` — it's a
+                plain uncontrolled-looking wrapper, so the value actually
+                submitted comes from this hidden field instead. */}
+            <input type="hidden" name="suburb" value={suburb} />
           </label>
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-fg">State</span>
             <input
               name="state"
               type="text"
-              defaultValue={coach?.state}
+              value={state}
+              onChange={(e) => setState(e.target.value)}
               disabled={!configured}
               className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
             />
@@ -349,7 +340,8 @@ export function ProfileForm({
             <input
               name="postcode"
               type="text"
-              defaultValue={coach?.postcode}
+              value={postcode}
+              onChange={(e) => setPostcode(e.target.value)}
               disabled={!configured}
               className="w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-fg disabled:opacity-60"
             />
@@ -449,8 +441,6 @@ export function ProfileForm({
           Save profile
         </Button>
       </form>
-
-      <PhotoUploadForm configured={configured} />
 
       <section className="border-t border-border pt-6">
         <h2 className="text-lg font-semibold text-fg">Testimonials</h2>

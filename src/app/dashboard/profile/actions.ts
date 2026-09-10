@@ -16,6 +16,30 @@ async function requireCoach() {
   return { supabase, userId: user.id };
 }
 
+// Video is a paid-tier perk (pricing copy promises it on Spotlight), but
+// `subscription_tier` is still the pre-revision two-value enum
+// ('standard'/'standard_plus_clinics') — there's no 'spotlight' value to
+// check yet, that needs the pending 3-tier billing migration (see
+// 0017_coach_video.sql). Gating on "any active paid subscription" is the
+// honest interim rule: it still blocks unpublished/free coaches, and
+// upgrading the gate to a real tier check later is a one-line change here,
+// not a rewrite.
+async function requireVideoTierCoach() {
+  const { supabase, userId } = await requireCoach();
+
+  const { data: coach } = await supabase
+    .from("coach_profiles")
+    .select("subscription_status, video_storage_path")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (coach?.subscription_status !== "active") {
+    throw new Error("Video is available on paid plans — subscribe in Billing to add one.");
+  }
+
+  return { supabase, userId, existingVideoPath: coach.video_storage_path as string | null };
+}
+
 export async function saveProfile(formData: FormData) {
   const { supabase, userId } = await requireCoach();
 
@@ -130,6 +154,59 @@ export async function deletePhoto(photoId: string, storagePath: string) {
     .delete()
     .eq("id", photoId)
     .eq("coach_id", userId);
+  if (error) throw error;
+
+  revalidatePath("/dashboard/profile");
+}
+
+export async function uploadVideo(formData: FormData) {
+  const { supabase, userId, existingVideoPath } = await requireVideoTierCoach();
+
+  const file = formData.get("video") as File | null;
+  if (!file || file.size === 0) throw new Error("No file provided.");
+
+  // One video per coach — replace, don't accumulate. Remove the old object
+  // first so a re-upload never leaves an orphaned file behind in storage.
+  if (existingVideoPath) {
+    await supabase.storage.from("coach-videos").remove([existingVideoPath]);
+  }
+
+  const ext = file.name.split(".").pop() ?? "mp4";
+  const path = `${userId}/${Date.now()}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("coach-videos")
+    .upload(path, file, { contentType: file.type });
+  if (uploadError) throw uploadError;
+
+  const { data: publicUrl } = supabase.storage.from("coach-videos").getPublicUrl(path);
+
+  const { error } = await supabase
+    .from("coach_profiles")
+    .update({ video_url: publicUrl.publicUrl, video_storage_path: path, updated_at: new Date().toISOString() })
+    .eq("id", userId);
+  if (error) throw error;
+
+  revalidatePath("/dashboard/profile");
+}
+
+export async function deleteVideo() {
+  const { supabase, userId } = await requireCoach();
+
+  const { data: coach } = await supabase
+    .from("coach_profiles")
+    .select("video_storage_path")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (coach?.video_storage_path) {
+    await supabase.storage.from("coach-videos").remove([coach.video_storage_path]);
+  }
+
+  const { error } = await supabase
+    .from("coach_profiles")
+    .update({ video_url: null, video_storage_path: null, updated_at: new Date().toISOString() })
+    .eq("id", userId);
   if (error) throw error;
 
   revalidatePath("/dashboard/profile");
