@@ -1,3 +1,4 @@
+import { titleCase } from "@/lib/text";
 import { SearchResults } from "@/components/search-results";
 import type { CoachResultData } from "@/components/coach-result-card";
 import { createClient } from "@/lib/supabase/server";
@@ -57,7 +58,7 @@ export default async function SearchPage({
         lat = resolved.lat;
         long = resolved.long;
         origin = { lat, long };
-        searchTown = resolved.suburb.toLowerCase().replace(/(^|[\s'-])([a-z])/g, (m: string, sep: string, c: string) => sep + c.toUpperCase());
+        searchTown = titleCase(resolved.suburb);
       } else {
         locationNotFound = true;
       }

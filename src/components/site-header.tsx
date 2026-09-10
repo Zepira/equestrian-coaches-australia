@@ -172,6 +172,10 @@ export function SiteHeader() {
   // "View public profile" pill and the coach's avatar + first name instead
   // of the public nav.
   const isDashboard = pathname.startsWith("/dashboard");
+  // Rider account (canvas: Dashboards 1c/1d): desktop keeps the public nav
+  // + avatar and drops "Log out" (the page has Sign out); phones show
+  // "Find a coach" + the avatar instead of the burger.
+  const isAccount = pathname.startsWith("/account");
   const profileHref = auth.coachSlug ? `/coaches/${auth.coachSlug}` : "/dashboard/profile";
 
   return (
@@ -246,11 +250,13 @@ export function SiteHeader() {
                 <Avatar name={auth.name} />
                 {firstName ?? (auth.role === "coach" ? "Dashboard" : "My account")}
               </Link>
-              <form action="/auth/sign-out" method="post">
-                <button type="submit" className="site-header__link">
-                  Log out
-                </button>
-              </form>
+              {!isAccount && (
+                <form action="/auth/sign-out" method="post">
+                  <button type="submit" className="site-header__link">
+                    Log out
+                  </button>
+                </form>
+              )}
             </>
           ) : (
             <>
@@ -269,8 +275,19 @@ export function SiteHeader() {
           )}
         </nav>
 
+        {isAccount && (
+          <div className="flex items-center gap-3 md:hidden">
+            <Link href="/search" className="site-header__link text-[14px] font-medium" onClick={close}>
+              Find a coach
+            </Link>
+            <Link href="/account" aria-label={firstName ?? "My account"}>
+              <Avatar name={auth.name} />
+            </Link>
+          </div>
+        )}
+
         {/* Phone: "Log in" + round burger */}
-        <div className={`${isDashboard ? "hidden" : "flex"} items-center gap-3.5 md:hidden`}>
+        <div className={`${isDashboard || isAccount ? "hidden" : "flex"} items-center gap-3.5 md:hidden`}>
           {auth.loggedIn ? (
             <Link href={accountHref} aria-label={firstName ?? "My account"} onClick={close}>
               <Avatar name={auth.name} />

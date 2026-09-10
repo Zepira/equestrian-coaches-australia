@@ -220,14 +220,16 @@ Copy is already right (the canvas was lifted from the current page). This is a r
 
 ### R8 — Rider account (`/account`)
 
-- [ ] Light header with initial-avatar + name. "My account" eyebrow, "Hello, Name", "Free, always…" line.
-- [ ] Saved coaches: cards with arch thumb, name, where, tags, ♥ remove (existing action); dashed empty state with "Browse coaches".
-- [ ] Clinic alerts card: "My area" (autocomplete) + "Disciplines I follow" chips + "Save alerts" — the existing preferences action, restyled.
-- [ ] "Coming up near you": `clinics_for_rider` results as date-block rows (ink card on desktop).
-- [ ] "Enquiries you've sent": from `enquiries` by `rider_id`, status pill (Replied / Awaiting reply mapped from the coach's status).
-- [ ] Links: Email & password, Sign out, Delete my account (delete goes to a confirm page; it is the one destructive action and stays behind a confirmation).
+- [x] Light header with initial-avatar + name. "My account" eyebrow, "Hello, Name", "Free, always…" line.
+- [x] Saved coaches: cards with arch thumb, name, where, tags, ♥ remove (existing action); dashed empty state with "Browse coaches".
+- [x] Clinic alerts card: "My area" (autocomplete) + "Disciplines I follow" chips + "Save alerts" — the existing preferences action, restyled.
+- [x] "Coming up near you": `clinics_for_rider` results as date-block rows (ink card on desktop).
+- [x] "Enquiries you've sent": from `enquiries` by `rider_id`, status pill (Replied / Awaiting reply mapped from the coach's status).
+- [x] Links: Email & password, Sign out, Delete my account (delete goes to a confirm page; it is the one destructive action and stays behind a confirmation).
 
 **Validation:** computed styles both widths; favourites add/remove round-trip; alerts save round-trip (row read back, geocoded point present); "Coming up near you" shows a seeded matching clinic and hides a non-matching one; sent enquiries list shows the row created in R5's test; screenshots vs reference.
+
+**Done 10 Sep 2026.** `/account` rebuilt to the Dashboards 1c/1d frames as **one DOM**: the two desktop columns are `display: contents` wrappers below `wide`, so the five blocks take the phone order (saved → alerts → coming up → sent → links) from `order-*` and become two flex columns from 1100px. Header on `/account`: desktop keeps the public nav + initial avatar + first name and drops "Log out" (the page has Sign out); phones show "Find a coach" + the avatar instead of the burger. Saved coaches: arch thumbs (72×86 / 84×100), name, "Town STATE · N km" measured from the rider's saved area with a haversine against the coach's lat/long (no km until an area is saved), discipline tags (phone: under the name; desktop: right column) and the desktop-only headline ellipsis, ♥ removes via the existing `removeFavourite`; dashed "Nothing saved yet" empty state. Clinic alerts (`clinic-alerts-form.tsx`): the search bar's `LocationAutocomplete` for "My area" + `has-checked:` chip checkboxes (no JS for the toggle) → `saveRiderPreferences`, which redirects to `?saved=1` for the confirmation line. "Coming up near you" reads `clinics_for_rider()` (desktop: ink card with peach eyebrow and `ink-card` rows; phone: cream cards) and links to `/clinics/[id]`. "Enquiries you've sent" reads `enquiries` by `rider_id` with the rider-side status labels (`new` → Awaiting reply, `replied`, `booked`, `no_response`). Links: Email & password → `/forgot-password` (the reset-email flow; there is no separate credentials page yet — §6), Sign out (POST `/auth/sign-out`), Delete my account → **`/account/delete`**, a confirm page that requires typing DELETE, re-checked in `deleteAccount` before the service-role `auth.admin.deleteUser` (favourites/preferences cascade; sent enquiries stay with the coach with `rider_id` nulled by the FK). `src/lib/text.ts` now owns the one `titleCase()` the postcodes dataset needs — the smoke test caught "CASTLEMAINE VIC 3450" coming back in caps, the same defect R4 fixed for the search town in its own copy of the regex; both copies now import it. Measured: `scripts/smoke/r8-account.mjs` **25/25** (greeting, saved card, count, no km before an area, Awaiting reply pill, nothing-near-you before prefs, header state, alerts row read back with a geocoded point + followed id, saved confirmation, area re-rendered title-cased, chip persists, 34 km Castlemaine→Bendigo on the saved card, matching clinic shown / Broome clinic hidden, clinic href, heart deletes the row + empty state, wrong confirmation refused and user untouched, DELETE removes user + preferences, lands on `/` signed out, coach keeps the enquiry with `rider_id` null, no page errors); parity **73/73** at 1280 and **42/42** at 390 (`throwaway-coach.mjs create-rider` seeds Sarah with three saved coaches, two clinics and two sent enquiries for the `--login` run; `delete` removes all four users). Input height was the one style miss (50.5px from `line-height: 1.5` on top of the canvas's 13px padding) — fixed with a fixed 48px height.
 
 ### R9 — Everything without a canvas, then the whole-site sweep
 
@@ -276,6 +278,8 @@ Copy is already right (the canvas was lifted from the current page). This is a r
 ---
 
 ## 6. Open items for Alana (none block starting R0–R2)
+
+0. **Rider Email & password link** goes to `/forgot-password` (reset by email). If riders should change either in place, that is a small new page (`/account/security`) — not built, since the canvas only shows the link.
 
 1. **Commit the current uncommitted work** before R0 lands, or say if any of it should not ship.
 2. ~~Map provider~~ — decided: MapLibre + OpenFreeMap.

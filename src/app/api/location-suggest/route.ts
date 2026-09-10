@@ -31,8 +31,7 @@ const MAJOR_TOWNS = new Set(
   ].map((t) => t.toLowerCase())
 );
 
-const titleCase = (s: string) =>
-  s.toLowerCase().replace(/(^|[\s'-])([a-z])/g, (m, sep, c) => sep + c.toUpperCase());
+import { titleCase } from "@/lib/text";
 
 export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get("q")?.trim() ?? "";
