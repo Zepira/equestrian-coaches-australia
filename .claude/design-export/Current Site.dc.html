@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e9e4d8;font-family:"Work Sans",system-ui,sans-serif;color:#22201c}
+a{color:#b4553a;text-decoration:none}a:hover{color:#1f3a2e}
+*{box-sizing:border-box}
+</style>
+</helmet>
+<div style="padding:40px 44px 60px;display:flex;flex-direction:column;gap:28px">
+<div style="max-width:880px;font:400 14px/1.55 'Work Sans',sans-serif;color:#4a4842">
+<div style="font:600 11px ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:#6c685e;margin-bottom:8px">Reference — current site, recreated from source</div>
+<div style="font:400 26px/1.15 Fraunces,serif;color:#22201c;margin-bottom:10px">Equestrian Coaches Australia · as built today</div>
+Recreated from <code>src/app/page.tsx</code>, <code>globals.css</code>, <code>hero.tsx</code>, <code>search-bar.tsx</code>, <code>coach-card.tsx</code>, <code>discipline-masonry.tsx</code>, <code>site-header.tsx</code>, <code>site-footer.tsx</code>, <code>search/page.tsx</code>, <code>coaches/[slug]/page.tsx</code>. Palette is the "Paddock Edit" tokens: cream #f6f1e7, ink green #1f3a2e, terracotta #b4553a, tint #e7dac6, shade #efe9dc. Fraunces display, Work Sans UI. Coach data is the mock roster. <a href="ECA Redesign.dc.html">Go to the redesign →</a>
+</div>
+
+<div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
+
+<!-- ═══ DESKTOP HOME 1280 ═══ -->
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:600 10.5px ui-monospace,Menlo,monospace;color:rgba(0,0,0,.55)">Home · 1280</div>
+<div data-screen-label="Current home desktop" style="width:1280px;background:#f6f1e7;border:1px solid rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;font-family:'Work Sans',sans-serif">
+
+<!-- hero -->
+<section style="position:relative;height:800px;background:#1f3a2e;color:#f6f1e7;overflow:hidden">
+<img src="assets/hero-wide.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:86% 52%;display:block">
+<div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,24,18,.78) 0%,rgba(13,24,18,.64) 40%,rgba(13,24,18,.26) 64%,rgba(13,24,18,.1) 100%),linear-gradient(180deg,rgba(13,24,18,.42) 0%,rgba(13,24,18,0) 26%)"></div>
+<!-- floating header -->
+<header style="position:absolute;top:0;left:0;right:0;height:64px;border-bottom:1px solid rgba(246,241,231,.2);padding:0 32px;z-index:3">
+<div style="max-width:1152px;margin:0 auto;height:64px;display:flex;align-items:center;justify-content:space-between">
+<div style="display:flex;align-items:center;gap:12px"><span style="font:700 28px/1 Fraunces,serif;letter-spacing:-.02em">ECA</span><span style="font:500 12px 'Work Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:rgba(246,241,231,.65)">Equestrian Coaches Australia</span></div>
+<nav style="display:flex;align-items:center;gap:24px;font:500 15px 'Work Sans',sans-serif;color:rgba(246,241,231,.92)"><span>Find a coach</span><span>For coaches</span><span>Log in</span><span style="background:#b4553a;color:#f6f1e7;font:600 14px 'Work Sans',sans-serif;padding:12px 24px;border-radius:2px">List your profile</span></nav>
+</div></header>
+<div style="position:relative;z-index:2;height:100%;display:flex;align-items:center;padding:104px 32px 48px">
+<div style="width:100%;max-width:1152px;margin:0 auto"><div style="max-width:58%;display:flex;flex-direction:column;gap:22px">
+<p style="margin:0;font-size:16px;letter-spacing:.22em;text-transform:uppercase;color:rgba(246,241,231,.82)">Coaching, discipline by discipline</p>
+<h1 style="margin:0;font:400 104px/.96 Fraunces,serif;letter-spacing:-.025em;max-width:15ch;text-wrap:pretty">Find your perfect riding coach, nearby.</h1>
+<p style="margin:0;max-width:52ch;font-size:21px;line-height:1.5;color:rgba(246,241,231,.88)">Search coaches across Australia by discipline and location — dressage to bridleless, city arenas to bush tracks.</p>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:stretch;border-radius:4px;border:1px solid #e7dac6;background:#fffdf8;padding:10px;box-shadow:0 12px 30px rgba(31,58,46,.06);color:#22201c">
+<label style="flex:1;padding:6px 10px"><span style="display:block;font:600 12px 'Work Sans',sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#6c685e;margin-bottom:2px">Discipline</span><span style="display:block;font-size:17px;color:#1f3a2e;padding:2px 0">Any discipline</span></label>
+<div style="width:1px;background:#e7dac6"></div>
+<label style="flex:1;padding:6px 10px"><span style="display:block;font:600 12px 'Work Sans',sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#6c685e;margin-bottom:2px">Suburb or postcode</span><span style="display:block;font-size:17px;color:#6c685e;padding:2px 0">e.g. Bendigo VIC</span></label>
+<div style="background:#b4553a;color:#f6f1e7;font:600 17px 'Work Sans',sans-serif;padding:10px 32px;border-radius:2px;display:flex;align-items:center">Find a coach</div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<span style="border:1px solid rgba(246,241,231,.5);background:rgba(246,241,231,.1);border-radius:999px;padding:8px 16px;font:500 14px 'Work Sans',sans-serif;display:inline-flex;align-items:center;gap:6px">Skills &amp; setup <span style="font-size:9px">▾</span></span>
+<span style="border:1px solid rgba(246,241,231,.5);background:rgba(246,241,231,.1);border-radius:999px;padding:8px 16px;font:500 14px 'Work Sans',sans-serif">Horses available</span>
+<span style="border:1px solid rgba(246,241,231,.5);background:rgba(246,241,231,.1);border-radius:999px;padding:8px 16px;font:500 14px 'Work Sans',sans-serif">Indoor arena</span>
+</div></div>
+<dl style="margin:0;display:flex;gap:44px;padding-top:24px;border-top:1px solid rgba(246,241,231,.24);font-size:16px;color:rgba(246,241,231,.85)">
+<dd style="margin:0"><strong style="font:500 22px Fraunces,serif">19</strong> disciplines listed</dd>
+<dd style="margin:0"><strong style="font:500 22px Fraunces,serif">Free</strong> for riders, always</dd>
+</dl>
+</div></div></div>
+</section>
+
+<!-- featured coaches -->
+<section style="background:#f6f1e7"><div style="max-width:1152px;margin:0 auto;padding:80px 24px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px">
+<div><div style="display:inline-block;font:600 14px 'Work Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#b4553a;padding-bottom:.5em;border-bottom:1px solid rgba(180,85,58,.4)">Featured coaches</div>
+<h2 style="margin:16px 0 0;font:400 48px/1.05 Fraunces,serif;letter-spacing:-.02em;color:#1f3a2e">Coaches taking riders now.</h2></div>
+<span style="font:600 15px 'Work Sans',sans-serif;color:#b4553a;border-bottom:1px solid #b4553a">See all coaches →</span>
+</div>
+<div style="margin-top:40px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px">
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:1;background:#efe9dc url('https://images.unsplash.com/photo-1636738176866-ae2c0a80d614?auto=format&fit=crop&w=800&q=80') center/cover;border-radius:50% 50% 3px 3px / 50% 50% 2% 2%"></div><div><div style="font:500 20px Fraunces,serif;color:#1f3a2e">Emma Dawson</div><div style="margin-top:4px;font-size:14px;color:#6c685e">Bendigo VIC</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Bridleless</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Dressage</span></div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#4a4842">Bridleless coaching for riders in Bendigo and surrounds.</p><p style="margin:6px 0 0;font-size:12px;color:#6c685e">Groundwork &amp; handling · Confidence building · Own arena</p><div style="margin-top:8px;font:600 14px 'Work Sans',sans-serif;color:#b4553a">View profile →</div></div></div>
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:1;background:#efe9dc url('https://images.unsplash.com/photo-1726209503049-a705ac3fe28f?auto=format&fit=crop&w=800&q=80') center/cover;border-radius:50% 50% 3px 3px / 50% 50% 2% 2%"></div><div><div style="font:500 20px Fraunces,serif;color:#1f3a2e">Olivia Kelly</div><div style="margin-top:4px;font-size:14px;color:#6c685e">Ballarat VIC</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Working Equitation</span></div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#4a4842">Helping Ballarat riders build confidence in working equitation.</p><p style="margin:6px 0 0;font-size:12px;color:#6c685e">Lateral work · Stock work &amp; cattle handling · Horses available</p><div style="margin-top:8px;font:600 14px 'Work Sans',sans-serif;color:#b4553a">View profile →</div></div></div>
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:1;background:#efe9dc url('https://images.unsplash.com/photo-1589801837979-0eecc7c4f3c1?auto=format&fit=crop&w=800&q=80') center/cover;border-radius:50% 50% 3px 3px / 50% 50% 2% 2%"></div><div><div style="font:500 20px Fraunces,serif;color:#1f3a2e">Charlotte Reynolds</div><div style="margin-top:4px;font-size:14px;color:#6c685e">Geelong VIC</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Liberty</span></div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#4a4842">Liberty, taught at your property or mine, based near Geelong.</p><p style="margin:6px 0 0;font-size:12px;color:#6c685e">Groundwork &amp; handling · Trick training · Indoor arena</p><div style="margin-top:8px;font:600 14px 'Work Sans',sans-serif;color:#b4553a">View profile →</div></div></div>
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:1;background:#efe9dc url('https://images.unsplash.com/photo-1624125278758-c0572f6ebc55?auto=format&fit=crop&w=800&q=80') center/cover;border-radius:50% 50% 3px 3px / 50% 50% 2% 2%"></div><div><div style="font:500 20px Fraunces,serif;color:#1f3a2e">Sophie Zimmerman</div><div style="margin-top:4px;font-size:14px;color:#6c685e">Shepparton VIC</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Western</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Campdrafting</span></div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#4a4842">From first lesson to competition-ready — western coaching.</p><p style="margin:6px 0 0;font-size:12px;color:#6c685e">Stock work &amp; cattle handling · Starting young horses · EA accredited</p><div style="margin-top:8px;font:600 14px 'Work Sans',sans-serif;color:#b4553a">View profile →</div></div></div>
+</div></div></section>
+
+<!-- disciplines -->
+<section style="background:#efe9dc"><div style="max-width:1152px;margin:0 auto;padding:80px 24px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px">
+<div><div style="display:inline-block;font:600 14px 'Work Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#b4553a;padding-bottom:.5em;border-bottom:1px solid rgba(180,85,58,.4)">Featured disciplines</div>
+<h2 style="margin:16px 0 0;font:400 48px/1.05 Fraunces,serif;letter-spacing:-.02em;color:#1f3a2e;max-width:576px">Start with the discipline you ride.</h2></div>
+<p style="margin:0;max-width:384px;font-size:18px;line-height:1.625;color:#4a4842">Coaches are listed by the disciplines they actually teach, not by keyword.</p>
+</div>
+<div style="margin-top:48px;display:grid;grid-template-columns:3fr 2fr;grid-template-rows:192px 192px;gap:16px">
+<div style="grid-row:span 2;position:relative;overflow:hidden;border-radius:3px;background:url('https://images.unsplash.com/photo-1636738176866-ae2c0a80d614?auto=format&fit=crop&w=1200&q=80') center/cover">
+<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(31,58,46,.88) 0%,rgba(31,58,46,.5) 40%,rgba(31,58,46,0) 68%)"></div>
+<div style="position:absolute;top:0;right:0;width:46%;height:60%;background:#b4553a;opacity:.3;clip-path:polygon(32% 0%,100% 0%,100% 100%,0% 100%)"></div>
+<div style="position:absolute;inset:0 0 auto 0;padding:32px;color:#f6f1e7"><h3 style="margin:0;font:400 36px Fraunces,serif;letter-spacing:-.02em">Bridleless</h3><p style="margin:8px 0 0;max-width:384px;font-size:15px;line-height:1.625;color:rgba(246,241,231,.85)">Riding without a bridle, built step by step from the groundwork up.</p></div></div>
+<div style="position:relative;overflow:hidden;border-radius:3px;background:url('https://images.unsplash.com/photo-1726209503049-a705ac3fe28f?auto=format&fit=crop&w=800&q=80') center/cover"><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(31,58,46,0) 35%,rgba(31,58,46,.88) 100%)"></div><h3 style="position:absolute;left:0;right:0;bottom:0;margin:0;padding:20px;font:400 20px Fraunces,serif;color:#f6f1e7">Working Equitation</h3></div>
+<div style="position:relative;overflow:hidden;border-radius:3px;background:url('https://images.unsplash.com/photo-1589801837979-0eecc7c4f3c1?auto=format&fit=crop&w=800&q=80') center/cover"><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(31,58,46,0) 35%,rgba(31,58,46,.88) 100%)"></div><h3 style="position:absolute;left:0;right:0;bottom:0;margin:0;padding:20px;font:400 20px Fraunces,serif;color:#f6f1e7">Liberty</h3></div>
+</div>
+<div style="margin-top:44px;display:flex;align-items:center;justify-content:space-between;gap:24px;border-top:1px solid #e7dac6;padding-top:32px">
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Western</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Dressage</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Show Jumping</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Eventing</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Campdrafting</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Natural Horsemanship</span>
+</div>
+<span style="font:600 15px 'Work Sans',sans-serif;color:#b4553a;border-bottom:1px solid #b4553a;white-space:nowrap">All disciplines →</span>
+</div>
+<div style="margin-top:44px;display:flex;align-items:center;justify-content:space-between;gap:24px;border-radius:3px;background:#1f3a2e;padding:32px 40px;color:#f6f1e7">
+<p style="margin:0;max-width:576px;font-size:16px;line-height:1.625;color:rgba(246,241,231,.9)"><strong>Coaches:</strong> <strong>$9.99 a month</strong> for a full profile — bio, photo, location, specialties, qualifications and testimonials. Plans for coaches building a book or running clinics too.</p>
+<span style="background:#b4553a;color:#f6f1e7;font:600 15px 'Work Sans',sans-serif;padding:12px 24px;border-radius:2px;white-space:nowrap">List your coaching profile</span>
+</div>
+</div></section>
+
+<!-- how it works -->
+<section style="background:#1f3a2e;color:#f6f1e7"><div style="max-width:1152px;margin:0 auto;padding:80px 24px">
+<h2 style="margin:0;font:400 48px/1.05 Fraunces,serif;letter-spacing:-.02em;max-width:576px">Three steps to a lesson.</h2>
+<div style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px">
+<div style="border-top:1px solid rgba(246,241,231,.35);padding-top:24px"><div style="font:400 24px Fraunces,serif;color:#e7dac6">01</div><div style="margin-top:12px;font:500 24px Fraunces,serif">Search your discipline</div><p style="margin:10px 0 0;font-size:17px;line-height:1.625;color:rgba(246,241,231,.82)">Pick what you ride and the town you ride in. Every listing is a real coach, not an agency.</p></div>
+<div style="border-top:1px solid rgba(246,241,231,.35);padding-top:24px"><div style="font:400 24px Fraunces,serif;color:#e7dac6">02</div><div style="margin-top:12px;font:500 24px Fraunces,serif">Read the profile</div><p style="margin:10px 0 0;font-size:17px;line-height:1.625;color:rgba(246,241,231,.82)">Qualifications, disciplines, travel radius, testimonials from riders they've taught.</p></div>
+<div style="border-top:1px solid rgba(246,241,231,.35);padding-top:24px"><div style="font:400 24px Fraunces,serif;color:#e7dac6">03</div><div style="margin-top:12px;font:500 24px Fraunces,serif">Contact them direct</div><p style="margin:10px 0 0;font-size:17px;line-height:1.625;color:rgba(246,241,231,.82)">No commission, no booking fee. You deal with your coach, the way riders always have.</p></div>
+</div></div></section>
+
+<!-- footer -->
+<footer style="background:#1f3a2e;color:#f6f1e7"><div style="max-width:1152px;margin:0 auto;padding:64px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:40px">
+<div><div style="display:flex;align-items:center;gap:12px"><span style="font:700 28px/1 Fraunces,serif">ECA</span><span style="font:500 12px 'Work Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:rgba(246,241,231,.7)">Equestrian Coaches Australia</span></div><p style="margin:16px 0 0;max-width:320px;font-size:15px;line-height:1.625;color:rgba(246,241,231,.78)">Find the coach who teaches exactly what you ride, wherever you are in Australia.</p></div>
+<div style="font-size:15px"><div style="margin-bottom:12px;font:600 12px 'Work Sans',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e7dac6">Riders</div><div style="display:flex;flex-direction:column;gap:10px;color:rgba(246,241,231,.82)"><span>Find a coach</span><span>Browse disciplines</span><span>My account</span></div></div>
+<div style="font-size:15px"><div style="margin-bottom:12px;font:600 12px 'Work Sans',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e7dac6">Coaches</div><div style="display:flex;flex-direction:column;gap:10px;color:rgba(246,241,231,.82)"><span>List your profile</span><span>Pricing</span><span>Coach dashboard</span></div></div>
+<div style="font-size:15px"><div style="margin-bottom:12px;font:600 12px 'Work Sans',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e7dac6">About</div><div style="display:flex;flex-direction:column;gap:10px;color:rgba(246,241,231,.82)"><span>Log in</span></div></div>
+</div>
+<div style="border-top:1px solid rgba(246,241,231,.25);padding:24px;font-size:14px;color:rgba(246,241,231,.6)"><div style="max-width:1152px;margin:0 auto">© 2026 Equestrian Coaches Australia</div></div>
+</footer>
+</div></div>
+
+<!-- ═══ MOBILE HOME 390 ═══ -->
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:600 10.5px ui-monospace,Menlo,monospace;color:rgba(0,0,0,.55)">Home · 390</div>
+<div data-screen-label="Current home mobile" style="width:390px;background:#f6f1e7;border:1px solid rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;font-family:'Work Sans',sans-serif">
+<section style="position:relative;height:780px;background:#1f3a2e;color:#f6f1e7;overflow:hidden">
+<img src="assets/hero-wide.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:86% 52%;display:block">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,24,18,.34) 0%,rgba(13,24,18,.55) 45%,rgba(13,24,18,.84) 100%)"></div>
+<header style="position:absolute;top:0;left:0;right:0;height:64px;border-bottom:1px solid rgba(246,241,231,.2);padding:0 16px;display:flex;align-items:center;justify-content:space-between;z-index:3;background:linear-gradient(180deg,rgba(13,24,18,.7),rgba(13,24,18,0))"><span style="font:700 28px/1 Fraunces,serif">ECA</span><span style="display:flex;flex-direction:column;gap:5px;width:20px"><span style="height:2px;background:#f6f1e7"></span><span style="height:2px;background:#f6f1e7"></span><span style="height:2px;background:#f6f1e7"></span></span></header>
+<div style="position:absolute;inset:0;display:flex;align-items:flex-end;padding:96px 16px 28px;z-index:2"><div style="display:flex;flex-direction:column;gap:14px;width:100%">
+<p style="margin:0;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:rgba(246,241,231,.82)">Coaching, discipline by discipline</p>
+<h1 style="margin:0;font:400 44px/.96 Fraunces,serif;letter-spacing:-.025em;text-wrap:pretty">Find your perfect riding coach, nearby.</h1>
+<div style="display:flex;flex-direction:column;gap:6px;color:#22201c">
+<div style="border-radius:4px;border:1px solid #e7dac6;background:#fffdf8;padding:6px 12px;box-shadow:0 12px 30px rgba(31,58,46,.06)"><span style="display:block;font:600 12px 'Work Sans',sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#6c685e">Discipline</span><span style="display:block;font-size:17px;color:#1f3a2e;padding:2px 0">Any discipline</span></div>
+<div style="border-radius:4px;border:1px solid #e7dac6;background:#fffdf8;padding:6px 12px;box-shadow:0 12px 30px rgba(31,58,46,.06)"><span style="display:block;font:600 12px 'Work Sans',sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#6c685e">Suburb or postcode</span><span style="display:block;font-size:17px;color:#6c685e;padding:2px 0">e.g. Bendigo VIC</span></div>
+<div style="background:#b4553a;color:#f6f1e7;font:600 17px 'Work Sans',sans-serif;padding:10px 32px;border-radius:2px;text-align:center">Find a coach</div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><span style="border:1px solid rgba(246,241,231,.5);background:rgba(246,241,231,.1);border-radius:999px;padding:8px 16px;font:500 14px 'Work Sans',sans-serif">Skills &amp; setup ▾</span><span style="border:1px solid rgba(246,241,231,.5);background:rgba(246,241,231,.1);border-radius:999px;padding:8px 16px;font:500 14px 'Work Sans',sans-serif">Horses available</span><span style="border:1px solid rgba(246,241,231,.5);background:rgba(246,241,231,.1);border-radius:999px;padding:8px 16px;font:500 14px 'Work Sans',sans-serif">Indoor arena</span></div>
+<dl style="margin:0;display:flex;gap:16px;flex-wrap:wrap;padding-top:12px;border-top:1px solid rgba(246,241,231,.24);font-size:16px;color:rgba(246,241,231,.85)"><dd style="margin:0"><strong style="font:500 22px Fraunces,serif">19</strong> disciplines listed</dd><dd style="margin:0"><strong style="font:500 22px Fraunces,serif">Free</strong> for riders, always</dd></dl>
+</div></div>
+</section>
+<section style="padding:56px 16px">
+<div style="display:inline-block;font:600 14px 'Work Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#b4553a;padding-bottom:.5em;border-bottom:1px solid rgba(180,85,58,.4)">Featured coaches</div>
+<h2 style="margin:16px 0 0;font:400 36px/1.05 Fraunces,serif;letter-spacing:-.02em;color:#1f3a2e">Coaches taking riders now.</h2>
+<div style="margin-top:40px;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:1;background:#efe9dc url('https://images.unsplash.com/photo-1636738176866-ae2c0a80d614?auto=format&fit=crop&w=800&q=80') center/cover;border-radius:50% 50% 3px 3px / 50% 50% 2% 2%"></div><div><div style="font:500 20px Fraunces,serif;color:#1f3a2e">Emma Dawson</div><div style="margin-top:4px;font-size:14px;color:#6c685e">Bendigo VIC</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Bridleless</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Dressage</span></div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#4a4842">Bridleless coaching for riders in Bendigo and surrounds.</p><div style="margin-top:8px;font:600 14px 'Work Sans',sans-serif;color:#b4553a">View profile →</div></div></div>
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:1;background:#efe9dc url('https://images.unsplash.com/photo-1726209503049-a705ac3fe28f?auto=format&fit=crop&w=800&q=80') center/cover;border-radius:50% 50% 3px 3px / 50% 50% 2% 2%"></div><div><div style="font:500 20px Fraunces,serif;color:#1f3a2e">Olivia Kelly</div><div style="margin-top:4px;font-size:14px;color:#6c685e">Ballarat VIC</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Working Equitation</span></div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#4a4842">Helping Ballarat riders build confidence in working equitation.</p><div style="margin-top:8px;font:600 14px 'Work Sans',sans-serif;color:#b4553a">View profile →</div></div></div>
+</div>
+<div style="margin-top:32px;border:1px solid #1f3a2e;color:#1f3a2e;font:600 15px 'Work Sans',sans-serif;padding:12px 24px;border-radius:2px;text-align:center">See all coaches</div>
+</section>
+<section style="background:#efe9dc;padding:56px 16px">
+<div style="display:inline-block;font:600 14px 'Work Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#b4553a;padding-bottom:.5em;border-bottom:1px solid rgba(180,85,58,.4)">Featured disciplines</div>
+<h2 style="margin:16px 0 0;font:400 36px/1.05 Fraunces,serif;letter-spacing:-.02em;color:#1f3a2e">Start with the discipline you ride.</h2>
+<p style="margin:24px 0 0;font-size:18px;line-height:1.625;color:#4a4842">Coaches are listed by the disciplines they actually teach, not by keyword.</p>
+<div style="margin-top:48px;display:flex;flex-direction:column;gap:16px">
+<div style="position:relative;height:256px;overflow:hidden;border-radius:3px;background:url('https://images.unsplash.com/photo-1636738176866-ae2c0a80d614?auto=format&fit=crop&w=800&q=80') center/cover"><div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(31,58,46,.88) 0%,rgba(31,58,46,.5) 40%,rgba(31,58,46,0) 68%)"></div><div style="position:absolute;top:0;right:0;width:46%;height:60%;background:#b4553a;opacity:.3;clip-path:polygon(32% 0%,100% 0%,100% 100%,0% 100%)"></div><div style="position:absolute;inset:0 0 auto 0;padding:24px;color:#f6f1e7"><h3 style="margin:0;font:400 30px Fraunces,serif">Bridleless</h3><p style="margin:8px 0 0;font-size:15px;line-height:1.6;color:rgba(246,241,231,.85)">Riding without a bridle, built step by step from the groundwork up.</p></div></div>
+<div style="position:relative;height:192px;overflow:hidden;border-radius:3px;background:url('https://images.unsplash.com/photo-1726209503049-a705ac3fe28f?auto=format&fit=crop&w=800&q=80') center/cover"><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(31,58,46,0) 35%,rgba(31,58,46,.88) 100%)"></div><h3 style="position:absolute;left:0;right:0;bottom:0;margin:0;padding:20px;font:400 20px Fraunces,serif;color:#f6f1e7">Working Equitation</h3></div>
+<div style="position:relative;height:192px;overflow:hidden;border-radius:3px;background:url('https://images.unsplash.com/photo-1589801837979-0eecc7c4f3c1?auto=format&fit=crop&w=800&q=80') center/cover"><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(31,58,46,0) 35%,rgba(31,58,46,.88) 100%)"></div><h3 style="position:absolute;left:0;right:0;bottom:0;margin:0;padding:20px;font:400 20px Fraunces,serif;color:#f6f1e7">Liberty</h3></div>
+</div>
+<div style="margin-top:44px;border-top:1px solid #e7dac6;padding-top:32px;display:flex;flex-direction:column;gap:24px"><div style="display:flex;gap:10px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Western</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Dressage</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Show Jumping</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Eventing</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Campdrafting</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Natural Horsemanship</span></div><span style="font:600 15px 'Work Sans',sans-serif;color:#b4553a;border-bottom:1px solid #b4553a;align-self:flex-start">All disciplines →</span></div>
+<div style="margin-top:44px;border-radius:3px;background:#1f3a2e;padding:32px 24px;color:#f6f1e7;display:flex;flex-direction:column;gap:24px"><p style="margin:0;font-size:15px;line-height:1.625;color:rgba(246,241,231,.9)"><strong>Coaches:</strong> <strong>$9.99 a month</strong> for a full profile — bio, photo, location, specialties, qualifications and testimonials. Plans for coaches building a book or running clinics too.</p><span style="background:#b4553a;color:#f6f1e7;font:600 15px 'Work Sans',sans-serif;padding:12px 24px;border-radius:2px;text-align:center">List your coaching profile</span></div>
+</section>
+<section style="background:#1f3a2e;color:#f6f1e7;padding:56px 16px">
+<h2 style="margin:0;font:400 36px/1.05 Fraunces,serif;letter-spacing:-.02em">Three steps to a lesson.</h2>
+<div style="margin-top:48px;display:flex;flex-direction:column;gap:40px">
+<div style="border-top:1px solid rgba(246,241,231,.35);padding-top:24px"><div style="font:400 24px Fraunces,serif;color:#e7dac6">01</div><div style="margin-top:12px;font:500 24px Fraunces,serif">Search your discipline</div><p style="margin:10px 0 0;font-size:17px;line-height:1.625;color:rgba(246,241,231,.82)">Pick what you ride and the town you ride in. Every listing is a real coach, not an agency.</p></div>
+<div style="border-top:1px solid rgba(246,241,231,.35);padding-top:24px"><div style="font:400 24px Fraunces,serif;color:#e7dac6">02</div><div style="margin-top:12px;font:500 24px Fraunces,serif">Read the profile</div><p style="margin:10px 0 0;font-size:17px;line-height:1.625;color:rgba(246,241,231,.82)">Qualifications, disciplines, travel radius, testimonials from riders they've taught.</p></div>
+<div style="border-top:1px solid rgba(246,241,231,.35);padding-top:24px"><div style="font:400 24px Fraunces,serif;color:#e7dac6">03</div><div style="margin-top:12px;font:500 24px Fraunces,serif">Contact them direct</div><p style="margin:10px 0 0;font-size:17px;line-height:1.625;color:rgba(246,241,231,.82)">No commission, no booking fee. You deal with your coach, the way riders always have.</p></div>
+</div></section>
+<footer style="background:#1f3a2e;color:#f6f1e7;padding:64px 16px 0"><div style="display:flex;flex-direction:column;gap:40px">
+<div><span style="font:700 28px/1 Fraunces,serif">ECA</span><p style="margin:16px 0 0;font-size:15px;line-height:1.625;color:rgba(246,241,231,.78)">Find the coach who teaches exactly what you ride, wherever you are in Australia.</p></div>
+<div style="font-size:15px"><div style="margin-bottom:12px;font:600 12px 'Work Sans',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e7dac6">Riders</div><div style="display:flex;flex-direction:column;gap:10px;color:rgba(246,241,231,.82)"><span>Find a coach</span><span>Browse disciplines</span><span>My account</span></div></div>
+<div style="font-size:15px"><div style="margin-bottom:12px;font:600 12px 'Work Sans',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e7dac6">Coaches</div><div style="display:flex;flex-direction:column;gap:10px;color:rgba(246,241,231,.82)"><span>List your profile</span><span>Pricing</span><span>Coach dashboard</span></div></div>
+<div style="font-size:15px"><div style="margin-bottom:12px;font:600 12px 'Work Sans',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e7dac6">About</div><div style="display:flex;flex-direction:column;gap:10px;color:rgba(246,241,231,.82)"><span>Log in</span></div></div>
+</div><div style="margin:64px -16px 0;border-top:1px solid rgba(246,241,231,.25);padding:24px 16px;font-size:14px;color:rgba(246,241,231,.6)">© 2026 Equestrian Coaches Australia</div></footer>
+</div></div>
+
+<!-- ═══ MOBILE SEARCH 390 ═══ -->
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:600 10.5px ui-monospace,Menlo,monospace;color:rgba(0,0,0,.55)">Search · 390</div>
+<div data-screen-label="Current search mobile" style="width:390px;background:#f6f1e7;border:1px solid rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;font-family:'Work Sans',sans-serif;color:#22201c">
+<header style="height:64px;border-bottom:1px solid #e7dac6;background:rgba(246,241,231,.95);padding:0 16px;display:flex;align-items:center;justify-content:space-between"><span style="font:700 28px/1 Fraunces,serif;color:#1f3a2e">ECA</span><span style="display:flex;flex-direction:column;gap:5px;width:20px"><span style="height:2px;background:#1f3a2e"></span><span style="height:2px;background:#1f3a2e"></span><span style="height:2px;background:#1f3a2e"></span></span></header>
+<div style="padding:32px 16px">
+<h1 style="margin:0;font:700 24px Fraunces,serif;letter-spacing:-.02em">Find a coach</h1>
+<div style="margin-top:16px;display:flex;flex-direction:column;gap:6px">
+<div style="border-radius:4px;border:1px solid #e7dac6;background:#fffdf8;padding:6px 12px"><span style="display:block;font:600 12px 'Work Sans',sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#6c685e">Discipline</span><span style="display:block;font-size:17px;color:#1f3a2e;padding:2px 0">Dressage</span></div>
+<div style="border-radius:4px;border:1px solid #e7dac6;background:#fffdf8;padding:6px 12px"><span style="display:block;font:600 12px 'Work Sans',sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#6c685e">Suburb or postcode</span><span style="display:block;font-size:17px;color:#1f3a2e;padding:2px 0">Bendigo VIC</span></div>
+<div style="background:#b4553a;color:#f6f1e7;font:600 17px 'Work Sans',sans-serif;padding:10px 32px;border-radius:2px;text-align:center">Find a coach</div>
+</div>
+<div style="margin-top:24px;display:flex;gap:8px;flex-wrap:wrap"><span style="border:1px solid #b4553a;background:#b4553a;color:#f6f1e7;border-radius:999px;padding:8px 16px;font:500 14px 'Work Sans',sans-serif">Discipline · 1 ▾</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:8px 16px;font:500 14px 'Work Sans',sans-serif">Skills ▾</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:8px 16px;font:500 14px 'Work Sans',sans-serif">Setup ▾</span></div>
+<p style="margin:24px 0 0;font-size:14px;color:#4a4842">7 coaches found near Bendigo VIC</p>
+<div style="margin-top:16px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:1;background:#efe9dc url('https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=800&q=80') center/cover;border-radius:50% 50% 3px 3px / 50% 50% 2% 2%"></div><div><div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:500 20px Fraunces,serif;color:#1f3a2e">Isabella Fletcher</div><span style="font-size:14px;color:#6c685e">0 km</span></div><div style="margin-top:4px;font-size:14px;color:#6c685e">Bendigo VIC</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Dressage</span></div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#4a4842">Dressage coaching for riders in Bendigo and surrounds.</p><p style="margin:6px 0 0;font-size:12px;color:#6c685e">Lateral work · Dressage test riding &amp; scoring · Own arena</p><div style="margin-top:8px;font:600 14px 'Work Sans',sans-serif;color:#b4553a">View profile →</div></div></div>
+<div style="display:flex;flex-direction:column;gap:12px"><div style="aspect-ratio:1;background:#efe9dc url('https://images.unsplash.com/photo-1613085411234-9c83af5562d8?auto=format&fit=crop&w=800&q=80') center/cover;border-radius:50% 50% 3px 3px / 50% 50% 2% 2%"></div><div><div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:500 20px Fraunces,serif;color:#1f3a2e">Emma Dawson</div><span style="font-size:14px;color:#6c685e">0 km</span></div><div style="margin-top:4px;font-size:14px;color:#6c685e">Bendigo VIC</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Bridleless</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font:500 12px 'Work Sans',sans-serif;color:#1f3a2e">Dressage</span></div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#4a4842">Bridleless coaching for riders in Bendigo and surrounds.</p><div style="margin-top:8px;font:600 14px 'Work Sans',sans-serif;color:#b4553a">View profile →</div></div></div>
+</div></div></div></div>
+
+<!-- ═══ MOBILE PROFILE 390 ═══ -->
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="font:600 10.5px ui-monospace,Menlo,monospace;color:rgba(0,0,0,.55)">Coach profile · 390</div>
+<div data-screen-label="Current profile mobile" style="width:390px;background:#f6f1e7;border:1px solid rgba(0,0,0,.08);box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;font-family:'Work Sans',sans-serif;color:#22201c">
+<header style="height:64px;border-bottom:1px solid #e7dac6;background:rgba(246,241,231,.95);padding:0 16px;display:flex;align-items:center;justify-content:space-between"><span style="font:700 28px/1 Fraunces,serif;color:#1f3a2e">ECA</span><span style="display:flex;flex-direction:column;gap:5px;width:20px"><span style="height:2px;background:#1f3a2e"></span><span style="height:2px;background:#1f3a2e"></span><span style="height:2px;background:#1f3a2e"></span></span></header>
+<div style="padding:32px 16px">
+<div style="height:192px;border-radius:3px;background:#efe9dc url('https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=800&q=80') center/cover"></div>
+<div style="margin-top:20px;display:flex;flex-direction:column;gap:16px">
+<div><h1 style="margin:0;font:700 24px Fraunces,serif;letter-spacing:-.02em">Isabella Fletcher</h1><p style="margin:0;color:#4a4842">Bendigo VIC</p><div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 14px 'Work Sans',sans-serif">Dressage</span></div></div>
+<span style="border:1px solid #1f3a2e;color:#1f3a2e;font:600 15px 'Work Sans',sans-serif;padding:12px 24px;border-radius:2px;text-align:center;align-self:flex-start">♡ Favourite</span>
+</div>
+<p style="margin:24px 0 0;font-size:18px">Dressage coaching for riders in Bendigo and surrounds.</p>
+<p style="margin:12px 0 0;color:#4a4842;line-height:1.5">Isabella has coached dressage for 7 years around Bendigo, working with riders from first flatwork through to competition tests. Lessons at her own arena or at your property.</p>
+<h2 style="margin:32px 0 0;font:600 18px 'Work Sans',sans-serif">Skills &amp; setup</h2>
+<div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font-size:14px">Lateral work</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:4px 12px;font-size:14px">Dressage test riding &amp; scoring</span><span style="background:#efe9dc;border-radius:999px;padding:4px 12px;font-size:14px">Own arena</span><span style="background:#efe9dc;border-radius:999px;padding:4px 12px;font-size:14px">Beginners welcome</span></div>
+<h2 style="margin:32px 0 0;font:600 18px 'Work Sans',sans-serif">Qualifications</h2>
+<ul style="margin:8px 0 0;padding-left:20px;color:#4a4842"><li>EA Level 1 Coach</li></ul>
+<section style="margin-top:40px;border-radius:3px;border:1px solid #e7dac6;background:#fffdf8;padding:20px">
+<h2 style="margin:0;font:600 18px 'Work Sans',sans-serif">Get in touch</h2>
+<div style="margin-top:12px;font:500 15px 'Work Sans',sans-serif;color:#b4553a">📞 0400 000 000</div>
+<div style="margin-top:20px;border-top:1px solid #e7dac6;padding-top:20px;display:flex;flex-direction:column;gap:12px">
+<div><label style="display:block;font:500 14px 'Work Sans',sans-serif;margin-bottom:4px">Your name</label><div style="border:1px solid #e7dac6;border-radius:2px;padding:10px 12px;font-size:15px;color:#6c685e">&nbsp;</div></div>
+<div><label style="display:block;font:500 14px 'Work Sans',sans-serif;margin-bottom:4px">Your email</label><div style="border:1px solid #e7dac6;border-radius:2px;padding:10px 12px;font-size:15px;color:#6c685e">&nbsp;</div></div>
+<div><label style="display:block;font:500 14px 'Work Sans',sans-serif;margin-bottom:4px">Message</label><div style="border:1px solid #e7dac6;border-radius:2px;padding:10px 12px;font-size:15px;color:#6c685e;height:96px"></div></div>
+<span style="background:#b4553a;color:#f6f1e7;font:600 15px 'Work Sans',sans-serif;padding:12px 24px;border-radius:2px;text-align:center">Send enquiry to Isabella</span>
+</div>
+<span style="display:inline-block;margin-top:20px;border:1px solid #1f3a2e;color:#1f3a2e;font:600 15px 'Work Sans',sans-serif;padding:12px 24px;border-radius:2px">← Back to search</span>
+</section>
+</div></div></div>
+
+</div></div>
+</x-dc>
+</body>
+</html>

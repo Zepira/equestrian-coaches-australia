@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e9e4d8;font-family:"Hanken Grotesk",system-ui,sans-serif;color:#22201c}
+a{color:#b4553a;text-decoration:none}a:hover{color:#1f3a2e}
+*{box-sizing:border-box}
+button{font-family:inherit}
+[data-frame]{scrollbar-width:none}[data-frame]::-webkit-scrollbar{display:none}
+@keyframes kb{from{transform:scale(1.08)}to{transform:scale(1)}}
+@keyframes rise{from{opacity:0;transform:translateY(110%) rotate(2deg)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+</style>
+</helmet>
+
+<section id="t1" style="padding:40px 44px 32px">
+<div style="display:flex;align-items:baseline;gap:10px;margin:0 0 20px"><a href="#t1" style="font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px">Turn 2</a><span style="font:400 30px/1.1 'Instrument Serif',serif;color:#22201c">For coaches — Golden Hour direction</span></div>
+<p style="max-width:760px;margin:0 0 28px;font:400 14px/1.6 'Hanken Grotesk',sans-serif;color:#4a4842">Every word is lifted from the current <em>/for-coaches</em> page — hero, founding offer, the monthly email, what we do, three plans, comparison, no-commission, FAQ, feedback note. Restyled to match <a href="ECA Redesign.dc.html#1a">1a</a>. Plans toggle monthly/yearly; FAQ rows expand; on mobile the full comparison folds away under the plans.</p>
+
+<div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+<!-- ═══════ 2a mobile ═══════ -->
+<div id="2a" style="display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 'Hanken Grotesk',sans-serif;color:rgba(0,0,0,.55)"><a href="#2a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">2a</a>For coaches · mobile 390</div>
+<div data-frame data-screen-label="For coaches mobile" style="width:390px;max-height:{{ mobileMax }};overflow-y:auto;background:#f6f1e7;border-radius:8px;border:1px solid rgba(0,0,0,.1);box-shadow:0 1px 3px rgba(0,0,0,.06);position:relative">
+<header style="position:sticky;top:0;z-index:5;height:60px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;color:#f6f1e7;background:linear-gradient(180deg,rgba(13,24,18,.55),rgba(13,24,18,0));margin-bottom:-60px">
+<span style="font:400 26px/1 'Instrument Serif',serif;letter-spacing:-.01em">ECA</span>
+<span style="display:flex;align-items:center;gap:14px"><span style="font:500 14px 'Hanken Grotesk',sans-serif">Log in</span><span style="width:40px;height:40px;border-radius:999px;border:1px solid rgba(246,241,231,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px"><span style="width:16px;height:1.5px;background:#f6f1e7"></span><span style="width:16px;height:1.5px;background:#f6f1e7"></span></span></span>
+</header>
+
+<section style="position:relative;height:700px;background:#14281f;color:#f6f1e7;overflow:hidden">
+<div data-parallax style="position:absolute;inset:-10% 0 0 0;will-change:transform"><img src="https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&w=1000&q=80" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;animation:kb 14s cubic-bezier(.2,.6,.2,1) both"></div>
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,24,18,.3) 0%,rgba(13,24,18,.1) 20%,rgba(13,24,18,.6) 40%,rgba(13,24,18,.92) 58%,rgba(20,40,31,1) 100%)"></div>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:0 18px 30px;gap:16px">
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(246,241,231,.75);animation:fade .8s .1s both">For coaches</p>
+<h1 style="margin:0;font:400 52px/.98 'Instrument Serif',serif;letter-spacing:-.02em;text-wrap:pretty">
+<span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise .9s cubic-bezier(.16,1,.3,1) .15s both">You'll</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise .9s cubic-bezier(.16,1,.3,1) .22s both">know</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise .9s cubic-bezier(.16,1,.3,1) .29s both;font-style:italic;color:#e8b79a">exactly</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise .9s cubic-bezier(.16,1,.3,1) .36s both">what</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise .9s cubic-bezier(.16,1,.3,1) .43s both">your</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise .9s cubic-bezier(.16,1,.3,1) .5s both">listing</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise .9s cubic-bezier(.16,1,.3,1) .57s both">did.</span></span>
+</h1>
+<p style="margin:0;font:400 16px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.85);animation:fade .8s .7s both">Most directories take your money and show you nothing. We email you every month with how many riders saw your profile, how many clicked to call, and how many got in touch — including the months when the answer is none.</p>
+<div style="display:flex;flex-direction:column;gap:8px;animation:fade .9s .85s both">
+<a href="#" style="display:block;background:#b4553a;color:#f6f1e7;border-radius:10px;padding:15px;text-align:center;font:600 16px 'Hanken Grotesk',sans-serif">Join as a founding coach</a>
+<a href="#" style="display:block;border:1px solid rgba(246,241,231,.4);color:#f6f1e7;border-radius:10px;padding:14px;text-align:center;font:500 16px 'Hanken Grotesk',sans-serif">See what's included</a>
+</div>
+</div>
+</section>
+<div style="background:#1f3a2e;border-top:1px solid rgba(246,241,231,.14);padding:16px 0;overflow:hidden;white-space:nowrap"><div style="display:inline-flex;animation:marquee 45s linear infinite"><span style="display:inline-flex;align-items:center;gap:28px;padding-right:28px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#f6f1e7"><span>No commission</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Cancel any time</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Real numbers every month</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>No accreditation gatekeeping</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Riders contact you direct</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Testimonials are yours</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span></span><span style="display:inline-flex;align-items:center;gap:28px;padding-right:28px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#f6f1e7"><span>No commission</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Cancel any time</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Real numbers every month</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>No accreditation gatekeeping</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Riders contact you direct</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Testimonials are yours</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span></span></div></div>
+
+<!-- founding -->
+<section data-reveal style="position:relative;overflow:hidden;background:#14281f;color:#f6f1e7;padding:64px 18px;opacity:0;transform:translateY(20px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<img src="https://images.unsplash.com/photo-1534773728080-33d31da27ae5?auto=format&fit=crop&w=1400&q=80" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,24,18,.55),rgba(13,24,18,.85))"></div>
+<div style="position:relative">
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#e8b79a">Founding coaches</p>
+<h2 style="margin:12px 0 0;font:400 38px/1 'Instrument Serif',serif;letter-spacing:-.02em">Every coach who signs up in our first <em style="color:#e8b79a">six months</em></h2>
+<p style="margin:16px 0 0;font:400 16px/1.55 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.85)">gets Spotlight free for six months, and $9.99 locked in for as long as they stay — even after the price goes up for everyone else. In return we ask for a complete profile: a photo, a real bio, your disciplines tagged and your location set. You're making an empty directory look alive, and that's worth something to us.</p>
+<a href="#" style="display:inline-block;margin-top:22px;background:#b4553a;color:#f6f1e7;border-radius:10px;padding:14px 22px;font:600 16px 'Hanken Grotesk',sans-serif">Claim a founding spot</a>
+</div>
+</section>
+
+<!-- email -->
+<section data-reveal style="padding:56px 18px 0;opacity:0;transform:translateY(20px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#b4553a">Every month, good or quiet</p>
+<h2 style="margin:10px 0 0;font:400 38px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">The monthly email, shown</h2>
+<div style="margin-top:24px;border-radius:16px;overflow:hidden;background:#fffdf8;border:1px solid #e7dac6;box-shadow:0 20px 50px rgba(31,58,46,.1)">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:#efe9dc;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6c685e"><span>Example email</span><span style="font:400 14px 'Instrument Serif',serif;letter-spacing:0;text-transform:none">Equestrian Coaches Australia</span></div>
+<div style="padding:22px 18px">
+<p style="margin:0;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6c685e">Subject</p>
+<p style="margin:4px 0 0;font:400 24px/1.1 'Instrument Serif',serif;color:#22201c">Your August on Equestrian Coaches Australia</p>
+<div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="4"><div style="border:1px solid #e7dac6;border-radius:10px;padding:14px 10px;text-align:center;background:#f6f1e7"><div style="font:400 36px/1 'Instrument Serif',serif;color:#1f3a2e">{{ s.value }}</div><div style="margin-top:6px;font:400 12px/1.3 'Hanken Grotesk',sans-serif;color:#4a4842">{{ s.label }}</div></div></sc-for>
+</div>
+<p style="margin:20px 0 0;font:400 15px/1.55 'Hanken Grotesk',sans-serif;color:#22201c">You came up most often for “dressage lessons Geelong” and “flatwork coach Bellarine”. Nine riders tapped to see your number, up from five in July <span style="color:#6c685e">(example figures)</span>.</p>
+<p style="margin:10px 0 0;font:400 15px/1.55 'Hanken Grotesk',sans-serif;color:#22201c">Two of your four enquiries are still marked as no response.</p>
+</div>
+<div style="padding:14px 18px;background:#efe9dc;border-top:1px solid #e7dac6;font:400 13.5px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">The quiet months get the same email. If nothing happened, it says so, and tells you the two things most likely to change it.</div>
+</div>
+</section>
+
+<!-- what we do -->
+<section data-reveal style="margin:56px 0 0;background:#1f3a2e;color:#f6f1e7;padding:56px 18px;opacity:0;transform:translateY(20px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(246,241,231,.6)">What's included</p>
+<h2 style="margin:12px 0 0;font:400 38px/1 'Instrument Serif',serif;letter-spacing:-.02em">What we actually do to bring <em style="color:#e8b79a">riders</em> to you</h2>
+<div style="margin-top:28px;display:flex;flex-direction:column;border-top:1px solid rgba(246,241,231,.2)">
+<sc-for list="{{ whatWeDo }}" as="w" hint-placeholder-count="9">
+<div style="display:grid;grid-template-columns:36px 1fr;gap:10px;padding:18px 0;border-bottom:1px solid rgba(246,241,231,.2)"><span style="font:400 italic 22px/1 'Instrument Serif',serif;color:#e8b79a;padding-top:2px">{{ w.n }}</span><div><div style="font:400 21px/1.15 'Instrument Serif',serif">{{ w.title }}</div><p style="margin:6px 0 0;font:400 14.5px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.75)">{{ w.body }}</p></div></div>
+</sc-for>
+</div>
+<p style="margin:22px 0 0;font:500 15px 'Hanken Grotesk',sans-serif;color:#e8b79a">All of that happens whether you're on Listed or Clinic.</p>
+</section>
+
+<!-- plans -->
+<section data-reveal style="padding:56px 18px 0;opacity:0;transform:translateY(20px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+<h2 style="margin:0;font:400 38px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">Pick a plan</h2>
+<div style="display:inline-flex;border:1px solid #e7dac6;border-radius:999px;padding:3px;background:#efe9dc;flex:none">
+<button onClick="{{ setMonthly }}" style="border:0;border-radius:999px;padding:8px 12px;font:500 13px 'Hanken Grotesk',sans-serif;cursor:pointer;background:{{ monthlyBg }};color:{{ monthlyFg }}">Monthly</button>
+<button onClick="{{ setYearly }}" style="border:0;border-radius:999px;padding:8px 12px;font:500 13px 'Hanken Grotesk',sans-serif;cursor:pointer;background:{{ yearlyBg }};color:{{ yearlyFg }}">Yearly</button>
+</div>
+</div>
+<p style="margin:12px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Annual is ten months' price. Change plan any time, both directions — a coach running a clinic in March goes up for March and back down in April.</p>
+<div style="margin-top:24px;display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ tiers }}" as="t" hint-placeholder-count="3">
+<div style="border-radius:16px;padding:22px 20px;background:{{ t.bg }};color:{{ t.fg }};border:1px solid {{ t.border }}">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><div style="font:400 30px/1 'Instrument Serif',serif">{{ t.name }}</div><sc-if value="{{ t.featured }}" hint-placeholder-val="{{ false }}"><span style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#e8b79a">Most popular</span></sc-if></div>
+<div style="margin-top:4px;font:400 14px 'Hanken Grotesk',sans-serif;opacity:.75">{{ t.tagline }}</div>
+<div style="margin-top:16px;display:flex;align-items:baseline;gap:8px"><span style="font:400 40px/1 'Instrument Serif',serif">{{ t.price }}</span><span style="font:400 14px 'Hanken Grotesk',sans-serif;opacity:.75">{{ t.alt }}</span></div>
+<p style="margin:14px 0 0;font:400 14.5px/1.5 'Hanken Grotesk',sans-serif;opacity:.85">{{ t.summary }}</p>
+<a href="#" style="display:block;margin-top:18px;border-radius:10px;padding:14px;text-align:center;font:600 15px 'Hanken Grotesk',sans-serif;background:{{ t.btnBg }};color:{{ t.btnFg }};border:1px solid {{ t.btnBorder }}">{{ t.cta }}</a>
+</div>
+</sc-for>
+</div>
+<p style="margin:16px 0 0;font:400 14px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Listed comes with everything a coach needs to be found and reached — it isn't a cut-down plan. Travel radius is the same on every tier, not a paid feature.</p>
+<button onClick="{{ toggleCompare }}" style="margin-top:20px;width:100%;display:flex;justify-content:space-between;align-items:center;border:1px solid #e7dac6;background:#fffdf8;border-radius:12px;padding:16px 18px;font:500 16px 'Hanken Grotesk',sans-serif;color:#1f3a2e;cursor:pointer"><span>Full comparison, all {{ rowCount }} features</span><span style="font-size:18px">{{ compareIcon }}</span></button>
+<sc-if value="{{ compareOpen }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:8px;border:1px solid #e7dac6;border-radius:12px;overflow:hidden;background:#fffdf8">
+<div style="display:grid;grid-template-columns:1fr 46px 46px 46px;padding:10px 6px 10px 14px;border-bottom:1px solid #e7dac6;background:#efe9dc;font:400 14px 'Instrument Serif',serif;color:#1f3a2e"><span>Feature</span><span style="text-align:center">Listed</span><span style="text-align:center;color:#b4553a">Spot.</span><span style="text-align:center">Clinic</span></div>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:1fr 46px 46px 46px;align-items:center;padding:10px 6px 10px 14px;border-bottom:1px solid #efe9dc;font:400 13.5px/1.35 'Hanken Grotesk',sans-serif;color:#22201c"><span>{{ r.label }}</span><span style="text-align:center;color:{{ r.lc }}">{{ r.l }}</span><span style="text-align:center;color:{{ r.sc }};background:rgba(180,85,58,.06);padding:10px 0">{{ r.s }}</span><span style="text-align:center;color:{{ r.cc }}">{{ r.c }}</span></div>
+</sc-for>
+</div>
+</sc-if>
+</section>
+
+<!-- no commission -->
+<section data-reveal style="margin:56px 18px 0;border-radius:16px;background:#14281f;color:#f6f1e7;padding:36px 24px;text-align:center;opacity:0;transform:translateY(20px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<p style="margin:0;font:400 34px/1.02 'Instrument Serif',serif;letter-spacing:-.02em">We never take a <em style="color:#e8b79a">percentage</em> of a lesson.</p>
+<p style="margin:14px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.8)">A flat monthly fee and nothing else, forever. What a rider pays you is between you and them.</p>
+</section>
+
+<!-- faq -->
+<section data-reveal style="padding:56px 18px;opacity:0;transform:translateY(20px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<h2 style="margin:0;font:400 38px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">Questions</h2>
+<div style="margin-top:20px;display:flex;flex-direction:column;border-top:1px solid #e7dac6">
+<sc-for list="{{ faq }}" as="f" hint-placeholder-count="8">
+<div style="border-bottom:1px solid #e7dac6">
+<button data-i="{{ f.i }}" onClick="{{ toggleFaq }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:left;border:0;background:transparent;padding:18px 0;font:400 20px/1.2 'Instrument Serif',serif;color:#1f3a2e;cursor:pointer"><span>{{ f.q }}</span><span style="flex:none;width:28px;height:28px;border-radius:999px;border:1px solid #e7dac6;display:flex;align-items:center;justify-content:center;font:400 16px 'Hanken Grotesk',sans-serif;color:#b4553a">{{ f.icon }}</span></button>
+<sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}"><p style="margin:0;padding:0 40px 20px 0;font:400 15px/1.55 'Hanken Grotesk',sans-serif;color:#4a4842">{{ f.a }}</p></sc-if>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:28px;border-radius:16px;background:#efe9dc;padding:24px 20px">
+<p style="margin:0;font:400 24px/1.1 'Instrument Serif',serif;color:#1f3a2e">Tell us what to fix</p>
+<p style="margin:10px 0 0;font:400 14.5px/1.55 'Hanken Grotesk',sans-serif;color:#4a4842">This site is new and we'd rather hear what's not working from you than guess. If something's confusing, missing, or just annoying, tell Kim or Alana directly — every founding coach gets a direct line to us, not a support ticket.</p>
+</div>
+</section>
+
+<footer style="background:#14281f;color:#f6f1e7;padding:44px 18px 28px">
+<div style="font:400 40px/1 'Instrument Serif',serif;letter-spacing:-.02em">ECA</div>
+<p style="margin:10px 0 0;font:400 14px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.7);max-width:280px">Equestrian Coaches Australia. The coach who teaches what you ride, wherever you are.</p>
+<div style="margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:20px;font:400 15px/1.9 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.85)">
+<div><div style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,241,231,.5);margin-bottom:6px">Riders</div>Find a coach<br>Disciplines<br>My account</div>
+<div><div style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,241,231,.5);margin-bottom:6px">Coaches</div>List your profile<br>Pricing<br>Dashboard</div>
+</div>
+<div style="margin-top:32px;padding-top:16px;border-top:1px solid rgba(246,241,231,.18);font:400 12px 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.5)">© 2026 Equestrian Coaches Australia</div>
+</footer>
+</div>
+</div>
+
+<!-- ═══════ 2b desktop ═══════ -->
+<div id="2b" style="display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 'Hanken Grotesk',sans-serif;color:rgba(0,0,0,.55)"><a href="#2b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">2b</a>For coaches · desktop 1280</div>
+<div data-frame data-screen-label="For coaches desktop" style="width:1280px;max-height:{{ desktopMax }};overflow-y:auto;background:#f6f1e7;border-radius:8px;border:1px solid rgba(0,0,0,.1);box-shadow:0 1px 3px rgba(0,0,0,.06);position:relative">
+<header style="position:sticky;top:0;z-index:5;height:72px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;color:#f6f1e7;background:linear-gradient(180deg,rgba(13,24,18,.55),rgba(13,24,18,0));margin-bottom:-72px">
+<span style="display:flex;align-items:baseline;gap:14px"><span style="font:400 30px/1 'Instrument Serif',serif">ECA</span><span style="font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,241,231,.7)">Equestrian Coaches Australia</span></span>
+<nav style="display:flex;align-items:center;gap:28px;font:500 15px 'Hanken Grotesk',sans-serif"><span>Find a coach</span><span>Disciplines</span><span style="border-bottom:1px solid #e8b79a;padding-bottom:2px">For coaches</span><span>Log in</span><span style="border:1px solid rgba(246,241,231,.5);border-radius:999px;padding:9px 16px">List your profile</span></nav>
+</header>
+
+<section style="position:relative;height:720px;background:#14281f;color:#f6f1e7;overflow:hidden">
+<div data-parallax style="position:absolute;inset:-12% 0 0 0;will-change:transform"><img src="https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&w=2000&q=80" alt="" style="width:100%;height:100%;object-fit:cover;object-position:60% 40%;display:block;animation:kb 16s cubic-bezier(.2,.6,.2,1) both"></div>
+<div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,24,18,.88) 0%,rgba(13,24,18,.65) 45%,rgba(13,24,18,.2) 75%,rgba(13,24,18,.1) 100%),linear-gradient(180deg,rgba(13,24,18,.35) 0%,rgba(13,24,18,0) 25%,rgba(13,24,18,0) 70%,rgba(20,40,31,.9) 100%)"></div>
+<div style="position:absolute;inset:0;display:flex;align-items:center;padding:100px 48px 56px">
+<div style="width:700px;display:flex;flex-direction:column;gap:26px">
+<p style="margin:0;font:500 13px 'Hanken Grotesk',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:rgba(246,241,231,.72);animation:fade .8s .1s both">For coaches</p>
+<h1 style="margin:0;font:400 92px/.94 'Instrument Serif',serif;letter-spacing:-.025em;text-wrap:balance">
+<span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise 1s cubic-bezier(.16,1,.3,1) .15s both">You'll</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise 1s cubic-bezier(.16,1,.3,1) .22s both">know</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise 1s cubic-bezier(.16,1,.3,1) .29s both;font-style:italic;color:#e8b79a">exactly</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise 1s cubic-bezier(.16,1,.3,1) .36s both">what</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise 1s cubic-bezier(.16,1,.3,1) .43s both">your</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise 1s cubic-bezier(.16,1,.3,1) .5s both">listing</span></span> <span style="display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.06em;margin-bottom:-.06em"><span style="display:inline-block;animation:rise 1s cubic-bezier(.16,1,.3,1) .57s both">did.</span></span>
+</h1>
+<p style="margin:0;max-width:56ch;font:400 19px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.85);animation:fade .8s .7s both">Most directories take your money and show you nothing. We email you every month with how many riders saw your profile, how many clicked to call, and how many got in touch — including the months when the answer is none.</p>
+<div style="display:flex;gap:10px;animation:fade .9s .85s both">
+<a href="#" style="background:#b4553a;color:#f6f1e7;border-radius:10px;padding:16px 26px;font:600 16px 'Hanken Grotesk',sans-serif;transition:background .25s" style-hover="background:#9c4630">Join as a founding coach</a>
+<a href="#" style="border:1px solid rgba(246,241,231,.4);color:#f6f1e7;border-radius:10px;padding:15px 26px;font:500 16px 'Hanken Grotesk',sans-serif">See what's included</a>
+</div>
+</div>
+</div>
+</section>
+<div style="background:#1f3a2e;border-top:1px solid rgba(246,241,231,.14);padding:20px 0;overflow:hidden;white-space:nowrap"><div style="display:inline-flex;animation:marquee 60s linear infinite"><span style="display:inline-flex;align-items:center;gap:40px;padding-right:40px;font:500 13px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#f6f1e7"><span>No commission</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Cancel any time</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Real numbers every month</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>No accreditation gatekeeping</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Riders contact you direct</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Testimonials are yours</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span></span><span style="display:inline-flex;align-items:center;gap:40px;padding-right:40px;font:500 13px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#f6f1e7"><span>No commission</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Cancel any time</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Real numbers every month</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>No accreditation gatekeeping</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Riders contact you direct</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span><span>Testimonials are yours</span><span style="width:6px;height:6px;border-radius:999px;background:#e8b79a;flex:none"></span></span></div></div>
+
+<!-- founding + email -->
+<section data-reveal style="max-width:1184px;margin:0 auto;padding:88px 48px 0;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<div style="position:relative;overflow:hidden;border-radius:20px;background:#14281f;color:#f6f1e7;padding:52px 44px;min-height:560px;display:flex;flex-direction:column;justify-content:flex-end">
+<img src="https://images.unsplash.com/photo-1534773728080-33d31da27ae5?auto=format&fit=crop&w=1400&q=80" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.4">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,24,18,.2),rgba(13,24,18,.9) 70%)"></div>
+<div style="position:relative">
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#e8b79a">Founding coaches</p>
+<h2 style="margin:14px 0 0;font:400 46px/1 'Instrument Serif',serif;letter-spacing:-.02em">Every coach who signs up in our first <em style="color:#e8b79a">six months</em></h2>
+<p style="margin:18px 0 0;font:400 16px/1.55 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.85)">gets Spotlight free for six months, and $9.99 locked in for as long as they stay — even after the price goes up for everyone else. In return we ask for a complete profile: a photo, a real bio, your disciplines tagged and your location set. You're making an empty directory look alive, and that's worth something to us.</p>
+<a href="#" style="display:inline-block;margin-top:24px;background:#b4553a;color:#f6f1e7;border-radius:10px;padding:14px 24px;font:600 16px 'Hanken Grotesk',sans-serif;transition:background .25s" style-hover="background:#9c4630">Claim a founding spot</a>
+</div>
+</div>
+<div>
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#b4553a">Every month, good or quiet</p>
+<h2 style="margin:12px 0 0;font:400 46px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">The monthly email, shown</h2>
+<div style="margin-top:24px;border-radius:16px;overflow:hidden;background:#fffdf8;border:1px solid #e7dac6;box-shadow:0 24px 60px rgba(31,58,46,.12)">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 22px;background:#efe9dc;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6c685e"><span>Example email</span><span style="font:400 15px 'Instrument Serif',serif;letter-spacing:0;text-transform:none">Equestrian Coaches Australia</span></div>
+<div style="padding:24px 22px">
+<p style="margin:0;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6c685e">Subject</p>
+<p style="margin:4px 0 0;font:400 26px/1.1 'Instrument Serif',serif;color:#22201c">Your August on Equestrian Coaches Australia</p>
+<div style="margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="4"><div style="border:1px solid #e7dac6;border-radius:10px;padding:14px 8px;text-align:center;background:#f6f1e7"><div style="font:400 34px/1 'Instrument Serif',serif;color:#1f3a2e">{{ s.value }}</div><div style="margin-top:6px;font:400 12px/1.3 'Hanken Grotesk',sans-serif;color:#4a4842">{{ s.label }}</div></div></sc-for>
+</div>
+<p style="margin:20px 0 0;font:400 15px/1.55 'Hanken Grotesk',sans-serif;color:#22201c">You came up most often for “dressage lessons Geelong” and “flatwork coach Bellarine”. Nine riders tapped to see your number, up from five in July <span style="color:#6c685e">(example figures)</span>.</p>
+<p style="margin:10px 0 0;font:400 15px/1.55 'Hanken Grotesk',sans-serif;color:#22201c">Two of your four enquiries are still marked as no response.</p>
+</div>
+<div style="padding:14px 22px;background:#efe9dc;border-top:1px solid #e7dac6;font:400 14px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">The quiet months get the same email. If nothing happened, it says so, and tells you the two things most likely to change it.</div>
+</div>
+</div>
+</section>
+
+<!-- what we do -->
+<section data-reveal style="margin:88px 0 0;background:#1f3a2e;color:#f6f1e7;opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<div style="max-width:1184px;margin:0 auto;padding:88px 48px;display:grid;grid-template-columns:1fr 1.5fr;gap:64px;align-items:start">
+<div style="position:sticky;top:100px">
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:rgba(246,241,231,.6)">What's included</p>
+<h2 style="margin:16px 0 0;font:400 60px/.98 'Instrument Serif',serif;letter-spacing:-.025em">What we actually do to bring <em style="color:#e8b79a">riders</em> to you</h2>
+<p style="margin:22px 0 0;font:500 16px 'Hanken Grotesk',sans-serif;color:#e8b79a">All of that happens whether you're on Listed or Clinic.</p>
+</div>
+<div style="display:flex;flex-direction:column;border-top:1px solid rgba(246,241,231,.2)">
+<sc-for list="{{ whatWeDo }}" as="w" hint-placeholder-count="9">
+<div style="display:grid;grid-template-columns:48px 1fr;gap:16px;padding:22px 0;border-bottom:1px solid rgba(246,241,231,.2)"><span style="font:400 italic 26px/1 'Instrument Serif',serif;color:#e8b79a;padding-top:2px">{{ w.n }}</span><div><div style="font:400 25px/1.15 'Instrument Serif',serif">{{ w.title }}</div><p style="margin:8px 0 0;font:400 15.5px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.75);max-width:60ch">{{ w.body }}</p></div></div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<!-- plans -->
+<section data-reveal style="max-width:1184px;margin:0 auto;padding:88px 48px 0;opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px">
+<div><h2 style="margin:0;font:400 64px/.98 'Instrument Serif',serif;letter-spacing:-.025em;color:#1f3a2e">Pick a plan</h2>
+<p style="margin:16px 0 0;max-width:62ch;font:400 17px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Annual is ten months' price. Change plan any time, both directions — a coach running a clinic in March goes up for March and back down in April.</p></div>
+<div style="display:inline-flex;border:1px solid #e7dac6;border-radius:999px;padding:4px;background:#efe9dc;flex:none">
+<button onClick="{{ setMonthly }}" style="border:0;border-radius:999px;padding:10px 18px;font:500 14px 'Hanken Grotesk',sans-serif;cursor:pointer;background:{{ monthlyBg }};color:{{ monthlyFg }}">Monthly</button>
+<button onClick="{{ setYearly }}" style="border:0;border-radius:999px;padding:10px 18px;font:500 14px 'Hanken Grotesk',sans-serif;cursor:pointer;background:{{ yearlyBg }};color:{{ yearlyFg }}">Yearly · save two months</button>
+</div>
+</div>
+<div style="margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch">
+<sc-for list="{{ tiers }}" as="t" hint-placeholder-count="3">
+<div style="border-radius:18px;padding:32px 28px;display:flex;flex-direction:column;background:{{ t.bg }};color:{{ t.fg }};border:1px solid {{ t.border }};transition:transform .5s cubic-bezier(.16,1,.3,1)" style-hover="transform:translateY(-6px)">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><div style="font:400 36px/1 'Instrument Serif',serif">{{ t.name }}</div><sc-if value="{{ t.featured }}" hint-placeholder-val="{{ false }}"><span style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#e8b79a">Most popular</span></sc-if></div>
+<div style="margin-top:6px;font:400 15px 'Hanken Grotesk',sans-serif;opacity:.75">{{ t.tagline }}</div>
+<div style="margin-top:24px;display:flex;align-items:baseline;gap:8px"><span style="font:400 52px/1 'Instrument Serif',serif;letter-spacing:-.02em">{{ t.price }}</span><span style="font:400 14px 'Hanken Grotesk',sans-serif;opacity:.75">{{ t.alt }}</span></div>
+<p style="margin:18px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;opacity:.85;flex:1">{{ t.summary }}</p>
+<a href="#" style="display:block;margin-top:24px;border-radius:10px;padding:15px;text-align:center;font:600 15px 'Hanken Grotesk',sans-serif;background:{{ t.btnBg }};color:{{ t.btnFg }};border:1px solid {{ t.btnBorder }}">{{ t.cta }}</a>
+</div>
+</sc-for>
+</div>
+<p style="margin:20px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842;text-align:center">Listed comes with everything a coach needs to be found and reached — it isn't a cut-down plan. Travel radius is the same on every tier, not a paid feature.</p>
+
+<div style="margin-top:56px;border:1px solid #e7dac6;border-radius:16px;overflow:hidden;background:#fffdf8">
+<div style="display:grid;grid-template-columns:1fr 160px 160px 160px;padding:18px 28px;background:#efe9dc;border-bottom:1px solid #e7dac6;font:400 20px 'Instrument Serif',serif;color:#1f3a2e"><span>Feature</span><span style="text-align:center">Listed</span><span style="text-align:center;color:#b4553a">Spotlight</span><span style="text-align:center">Clinic</span></div>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="10">
+<div style="display:grid;grid-template-columns:1fr 160px 160px 160px;align-items:stretch;border-bottom:1px solid #efe9dc;font:400 15px/1.4 'Hanken Grotesk',sans-serif;color:#22201c"><span style="padding:14px 28px">{{ r.label }}</span><span style="padding:14px 0;text-align:center;color:{{ r.lc }}">{{ r.l }}</span><span style="padding:14px 0;text-align:center;color:{{ r.sc }};background:rgba(180,85,58,.06)">{{ r.s }}</span><span style="padding:14px 0;text-align:center;color:{{ r.cc }}">{{ r.c }}</span></div>
+</sc-for>
+</div>
+</section>
+
+<!-- no commission -->
+<section data-reveal style="margin:88px 0 0;background:#14281f;color:#f6f1e7;padding:96px 48px;text-align:center;opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<p style="margin:0 auto;max-width:18ch;font:400 64px/1 'Instrument Serif',serif;letter-spacing:-.025em">We never take a <em style="color:#e8b79a">percentage</em> of a lesson.</p>
+<p style="margin:22px auto 0;max-width:48ch;font:400 18px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.8)">A flat monthly fee and nothing else, forever. What a rider pays you is between you and them.</p>
+</section>
+
+<!-- faq -->
+<section data-reveal style="max-width:1184px;margin:0 auto;padding:88px 48px;display:grid;grid-template-columns:1fr 1.6fr;gap:64px;align-items:start;opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+<div style="position:sticky;top:100px">
+<h2 style="margin:0;font:400 64px/.98 'Instrument Serif',serif;letter-spacing:-.025em;color:#1f3a2e">Questions</h2>
+<div style="margin-top:32px;border-radius:16px;background:#efe9dc;padding:26px 24px">
+<p style="margin:0;font:400 26px/1.1 'Instrument Serif',serif;color:#1f3a2e">Tell us what to fix</p>
+<p style="margin:10px 0 0;font:400 15px/1.55 'Hanken Grotesk',sans-serif;color:#4a4842">This site is new and we'd rather hear what's not working from you than guess. If something's confusing, missing, or just annoying, tell Kim or Alana directly — every founding coach gets a direct line to us, not a support ticket.</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;border-top:1px solid #e7dac6">
+<sc-for list="{{ faq }}" as="f" hint-placeholder-count="8">
+<div style="border-bottom:1px solid #e7dac6">
+<button data-i="{{ f.i }}" onClick="{{ toggleFaq }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;text-align:left;border:0;background:transparent;padding:22px 0;font:400 26px/1.15 'Instrument Serif',serif;color:#1f3a2e;cursor:pointer"><span>{{ f.q }}</span><span style="flex:none;width:34px;height:34px;border-radius:999px;border:1px solid #e7dac6;display:flex;align-items:center;justify-content:center;font:400 18px 'Hanken Grotesk',sans-serif;color:#b4553a">{{ f.icon }}</span></button>
+<sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}"><p style="margin:0;padding:0 60px 24px 0;font:400 16px/1.6 'Hanken Grotesk',sans-serif;color:#4a4842;max-width:64ch">{{ f.a }}</p></sc-if>
+</div>
+</sc-for>
+</div>
+</section>
+
+<footer style="background:#14281f;color:#f6f1e7"><div style="max-width:1184px;margin:0 auto;padding:64px 48px 32px;display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px">
+<div><div style="font:400 48px/1 'Instrument Serif',serif;letter-spacing:-.02em">ECA</div><p style="margin:12px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.7);max-width:320px">Equestrian Coaches Australia. The coach who teaches what you ride, wherever you are.</p></div>
+<div style="font:400 15px/2 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.85)"><div style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,241,231,.5);margin-bottom:8px">Riders</div>Find a coach<br>Disciplines<br>My account</div>
+<div style="font:400 15px/2 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.85)"><div style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,241,231,.5);margin-bottom:8px">Coaches</div>List your profile<br>Pricing<br>Dashboard</div>
+</div><div style="max-width:1184px;margin:0 auto;padding:0 48px 28px;font:400 13px 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.5)">© 2026 Equestrian Coaches Australia</div></footer>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;fullPage&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Preview&quot;}}">
+const WHAT_WE_DO = [
+  ["We build a page for your suburb and your discipline", "“Dressage coaches in Geelong” — and about 400 others. Riders search discipline + place far more than they search names."],
+  ["We write those pages properly", "150 words each on the top 20, by a person. Google's 2024 rules punished directories that generated thin pages."],
+  ["We only build a page where three or more real coaches exist", "Keeps the site out of the category Google demotes, which protects your profile too."],
+  ["Your profile carries structured data", "LocalBusiness and Person markup, so search engines can read who you are and where you teach."],
+  ["Kim answers the recommendation posts in equestrian Facebook groups", "By name — not an anonymous account, not an ad."],
+  ["We email riders every month", "Clinics near them, new coaches in their area."],
+  ["Cards and flyers where riders already stand", "Saddleries, feed stores, pony club, campdraft canteens."],
+  ["We give you something to share", "A “find me on ECA” graphic and a post you can paste. Free on every plan."],
+  ["We help you set up your own Google Business Profile", "Free, and yours to keep."],
+];
+const TIERS = [
+  { key: "listed", name: "Listed", monthly: "$9.99", yearly: "$99", tagline: "For most coaches", summary: "Everything a coach needs to be found and reached: an indexed profile, area and discipline listings, enquiries, testimonials and the monthly numbers email.", cta: "Join as a founding coach" },
+  { key: "spotlight", name: "Spotlight", monthly: "$24.95", yearly: "$249", tagline: "For coaches building a book", featured: true, summary: "Everything in Listed, plus a featured slot on your area pages, instant enquiry alerts, search-query insights, an intro video and unlimited events.", cta: "Choose Spotlight" },
+  { key: "clinic", name: "Clinic", monthly: "$49.95", yearly: "$499", tagline: "For coaches who are already full", summary: "Everything in Spotlight, plus your events pushed to riders statewide, waitlist capture, benchmarks and up to three locations.", cta: "Choose Clinic" },
+];
+const EVERY = ["Profile page indexed by Google", "Listed on area and discipline pages", "Travel radius you set yourself", "Remote / online lessons", "Enquiry form", "Click-to-reveal contact", "Unlimited testimonials", "Taking-new-students status (yes / waitlist / no)", "One live event", "Profile views, contact reveals and enquiries", "The monthly numbers email"];
+const SPOT = ["Featured slot on your area pages (labelled, capped at three, rotating)", "Instant enquiry alerts by email and SMS", "Enquiry inbox with outcomes", "Google search impressions and the queries you appeared for", "Full funnel and 12-month trend", "Intro video", "10 photos", "All contact methods, plus a link to your own website", "Testimonial request link and reminders", "Pin a testimonial", "Unlimited events"];
+const CLINIC = ["Your events pushed to riders by email statewide", "Each event gets its own indexed page Google can surface", "Waitlist capture for when you can't take anyone", "Benchmarks against similar coaches", "Up to three locations"];
+const FAQ = [
+  ["What if I don't get any enquiries?", "You'll know, because we'll tell you. The monthly email shows the real numbers whether they're good or not, and when it's quiet it says so and tells you what's most likely to change it. Cancel any time — no contract, no notice."],
+  ["Can I cancel any time?", "Yes, one click in your dashboard. Your listing stays live until the end of the period you've paid for, and nothing you've added is deleted."],
+  ["Do you take a cut of my lesson fees?", "No. Never. A flat monthly fee and nothing else."],
+  ["What happens to my testimonials if I leave?", "They're yours. They stay on your profile if you come back, and we'll send you a copy if you ask."],
+  ["Will you sell my details?", "No. Your contact details are shown to riders who click to see them, and that's it. We don't sell or rent our lists."],
+  ["Do I need to be accredited?", "No. We list Western, liberty, natural horsemanship and trail coaches alongside accredited ones, because riders look for all of them. Any qualifications you upload are displayed as supplied by you — we don't verify or endorse anyone."],
+  ["What if there aren't many coaches in my area?", "Then you're the answer to every search in it. We don't build an area page until three coaches exist there, so a thin area may take a while to get its own page — but your profile is live and findable from day one. We also switch the featured slot off in small areas, because being one of three isn't worth paying for."],
+  ["How long before I see anything?", "Six to twelve months for Google traffic to build properly. That's normal for a new site and we'd rather say it than pretend otherwise. What moves first is your search impressions — how often you're appearing — and you'll see those from the start."],
+];
+const STATS = [["412", "Appeared in search"], ["38", "Profile views"], ["9", "Tapped to call"], ["4", "Enquiries"]];
+
+class Component extends DCLogic {
+  state = { yearly: false, faqOpen: 0, compareOpen: false };
+  componentDidMount() { setTimeout(() => this.setupMotion(), 400); }
+  setupMotion() {
+    if (this._motion) return;
+    this._motion = true;
+    document.querySelectorAll("[data-frame]").forEach((f) => {
+      const io = new IntersectionObserver((es) => es.forEach((e) => {
+        if (e.isIntersecting) { e.target.style.opacity = "1"; e.target.style.transform = "none"; io.unobserve(e.target); }
+      }), { root: f, threshold: 0.1 });
+      f.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
+      const px = f.querySelectorAll("[data-parallax]");
+      f.addEventListener("scroll", () => {
+        const y = f.scrollTop;
+        px.forEach((p) => { p.style.transform = `translate3d(0,${Math.min(y * 0.28, 260)}px,0)`; });
+      }, { passive: true });
+    });
+  }
+  renderVals() {
+    const { yearly, faqOpen, compareOpen } = this.state;
+    const full = this.props.fullPage ?? false;
+    const on = "#1f3a2e", onFg = "#f6f1e7", off = "transparent", offFg = "#1f3a2e";
+    const tiers = TIERS.map((t) => {
+      const featured = !!t.featured;
+      return {
+        ...t, featured,
+        price: yearly ? t.yearly : t.monthly,
+        alt: yearly ? `a year · or ${t.monthly}/mo` : `a month · or ${t.yearly}/yr`,
+        bg: featured ? "#1f3a2e" : "#fffdf8", fg: featured ? "#f6f1e7" : "#22201c", border: featured ? "#1f3a2e" : "#e7dac6",
+        btnBg: featured ? "#b4553a" : "transparent", btnFg: featured ? "#f6f1e7" : "#1f3a2e", btnBorder: featured ? "#b4553a" : "#1f3a2e",
+      };
+    });
+    const mk = (l, s, c) => (label) => ({ label, l: l ? "✓" : "—", s: s ? "✓" : "—", c: c ? "✓" : "—", lc: l ? "#b4553a" : "#c9bfae", sc: s ? "#b4553a" : "#c9bfae", cc: c ? "#b4553a" : "#c9bfae" });
+    const rows = [...EVERY.map(mk(1, 1, 1)), ...SPOT.map(mk(0, 1, 1)), ...CLINIC.map(mk(0, 0, 1))];
+    return {
+      mobileMax: full ? "none" : "844px",
+      desktopMax: full ? "none" : "800px",
+      whatWeDo: WHAT_WE_DO.map(([title, body], i) => ({ title, body, n: String(i + 1).padStart(2, "0") })),
+      stats: STATS.map(([value, label]) => ({ value, label })),
+      tiers, rows, rowCount: rows.length,
+      monthlyBg: yearly ? off : on, monthlyFg: yearly ? offFg : onFg,
+      yearlyBg: yearly ? on : off, yearlyFg: yearly ? onFg : offFg,
+      setMonthly: () => this.setState({ yearly: false }),
+      setYearly: () => this.setState({ yearly: true }),
+      compareOpen, compareIcon: compareOpen ? "−" : "+",
+      toggleCompare: () => this.setState({ compareOpen: !compareOpen }),
+      faq: FAQ.map(([q, a], i) => ({ q, a, i, open: faqOpen === i, icon: faqOpen === i ? "−" : "+" })),
+      toggleFaq: (e) => { const i = +e.currentTarget.dataset.i; this.setState({ faqOpen: faqOpen === i ? -1 : i }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

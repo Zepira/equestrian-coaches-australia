@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e9e4d8;font-family:"Hanken Grotesk",system-ui,sans-serif;color:#22201c}
+a{color:#b4553a;text-decoration:none}a:hover{color:#1f3a2e}
+*{box-sizing:border-box}
+input,select,button,textarea{font-family:inherit}
+input:focus,textarea:focus{outline:none;border-color:#b4553a}
+[data-frame]{scrollbar-width:none}[data-frame]::-webkit-scrollbar{display:none}
+.hs{scrollbar-width:none}.hs::-webkit-scrollbar{display:none}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+</style>
+</helmet>
+
+<section id="t1" style="padding:40px 44px 32px">
+<div style="display:flex;align-items:baseline;gap:10px;margin:0 0 20px"><a href="#t1" style="font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px">Turn 1</a><span style="font:400 30px/1.1 'Instrument Serif',serif;color:#22201c">Coach dashboard &amp; rider account — Golden Hour direction</span></div>
+<p style="max-width:780px;margin:0 0 28px;font:400 14px/1.6 'Hanken Grotesk',sans-serif;color:#4a4842">Logged-in pages, so the drama drops and the numbers lead. The coach dashboard puts the monthly figures from the For Coaches promise front and centre — impressions, views, reveals, enquiries — with an enquiry inbox, a taking-students switch, profile completeness and the founding-offer billing state. Tabs work in both frames. The rider account is deliberately small: favourites, clinic alerts, and the enquiries they've sent. Mirrors the routes in the codebase (<em>/dashboard</em>, <em>/account</em>). <a href="ECA Redesign.dc.html#1a">← Homepage</a> · <a href="For Coaches.dc.html">For coaches</a> · <a href="Coach Profile.dc.html">Coach profile</a></p>
+
+<div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+<!-- ═══════ 1a coach dashboard mobile ═══════ -->
+<div id="1a" style="display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 'Hanken Grotesk',sans-serif;color:rgba(0,0,0,.55)"><a href="#1a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">1a</a>Coach dashboard · mobile 390</div>
+<div data-frame data-screen-label="Coach dashboard mobile" style="width:390px;height:844px;overflow-y:auto;background:#f6f1e7;border-radius:8px;border:1px solid rgba(0,0,0,.1);box-shadow:0 1px 3px rgba(0,0,0,.06);position:relative">
+<header style="position:sticky;top:0;z-index:6;background:rgba(246,241,231,.9);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,32,28,.08)">
+<div style="height:58px;padding:0 18px;display:flex;align-items:center;justify-content:space-between"><a href="ECA Redesign.dc.html" style="font:400 26px/1 'Instrument Serif',serif;color:#1f3a2e">ECA</a><span style="display:flex;align-items:center;gap:10px"><a href="Coach Profile.dc.html" style="flex:none;white-space:nowrap;font:500 13px 'Hanken Grotesk',sans-serif;color:#1f3a2e;border:1px solid #1f3a2e;border-radius:999px;padding:7px 12px">View profile</a><span style="width:36px;height:36px;border-radius:999px;overflow:hidden;background:#efe9dc"><img src="https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=120&q=70" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 25%;display:block"></span></span></div>
+<nav class="hs" style="display:flex;gap:4px;overflow-x:auto;padding:0 14px 0">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button data-k="{{ t.k }}" onClick="{{ setTab }}" style="flex:none;border:0;background:transparent;padding:10px 8px 12px;font:500 14px 'Hanken Grotesk',sans-serif;color:{{ t.fg }};border-bottom:2px solid {{ t.line }};cursor:pointer;display:flex;align-items:center;gap:6px">{{ t.label }}<sc-if value="{{ t.badge }}" hint-placeholder-val="{{ false }}"><span style="background:#b4553a;color:#f6f1e7;border-radius:999px;font:600 10px/1 'Hanken Grotesk',sans-serif;padding:3px 6px">{{ t.badge }}</span></sc-if></button></sc-for>
+</nav>
+</header>
+
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+<div style="padding:22px 18px 40px;animation:fade .5s both">
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6c685e">{{ monthLabel }}</p>
+<h1 style="margin:6px 0 0;font:400 40px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">{{ greeting }}</h1>
+<p style="margin:10px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">{{ summaryLine }}</p>
+
+<div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="4"><div style="background:#fffdf8;border:1px solid #e7dac6;border-radius:14px;padding:16px 14px"><div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font:400 38px/1 'Instrument Serif',serif;color:#1f3a2e">{{ s.value }}</span><span style="font:500 12px 'Hanken Grotesk',sans-serif;color:{{ s.deltaColor }}">{{ s.delta }}</span></div><div style="margin-top:8px;font:400 13px/1.3 'Hanken Grotesk',sans-serif;color:#4a4842">{{ s.label }}</div></div></sc-for>
+</div>
+
+<div style="margin-top:18px;background:#1f3a2e;color:#f6f1e7;border-radius:16px;padding:20px 18px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:400 22px/1 'Instrument Serif',serif">Twelve months of views</span><span style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#e8b79a">{{ planName }}</span></div>
+<div style="margin-top:18px;display:grid;grid-template-columns:repeat(12,1fr);gap:5px;align-items:end;height:90px">
+<sc-for list="{{ trend }}" as="t" hint-placeholder-count="12"><div style="display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="background:{{ t.bg }};border-radius:3px 3px 0 0;height:{{ t.h }};transform-origin:bottom;animation:grow .7s cubic-bezier(.16,1,.3,1) both"></div></div></sc-for>
+</div>
+<div style="margin-top:8px;display:grid;grid-template-columns:repeat(12,1fr);gap:5px;font:400 10px 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.55);text-align:center"><sc-for list="{{ trend }}" as="t" hint-placeholder-count="12"><span>{{ t.m }}</span></sc-for></div>
+<p style="margin:16px 0 0;font:400 14px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.8)">{{ trendNote }}</p>
+</div>
+
+<div style="margin-top:18px;background:#fffdf8;border:1px solid #e7dac6;border-radius:16px;padding:18px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:400 22px/1 'Instrument Serif',serif;color:#1f3a2e">Taking new students?</span><span style="font:400 13px 'Hanken Grotesk',sans-serif;color:#6c685e">Shown on your profile</span></div>
+<div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;background:#efe9dc;border-radius:999px;padding:4px">
+<sc-for list="{{ statusOpts }}" as="o" hint-placeholder-count="3"><button data-k="{{ o.k }}" onClick="{{ setStatus }}" style="border:0;border-radius:999px;padding:10px 0;font:500 14px 'Hanken Grotesk',sans-serif;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};transition:background .25s">{{ o.label }}</button></sc-for>
+</div>
+<p style="margin:12px 0 0;font:400 13.5px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">{{ statusNote }}</p>
+</div>
+
+<div style="margin-top:18px;background:#fffdf8;border:1px solid #e7dac6;border-radius:16px;padding:18px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:400 22px/1 'Instrument Serif',serif;color:#1f3a2e">Latest enquiries</span><button data-k="enquiries" onClick="{{ setTab }}" style="border:0;background:transparent;font:500 14px 'Hanken Grotesk',sans-serif;color:#b4553a;cursor:pointer;padding:0">All {{ enqCount }} →</button></div>
+<div style="margin-top:8px;display:flex;flex-direction:column">
+<sc-for list="{{ enqRecent }}" as="e" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:1fr auto;gap:10px;padding:13px 0;border-top:1px solid #efe9dc"><div style="min-width:0"><div style="font:500 15px 'Hanken Grotesk',sans-serif;color:#22201c">{{ e.name }} <span style="font-weight:400;color:#6c685e">· {{ e.want }}</span></div><div style="margin-top:3px;font:400 13px/1.4 'Hanken Grotesk',sans-serif;color:#4a4842;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.msg }}</div></div><span style="align-self:start;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:{{ e.fg }};background:{{ e.bg }};border-radius:999px;padding:5px 9px;white-space:nowrap">{{ e.status }}</span></div></sc-for>
+</div>
+</div>
+
+<div style="margin-top:18px;background:#fffdf8;border:1px solid #e7dac6;border-radius:16px;padding:18px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:400 22px/1 'Instrument Serif',serif;color:#1f3a2e">Profile completeness</span><span style="font:400 20px 'Instrument Serif',serif;color:#b4553a">{{ completePct }}</span></div>
+<div style="margin-top:12px;height:6px;border-radius:3px;background:#efe9dc;overflow:hidden"><div style="height:100%;background:#b4553a;border-radius:3px;width:{{ completePct }};transition:width .6s"></div></div>
+<div style="margin-top:14px;display:flex;flex-direction:column;gap:9px">
+<sc-for list="{{ checklist }}" as="c" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:10px;font:400 14.5px 'Hanken Grotesk',sans-serif;color:{{ c.fg }}"><span style="flex:none;width:20px;height:20px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:12px;background:{{ c.bg }};color:{{ c.iconFg }};border:1px solid {{ c.border }}">{{ c.icon }}</span><span style="flex:1">{{ c.label }}</span><sc-if value="{{ c.cta }}" hint-placeholder-val="{{ false }}"><button data-k="profile" onClick="{{ setTab }}" style="border:0;background:transparent;padding:0;font:500 13px 'Hanken Grotesk',sans-serif;color:#b4553a;cursor:pointer">{{ c.cta }}</button></sc-if></div></sc-for>
+</div>
+</div>
+
+<div style="margin-top:18px;background:#efe9dc;border-radius:16px;padding:18px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center">
+<div><p style="margin:0;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#6c685e">Your plan</p><p style="margin:6px 0 0;font:400 22px/1 'Instrument Serif',serif;color:#1f3a2e">{{ planName }} · <em style="color:#b4553a">founding</em></p><p style="margin:6px 0 0;font:400 13.5px/1.45 'Hanken Grotesk',sans-serif;color:#4a4842">{{ planLine }}</p></div>
+<button data-k="billing" onClick="{{ setTab }}" style="border:1px solid #1f3a2e;background:transparent;color:#1f3a2e;border-radius:999px;padding:9px 14px;font:500 13px 'Hanken Grotesk',sans-serif;cursor:pointer;white-space:nowrap">Billing</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isEnquiries }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 18px 40px;animation:fade .5s both">
+<h1 style="margin:0;font:400 40px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">Enquiries</h1>
+<p style="margin:10px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Tap a status to change it. Outcomes feed your monthly email, so mark the ones that turned into lessons.</p>
+<div style="margin-top:18px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ enquiries }}" as="e" hint-placeholder-count="4"><div style="background:#fffdf8;border:1px solid #e7dac6;border-radius:14px;padding:16px">
+<div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline"><span style="font:400 22px/1 'Instrument Serif',serif;color:#1f3a2e">{{ e.name }}</span><span style="font:400 12.5px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ e.when }}</span></div>
+<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #e7dac6;border-radius:999px;padding:4px 10px;font:500 12px 'Hanken Grotesk',sans-serif;color:#4a4842">{{ e.want }}</span><span style="border:1px solid #e7dac6;border-radius:999px;padding:4px 10px;font:500 12px 'Hanken Grotesk',sans-serif;color:#4a4842">{{ e.from }}</span></div>
+<p style="margin:12px 0 0;font:400 14.5px/1.5 'Hanken Grotesk',sans-serif;color:#22201c">{{ e.msg }}</p>
+<div style="margin-top:14px;display:flex;gap:8px;align-items:center;justify-content:space-between"><a href="#" style="font:500 14px 'Hanken Grotesk',sans-serif;color:#1f3a2e;border:1px solid #1f3a2e;border-radius:999px;padding:8px 14px">Reply by email</a><button data-i="{{ e.i }}" onClick="{{ cycleStatus }}" style="border:0;cursor:pointer;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:{{ e.fg }};background:{{ e.bg }};border-radius:999px;padding:8px 12px">{{ e.status }} ↻</button></div>
+</div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 18px 40px;animation:fade .5s both">
+<div style="display:flex;justify-content:space-between;align-items:flex-end"><h1 style="margin:0;font:400 40px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">Your profile</h1><a href="Coach Profile.dc.html" style="font:500 14px 'Hanken Grotesk',sans-serif">Preview →</a></div>
+<div style="margin-top:18px;display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center"><div style="aspect-ratio:4/5;border-radius:48px 48px 10px 10px;overflow:hidden;background:#efe9dc"><img src="https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=300&q=75" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 25%;display:block"></div><div><p style="margin:0;font:400 14px/1.45 'Hanken Grotesk',sans-serif;color:#4a4842">A real photo of you with a horse does more than anything else on this page. Portrait, face visible.</p><button style="margin-top:10px;border:1px solid #1f3a2e;background:transparent;color:#1f3a2e;border-radius:999px;padding:8px 14px;font:500 13px 'Hanken Grotesk',sans-serif;cursor:pointer">Change photo</button></div></div>
+<div style="margin-top:22px;display:flex;flex-direction:column;gap:14px">
+<label style="display:block"><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Headline</span><input value="Dressage from first flatwork through to competition tests — patient, precise, and on your horse or one of mine." style="width:100%;border:1px solid #e7dac6;border-radius:12px;padding:13px 14px;font:400 15px 'Hanken Grotesk',sans-serif;background:#fffdf8"></label>
+<label style="display:block"><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Bio</span><textarea style="width:100%;height:130px;resize:none;border:1px solid #e7dac6;border-radius:12px;padding:13px 14px;font:400 15px/1.45 'Hanken Grotesk',sans-serif;background:#fffdf8">Isabella has coached around Bendigo for seven years, working mostly with adult riders who want their flatwork to feel less like a fight. Lessons run at her own arena at Strathfieldsaye or at your property.</textarea></label>
+<div><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Disciplines <span style="color:#b4553a;letter-spacing:0;text-transform:none;font-weight:400">· first one leads your page title</span></span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ disciplines }}" as="d" hint-placeholder-count="8"><button data-k="{{ d.k }}" onClick="{{ toggleDiscipline }}" style="border:1px solid {{ d.border }};background:{{ d.bg }};color:{{ d.fg }};border-radius:999px;padding:7px 12px;font:500 13px 'Hanken Grotesk',sans-serif;cursor:pointer;transition:all .2s">{{ d.label }}</button></sc-for></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<label style="display:block"><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Based in</span><input value="Strathfieldsaye VIC 3551" style="width:100%;border:1px solid #e7dac6;border-radius:12px;padding:13px 14px;font:400 15px 'Hanken Grotesk',sans-serif;background:#fffdf8"></label>
+<label style="display:block"><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Travels up to</span><input value="60 km" style="width:100%;border:1px solid #e7dac6;border-radius:12px;padding:13px 14px;font:400 15px 'Hanken Grotesk',sans-serif;background:#fffdf8"></label>
+</div>
+<div style="background:#fffdf8;border:1px solid #e7dac6;border-radius:14px;padding:14px 16px">
+<span style="display:block;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Contact riders see</span>
+<sc-for list="{{ contacts }}" as="c" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #efe9dc"><div style="min-width:0"><div style="font:500 14.5px 'Hanken Grotesk',sans-serif;color:#22201c">{{ c.label }}</div><div style="font:400 13px 'Hanken Grotesk',sans-serif;color:#6c685e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.value }}</div></div><button data-k="{{ c.k }}" onClick="{{ toggleContact }}" style="flex:none;width:44px;height:26px;border-radius:999px;border:0;cursor:pointer;background:{{ c.bg }};position:relative;transition:background .25s"><span style="position:absolute;top:3px;left:{{ c.knob }};width:20px;height:20px;border-radius:999px;background:#fffdf8;transition:left .25s"></span></button></div></sc-for>
+</div>
+<button style="border:0;background:#b4553a;color:#f6f1e7;border-radius:999px;height:54px;font:600 16px 'Hanken Grotesk',sans-serif;cursor:pointer">Save changes</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isClinics }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 18px 40px;animation:fade .5s both">
+<div style="display:flex;justify-content:space-between;align-items:flex-end"><h1 style="margin:0;font:400 40px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">Clinics</h1><button style="border:0;background:#b4553a;color:#f6f1e7;border-radius:999px;padding:10px 16px;font:600 14px 'Hanken Grotesk',sans-serif;cursor:pointer">+ New clinic</button></div>
+<p style="margin:10px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">{{ clinicNote }}</p>
+<div style="margin-top:18px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ clinics }}" as="c" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:60px 1fr;gap:14px;background:#fffdf8;border:1px solid #e7dac6;border-radius:14px;padding:14px"><span style="text-align:center;background:#efe9dc;border-radius:10px;padding:8px 0;align-self:start"><span style="display:block;font:400 26px/1 'Instrument Serif',serif;color:#1f3a2e">{{ c.day }}</span><span style="display:block;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6c685e;margin-top:2px">{{ c.mon }}</span></span><div><div style="font:400 20px/1.1 'Instrument Serif',serif;color:#1f3a2e">{{ c.title }}</div><div style="margin-top:5px;font:400 13px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ c.where }}</div><div style="margin-top:10px;display:flex;gap:14px;font:400 13px 'Hanken Grotesk',sans-serif;color:#22201c"><span><strong style="font-weight:500;color:#1f3a2e">{{ c.places }}</strong> places left</span><span><strong style="font-weight:500;color:#1f3a2e">{{ c.notified }}</strong> riders emailed</span></div><div style="margin-top:10px;display:flex;gap:12px;font:500 13px 'Hanken Grotesk',sans-serif"><a href="#">Edit</a><a href="#" style="color:#1f3a2e">View page</a></div></div></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBilling }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 18px 40px;animation:fade .5s both">
+<h1 style="margin:0;font:400 40px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">Billing</h1>
+<div style="margin-top:18px;background:#1f3a2e;color:#f6f1e7;border-radius:16px;padding:22px 20px">
+<p style="margin:0;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8b79a">Founding coach</p>
+<p style="margin:8px 0 0;font:400 34px/1 'Instrument Serif',serif">{{ planName }}</p>
+<p style="margin:12px 0 0;font:400 14.5px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.85)">{{ billingLine }}</p>
+<div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:#24463a;border-radius:10px;padding:12px"><div style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(246,241,231,.6)">Next charge</div><div style="margin-top:4px;font:400 20px 'Instrument Serif',serif">{{ nextCharge }}</div></div>
+<div style="background:#24463a;border-radius:10px;padding:12px"><div style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(246,241,231,.6)">Card</div><div style="margin-top:4px;font:400 20px 'Instrument Serif',serif">Visa ·· 4242</div></div>
+</div>
+</div>
+<p style="margin:22px 0 0;font:400 22px/1 'Instrument Serif',serif;color:#1f3a2e">Change plan</p>
+<p style="margin:8px 0 0;font:400 14px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Both directions, any time. Go up for a clinic month and back down after.</p>
+<div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ planOpts }}" as="p" hint-placeholder-count="3"><button data-k="{{ p.k }}" onClick="{{ setPlan }}" style="text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid {{ p.border }};background:{{ p.bg }};border-radius:14px;padding:14px 16px;cursor:pointer"><span><span style="display:block;font:400 20px 'Instrument Serif',serif;color:#1f3a2e">{{ p.name }}</span><span style="display:block;margin-top:2px;font:400 13px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ p.tag }}</span></span><span style="font:400 18px 'Instrument Serif',serif;color:{{ p.priceFg }}">{{ p.price }}</span></button></sc-for>
+</div>
+<div style="margin-top:22px;display:flex;flex-direction:column;gap:8px">
+<a href="#" style="display:flex;justify-content:space-between;padding:14px 16px;background:#fffdf8;border:1px solid #e7dac6;border-radius:12px;color:#22201c;font:500 15px 'Hanken Grotesk',sans-serif"><span>Invoices</span><span style="color:#6c685e">→</span></a>
+<a href="#" style="display:flex;justify-content:space-between;padding:14px 16px;background:#fffdf8;border:1px solid #e7dac6;border-radius:12px;color:#22201c;font:500 15px 'Hanken Grotesk',sans-serif"><span>Update card</span><span style="color:#6c685e">→</span></a>
+<a href="#" style="display:block;padding:14px 16px;color:#6c685e;font:400 14px 'Hanken Grotesk',sans-serif;text-align:center">Cancel subscription — one click, your listing stays live until the period ends</a>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+
+<!-- ═══════ 1b coach dashboard desktop ═══════ -->
+<div id="1b" style="display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 'Hanken Grotesk',sans-serif;color:rgba(0,0,0,.55)"><a href="#1b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">1b</a>Coach dashboard · desktop 1280</div>
+<div data-frame data-screen-label="Coach dashboard desktop" style="width:1280px;height:800px;overflow-y:auto;background:#f6f1e7;border-radius:8px;border:1px solid rgba(0,0,0,.1);box-shadow:0 1px 3px rgba(0,0,0,.06);position:relative">
+<header style="position:sticky;top:0;z-index:6;height:72px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(246,241,231,.86);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,32,28,.08)">
+<span style="display:flex;align-items:baseline;gap:14px"><a href="ECA Redesign.dc.html" style="font:400 30px/1 'Instrument Serif',serif;color:#1f3a2e">ECA</a><span style="font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#6c685e">Coach dashboard</span></span>
+<nav style="display:flex;align-items:center;gap:22px;font:500 15px 'Hanken Grotesk',sans-serif;color:#1f3a2e"><a href="Coach Profile.dc.html" style="color:#1f3a2e;border:1px solid #1f3a2e;border-radius:999px;padding:8px 16px">View public profile</a><span style="display:flex;align-items:center;gap:10px"><span style="width:36px;height:36px;border-radius:999px;overflow:hidden;background:#efe9dc"><img src="https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=120&q=70" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 25%;display:block"></span>Isabella</span></nav>
+</header>
+<div style="max-width:1184px;margin:0 auto;padding:36px 48px 80px;display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start">
+<nav style="position:sticky;top:108px;display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button data-k="{{ t.k }}" onClick="{{ setTab }}" style="text-align:left;border:0;background:{{ t.sideBg }};border-radius:10px;padding:11px 14px;font:500 15px 'Hanken Grotesk',sans-serif;color:{{ t.fg }};cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .2s">{{ t.label }}<sc-if value="{{ t.badge }}" hint-placeholder-val="{{ false }}"><span style="background:#b4553a;color:#f6f1e7;border-radius:999px;font:600 10px/1 'Hanken Grotesk',sans-serif;padding:3px 6px">{{ t.badge }}</span></sc-if></button></sc-for>
+<div style="margin-top:24px;padding:16px 14px;background:#efe9dc;border-radius:12px"><p style="margin:0;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6c685e">Plan</p><p style="margin:6px 0 0;font:400 20px/1 'Instrument Serif',serif;color:#1f3a2e">{{ planName }}</p><p style="margin:4px 0 0;font:400 12.5px/1.4 'Hanken Grotesk',sans-serif;color:#4a4842">{{ planLine }}</p></div>
+<p style="margin:20px 0 0;padding:0 14px;font:400 13px/1.5 'Hanken Grotesk',sans-serif;color:#6c685e">Something not working? Tell Kim or Alana directly — <a href="#">message us</a>.</p>
+</nav>
+
+<div style="min-width:0">
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+<div style="animation:fade .5s both">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+<div><p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6c685e">{{ monthLabel }}</p><h1 style="margin:8px 0 0;font:400 56px/.98 'Instrument Serif',serif;letter-spacing:-.025em;color:#1f3a2e">{{ greeting }}</h1><p style="margin:12px 0 0;max-width:60ch;font:400 16px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">{{ summaryLine }}</p></div>
+<div style="flex:none;background:#fffdf8;border:1px solid #e7dac6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:300px"><span style="font:400 18px/1 'Instrument Serif',serif;color:#1f3a2e">Taking new students?</span><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;background:#efe9dc;border-radius:999px;padding:4px"><sc-for list="{{ statusOpts }}" as="o" hint-placeholder-count="3"><button data-k="{{ o.k }}" onClick="{{ setStatus }}" style="border:0;border-radius:999px;padding:8px 0;font:500 13px 'Hanken Grotesk',sans-serif;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};transition:background .25s">{{ o.label }}</button></sc-for></div></div>
+</div>
+
+<div style="margin-top:32px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="4"><div style="background:#fffdf8;border:1px solid #e7dac6;border-radius:16px;padding:22px 20px"><div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font:400 48px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">{{ s.value }}</span><span style="font:500 13px 'Hanken Grotesk',sans-serif;color:{{ s.deltaColor }}">{{ s.delta }}</span></div><div style="margin-top:10px;font:400 14px/1.3 'Hanken Grotesk',sans-serif;color:#4a4842">{{ s.label }}</div></div></sc-for>
+</div>
+
+<div style="margin-top:16px;display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:stretch">
+<div style="background:#1f3a2e;color:#f6f1e7;border-radius:18px;padding:26px 28px;display:flex;flex-direction:column">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:400 26px/1 'Instrument Serif',serif">Twelve months of views</span><span style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#e8b79a">{{ planName }} insight</span></div>
+<div style="margin-top:22px;flex:1;display:grid;grid-template-columns:repeat(12,1fr);gap:8px;align-items:end;min-height:130px">
+<sc-for list="{{ trend }}" as="t" hint-placeholder-count="12"><div style="display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="background:{{ t.bg }};border-radius:4px 4px 0 0;height:{{ t.h }};transform-origin:bottom;animation:grow .7s cubic-bezier(.16,1,.3,1) both"></div></div></sc-for>
+</div>
+<div style="margin-top:8px;display:grid;grid-template-columns:repeat(12,1fr);gap:8px;font:400 11px 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.55);text-align:center"><sc-for list="{{ trend }}" as="t" hint-placeholder-count="12"><span>{{ t.m }}</span></sc-for></div>
+<p style="margin:18px 0 0;font:400 14.5px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.8)">{{ trendNote }}</p>
+</div>
+<div style="background:#fffdf8;border:1px solid #e7dac6;border-radius:18px;padding:22px 24px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:400 24px/1 'Instrument Serif',serif;color:#1f3a2e">Profile completeness</span><span style="font:400 24px 'Instrument Serif',serif;color:#b4553a">{{ completePct }}</span></div>
+<div style="margin-top:14px;height:6px;border-radius:3px;background:#efe9dc;overflow:hidden"><div style="height:100%;background:#b4553a;border-radius:3px;width:{{ completePct }};transition:width .6s"></div></div>
+<div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ checklist }}" as="c" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:10px;font:400 14.5px 'Hanken Grotesk',sans-serif;color:{{ c.fg }}"><span style="flex:none;width:20px;height:20px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:12px;background:{{ c.bg }};color:{{ c.iconFg }};border:1px solid {{ c.border }}">{{ c.icon }}</span><span style="flex:1">{{ c.label }}</span><sc-if value="{{ c.cta }}" hint-placeholder-val="{{ false }}"><button data-k="profile" onClick="{{ setTab }}" style="border:0;background:transparent;padding:0;font:500 13px 'Hanken Grotesk',sans-serif;color:#b4553a;cursor:pointer">{{ c.cta }}</button></sc-if></div></sc-for>
+</div>
+</div>
+</div>
+
+<div style="margin-top:16px;display:grid;grid-template-columns:1.5fr 1fr;gap:16px">
+<div style="background:#fffdf8;border:1px solid #e7dac6;border-radius:18px;padding:22px 24px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:400 24px/1 'Instrument Serif',serif;color:#1f3a2e">Latest enquiries</span><button data-k="enquiries" onClick="{{ setTab }}" style="border:0;background:transparent;font:500 14px 'Hanken Grotesk',sans-serif;color:#b4553a;cursor:pointer;padding:0">All {{ enqCount }} →</button></div>
+<div style="margin-top:8px;display:flex;flex-direction:column">
+<sc-for list="{{ enqRecent }}" as="e" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;padding:14px 0;border-top:1px solid #efe9dc"><div style="min-width:0"><div style="font:500 15px 'Hanken Grotesk',sans-serif;color:#22201c">{{ e.name }} <span style="font-weight:400;color:#6c685e">· {{ e.want }}</span></div><div style="margin-top:3px;font:400 13.5px/1.4 'Hanken Grotesk',sans-serif;color:#4a4842;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.msg }}</div></div><span style="font:400 12.5px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ e.when }}</span><span style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:{{ e.fg }};background:{{ e.bg }};border-radius:999px;padding:5px 9px;white-space:nowrap">{{ e.status }}</span></div></sc-for>
+</div>
+</div>
+<div style="background:#fffdf8;border:1px solid #e7dac6;border-radius:18px;padding:22px 24px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:400 24px/1 'Instrument Serif',serif;color:#1f3a2e">Next clinic</span><button data-k="clinics" onClick="{{ setTab }}" style="border:0;background:transparent;font:500 14px 'Hanken Grotesk',sans-serif;color:#b4553a;cursor:pointer;padding:0">Manage →</button></div>
+<sc-for list="{{ clinicFirst }}" as="c" hint-placeholder-count="1"><div style="margin-top:16px;display:grid;grid-template-columns:60px 1fr;gap:14px"><span style="text-align:center;background:#efe9dc;border-radius:10px;padding:8px 0;align-self:start"><span style="display:block;font:400 26px/1 'Instrument Serif',serif;color:#1f3a2e">{{ c.day }}</span><span style="display:block;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6c685e;margin-top:2px">{{ c.mon }}</span></span><div><div style="font:400 20px/1.1 'Instrument Serif',serif;color:#1f3a2e">{{ c.title }}</div><div style="margin-top:5px;font:400 13px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ c.where }}</div><div style="margin-top:10px;display:flex;flex-direction:column;gap:4px;font:400 13.5px 'Hanken Grotesk',sans-serif;color:#22201c"><span><strong style="font-weight:500;color:#1f3a2e">{{ c.places }}</strong> places left</span><span><strong style="font-weight:500;color:#1f3a2e">{{ c.notified }}</strong> riders emailed about it</span></div></div></div></sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isEnquiries }}" hint-placeholder-val="{{ false }}">
+<div style="animation:fade .5s both">
+<h1 style="margin:0;font:400 56px/.98 'Instrument Serif',serif;letter-spacing:-.025em;color:#1f3a2e">Enquiries</h1>
+<p style="margin:12px 0 0;max-width:60ch;font:400 16px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Click a status to change it. Outcomes feed your monthly email, so mark the ones that turned into lessons.</p>
+<div style="margin-top:28px;background:#fffdf8;border:1px solid #e7dac6;border-radius:18px;overflow:hidden">
+<div style="display:grid;grid-template-columns:180px 1fr 140px 130px 150px;gap:16px;padding:12px 24px;background:#efe9dc;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#6c685e"><span>Rider</span><span>Message</span><span>Wants</span><span>Received</span><span>Status</span></div>
+<sc-for list="{{ enquiries }}" as="e" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:180px 1fr 140px 130px 150px;gap:16px;align-items:center;padding:18px 24px;border-top:1px solid #efe9dc"><div><div style="font:400 20px/1 'Instrument Serif',serif;color:#1f3a2e">{{ e.name }}</div><div style="margin-top:4px;font:400 12.5px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ e.from }}</div></div><p style="margin:0;font:400 14.5px/1.5 'Hanken Grotesk',sans-serif;color:#22201c">{{ e.msg }}</p><span style="font:400 14px 'Hanken Grotesk',sans-serif;color:#4a4842">{{ e.want }}</span><span style="font:400 13.5px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ e.when }}</span><button data-i="{{ e.i }}" onClick="{{ cycleStatus }}" style="justify-self:start;border:0;cursor:pointer;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:{{ e.fg }};background:{{ e.bg }};border-radius:999px;padding:8px 12px">{{ e.status }} ↻</button></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+<div style="animation:fade .5s both">
+<div style="display:flex;justify-content:space-between;align-items:flex-end"><h1 style="margin:0;font:400 56px/.98 'Instrument Serif',serif;letter-spacing:-.025em;color:#1f3a2e">Your profile</h1><a href="Coach Profile.dc.html" style="font:500 15px 'Hanken Grotesk',sans-serif">Preview as a rider →</a></div>
+<div style="margin-top:28px;display:grid;grid-template-columns:260px 1fr;gap:40px;align-items:start">
+<div style="position:sticky;top:108px"><div style="aspect-ratio:4/5;border-radius:130px 130px 14px 14px;overflow:hidden;background:#efe9dc"><img src="https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=600&q=75" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 25%;display:block"></div><p style="margin:14px 0 0;font:400 13.5px/1.45 'Hanken Grotesk',sans-serif;color:#4a4842">A real photo of you with a horse does more than anything else on this page. Portrait, face visible.</p><button style="margin-top:10px;border:1px solid #1f3a2e;background:transparent;color:#1f3a2e;border-radius:999px;padding:9px 16px;font:500 14px 'Hanken Grotesk',sans-serif;cursor:pointer">Change photo</button></div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<label style="display:block"><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Headline</span><input value="Dressage from first flatwork through to competition tests — patient, precise, and on your horse or one of mine." style="width:100%;border:1px solid #e7dac6;border-radius:12px;padding:14px 16px;font:400 16px 'Hanken Grotesk',sans-serif;background:#fffdf8"></label>
+<label style="display:block"><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Bio</span><textarea style="width:100%;height:140px;resize:none;border:1px solid #e7dac6;border-radius:12px;padding:14px 16px;font:400 16px/1.5 'Hanken Grotesk',sans-serif;background:#fffdf8">Isabella has coached around Bendigo for seven years, working mostly with adult riders who want their flatwork to feel less like a fight. Lessons run at her own arena at Strathfieldsaye or at your property. She competes to Medium and judges at club level, so test-riding and scoring are a specialty.</textarea></label>
+<div><span style="display:block;margin-bottom:8px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Disciplines <span style="color:#b4553a;letter-spacing:0;text-transform:none;font-weight:400">· first one leads your page title</span></span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ disciplines }}" as="d" hint-placeholder-count="8"><button data-k="{{ d.k }}" onClick="{{ toggleDiscipline }}" style="border:1px solid {{ d.border }};background:{{ d.bg }};color:{{ d.fg }};border-radius:999px;padding:8px 14px;font:500 14px 'Hanken Grotesk',sans-serif;cursor:pointer;transition:all .2s">{{ d.label }}</button></sc-for></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<label style="display:block"><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Based in</span><input value="Strathfieldsaye VIC 3551" style="width:100%;border:1px solid #e7dac6;border-radius:12px;padding:14px 16px;font:400 16px 'Hanken Grotesk',sans-serif;background:#fffdf8"></label>
+<label style="display:block"><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Travels up to</span><input value="60 km" style="width:100%;border:1px solid #e7dac6;border-radius:12px;padding:14px 16px;font:400 16px 'Hanken Grotesk',sans-serif;background:#fffdf8"></label>
+</div>
+<div style="background:#fffdf8;border:1px solid #e7dac6;border-radius:14px;padding:16px 20px">
+<span style="display:block;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Contact riders see</span>
+<sc-for list="{{ contacts }}" as="c" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #efe9dc"><div><div style="font:500 15px 'Hanken Grotesk',sans-serif;color:#22201c">{{ c.label }}</div><div style="font:400 13.5px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ c.value }}</div></div><button data-k="{{ c.k }}" onClick="{{ toggleContact }}" style="flex:none;width:44px;height:26px;border-radius:999px;border:0;cursor:pointer;background:{{ c.bg }};position:relative;transition:background .25s"><span style="position:absolute;top:3px;left:{{ c.knob }};width:20px;height:20px;border-radius:999px;background:#fffdf8;transition:left .25s"></span></button></div></sc-for>
+</div>
+<div style="display:flex;gap:10px;justify-content:flex-end"><button style="border:1px solid #e7dac6;background:transparent;color:#4a4842;border-radius:999px;padding:0 20px;height:50px;font:500 15px 'Hanken Grotesk',sans-serif;cursor:pointer">Discard</button><button style="border:0;background:#b4553a;color:#f6f1e7;border-radius:999px;padding:0 26px;height:50px;font:600 15px 'Hanken Grotesk',sans-serif;cursor:pointer;transition:background .25s" style-hover="background:#9c4630">Save changes</button></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isClinics }}" hint-placeholder-val="{{ false }}">
+<div style="animation:fade .5s both">
+<div style="display:flex;justify-content:space-between;align-items:flex-end"><div><h1 style="margin:0;font:400 56px/.98 'Instrument Serif',serif;letter-spacing:-.025em;color:#1f3a2e">Clinics</h1><p style="margin:12px 0 0;max-width:60ch;font:400 16px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">{{ clinicNote }}</p></div><button style="border:0;background:#b4553a;color:#f6f1e7;border-radius:999px;padding:13px 20px;font:600 15px 'Hanken Grotesk',sans-serif;cursor:pointer;flex:none">+ New clinic</button></div>
+<div style="margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+<sc-for list="{{ clinics }}" as="c" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:68px 1fr;gap:18px;background:#fffdf8;border:1px solid #e7dac6;border-radius:16px;padding:18px"><span style="text-align:center;background:#efe9dc;border-radius:10px;padding:10px 0;align-self:start"><span style="display:block;font:400 28px/1 'Instrument Serif',serif;color:#1f3a2e">{{ c.day }}</span><span style="display:block;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6c685e;margin-top:2px">{{ c.mon }}</span></span><div><div style="font:400 22px/1.1 'Instrument Serif',serif;color:#1f3a2e">{{ c.title }}</div><div style="margin-top:5px;font:400 14px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ c.where }}</div><div style="margin-top:12px;display:flex;gap:16px;font:400 14px 'Hanken Grotesk',sans-serif;color:#22201c"><span><strong style="font-weight:500;color:#1f3a2e">{{ c.places }}</strong> places left</span><span><strong style="font-weight:500;color:#1f3a2e">{{ c.notified }}</strong> riders emailed</span></div><div style="margin-top:12px;display:flex;gap:14px;font:500 14px 'Hanken Grotesk',sans-serif"><a href="#">Edit</a><a href="#" style="color:#1f3a2e">View page</a></div></div></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBilling }}" hint-placeholder-val="{{ false }}">
+<div style="animation:fade .5s both">
+<h1 style="margin:0;font:400 56px/.98 'Instrument Serif',serif;letter-spacing:-.025em;color:#1f3a2e">Billing</h1>
+<div style="margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+<div style="background:#1f3a2e;color:#f6f1e7;border-radius:18px;padding:28px">
+<p style="margin:0;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8b79a">Founding coach</p>
+<p style="margin:10px 0 0;font:400 44px/1 'Instrument Serif',serif;letter-spacing:-.02em">{{ planName }}</p>
+<p style="margin:14px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.85)">{{ billingLine }}</p>
+<div style="margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="background:#24463a;border-radius:12px;padding:14px"><div style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(246,241,231,.6)">Next charge</div><div style="margin-top:4px;font:400 22px 'Instrument Serif',serif">{{ nextCharge }}</div></div>
+<div style="background:#24463a;border-radius:12px;padding:14px"><div style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(246,241,231,.6)">Card</div><div style="margin-top:4px;font:400 22px 'Instrument Serif',serif">Visa ·· 4242</div></div>
+</div>
+<div style="margin-top:22px;display:flex;gap:10px;flex-wrap:wrap"><a href="#" style="border:1px solid rgba(246,241,231,.4);color:#f6f1e7;border-radius:999px;padding:10px 16px;font:500 14px 'Hanken Grotesk',sans-serif">Invoices</a><a href="#" style="border:1px solid rgba(246,241,231,.4);color:#f6f1e7;border-radius:999px;padding:10px 16px;font:500 14px 'Hanken Grotesk',sans-serif">Update card</a></div>
+</div>
+<div>
+<p style="margin:0;font:400 26px/1 'Instrument Serif',serif;color:#1f3a2e">Change plan</p>
+<p style="margin:8px 0 0;font:400 14.5px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Both directions, any time. Go up for a clinic month and back down after.</p>
+<div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ planOpts }}" as="p" hint-placeholder-count="3"><button data-k="{{ p.k }}" onClick="{{ setPlan }}" style="text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid {{ p.border }};background:{{ p.bg }};border-radius:14px;padding:16px 18px;cursor:pointer"><span><span style="display:block;font:400 22px 'Instrument Serif',serif;color:#1f3a2e">{{ p.name }}</span><span style="display:block;margin-top:2px;font:400 13.5px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ p.tag }}</span></span><span style="font:400 20px 'Instrument Serif',serif;color:{{ p.priceFg }}">{{ p.price }}</span></button></sc-for>
+</div>
+<a href="#" style="display:block;margin-top:18px;color:#6c685e;font:400 14px/1.5 'Hanken Grotesk',sans-serif">Cancel subscription — one click, your listing stays live until the period ends and nothing you've added is deleted.</a>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ 1c rider account mobile ═══════ -->
+<div id="1c" style="display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 'Hanken Grotesk',sans-serif;color:rgba(0,0,0,.55)"><a href="#1c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">1c</a>Rider account · mobile 390</div>
+<div data-frame data-screen-label="Rider account mobile" style="width:390px;height:844px;overflow-y:auto;background:#f6f1e7;border-radius:8px;border:1px solid rgba(0,0,0,.1);box-shadow:0 1px 3px rgba(0,0,0,.06);position:relative">
+<header style="position:sticky;top:0;z-index:6;height:58px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;background:rgba(246,241,231,.9);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,32,28,.08)"><a href="ECA Redesign.dc.html" style="font:400 26px/1 'Instrument Serif',serif;color:#1f3a2e">ECA</a><span style="display:flex;align-items:center;gap:12px"><a href="Search Results.dc.html" style="font:500 14px 'Hanken Grotesk',sans-serif;color:#1f3a2e">Find a coach</a><span style="width:36px;height:36px;border-radius:999px;background:#1f3a2e;color:#f6f1e7;display:flex;align-items:center;justify-content:center;font:400 16px 'Instrument Serif',serif">S</span></span></header>
+<div style="padding:24px 18px 40px">
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6c685e">My account</p>
+<h1 style="margin:6px 0 0;font:400 40px/1 'Instrument Serif',serif;letter-spacing:-.02em;color:#1f3a2e">Hello, Sarah</h1>
+<p style="margin:10px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Free, always. This is just where your saved coaches and clinic alerts live.</p>
+
+<div style="margin-top:26px;display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font:400 28px/1 'Instrument Serif',serif;color:#1f3a2e">Saved coaches</h2><span style="font:400 14px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ favCount }}</span></div>
+<div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ favs }}" as="f" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:72px 1fr auto;gap:14px;align-items:center;background:#fffdf8;border:1px solid #e7dac6;border-radius:16px;padding:12px"><a href="Coach Profile.dc.html" style="display:block;width:72px;height:86px;border-radius:36px 36px 8px 8px;overflow:hidden;background:#efe9dc"><img src="{{ f.img }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></a><div style="min-width:0"><a href="Coach Profile.dc.html" style="font:400 21px/1.05 'Instrument Serif',serif;color:#1f3a2e">{{ f.name }}</a><div style="margin-top:4px;font:400 13px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ f.where }}</div><div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ f.tags }}" as="t" hint-placeholder-count="1"><span style="white-space:nowrap;border:1px solid #e7dac6;border-radius:999px;padding:3px 8px;font:500 11px 'Hanken Grotesk',sans-serif;color:#4a4842">{{ t }}</span></sc-for></div></div><button data-i="{{ f.i }}" onClick="{{ removeFav }}" title="Remove" style="border:0;background:transparent;color:#b4553a;font-size:20px;cursor:pointer;padding:6px">♥</button></div></sc-for>
+<sc-if value="{{ noFavs }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed #d9cdb6;border-radius:16px;padding:26px 18px;text-align:center"><p style="margin:0;font:400 20px/1.2 'Instrument Serif',serif;color:#1f3a2e">Nothing saved yet</p><p style="margin:8px 0 0;font:400 14px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Tap the heart on any coach to keep them here.</p><a href="Search Results.dc.html" style="display:inline-block;margin-top:14px;border:1px solid #1f3a2e;color:#1f3a2e;border-radius:999px;padding:10px 16px;font:500 14px 'Hanken Grotesk',sans-serif">Browse coaches</a></div></sc-if>
+</div>
+
+<h2 style="margin:32px 0 0;font:400 28px/1 'Instrument Serif',serif;color:#1f3a2e">Clinic alerts</h2>
+<p style="margin:8px 0 0;font:400 14.5px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">One email when a coach lists a clinic near you or in a discipline you follow. Nothing else.</p>
+<div style="margin-top:14px;background:#fffdf8;border:1px solid #e7dac6;border-radius:16px;padding:16px">
+<label style="display:block"><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">My area</span><input value="Castlemaine VIC 3450" style="width:100%;border:1px solid #e7dac6;border-radius:12px;padding:13px 14px;font:400 15px 'Hanken Grotesk',sans-serif;background:#fff"></label>
+<span style="display:block;margin:16px 0 8px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Disciplines I follow</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ follow }}" as="d" hint-placeholder-count="8"><button data-k="{{ d.k }}" onClick="{{ toggleFollow }}" style="border:1px solid {{ d.border }};background:{{ d.bg }};color:{{ d.fg }};border-radius:999px;padding:7px 12px;font:500 13px 'Hanken Grotesk',sans-serif;cursor:pointer;transition:all .2s">{{ d.label }}</button></sc-for></div>
+<button style="margin-top:16px;width:100%;border:0;background:#1f3a2e;color:#f6f1e7;border-radius:999px;height:48px;font:600 15px 'Hanken Grotesk',sans-serif;cursor:pointer">Save alerts</button>
+</div>
+
+<h2 style="margin:32px 0 0;font:400 28px/1 'Instrument Serif',serif;color:#1f3a2e">Coming up near you</h2>
+<div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ nearby }}" as="c" hint-placeholder-count="2"><a href="#" style="display:grid;grid-template-columns:56px 1fr;gap:12px;background:#fffdf8;border:1px solid #e7dac6;border-radius:14px;padding:12px;color:inherit"><span style="text-align:center;background:#efe9dc;border-radius:10px;padding:7px 0;align-self:start"><span style="display:block;font:400 24px/1 'Instrument Serif',serif;color:#1f3a2e">{{ c.day }}</span><span style="display:block;font:500 10px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6c685e;margin-top:2px">{{ c.mon }}</span></span><span><span style="display:block;font:400 18px/1.1 'Instrument Serif',serif;color:#1f3a2e">{{ c.title }}</span><span style="display:block;margin-top:4px;font:400 13px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ c.who }} · {{ c.where }}</span></span></a></sc-for>
+</div>
+
+<h2 style="margin:32px 0 0;font:400 28px/1 'Instrument Serif',serif;color:#1f3a2e">Enquiries you've sent</h2>
+<div style="margin-top:14px;display:flex;flex-direction:column;border-top:1px solid #e7dac6">
+<sc-for list="{{ sent }}" as="s" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #e7dac6"><div><div style="font:500 15px 'Hanken Grotesk',sans-serif;color:#22201c">{{ s.name }}</div><div style="margin-top:2px;font:400 13px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ s.when }} · {{ s.want }}</div></div><span style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:{{ s.fg }};background:{{ s.bg }};border-radius:999px;padding:5px 9px;white-space:nowrap">{{ s.status }}</span></div></sc-for>
+</div>
+
+<div style="margin-top:32px;display:flex;flex-direction:column;gap:2px;font:400 14px/1.5 'Hanken Grotesk',sans-serif"><a href="#" style="padding:12px 0;color:#4a4842;border-bottom:1px solid #efe9dc;display:flex;justify-content:space-between">Email &amp; password<span style="color:#6c685e">→</span></a><a href="#" style="padding:12px 0;color:#4a4842;border-bottom:1px solid #efe9dc;display:flex;justify-content:space-between">Sign out<span style="color:#6c685e">→</span></a><a href="#" style="padding:12px 0;color:#6c685e">Delete my account</a></div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ 1d rider account desktop ═══════ -->
+<div id="1d" style="display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 'Hanken Grotesk',sans-serif;color:rgba(0,0,0,.55)"><a href="#1d" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">1d</a>Rider account · desktop 1280</div>
+<div data-frame data-screen-label="Rider account desktop" style="width:1280px;height:800px;overflow-y:auto;background:#f6f1e7;border-radius:8px;border:1px solid rgba(0,0,0,.1);box-shadow:0 1px 3px rgba(0,0,0,.06);position:relative">
+<header style="position:sticky;top:0;z-index:6;height:72px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(246,241,231,.86);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,32,28,.08)">
+<span style="display:flex;align-items:baseline;gap:14px"><a href="ECA Redesign.dc.html" style="font:400 30px/1 'Instrument Serif',serif;color:#1f3a2e">ECA</a><span style="font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#6c685e">Equestrian Coaches Australia</span></span>
+<nav style="display:flex;align-items:center;gap:24px;font:500 15px 'Hanken Grotesk',sans-serif;color:#1f3a2e"><a href="Search Results.dc.html" style="color:#1f3a2e">Find a coach</a><span>Disciplines</span><a href="For Coaches.dc.html" style="color:#1f3a2e">For coaches</a><span style="display:flex;align-items:center;gap:10px"><span style="width:36px;height:36px;border-radius:999px;background:#1f3a2e;color:#f6f1e7;display:flex;align-items:center;justify-content:center;font:400 16px 'Instrument Serif',serif">S</span>Sarah</span></nav>
+</header>
+<div style="max-width:1184px;margin:0 auto;padding:44px 48px 80px">
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#6c685e">My account</p>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px"><h1 style="margin:8px 0 0;font:400 56px/.98 'Instrument Serif',serif;letter-spacing:-.025em;color:#1f3a2e">Hello, Sarah</h1><p style="margin:0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842;max-width:44ch;text-align:right">Free, always. This is just where your saved coaches and clinic alerts live.</p></div>
+
+<div style="margin-top:40px;display:grid;grid-template-columns:1.6fr 1fr;gap:40px;align-items:start">
+<div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font:400 32px/1 'Instrument Serif',serif;color:#1f3a2e">Saved coaches</h2><span style="font:400 14px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ favCount }}</span></div>
+<div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ favs }}" as="f" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:84px 1fr auto auto;gap:18px;align-items:center;background:#fffdf8;border:1px solid #e7dac6;border-radius:16px;padding:12px 18px 12px 12px;transition:border-color .3s" style-hover="border-color:#b4553a"><a href="Coach Profile.dc.html" style="display:block;width:84px;height:100px;border-radius:42px 42px 8px 8px;overflow:hidden;background:#efe9dc"><img src="{{ f.img }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></a><div style="min-width:0"><a href="Coach Profile.dc.html" style="font:400 24px/1.05 'Instrument Serif',serif;color:#1f3a2e">{{ f.name }}</a><div style="margin-top:4px;font:400 14px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ f.where }}</div><p style="margin:6px 0 0;font:400 14px/1.4 'Hanken Grotesk',sans-serif;color:#4a4842;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.headline }}</p></div><div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:180px"><sc-for list="{{ f.tags }}" as="t" hint-placeholder-count="1"><span style="white-space:nowrap;border:1px solid #e7dac6;border-radius:999px;padding:4px 9px;font:500 12px 'Hanken Grotesk',sans-serif;color:#4a4842">{{ t }}</span></sc-for></div><button data-i="{{ f.i }}" onClick="{{ removeFav }}" title="Remove" style="border:0;background:transparent;color:#b4553a;font-size:22px;cursor:pointer;padding:6px">♥</button></div></sc-for>
+<sc-if value="{{ noFavs }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed #d9cdb6;border-radius:16px;padding:36px;text-align:center"><p style="margin:0;font:400 24px/1.2 'Instrument Serif',serif;color:#1f3a2e">Nothing saved yet</p><p style="margin:8px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Click the heart on any coach to keep them here.</p><a href="Search Results.dc.html" style="display:inline-block;margin-top:16px;border:1px solid #1f3a2e;color:#1f3a2e;border-radius:999px;padding:11px 18px;font:500 14px 'Hanken Grotesk',sans-serif">Browse coaches</a></div></sc-if>
+</div>
+
+<h2 style="margin:44px 0 0;font:400 32px/1 'Instrument Serif',serif;color:#1f3a2e">Enquiries you've sent</h2>
+<div style="margin-top:14px;display:flex;flex-direction:column;border-top:1px solid #e7dac6">
+<sc-for list="{{ sent }}" as="s" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:1fr auto auto;gap:20px;align-items:center;padding:16px 0;border-bottom:1px solid #e7dac6"><div><div style="font:400 20px/1 'Instrument Serif',serif;color:#1f3a2e">{{ s.name }}</div><div style="margin-top:4px;font:400 13.5px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ s.want }}</div></div><span style="font:400 13.5px 'Hanken Grotesk',sans-serif;color:#6c685e">{{ s.when }}</span><span style="font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:{{ s.fg }};background:{{ s.bg }};border-radius:999px;padding:6px 10px;white-space:nowrap">{{ s.status }}</span></div></sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="background:#fffdf8;border:1px solid #e7dac6;border-radius:18px;padding:22px 24px">
+<h2 style="margin:0;font:400 28px/1 'Instrument Serif',serif;color:#1f3a2e">Clinic alerts</h2>
+<p style="margin:8px 0 0;font:400 14px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">One email when a coach lists a clinic near you or in a discipline you follow. Nothing else.</p>
+<label style="display:block;margin-top:16px"><span style="display:block;margin-bottom:6px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">My area</span><input value="Castlemaine VIC 3450" style="width:100%;border:1px solid #e7dac6;border-radius:12px;padding:13px 14px;font:400 15px 'Hanken Grotesk',sans-serif;background:#fff"></label>
+<span style="display:block;margin:16px 0 8px;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6c685e">Disciplines I follow</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ follow }}" as="d" hint-placeholder-count="8"><button data-k="{{ d.k }}" onClick="{{ toggleFollow }}" style="border:1px solid {{ d.border }};background:{{ d.bg }};color:{{ d.fg }};border-radius:999px;padding:7px 12px;font:500 13px 'Hanken Grotesk',sans-serif;cursor:pointer;transition:all .2s">{{ d.label }}</button></sc-for></div>
+<button style="margin-top:18px;width:100%;border:0;background:#1f3a2e;color:#f6f1e7;border-radius:999px;height:48px;font:600 15px 'Hanken Grotesk',sans-serif;cursor:pointer">Save alerts</button>
+</div>
+<div style="background:#1f3a2e;color:#f6f1e7;border-radius:18px;padding:22px 24px">
+<p style="margin:0;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8b79a">Coming up near you</p>
+<div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ nearby }}" as="c" hint-placeholder-count="2"><a href="#" style="display:grid;grid-template-columns:52px 1fr;gap:12px;background:#24463a;border-radius:12px;padding:12px;color:#f6f1e7"><span style="text-align:center;background:rgba(246,241,231,.1);border-radius:8px;padding:6px 0;align-self:start"><span style="display:block;font:400 22px/1 'Instrument Serif',serif">{{ c.day }}</span><span style="display:block;font:500 10px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(246,241,231,.6);margin-top:2px">{{ c.mon }}</span></span><span><span style="display:block;font:400 18px/1.1 'Instrument Serif',serif">{{ c.title }}</span><span style="display:block;margin-top:4px;font:400 13px 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.7)">{{ c.who }} · {{ c.where }}</span></span></a></sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;font:400 14px/1.5 'Hanken Grotesk',sans-serif;padding:0 4px"><a href="#" style="padding:12px 0;color:#4a4842;border-bottom:1px solid #e7dac6;display:flex;justify-content:space-between">Email &amp; password<span style="color:#6c685e">→</span></a><a href="#" style="padding:12px 0;color:#4a4842;border-bottom:1px solid #e7dac6;display:flex;justify-content:space-between">Sign out<span style="color:#6c685e">→</span></a><a href="#" style="padding:12px 0;color:#6c685e">Delete my account</a></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;quietMonth&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Coach dashboard&quot;}}">
+const TABS = [["overview", "Overview"], ["enquiries", "Enquiries"], ["profile", "Profile"], ["clinics", "Clinics"], ["billing", "Billing"]];
+const DISC = ["Dressage", "Working Equitation", "Show Jumping", "Eventing", "Western", "Liberty", "Natural Horsemanship", "Trail Riding"];
+const ENQ = [
+  ["Megan Hartley", "Regular lessons", "Bendigo", "2 days ago", "Adult returning rider, 12yo TB gelding who rushes in canter. Weekday afternoons if possible."],
+  ["Cara & Lily Nguyen", "Regular lessons", "Heathcote", "5 days ago", "My daughter is 11 and wants to move up from Preliminary — can you take on a junior?"],
+  ["Josh Whitfield", "One-off", "Castlemaine", "Last week", "Would love a test-riding session before the Kyneton comp on the 4th."],
+  ["Anne-Marie Roux", "Clinic", "Kyneton", "3 weeks ago", "Is the October test-riding day open to Elementary riders? Two of us would come."],
+];
+const STATUS_ORDER = ["New", "Replied", "Booked", "No response"];
+const STATUS_STYLE = { "New": ["#b4553a", "rgba(180,85,58,.1)"], "Replied": ["#1f3a2e", "#e6efe8"], "Booked": ["#f6f1e7", "#1f3a2e"], "No response": ["#6c685e", "#efe9dc"] };
+const PLANS = { listed: ["Listed", "$9.99", "For most coaches"], spotlight: ["Spotlight", "$24.95", "For coaches building a book"], clinic: ["Clinic", "$49.95", "For coaches who are already full"] };
+const TREND = [12, 15, 14, 19, 22, 20, 27, 31, 29, 34, 33, 38];
+const MONTHS = ["S", "O", "N", "D", "J", "F", "M", "A", "M", "J", "J", "A"];
+const FAVS = [
+  { name: "Isabella Fletcher", where: "Bendigo VIC · 38 km", tags: ["Dressage", "Working Eq."], headline: "Dressage from first flatwork through to competition tests.", img: "https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=300&q=75" },
+  { name: "Tom Reilly", where: "Maldon VIC · 16 km", tags: ["Western", "Trail"], headline: "Ranch riding and quiet, confident trail horses.", img: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=300&q=75" },
+  { name: "Priya Nair", where: "Kyneton VIC · 34 km", tags: ["Liberty"], headline: "Liberty and groundwork for horses that have stopped listening.", img: "https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&w=300&q=75" },
+];
+
+class Component extends DCLogic {
+  state = {
+    tab: "overview", status: "yes", plan: "spotlight",
+    enq: ["New", "New", "Replied", "No response"],
+    disc: ["Dressage", "Working Equitation"],
+    contacts: { form: true, phone: true, email: false, facebook: true },
+    favs: [0, 1, 2], follow: ["Dressage", "Working Equitation"],
+  };
+  renderVals() {
+    const s = this.state;
+    const quiet = this.props.quietMonth ?? false;
+    const plan = PLANS[s.plan];
+    const newCount = s.enq.filter((x) => x === "New").length;
+    const tabs = TABS.map(([k, label]) => ({
+      k, label, badge: k === "enquiries" && newCount && !quiet ? newCount : false,
+      fg: s.tab === k ? "#1f3a2e" : "#6c685e", line: s.tab === k ? "#b4553a" : "transparent",
+      sideBg: s.tab === k ? "#efe9dc" : "transparent",
+    }));
+    const stats = quiet
+      ? [["61", "Appeared in search", "−18%", "#b4553a"], ["7", "Profile views", "−3", "#b4553a"], ["0", "Tapped to call", "—", "#6c685e"], ["0", "Enquiries", "—", "#6c685e"]]
+      : [["412", "Appeared in search", "+22%", "#1f3a2e"], ["38", "Profile views", "+11", "#1f3a2e"], ["9", "Tapped to call", "+4", "#1f3a2e"], ["4", "Enquiries", "+1", "#1f3a2e"]];
+    const max = Math.max(...TREND);
+    const trend = TREND.map((v, i) => ({
+      h: Math.round(((quiet && i === 11 ? 7 : v) / max) * 100) + "%", m: MONTHS[i],
+      bg: i === 11 ? "#e8b79a" : "rgba(246,241,231,.35)",
+    }));
+    const enquiries = ENQ.map(([name, want, from, when, msg], i) => {
+      const status = s.enq[i]; const [fg, bg] = STATUS_STYLE[status];
+      return { i, name, want, from, when, msg, status, fg, bg };
+    });
+    const complete = [["Photo uploaded", true], ["Bio written", true], ["Disciplines tagged", true], ["Location set", true], ["Three testimonials", true], ["Intro video", false, "Add"]];
+    const done = complete.filter((c) => c[1]).length;
+    const on = "#1f3a2e", off = "transparent";
+    const chip = (label, active) => ({ k: label, label, border: active ? "#b4553a" : "#e7dac6", bg: active ? "rgba(180,85,58,.08)" : "#fffdf8", fg: active ? "#b4553a" : "#4a4842" });
+    const favs = s.favs.map((i) => ({ ...FAVS[i], i }));
+    return {
+      tabs, setTab: (e) => this.setState({ tab: e.currentTarget.dataset.k }),
+      isOverview: s.tab === "overview", isEnquiries: s.tab === "enquiries", isProfile: s.tab === "profile", isClinics: s.tab === "clinics", isBilling: s.tab === "billing",
+      monthLabel: "August 2026 · your month so far", greeting: quiet ? "A quiet month, Isabella." : "Good month, Isabella.",
+      summaryLine: quiet
+        ? "Nothing happened in August, and that's the honest number. The two things most likely to change it: add an intro video, and share your ECA graphic in the Bendigo riders group."
+        : "Nine riders tapped to see your number, up from five in July. You came up most often for “dressage lessons Bendigo” and “flatwork coach Strathfieldsaye”.",
+      stats: stats.map(([value, label, delta, deltaColor]) => ({ value, label, delta, deltaColor })),
+      trend, trendNote: quiet ? "Views dipped this month. Spring usually picks up — riders start searching for coaches when the ground firms up." : "Views have tripled since September. Search impressions are the leading number — views and enquiries follow them by a month or two.",
+      planName: plan[0], planLine: s.plan === "spotlight" ? "Free until March 2027, then $9.99/mo locked in." : `${plan[1]} a month · founding price locked in.`,
+      statusOpts: [["yes", "Yes"], ["waitlist", "Waitlist"], ["no", "Not now"]].map(([k, label]) => ({ k, label, bg: s.status === k ? on : off, fg: s.status === k ? "#f6f1e7" : "#1f3a2e" })),
+      setStatus: (e) => this.setState({ status: e.currentTarget.dataset.k }),
+      statusNote: { yes: "Riders see a green “Taking new students” badge and the enquiry form.", waitlist: "Riders see “Waitlist open” and can still enquire — we'll tell them to expect a wait.", no: "Your profile stays live and findable, but the enquiry button reads “Not taking students right now”." }[s.status],
+      enquiries, enqRecent: enquiries.slice(0, 3), enqCount: enquiries.length,
+      cycleStatus: (e) => { const i = +e.currentTarget.dataset.i; const next = [...s.enq]; next[i] = STATUS_ORDER[(STATUS_ORDER.indexOf(next[i]) + 1) % STATUS_ORDER.length]; this.setState({ enq: next }); },
+      completePct: Math.round((done / complete.length) * 100) + "%",
+      checklist: complete.map(([label, ok, cta]) => ({ label, cta: cta || false, icon: ok ? "✓" : "", fg: ok ? "#22201c" : "#6c685e", bg: ok ? "#1f3a2e" : "transparent", iconFg: "#f6f1e7", border: ok ? "#1f3a2e" : "#d9cdb6" })),
+      disciplines: DISC.map((d) => chip(d, s.disc.includes(d))),
+      toggleDiscipline: (e) => { const k = e.currentTarget.dataset.k; this.setState({ disc: s.disc.includes(k) ? s.disc.filter((x) => x !== k) : [...s.disc, k] }); },
+      contacts: [["form", "Enquiry form", "Riders message you through ECA"], ["phone", "Phone (click to reveal)", "0412 345 678"], ["email", "Email", "isabella@example.com"], ["facebook", "Facebook page", "facebook.com/fletcherdressage"]].map(([k, label, value]) => ({ k, label, value, bg: s.contacts[k] ? "#1f3a2e" : "#d9cdb6", knob: s.contacts[k] ? "21px" : "3px" })),
+      toggleContact: (e) => { const k = e.currentTarget.dataset.k; this.setState({ contacts: { ...s.contacts, [k]: !s.contacts[k] } }); },
+      clinics: [{ day: "18", mon: "Oct", title: "Test Riding Day — Preliminary to Elementary", where: "Strathfieldsaye VIC · 9am–3pm", places: 6, notified: 142 }, { day: "22", mon: "Nov", title: "Flatwork Fundamentals weekend", where: "Strathfieldsaye VIC · Sat & Sun", places: 8, notified: 0 }],
+      clinicFirst: [{ day: "18", mon: "Oct", title: "Test Riding Day — Preliminary to Elementary", where: "Strathfieldsaye VIC · 9am–3pm", places: 6, notified: 142 }],
+      clinicNote: s.plan === "listed" ? "Listed includes one live clinic at a time. Riders in your area who follow dressage get an email when you post one." : "Every clinic gets its own page and an email to riders nearby who follow your disciplines.",
+      billingLine: s.plan === "spotlight" ? "Founding offer: Spotlight free for six months, then $9.99 a month for as long as you stay — even after the price goes up for everyone else." : `${plan[1]} a month. Your founding $9.99 Listed rate is kept for you if you come back down.`,
+      nextCharge: s.plan === "spotlight" ? "1 Mar 2027" : "1 Oct 2026",
+      planOpts: Object.entries(PLANS).map(([k, [name, price, tag]]) => ({ k, name, tag, price: s.plan === k ? "Current" : price + "/mo", border: s.plan === k ? "#1f3a2e" : "#e7dac6", bg: s.plan === k ? "#efe9dc" : "#fffdf8", priceFg: s.plan === k ? "#b4553a" : "#1f3a2e" })),
+      setPlan: (e) => this.setState({ plan: e.currentTarget.dataset.k }),
+      favs, favCount: favs.length ? `${favs.length} saved` : "", noFavs: favs.length === 0,
+      removeFav: (e) => { const i = +e.currentTarget.dataset.i; this.setState({ favs: s.favs.filter((x) => x !== i) }); },
+      follow: DISC.map((d) => chip(d, s.follow.includes(d))),
+      toggleFollow: (e) => { const k = e.currentTarget.dataset.k; this.setState({ follow: s.follow.includes(k) ? s.follow.filter((x) => x !== k) : [...s.follow, k] }); },
+      nearby: [{ day: "18", mon: "Oct", title: "Test Riding Day", who: "Isabella Fletcher", where: "Strathfieldsaye" }, { day: "9", mon: "Nov", title: "Confident Trail Clinic", who: "Tom Reilly", where: "Maldon" }],
+      sent: [{ name: "Isabella Fletcher", want: "Regular lessons", when: "12 Aug", status: "Replied", fg: "#1f3a2e", bg: "#e6efe8" }, { name: "Priya Nair", want: "One-off", when: "3 Aug", status: "Awaiting reply", fg: "#6c685e", bg: "#efe9dc" }],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e9e4d8;font-family:"Hanken Grotesk",system-ui,sans-serif;color:#22201c}
+a{color:#b4553a;text-decoration:none}a:hover{color:#1f3a2e}
+*{box-sizing:border-box}
+input,select,button,textarea{font-family:inherit}
+input:focus,textarea:focus{outline:none;border-color:#b4553a}
+[data-frame]{scrollbar-width:none}[data-frame]::-webkit-scrollbar{display:none}
+.hs{scrollbar-width:none}.hs::-webkit-scrollbar{display:none}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes sheet{from{transform:translateY(100%)}to{transform:none}}
+@keyframes kb{from{transform:scale(1.06)}to{transform:scale(1)}}
+</style>
+</helmet>
+
+<section id="t1" style="padding:40px 44px 32px">
+<div style="display:flex;align-items:baseline;gap:10px;margin:0 0 20px"><a href="#t1" style="font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px">1</a><span style="font:600 13px/1.2 'Hanken Grotesk',sans-serif;color:#1a1a1a">Coach profile — testimonials and enquiry lead · in the <a href="ECA Redesign.dc.html#1a">1a Golden Hour</a> language</span></div>
+<p style="max-width:760px;margin:0 0 28px;font:400 14px/1.6 'Hanken Grotesk',sans-serif;color:#4a4842">The page a coach is paying $9.99 a month for, so it has to make them look good. Photo up top in the arch, then the three things a rider decides on: what they teach, where, and what other riders say. On phones the enquiry lives in a sticky bar — tap <em>Enquire</em> to open the sheet; on desktop the form is pinned beside the story. Phone number is click-to-reveal per the product rules. Testimonials are placeholder copy. <a href="ECA Redesign.dc.html">← Homepage directions</a> · <a href="Search Results.dc.html">Search results</a></p>
+
+<div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+
+<!-- mobile -->
+<div data-frame data-screen-label="Profile mobile" style="width:390px;height:844px;overflow-y:auto;background:#f6f1e7;border-radius:8px;border:1px solid rgba(0,0,0,.1);box-shadow:0 1px 3px rgba(0,0,0,.06);position:relative">
+<header style="position:sticky;top:0;z-index:6;height:60px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;color:#f6f1e7;background:linear-gradient(180deg,rgba(13,24,18,.6),rgba(13,24,18,0));margin-bottom:-60px">
+<a href="Search Results.dc.html" style="display:flex;align-items:center;gap:8px;color:#f6f1e7;font:500 14px 'Hanken Grotesk',sans-serif"><span style="width:36px;height:36px;border-radius:999px;background:rgba(20,40,31,.55);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)">←</span>Results</a>
+<button onClick="{{ toggleFav }}" style="border:0;width:40px;height:40px;border-radius:999px;background:rgba(20,40,31,.55);color:{{ favColor }};font-size:18px;backdrop-filter:blur(6px);cursor:pointer;transition:color .2s">{{ favGlyph }}</button>
+</header>
+<div style="position:relative;height:440px;overflow:hidden;background:#14281f">
+<img src="https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=900&q=80" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;animation:kb 10s cubic-bezier(.2,.6,.2,1) both">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,24,18,.15),rgba(13,24,18,0) 35%,rgba(246,241,231,0) 70%,#f6f1e7 100%)"></div>
+</div>
+<div style="padding:0 18px 120px;margin-top:-56px;position:relative">
+<span style="display:inline-flex;align-items:center;gap:8px;background:#1f3a2e;color:#f6f1e7;border-radius:999px;padding:7px 12px;font:500 12px 'Hanken Grotesk',sans-serif;animation:fade .6s both"><span style="width:7px;height:7px;border-radius:999px;background:#7fcf9a"></span>Taking new students</span>
+<h1 style="margin:14px 0 0;font:400 46px/.98 'Instrument Serif',serif;letter-spacing:-.025em;color:#1f3a2e;animation:fade .7s .05s both">Isabella Fletcher</h1>
+<p style="margin:10px 0 0;font:400 16px/1.4 'Hanken Grotesk',sans-serif;color:#4a4842;animation:fade .7s .1s both">Based in <strong style="color:#22201c;font-weight:500">Bendigo VIC</strong> · travels up to 60 km · 7 years coaching</p>
+<div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;animation:fade .7s .15s both"><span style="border:1px solid #b4553a;color:#b4553a;border-radius:999px;padding:6px 12px;font:500 13px 'Hanken Grotesk',sans-serif">Dressage</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:6px 12px;font:500 13px 'Hanken Grotesk',sans-serif">Working Equitation</span></div>
+<p style="margin:26px 0 0;font:400 24px/1.25 'Instrument Serif',serif;color:#1f3a2e;animation:fade .7s .2s both">Dressage from first flatwork through to competition tests — patient, precise, and on your horse or one of mine.</p>
+<p style="margin:14px 0 0;font:400 16px/1.55 'Hanken Grotesk',sans-serif;color:#4a4842">Isabella has coached around Bendigo for seven years, working mostly with adult riders who want their flatwork to feel less like a fight. Lessons run at her own arena at Strathfieldsaye or at your property. She competes to Medium and judges at club level, so test-riding and scoring are a specialty.</p>
+
+<h2 style="margin:36px 0 0;font:400 30px/1 'Instrument Serif',serif;color:#1f3a2e">What she helps with</h2>
+<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{ skills }}" as="s" hint-placeholder-count="4"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:8px 13px;font:400 14px 'Hanken Grotesk',sans-serif">{{ s }}</span></sc-for>
+</div>
+<h2 style="margin:32px 0 0;font:400 30px/1 'Instrument Serif',serif;color:#1f3a2e">Setup</h2>
+<div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<sc-for list="{{ setup }}" as="s" hint-placeholder-count="4"><div style="background:#efe9dc;border-radius:12px;padding:14px;font:400 14px/1.35 'Hanken Grotesk',sans-serif;color:#22201c"><span style="display:block;font:italic 400 18px 'Instrument Serif',serif;color:#b4553a;margin-bottom:4px">{{ s.k }}</span>{{ s.v }}</div></sc-for>
+</div>
+<h2 style="margin:32px 0 0;font:400 30px/1 'Instrument Serif',serif;color:#1f3a2e">Qualifications</h2>
+<ul style="margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font:400 15px 'Hanken Grotesk',sans-serif;color:#4a4842"><li style="display:flex;gap:10px"><span style="color:#b4553a">—</span>EA Level 1 Coach (Dressage)</li><li style="display:flex;gap:10px"><span style="color:#b4553a">—</span>EA Dressage Judge, Preliminary–Novice</li><li style="display:flex;gap:10px"><span style="color:#b4553a">—</span>Working with Children Check · First aid current</li></ul>
+</div>
+
+<div style="margin-top:-100px;padding:40px 0 0;background:#1f3a2e;color:#f6f1e7">
+<div style="padding:0 18px"><p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(246,241,231,.6)">From her riders</p><h2 style="margin:10px 0 0;font:400 34px/1 'Instrument Serif',serif">What riders <em style="color:#e8b79a">say</em></h2></div>
+<div class="hs" style="display:flex;gap:12px;overflow-x:auto;padding:22px 18px 36px;scroll-snap-type:x mandatory">
+<sc-for list="{{ quotes }}" as="q" hint-placeholder-count="3">
+<figure style="flex:none;width:300px;margin:0;scroll-snap-align:start;background:#24463a;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:14px"><span style="font:400 44px/0.5 'Instrument Serif',serif;color:#e8b79a">“</span><blockquote style="margin:0;font:400 20px/1.3 'Instrument Serif',serif">{{ q.text }}</blockquote><figcaption style="margin-top:auto;font:400 13px 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.65)">{{ q.who }}</figcaption></figure>
+</sc-for>
+</div>
+</div>
+
+<div style="padding:36px 18px 120px">
+<h2 style="margin:0;font:400 30px/1 'Instrument Serif',serif;color:#1f3a2e">Upcoming clinic</h2>
+<a href="#" style="display:grid;grid-template-columns:64px 1fr;gap:14px;margin-top:14px;background:#fffdf8;border:1px solid #e7dac6;border-radius:16px;padding:14px;color:inherit"><span style="text-align:center;background:#efe9dc;border-radius:10px;padding:8px 0"><span style="display:block;font:400 26px/1 'Instrument Serif',serif;color:#1f3a2e">18</span><span style="display:block;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6c685e;margin-top:2px">Oct</span></span><span><span style="display:block;font:400 20px/1.1 'Instrument Serif',serif;color:#1f3a2e">Test Riding Day — Preliminary to Elementary</span><span style="display:block;margin-top:5px;font:400 13px 'Hanken Grotesk',sans-serif;color:#6c685e">Strathfieldsaye VIC · 6 places left</span></span></a>
+<h2 style="margin:36px 0 0;font:400 30px/1 'Instrument Serif',serif;color:#1f3a2e">Get in touch</h2>
+<p style="margin:8px 0 0;font:400 15px/1.5 'Hanken Grotesk',sans-serif;color:#4a4842">Isabella usually replies within a day. You deal with her direct — ECA never takes a cut.</p>
+<button onClick="{{ reveal }}" style="margin-top:14px;width:100%;border:1px solid #1f3a2e;background:transparent;color:#1f3a2e;border-radius:999px;padding:14px;font:500 15px 'Hanken Grotesk',sans-serif;cursor:pointer">{{ phoneLabel }}</button>
+</div>
+
+<!-- sticky enquiry bar -->
+<div style="position:sticky;bottom:0;z-index:7;margin-top:-92px;padding:12px 18px 18px;background:linear-gradient(180deg,rgba(246,241,231,0),#f6f1e7 40%)">
+<button onClick="{{ openSheet }}" style="width:100%;border:0;background:#b4553a;color:#f6f1e7;border-radius:999px;padding:0 22px;height:56px;font:600 16px 'Hanken Grotesk',sans-serif;box-shadow:0 16px 40px rgba(180,85,58,.35);display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .25s" style-hover="background:#9c4630"><span>Enquire with Isabella</span><span style="font:400 14px 'Hanken Grotesk',sans-serif;opacity:.85">Free · no account needed</span></button>
+</div>
+
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:sticky;bottom:0;z-index:9;margin-top:-844px;height:844px;display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(20,40,31,.55);pointer-events:auto;animation:fade .3s both"></div>
+<div style="position:relative;pointer-events:auto;background:#fffdf8;border-radius:22px 22px 0 0;padding:14px 18px 22px;box-shadow:0 -20px 60px rgba(20,40,31,.3);animation:sheet .45s cubic-bezier(.16,1,.3,1) both">
+<div style="width:40px;height:4px;border-radius:2px;background:#e7dac6;margin:0 auto 14px"></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font:400 28px/1 'Instrument Serif',serif;color:#1f3a2e">Message Isabella</h2><button onClick="{{ closeSheet }}" style="border:0;background:transparent;font:500 14px 'Hanken Grotesk',sans-serif;color:#6c685e;cursor:pointer">Close</button></div>
+<div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+<input placeholder="Your name" style="border:1px solid #e7dac6;border-radius:12px;padding:14px;font:400 16px 'Hanken Grotesk',sans-serif;background:#fff">
+<input placeholder="Email or mobile" style="border:1px solid #e7dac6;border-radius:12px;padding:14px;font:400 16px 'Hanken Grotesk',sans-serif;background:#fff">
+<div style="display:flex;gap:8px;flex-wrap:wrap"><span style="border:1px solid #b4553a;color:#b4553a;border-radius:999px;padding:7px 12px;font:500 13px 'Hanken Grotesk',sans-serif">Regular lessons</span><span style="border:1px solid #e7dac6;border-radius:999px;padding:7px 12px;font:500 13px 'Hanken Grotesk',sans-serif">One-off</span><span style="border:1px solid #e7dac6;border-radius:999px;padding:7px 12px;font:500 13px 'Hanken Grotesk',sans-serif">Clinic</span></div>
+<textarea placeholder="A line about you and your horse, and what you'd like help with" style="border:1px solid #e7dac6;border-radius:12px;padding:14px;font:400 16px/1.4 'Hanken Grotesk',sans-serif;height:110px;resize:none;background:#fff"></textarea>
+<button onClick="{{ closeSheet }}" style="border:0;background:#b4553a;color:#f6f1e7;border-radius:999px;height:54px;font:600 16px 'Hanken Grotesk',sans-serif;cursor:pointer">Send enquiry</button>
+<p style="margin:0;text-align:center;font:400 12px 'Hanken Grotesk',sans-serif;color:#6c685e">Goes straight to Isabella. We never share your details.</p>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+
+<!-- desktop -->
+<div data-frame data-screen-label="Profile desktop" style="width:1280px;height:800px;overflow-y:auto;background:#f6f1e7;border-radius:8px;border:1px solid rgba(0,0,0,.1);box-shadow:0 1px 3px rgba(0,0,0,.06);position:relative">
+<header style="position:sticky;top:0;z-index:6;height:72px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(246,241,231,.86);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,32,28,.08)">
+<span style="display:flex;align-items:center;gap:24px"><a href="ECA Redesign.dc.html" style="font:400 30px/1 'Instrument Serif',serif;color:#1f3a2e">ECA</a><a href="Search Results.dc.html" style="font:500 14px 'Hanken Grotesk',sans-serif;color:#6c685e">← Back to results</a></span>
+<nav style="display:flex;align-items:center;gap:24px;font:500 15px 'Hanken Grotesk',sans-serif;color:#1f3a2e"><span>Find a coach</span><span>For coaches</span><span>Log in</span></nav>
+</header>
+<div style="max-width:1184px;margin:0 auto;padding:36px 48px 80px;display:grid;grid-template-columns:1fr 400px;gap:56px;align-items:start">
+<div>
+<div style="display:grid;grid-template-columns:300px 1fr;gap:36px;align-items:end">
+<div style="aspect-ratio:4/5;border-radius:150px 150px 16px 16px;overflow:hidden;background:#efe9dc;animation:fade .7s both"><img src="https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=900&q=80" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;animation:kb 10s cubic-bezier(.2,.6,.2,1) both"></div>
+<div style="padding-bottom:8px">
+<span style="display:inline-flex;align-items:center;gap:8px;background:#1f3a2e;color:#f6f1e7;border-radius:999px;padding:7px 12px;font:500 12px 'Hanken Grotesk',sans-serif;animation:fade .6s both"><span style="width:7px;height:7px;border-radius:999px;background:#7fcf9a"></span>Taking new students</span>
+<h1 style="margin:16px 0 0;font:400 68px/.95 'Instrument Serif',serif;letter-spacing:-.03em;color:#1f3a2e;animation:fade .7s .05s both">Isabella<br>Fletcher</h1>
+<p style="margin:14px 0 0;font:400 17px/1.4 'Hanken Grotesk',sans-serif;color:#4a4842;animation:fade .7s .1s both">Based in <strong style="color:#22201c;font-weight:500">Bendigo VIC</strong> · travels up to 60 km · 7 years coaching</p>
+<div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;animation:fade .7s .15s both"><span style="border:1px solid #b4553a;color:#b4553a;border-radius:999px;padding:7px 13px;font:500 13px 'Hanken Grotesk',sans-serif">Dressage</span><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:7px 13px;font:500 13px 'Hanken Grotesk',sans-serif">Working Equitation</span></div>
+<button onClick="{{ toggleFav }}" style="margin-top:20px;border:1px solid #e7dac6;background:#fffdf8;color:{{ favColorLight }};border-radius:999px;padding:10px 16px;font:500 14px 'Hanken Grotesk',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:color .2s"><span style="font-size:16px">{{ favGlyph }}</span>{{ favLabel }}</button>
+</div>
+</div>
+<p style="margin:44px 0 0;font:400 32px/1.2 'Instrument Serif',serif;color:#1f3a2e;max-width:26ch">Dressage from first flatwork through to competition tests — patient, precise, and on your horse or one of mine.</p>
+<p style="margin:18px 0 0;font:400 17px/1.55 'Hanken Grotesk',sans-serif;color:#4a4842;max-width:64ch">Isabella has coached around Bendigo for seven years, working mostly with adult riders who want their flatwork to feel less like a fight. Lessons run at her own arena at Strathfieldsaye or at your property. She competes to Medium and judges at club level, so test-riding and scoring are a specialty.</p>
+
+<div style="margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:40px">
+<div><h2 style="margin:0;font:400 32px/1 'Instrument Serif',serif;color:#1f3a2e">What she helps with</h2><div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ skills }}" as="s" hint-placeholder-count="4"><span style="border:1px solid #e7dac6;background:#fffdf8;border-radius:999px;padding:8px 13px;font:400 14px 'Hanken Grotesk',sans-serif">{{ s }}</span></sc-for></div>
+<h2 style="margin:32px 0 0;font:400 32px/1 'Instrument Serif',serif;color:#1f3a2e">Qualifications</h2>
+<ul style="margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font:400 15px 'Hanken Grotesk',sans-serif;color:#4a4842"><li style="display:flex;gap:10px"><span style="color:#b4553a">—</span>EA Level 1 Coach (Dressage)</li><li style="display:flex;gap:10px"><span style="color:#b4553a">—</span>EA Dressage Judge, Preliminary–Novice</li><li style="display:flex;gap:10px"><span style="color:#b4553a">—</span>Working with Children Check · First aid current</li></ul></div>
+<div><h2 style="margin:0;font:400 32px/1 'Instrument Serif',serif;color:#1f3a2e">Setup</h2><div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px"><sc-for list="{{ setup }}" as="s" hint-placeholder-count="4"><div style="background:#efe9dc;border-radius:12px;padding:14px;font:400 14px/1.35 'Hanken Grotesk',sans-serif"><span style="display:block;font:italic 400 18px 'Instrument Serif',serif;color:#b4553a;margin-bottom:4px">{{ s.k }}</span>{{ s.v }}</div></sc-for></div></div>
+</div>
+
+<div style="margin-top:56px;background:#1f3a2e;color:#f6f1e7;border-radius:22px;padding:36px">
+<p style="margin:0;font:500 12px 'Hanken Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(246,241,231,.6)">From her riders</p>
+<h2 style="margin:10px 0 0;font:400 40px/1 'Instrument Serif',serif">What riders <em style="color:#e8b79a">say</em></h2>
+<div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+<sc-for list="{{ quotes }}" as="q" hint-placeholder-count="3"><figure style="margin:0;background:#24463a;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px"><span style="font:400 44px/0.5 'Instrument Serif',serif;color:#e8b79a">“</span><blockquote style="margin:0;font:400 19px/1.3 'Instrument Serif',serif">{{ q.text }}</blockquote><figcaption style="margin-top:auto;font:400 13px 'Hanken Grotesk',sans-serif;color:rgba(246,241,231,.65)">{{ q.who }}</figcaption></figure></sc-for>
+</div>
+</div>
+
+<h2 style="margin:48px 0 0;font:400 32px/1 'Instrument Serif',serif;color:#1f3a2e">Upcoming clinic</h2>
+<a href="#" style="display:grid;grid-template-columns:72px 1fr auto;gap:18px;align-items:center;margin-top:14px;background:#fffdf8;border:1px solid #e7dac6;border-radius:16px;padding:14px 18px 14px 14px;color:inherit;transition:border-color .3s" style-hover="border-color:#b4553a"><span style="text-align:center;background:#efe9dc;border-radius:10px;padding:10px 0"><span style="display:block;font:400 28px/1 'Instrument Serif',serif;color:#1f3a2e">18</span><span style="display:block;font:500 11px 'Hanken Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6c685e;margin-top:2px">Oct</span></span><span><span style="display:block;font:400 22px/1.1 'Instrument Serif',serif;color:#1f3a2e">Test Riding Day — Preliminary to Elementary</span><span style="display:block;margin-top:5px;font:400 14px 'Hanken Grotesk',sans-serif;color:#6c685e">Strathfieldsaye VIC · 6 places left</span></span><span style="font:500 14px 'Hanken Grotesk',sans-serif;color:#b4553a">Details →</span></a>
+</div>
+
+<aside style="position:sticky;top:96px;background:#fffdf8;border:1px solid #e7dac6;border-radius:22px;padding:26px;box-shadow:0 30px 70px rgba(31,58,46,.1);animation:fade .8s .2s both">
+<h2 style="margin:0;font:400 30px/1 'Instrument Serif',serif;color:#1f3a2e">Message Isabella</h2>
+<p style="margin:8px 0 0;font:400 14px/1.5 'Hanken Grotesk',sans-serif;color:#6c685e">Usually replies within a day. Free, no account needed — you deal with her direct.</p>
+<div style="margin-top:18px;display:flex;flex-direction:column;gap:10px">
+<input placeholder="Your name" style="border:1px solid #e7dac6;border-radius:12px;padding:13px 14px;font:400 15px 'Hanken Grotesk',sans-serif;background:#fff">
+<input placeholder="Email or mobile" style="border:1px solid #e7dac6;border-radius:12px;padding:13px 14px;font:400 15px 'Hanken Grotesk',sans-serif;background:#fff">
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="border:1px solid #b4553a;color:#b4553a;border-radius:999px;padding:7px 12px;font:500 13px 'Hanken Grotesk',sans-serif">Regular lessons</span><span style="border:1px solid #e7dac6;border-radius:999px;padding:7px 12px;font:500 13px 'Hanken Grotesk',sans-serif">One-off</span><span style="border:1px solid #e7dac6;border-radius:999px;padding:7px 12px;font:500 13px 'Hanken Grotesk',sans-serif">Clinic</span></div>
+<textarea placeholder="A line about you and your horse, and what you'd like help with" style="border:1px solid #e7dac6;border-radius:12px;padding:13px 14px;font:400 15px/1.4 'Hanken Grotesk',sans-serif;height:120px;resize:none;background:#fff"></textarea>
+<button style="border:0;background:#b4553a;color:#f6f1e7;border-radius:999px;height:52px;font:600 15px 'Hanken Grotesk',sans-serif;cursor:pointer;transition:background .25s" style-hover="background:#9c4630">Send enquiry</button>
+</div>
+<div style="margin-top:16px;padding-top:16px;border-top:1px solid #e7dac6;display:flex;align-items:center;justify-content:space-between;gap:12px">
+<span style="font:400 14px 'Hanken Grotesk',sans-serif;color:#6c685e">Prefer to call?</span>
+<button onClick="{{ reveal }}" style="border:1px solid #1f3a2e;background:transparent;color:#1f3a2e;border-radius:999px;padding:9px 14px;font:500 14px 'Hanken Grotesk',sans-serif;cursor:pointer">{{ phoneLabel }}</button>
+</div>
+</aside>
+</div>
+</div>
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { fav: false, sheet: false, phone: false };
+  renderVals() {
+    const { fav, sheet, phone } = this.state;
+    return {
+      favGlyph: fav ? "♥" : "♡", favColor: fav ? "#e8b79a" : "#f6f1e7", favColorLight: fav ? "#b4553a" : "#1f3a2e",
+      favLabel: fav ? "Saved" : "Save to favourites",
+      toggleFav: () => this.setState({ fav: !fav }),
+      sheetOpen: sheet, openSheet: () => this.setState({ sheet: true }), closeSheet: () => this.setState({ sheet: false }),
+      phoneLabel: phone ? "0412 345 678" : "Show phone number",
+      reveal: () => this.setState({ phone: true }),
+      skills: ["Lateral work", "Dressage test riding & scoring", "Confidence building", "Competition preparation", "Returning to riding", "Rider biomechanics"],
+      setup: [{ k: "Own arena", v: "60 × 20 m, all-weather surface" }, { k: "Horses available", v: "Two schoolmasters for lessons" }, { k: "Travels", v: "Up to 60 km from Bendigo" }, { k: "Availability", v: "Weekdays and Saturday mornings" }],
+      quotes: [
+        { text: "She worked out why I'd been avoiding canter for a year, and started there instead.", who: "Placeholder testimonial — adult rider, Bendigo" },
+        { text: "First coach who explained a half-halt in a way my body understood.", who: "Placeholder testimonial — returning rider, Castlemaine" },
+        { text: "My daughter went from Preliminary to Novice in a season and still loves it.", who: "Placeholder testimonial — parent, Heathcote" },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

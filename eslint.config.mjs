@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Vendor export from Claude Design — not app source, not ours to lint.
     "design-preview/**",
+    // Claude Design canvas export (Golden Hour redesign source of truth) —
+    // ships its own React runtime (support.js), not app source.
+    ".claude/**",
   ]),
 ]);
 

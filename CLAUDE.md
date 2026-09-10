@@ -12,13 +12,17 @@ This is a pre-launch venture — no existing site, brand assets, or codebase yet
 - **For coaches:** pay a monthly subscription to list a profile. Coaches upload their own info — description/bio, photo, location, specialties, qualifications, testimonials — and tag themselves under one or more discipline categories.
 - **Matching model:** riders find "the perfect coach in the exact discipline they're looking for" — the whole value proposition rests on precise discipline + location filtering, not a generic instructor list.
 
-## Two-sided marketplace, one-sided pricing
+## Two-sided marketplace, one-sided pricing (revised 7 Sep 2026 — three tiers)
 
 - **Riders:** free, always. No revenue from the rider side at launch.
-- **Coaches — two tiers:**
-  - **Standard listing — $9.99/month AUD.** Profile with bio, photo, location, specialties, qualifications, testimonials, discipline category tags.
-  - **Standard + Clinics/Events — $14.95/month AUD.** Everything in Standard, plus the ability to list clinics and events (e.g. a coach hosting a weekend dressage clinic).
-- Pricing is indicative/target pricing for launch, not yet finalised or tested with real coaches.
+- **Coaches — three tiers.** Full spec, contents and reasoning: ["What They're Buying"](https://claude.ai/code/artifact/401a3e04-f514-455d-94d7-ea49813acc64).
+  - **Listed — $9.99/mo, $99/yr.** A complete, working listing. Profile, enquiry form, click-to-reveal contact, travel radius, remote-lessons flag, unlimited testimonials, taking-new-students status, one live event, views/reveals/enquiries, the monthly numbers email. Nothing is withheld to make it worse.
+  - **Spotlight — $24.95/mo, $249/yr.** Reach and diagnosis: featured slot, instant enquiry alerts, enquiry inbox with outcomes, Search Console impressions and queries, full funnel and 12-month trend, video, 10 photos, all contact methods + website link, testimonial collection tools, unlimited events.
+  - **Clinic — $49.95/mo, $499/yr.** A different job, not more of Spotlight — the product for coaches who are already full. Events promoted statewide in the rider email, event pages with `Event` markup, waitlist capture, benchmarks, up to three locations.
+- Annual is ten months' price. **Coaches change plan themselves, both directions, any time** — a coach goes up to Clinic for their clinic month and back down after. That is the intended use, which is why there is no separate one-off event product.
+- $9.99 is Alana's decision and settled. On a 70/25/5 mix the average coach is worth **$15.16/mo after Stripe** instead of $10.74 (+40%), lifting LTV $153 → ~$212 and the acquisition ceiling $50 → ~$70. **$24.95 and $49.95 are not yet confirmed with Kim.**
+- **Travel radius is not a tier** — every coach sets their own on every plan. Rank by distance rather than capping it: based-in-the-area outranks travels-to-it, and the card says which. **Remote coaches appear on discipline pages and a dedicated online-lessons page, never on suburb pages** — that would undo the three-coach gate.
+- **Four things we never sell:** a place in the organic results (featured is a labelled block above the list, capped at three per area, rotating, and switched off below eight coaches in an area); "verified"/"accredited"/"recommended" unless genuinely checked; a percentage of a lesson, ever.
 
 ## Discipline categories (launch scope)
 
@@ -83,6 +87,23 @@ Fee snapshot per provider (approx. cost on a $9.99 charge, AU domestic card unle
 Important regulatory note: the RBA's card surcharge ban takes effect 1 October 2026 (eftpos/Mastercard/Visa) — you will not be able to pass the processing fee back to coaches as a checkout surcharge, so whichever provider's fee applies comes straight out of the $9.99/$14.95 revenue. Factor that into margin, not into pricing display.
 
 GST: flag to an accountant/bookkeeper before launch — Stripe Tax exists to automate this (percentage or flat per-transaction cost) but for a single-country, single 10%-rate business it may be simpler to just build the 10% GST into the listed price manually rather than pay for Stripe Tax at this stage.
+
+## Configuration over hardcoding (rule, 7 Sep 2026)
+
+**Anything that is a business decision rather than a structural fact lives in the `settings` table and is editable in `/admin`.** Assume Alana and Kim will want to change it without a deploy, because they will.
+
+- **Business decision** — will change without the code changing: prices, thresholds, limits, cadence, founding-offer terms, marketing copy that carries a number, feature toggles, which capabilities each tier unlocks.
+- **Structural fact** — stays in code: schema, RLS and security rules, algorithms, and anything where a wrong value corrupts data rather than producing a different-but-valid outcome. Don't make the three-coach *gate logic* configurable; do make the *number three* configurable.
+
+Five things that make this safe, all of which are easy to skip and painful to retrofit:
+
+1. **Defaults live in code.** `getSetting('featured_slots_per_area', 3)`. A missing row must never crash or silently resolve to zero — the code default is the documented correct value.
+2. **Typed accessors**, one per setting, so `parseInt(await get('x'))` never spreads through the codebase.
+3. **Validation on write.** Min/max on every numeric setting. Typing 300 into "featured slots per area" is rejected, not applied.
+4. **Audit trail.** `settings_history` records old value, new value, who and when. Two people run this business; a number that changed for no visible reason is exactly what causes an argument.
+5. **Cache with a short TTL**, or every request gains a database read.
+
+**Prices are the exception that needs extra care.** Stripe is authoritative for what actually gets charged, so a settings row holding a bare price number will eventually disagree with what a subscribed coach is billed — displaying one figure and charging another is a consumer-law problem, not just a bug. Store the **display price and the Stripe price ID as a pair**. Stripe Prices are immutable by design; "changing a price" means creating a new Price and repointing the mapping, which is also what makes founding-coach grandfathering work with no special-casing. On save, verify against the Stripe API that the ID exists and its amount matches the number being shown, and refuse the save if not.
 
 ## Tech stack (decided 27 Aug 2026, hosting revised 28 Aug 2026)
 
@@ -433,6 +454,7 @@ Full spec: **["How Riders Find Us"](https://claude.ai/code/artifact/e11731ff-7c5
 
 ## Status / next steps
 
+- [ ] **Golden Hour redesign (10 Sep 2026)** — new Claude Design canvases in `.claude/design-export/` (direction 1a "Golden Hour"; Instrument Serif + Hanken Grotesk; pill/rounded radii; ECA wordmark; search results with map; coach profile with enquiry sheet; coach dashboard + rider account; for-coaches restyle). Full phase-by-phase build plan with per-phase measured parity checks: [`docs/redesign-plan.md`](docs/redesign-plan.md). Phases R0–R9; nothing started yet. Supersedes the Paddock Edit tokens (Phase 10) and the Phase 17/20 motion extras once R1 lands.
 - [ ] **Kim and Alana work through the nine decisions in ["Before We Start"](https://claude.ai/code/artifact/5173be3a-497d-4de5-bbf4-8738f0f0d55d)** — blocks ABN, domain, Stripe and therefore all marketing
 - [ ] **Decide the parent name and buy both domains** (decision 9) — blocks launch, and the choice hardens once the site is indexed
 - [ ] **Ask Kim what she can commit, in hours a week** — blocks the equity split and the whole marketing pace — it sets the pace of the entire marketing plan
