@@ -6,7 +6,6 @@ import { MonthlyEmailExample } from "@/components/for-coaches/monthly-email-exam
 import { PromiseTicker } from "@/components/for-coaches/promise-ticker";
 import { Plans, type Tier } from "@/components/for-coaches/plans";
 import { RiseWords } from "@/components/hero";
-import { Parallax } from "@/components/hero-parallax";
 
 // Dark hero at the top of this route too — see the same export on "/".
 export const viewport: Viewport = {
@@ -180,7 +179,6 @@ export default function ForCoachesPage() {
     <div>
       {/* ── 1. Hero ─────────────────────────────────────────────────────── */}
       <section className="hero hero--coaches">
-        <Parallax />
         <div className="hero__media" data-parallax>
           <picture>
             <source type="image/avif" srcSet={srcset("for-coaches", "avif", WIDTHS)} sizes="100vw" />
@@ -220,7 +218,7 @@ export default function ForCoachesPage() {
             <picture>
               <source type="image/avif" srcSet={srcset("founding", "avif", [640, 1024, 1400])} sizes="(min-width: 1100px) 560px, 100vw" />
               <source type="image/webp" srcSet={srcset("founding", "webp", [640, 1024, 1400])} sizes="(min-width: 1100px) 560px, 100vw" />
-              <img src="/hero/founding-1024.jpg" alt="" loading="lazy" decoding="async" className="founding__img absolute inset-0 h-full w-full object-cover opacity-35 wide:opacity-40" />
+              <img src="/hero/founding-1024.jpg" alt="" loading="lazy" decoding="async" data-parallax="drift" data-parallax-speed="0.1" className="founding__img parallax-drift absolute inset-0 h-full w-full object-cover opacity-35 wide:opacity-40" />
             </picture>
             <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,24,18,.55),rgba(13,24,18,.85))] wide:bg-[linear-gradient(180deg,rgba(13,24,18,.2),rgba(13,24,18,.9)_70%)]" />
             <div className="relative">

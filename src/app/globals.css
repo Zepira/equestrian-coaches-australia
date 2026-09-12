@@ -383,6 +383,14 @@ html[data-overlay-route="true"] {
   transform: none;
 }
 
+/* Viewport-relative parallax (see components/hero-parallax.tsx): scaled up
+   a little so the ±max slide inside an overflow-hidden frame never shows
+   an edge. The JS composes `translate3d(...) scale(var(--parallax-scale))`. */
+.parallax-drift {
+  --parallax-scale: 1.12;
+  will-change: transform;
+}
+
 /* ── Coach profile (canvas: Coach Profile) ───────────────────────────── */
 .coach-profile {
   position: relative;

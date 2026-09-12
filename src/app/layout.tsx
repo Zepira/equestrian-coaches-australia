@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { Parallax } from "@/components/hero-parallax";
 
 // Golden Hour type: Instrument Serif (display, regular + italic — the face
 // has no other weights) and Hanken Grotesk (body).
@@ -121,6 +122,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <SiteHeader />
+        <Parallax />
         <main id="main-content" className="flex-1">
           {children}
         </main>

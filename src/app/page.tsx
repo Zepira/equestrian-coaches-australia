@@ -184,13 +184,15 @@ export default async function Home() {
                 href={`/disciplines/${d.slug}`}
                 className="group relative block aspect-[1.25] overflow-hidden rounded-[14px] bg-ink-deep text-ink-fg"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={d.photo}
-                  alt=""
-                  className="block h-full w-full object-cover transition-transform duration-[800ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-105"
-                  loading="lazy"
-                />
+                <span data-parallax="drift" data-parallax-speed="0.08" data-parallax-max="40" className="parallax-drift absolute inset-0 block">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={d.photo}
+                    alt=""
+                    className="block h-full w-full object-cover transition-transform duration-[800ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </span>
                 <span
                   aria-hidden
                   className="absolute inset-0 bg-[linear-gradient(180deg,rgba(20,40,31,0)_40%,rgba(20,40,31,.85)_100%)]"

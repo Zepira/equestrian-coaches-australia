@@ -279,6 +279,7 @@ Copy is already right (the canvas was lifted from the current page). This is a r
 - **Delete my account** — the canvas is a bare link; the app confirms first.
 - **Pages without a canvas** (§1 last row) get the tokens and the header/footer, nothing invented — auth pages share the rider account's page head (`AuthShell`), the clinic page is the dashboard clinic card + the profile's enquiry aside.
 - **Two canvas opacities fail AA and were raised** — the rider account's month label (`Oct`, 10px cream at .6 on the ink card = 3.7:1 → .75 = 4.8:1) and the dashboard chart's month labels (cream at .55 = 4.46:1 → .65). Same colours, slightly more opaque.
+- **Parallax beyond the hero (12 Sep 2026, Alana's request)** — the canvases only parallax the two hero photos with `min(scrollY × .28, 260px)`, a rule that saturates 930px down the page, so nothing else could ever move. `Parallax` (now mounted once in the layout) keeps that rule for the heroes and adds `data-parallax="drift"`: a viewport-relative slide (`(viewport centre − frame centre) × speed`, clamped, measured on the untransformed frame) on the featured coach photos, the home discipline tiles, the founding band photo and the coach profile photo, each scaled 1.12 inside its overflow-hidden frame so no edge shows. Off under reduced motion like everything else.
 - **Reduced motion shows scroll-reveal content immediately** rather than fading it in at 0.01ms; the canvases have no reduced-motion state.
 
 ---

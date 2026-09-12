@@ -32,7 +32,7 @@ export function CoachCard({ coach, className = "" }: { coach: CoachCardData; cla
       <div className="relative aspect-[4/5] overflow-hidden rounded-t-[125px] rounded-b-[10px] bg-shade wide:rounded-t-[999px] wide:rounded-b-[12px]">
         {coach.photoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={coach.photoUrl} alt="" className="block h-full w-full object-cover" loading="lazy" />
+          <img src={coach.photoUrl} alt="" data-parallax="drift" data-parallax-speed="0.08" data-parallax-max="40" className="parallax-drift block h-full w-full object-cover" loading="lazy" />
         ) : null}
         <span className="absolute bottom-3 left-3 rounded-[var(--radius-pill)] bg-ink-deep/82 px-2.5 py-[5px] text-[12px] font-medium text-ink-fg backdrop-blur-[6px] wide:bottom-3.5 wide:left-3.5 wide:px-[11px] wide:py-1.5">
           {badge}

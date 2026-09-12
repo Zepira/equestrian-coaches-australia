@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Parallax } from "@/components/hero-parallax";
 
 /**
  * The Golden Hour hero (canvas: ECA Redesign › 1a, mobile + desktop).
@@ -68,7 +67,6 @@ export function Hero({
 }) {
   return (
     <section className="hero">
-      <Parallax />
       <div className="hero__media" data-parallax>
         <picture>
           <source type="image/avif" srcSet={srcset("avif")} sizes="100vw" />

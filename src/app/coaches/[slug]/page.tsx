@@ -305,8 +305,10 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
           <div className="wide:grid wide:grid-cols-[300px_1fr] wide:items-end wide:gap-9">
             <div className="coach-photo fade-in relative h-[440px] overflow-hidden bg-ink-deep wide:aspect-[4/5] wide:h-auto wide:rounded-t-[150px] wide:rounded-b-[16px] wide:bg-shade" style={{ animationDuration: "0.7s" }}>
               {coach.photoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={coach.photoUrl} alt="" className="coach-photo__img block h-full w-full object-cover object-[50%_30%]" />
+                <span data-parallax="drift" data-parallax-speed="0.1" data-parallax-max="50" className="parallax-drift absolute inset-0 block">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={coach.photoUrl} alt="" className="coach-photo__img block h-full w-full object-cover object-[50%_30%]" />
+                </span>
               ) : null}
               <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,24,18,.15),rgba(13,24,18,0)_35%,rgba(246,241,231,0)_70%,#f6f1e7_100%)] wide:hidden" />
             </div>
