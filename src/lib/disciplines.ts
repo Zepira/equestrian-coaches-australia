@@ -7,7 +7,8 @@ export type Discipline = {
   blurb: string;
 };
 
-export const disciplines: Discipline[] = [
+// Listed alphabetically by name (sorted below) — matches the live `terms` order.
+const disciplineList: Discipline[] = [
   {
     slug: "bridleless",
     name: "Bridleless",
@@ -105,6 +106,8 @@ export const disciplines: Discipline[] = [
     blurb: "Carriage and harness driving, from recreational to competitive combined driving.",
   },
 ];
+
+export const disciplines: Discipline[] = [...disciplineList].sort((a, b) => a.name.localeCompare(b.name));
 
 export function getDisciplineBySlug(slug: string): Discipline | undefined {
   return disciplines.find((d) => d.slug === slug);

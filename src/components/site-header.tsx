@@ -52,17 +52,24 @@ function useScrolled(threshold = 8) {
   return scrolled;
 }
 
-type AuthState = { loggedIn: boolean; role: "rider" | "coach" | null; name: string | null; coachSlug: string | null; avatarUrl: string | null };
+type AuthState = { loggedIn: boolean; role: "rider" | "coach" | null; name: string | null; coachSlug: string | null; avatarUrl: string | null; isAdmin: boolean };
+
+const SIGNED_OUT: AuthState = { loggedIn: false, role: null, name: null, coachSlug: null, avatarUrl: null, isAdmin: false };
 
 function useAuthState(): AuthState {
-  const [state, setState] = useState<AuthState>({ loggedIn: false, role: null, name: null, coachSlug: null, avatarUrl: null });
+  const [state, setState] = useState<AuthState>(SIGNED_OUT);
 
   useEffect(() => {
     const supabase = createClient();
     if (!supabase) return;
 
     async function load(client: NonNullable<typeof supabase>, userId: string) {
-      const { data } = await client.from("profiles").select("role, name").eq("id", userId).single();
+      // is_admin() reads admin_users (0007_taxonomy.sql) — the only way in
+      // is a direct insert, so this is what surfaces the Admin link.
+      const [{ data }, { data: isAdmin }] = await Promise.all([
+        client.from("profiles").select("role, name").eq("id", userId).single(),
+        client.rpc("is_admin"),
+      ]);
       const role = (data?.role as "rider" | "coach") ?? null;
       let coachSlug: string | null = null;
       let avatarUrl: string | null = null;
@@ -74,7 +81,7 @@ function useAuthState(): AuthState {
         coachSlug = (cp?.slug as string | undefined) ?? null;
         if (photo?.storage_path) avatarUrl = client.storage.from("coach-photos").getPublicUrl(photo.storage_path).data.publicUrl;
       }
-      setState({ loggedIn: true, role, name: (data?.name as string | null) ?? null, coachSlug, avatarUrl });
+      setState({ loggedIn: true, role, name: (data?.name as string | null) ?? null, coachSlug, avatarUrl, isAdmin: Boolean(isAdmin) });
     }
 
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -84,7 +91,7 @@ function useAuthState(): AuthState {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) load(supabase, session.user.id);
-      else setState({ loggedIn: false, role: null, name: null, coachSlug: null, avatarUrl: null });
+      else setState(SIGNED_OUT);
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -212,6 +219,11 @@ export function SiteHeader() {
 
         {isDashboard ? (
           <div className="flex items-center gap-2.5 md:gap-[22px]">
+            {auth.isAdmin && (
+              <Link href="/admin" className="site-header__link hidden text-[15px] font-medium md:inline">
+                Admin
+              </Link>
+            )}
             <Link href={profileHref} className="site-header__outline whitespace-nowrap rounded-[var(--radius-pill)] px-3 py-[7px] text-[13px] font-medium md:px-4 md:py-2 md:text-[15px]">
               <span className="md:hidden">View profile</span>
               <span className="hidden md:inline">View public profile</span>
@@ -246,6 +258,11 @@ export function SiteHeader() {
           )}
           {auth.loggedIn ? (
             <>
+              {auth.isAdmin && (
+                <Link href="/admin" className="site-header__link" aria-current={pathname.startsWith("/admin") ? "page" : undefined}>
+                  Admin
+                </Link>
+              )}
               <Link href={accountHref} className="site-header__link flex items-center gap-2.5">
                 <Avatar name={auth.name} />
                 {firstName ?? (auth.role === "coach" ? "Dashboard" : "My account")}
@@ -337,6 +354,17 @@ export function SiteHeader() {
             ))}
             {auth.loggedIn ? (
               <>
+                {auth.isAdmin && (
+                  <li>
+                    <Link
+                      href="/admin"
+                      onClick={close}
+                      className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
+                    >
+                      Admin
+                    </Link>
+                  </li>
+                )}
                 <li>
                   <Link
                     href={accountHref}

@@ -31,7 +31,7 @@ export default async function AdminTermsPage() {
   const terms = (data ?? []) as TermRow[];
 
   const byKind: Record<TermRow["kind"], TermRow[]> = {
-    discipline: terms.filter((t) => t.kind === "discipline"),
+    discipline: terms.filter((t) => t.kind === "discipline").sort((a, b) => a.name.localeCompare(b.name)),
     skill: terms.filter((t) => t.kind === "skill"),
     attribute: terms.filter((t) => t.kind === "attribute"),
   };

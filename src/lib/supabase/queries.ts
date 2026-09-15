@@ -13,12 +13,15 @@ export type TermKind = "discipline" | "skill" | "attribute";
 export async function getTerms(supabase: SupabaseClient | null, kind: TermKind) {
   if (!supabase) return kind === "discipline" ? staticDisciplines.map((d) => ({ id: d.slug, ...d })) : [];
 
+  // Disciplines list alphabetically wherever the full set is shown (search
+  // dropdowns, the profile editor, clinic forms); skills and attributes
+  // keep the curated seed order, which groups related ideas together.
   const { data, error } = await supabase
     .from("terms")
     .select("id, slug, name, blurb")
     .eq("kind", kind)
     .eq("active", true)
-    .order("sort_order");
+    .order(kind === "discipline" ? "name" : "sort_order");
 
   if (error || !data || data.length === 0) {
     return kind === "discipline" ? staticDisciplines.map((d) => ({ id: d.slug, ...d })) : [];
