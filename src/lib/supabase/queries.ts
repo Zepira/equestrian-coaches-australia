@@ -5,6 +5,14 @@ const AU_STATES = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"];
 
 export type TermKind = "discipline" | "skill" | "attribute";
 
+// Skills and attributes are stored with sort_order 0, so whatever order the
+// database hands back is arbitrary — sort them for display. Disciplines are
+// deliberately excluded: their sort_order carries the coach's own ordering,
+// lowest first, which is what names their primary discipline.
+export function sortByName(names: string[] | undefined) {
+  return [...(names ?? [])].sort((a, b) => a.localeCompare(b));
+}
+
 // Generic reader for the terms table (phase 9 taxonomy — see CLAUDE.md
 // "Search & taxonomy build spec"). Falls back to the static discipline
 // list when there's no live Supabase project, or for skills/attributes
@@ -13,15 +21,15 @@ export type TermKind = "discipline" | "skill" | "attribute";
 export async function getTerms(supabase: SupabaseClient | null, kind: TermKind) {
   if (!supabase) return kind === "discipline" ? staticDisciplines.map((d) => ({ id: d.slug, ...d })) : [];
 
-  // Disciplines list alphabetically wherever the full set is shown (search
-  // dropdowns, the profile editor, clinic forms); skills and attributes
-  // keep the curated seed order, which groups related ideas together.
+  // Every kind lists alphabetically wherever the full set is shown — search
+  // dropdowns, the profile editor, clinic forms, the admin screens. The
+  // seeded sort_order is kept on the rows but no longer drives display.
   const { data, error } = await supabase
     .from("terms")
     .select("id, slug, name, blurb")
     .eq("kind", kind)
     .eq("active", true)
-    .order(kind === "discipline" ? "name" : "sort_order");
+    .order("name");
 
   if (error || !data || data.length === 0) {
     return kind === "discipline" ? staticDisciplines.map((d) => ({ id: d.slug, ...d })) : [];
@@ -210,8 +218,8 @@ export async function searchCoaches(
     state: m.state,
     distanceKm: m.distance_km,
     disciplineNames: namesByKindAndCoach.discipline.get(m.id) ?? [],
-    skillNames: namesByKindAndCoach.skill.get(m.id) ?? [],
-    attributeNames: namesByKindAndCoach.attribute.get(m.id) ?? [],
+    skillNames: sortByName(namesByKindAndCoach.skill.get(m.id)),
+    attributeNames: sortByName(namesByKindAndCoach.attribute.get(m.id)),
     photoUrl: photoById.get(m.id) ?? null,
     lat: (coachById.get(m.id)?.lat as number | null) ?? null,
     long: (coachById.get(m.id)?.long as number | null) ?? null,

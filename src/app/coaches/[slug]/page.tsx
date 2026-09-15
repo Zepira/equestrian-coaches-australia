@@ -7,6 +7,7 @@ import { EnquirySheet } from "@/components/enquiry-sheet";
 import { PhoneReveal } from "@/components/phone-reveal";
 import { BackToResults } from "@/components/back-to-results";
 import { createClient } from "@/lib/supabase/server";
+import { sortByName } from "@/lib/supabase/queries";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 import { getMockCoachBySlug, SKILL_NAMES, ATTRIBUTE_NAMES } from "@/lib/mock-coaches";
 import { getDisciplineBySlug } from "@/lib/disciplines";
@@ -109,14 +110,18 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
       .map((r) => (r as unknown as { terms: { slug: string; kind: string } | null }).terms)
       .filter((t): t is { slug: string; kind: string } => Boolean(t) && t!.kind === "discipline")
       .map((t) => t.slug),
-    skillNames: (disciplineRows ?? [])
-      .map((r) => (r as unknown as { terms: { name: string; kind: string } | null }).terms)
-      .filter((t): t is { name: string; kind: string } => Boolean(t) && t!.kind === "skill")
-      .map((t) => t.name),
-    attributeNames: (disciplineRows ?? [])
-      .map((r) => (r as unknown as { terms: { name: string; kind: string } | null }).terms)
-      .filter((t): t is { name: string; kind: string } => Boolean(t) && t!.kind === "attribute")
-      .map((t) => t.name),
+    skillNames: sortByName(
+      (disciplineRows ?? [])
+        .map((r) => (r as unknown as { terms: { name: string; kind: string } | null }).terms)
+        .filter((t): t is { name: string; kind: string } => Boolean(t) && t!.kind === "skill")
+        .map((t) => t.name)
+    ),
+    attributeNames: sortByName(
+      (disciplineRows ?? [])
+        .map((r) => (r as unknown as { terms: { name: string; kind: string } | null }).terms)
+        .filter((t): t is { name: string; kind: string } => Boolean(t) && t!.kind === "attribute")
+        .map((t) => t.name)
+    ),
     qualifications: coach.qualifications ?? [],
     testimonials: (testimonialRows ?? []).map((t) => ({ quote: t.quote, author: t.author_name })),
     clinics: (clinicRows ?? []).map((c) => ({
@@ -165,8 +170,8 @@ function getCoachFromMock(slug: string): CoachView | null {
     headline: coach.headline,
     bio: coach.bio,
     disciplineSlugs: coach.disciplineSlugs,
-    skillNames: coach.skillSlugs.map((s) => SKILL_NAMES[s] ?? s),
-    attributeNames: coach.attributeSlugs.map((s) => ATTRIBUTE_NAMES[s] ?? s),
+    skillNames: sortByName(coach.skillSlugs.map((s) => SKILL_NAMES[s] ?? s)),
+    attributeNames: sortByName(coach.attributeSlugs.map((s) => ATTRIBUTE_NAMES[s] ?? s)),
     qualifications: coach.qualifications,
     testimonials: [],
     clinics: [],
