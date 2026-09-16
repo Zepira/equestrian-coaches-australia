@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { disciplines } from "@/lib/disciplines";
 import { SelectMenu } from "@/components/ui/select-menu";
+import { MultiSelectMenu, type TermOption } from "@/components/ui/multi-select-menu";
 import type { LocationSuggestion } from "@/app/api/location-suggest/route";
 
 /**
@@ -21,20 +22,38 @@ import type { LocationSuggestion } from "@/app/api/location-suggest/route";
  * `tone="glass"` is the hero's translucent card; `tone="plain"` renders the
  * same fields on a cream plate for pages without a photograph behind them.
  */
+// The two setup terms riders reach for most — worth a one-tap pill on the
+// card rather than two clicks into the panel. Slugs, matched against the
+// real `terms` rows, so a term that's been renamed or deactivated simply
+// drops out of the row instead of rendering a filter that finds nobody.
+const QUICK_ATTRIBUTES = ["horses-available", "beginners-welcome"];
+
 export function SearchBar({
   defaultDiscipline = "",
   defaultLocation = "",
+  defaultSkills = [],
+  defaultAttributes = [],
+  skills = [],
+  attributes = [],
   tone = "glass",
   autoFocus = false,
 }: {
   defaultDiscipline?: string;
   defaultLocation?: string;
+  defaultSkills?: string[];
+  defaultAttributes?: string[];
+  /** The skill/attribute vocabulary, from the `terms` table. With both
+   *  empty the refine row isn't rendered at all, so a caller that doesn't
+   *  have them gets exactly the card it had before. */
+  skills?: TermOption[];
+  attributes?: TermOption[];
   tone?: "glass" | "plain";
   autoFocus?: boolean;
 }) {
   const router = useRouter();
   const [discipline, setDiscipline] = useState(defaultDiscipline);
   const [location, setLocation] = useState(defaultLocation);
+  const [refine, setRefine] = useState<string[]>([...defaultSkills, ...defaultAttributes]);
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [count, setCount] = useState<number | null>(null);
   const listId = useId();
@@ -93,11 +112,20 @@ export function SearchBar({
   const hasLoc = location.trim().length > 0;
   const cta = hasLoc && count != null ? `Show ${count} near ${town}` : "Find a coach";
 
+  // Skills and attributes are separate URL params (`s` and `a`) because the
+  // RPC ORs within a kind and ANDs across them — but they share one picker,
+  // so the picked slugs get split back apart by which list they came from.
+  const skillSlugs = new Set(skills.map((t) => t.slug));
+  const pickedSkills = refine.filter((s) => skillSlugs.has(s));
+  const pickedAttributes = refine.filter((s) => !skillSlugs.has(s));
+
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
     if (location.trim()) params.set("location", location.trim());
     if (discipline) params.set("d", discipline);
+    if (pickedSkills.length) params.set("s", pickedSkills.join(","));
+    if (pickedAttributes.length) params.set("a", pickedAttributes.join(","));
     router.push(`/search?${params.toString()}`);
   }
 
@@ -116,6 +144,14 @@ export function SearchBar({
   const chip = glass
     ? "border-ink-fg/35 bg-ink-fg/12 text-ink-fg hover:bg-ink-fg/22"
     : "border-border bg-shade text-fg hover:bg-accent-soft";
+  // The refine row's pills sit on the card itself, not on a plate, so the
+  // glass variant reads against the photograph through the card's blur.
+  const quickPill = (on: boolean) =>
+    on
+      ? "border-accent bg-accent text-accent-fg hover:bg-accent-hover"
+      : glass
+        ? "border-ink-fg/30 bg-ink-fg/10 text-ink-fg hover:bg-ink-fg/20"
+        : "border-border bg-surface text-fg hover:bg-accent-soft";
 
   // One set of fields in one row (location + discipline + CTA), with the
   // suggestion row hanging off the bottom of the card as an absolutely
@@ -236,6 +272,43 @@ export function SearchBar({
     </button>
   );
 
+  // The refine row: one "Skills & setup" pill over the whole skill and
+  // attribute vocabulary, plus one-tap pills for the two setup terms riders
+  // reach for most often — those don't need a panel to say yes to. Marked
+  // js-only: with JavaScript off the menu can't open, and a dead control is
+  // worse than none (the location and discipline fields still submit).
+  const quick = QUICK_ATTRIBUTES.map((slug) => attributes.find((a) => a.slug === slug)).filter(
+    (a): a is TermOption => Boolean(a)
+  );
+  const refineRow = (skills.length > 0 || attributes.length > 0) && (
+    <div className="js-only order-5 flex basis-full flex-wrap items-center gap-1.5 px-0.5 pb-0.5 pt-1 wide:order-5">
+      <MultiSelectMenu
+        label="Skills & setup"
+        groups={[
+          { heading: "What they help you fix", options: skills },
+          { heading: "What they offer", options: attributes },
+        ].filter((g) => g.options.length > 0)}
+        selected={refine}
+        onApply={setRefine}
+        triggerClassName={`flex items-center rounded-[var(--radius-pill)] border px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${quickPill(refine.length > 0)}`}
+      />
+      {quick.map((a) => {
+        const on = refine.includes(a.slug);
+        return (
+          <button
+            key={a.slug}
+            type="button"
+            aria-pressed={on}
+            onClick={() => setRefine((r) => (on ? r.filter((v) => v !== a.slug) : [...r, a.slug]))}
+            className={`rounded-[var(--radius-pill)] border px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${quickPill(on)}`}
+          >
+            {a.name}
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <form
       action="/search"
@@ -248,6 +321,7 @@ export function SearchBar({
       {chips}
       {disciplineField}
       {button}
+      {refineRow}
     </form>
   );
 }

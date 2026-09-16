@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Wordmark } from "@/components/wordmark";
 import { SearchChips } from "@/components/search-chips";
+import { SearchFacets } from "@/components/search-facets";
 import { BackToResults } from "@/components/back-to-results";
 import { createClient } from "@/lib/supabase/client";
 
@@ -333,7 +334,14 @@ export function SiteHeader() {
         <div className="px-[18px] pb-3.5 md:hidden">
           <Suspense fallback={null}>
             <SearchSummary className="mt-0" />
-            <SearchChips rail className="-mx-[18px] mt-2.5 px-[18px]" />
+            {/* The "Skills & setup" pill sits outside the scroller, not in
+                it: `.hs` scrolls on x, and an element that scrolls on one
+                axis clips the other too, which would cut the panel off at
+                the rail's edge. */}
+            <div className="mt-2.5 flex items-center gap-2">
+              <SearchFacets tone="ink" />
+              <SearchChips rail className="-mr-[18px] min-w-0 flex-1 pr-[18px]" />
+            </div>
           </Suspense>
         </div>
       )}

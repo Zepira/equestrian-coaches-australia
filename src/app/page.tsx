@@ -8,7 +8,7 @@ import { Reveal } from "@/components/reveal";
 import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
-import { searchCoaches } from "@/lib/supabase/queries";
+import { getAttributes, getSkills, searchCoaches } from "@/lib/supabase/queries";
 import { searchMockCoaches, disciplinePhoto } from "@/lib/mock-coaches";
 
 // Overrides the root layout's cream themeColor (src/app/layout.tsx) — this
@@ -47,6 +47,8 @@ const STEPS = [
 
 export default async function Home() {
   const supabase = await createClient();
+  // The skill/attribute vocabulary for the card's "Skills & setup" picker.
+  const [skills, attributes] = await Promise.all([getSkills(supabase), getAttributes(supabase)]);
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const all = supabase
     ? [...(await searchCoaches(supabase, {})), ...searchMockCoaches({})]
@@ -75,7 +77,7 @@ export default async function Home() {
           { value: "Direct", label: "contact, no commission" },
         ]}
       >
-        <SearchBar />
+        <SearchBar skills={skills} attributes={attributes} />
       </Hero>
 
       <DisciplineMarquee />

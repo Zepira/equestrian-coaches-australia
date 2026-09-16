@@ -1,6 +1,11 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { placePanel } from "@/lib/anchored-panel";
+
+// placePanel() trims this to the space the trigger's clipping ancestor
+// actually leaves visible.
+const PANEL_HEIGHT = 260;
 
 export type SelectOption = { value: string; label: string };
 
@@ -39,7 +44,7 @@ export function SelectMenu({
   triggerClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [dropUp, setDropUp] = useState(false);
+  const [place, setPlace] = useState({ dropUp: false, maxHeight: PANEL_HEIGHT });
   const [activeIndex, setActiveIndex] = useState(-1);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -72,9 +77,9 @@ export function SelectMenu({
   function openMenu(startAt = selectedIndex < 0 ? 0 : selectedIndex) {
     // Measured at the moment of opening rather than tracked continuously:
     // 19 disciplines is a tall panel, and near the bottom of a phone
-    // viewport it would otherwise open off-screen.
-    const rect = triggerRef.current?.getBoundingClientRect();
-    if (rect) setDropUp(window.innerHeight - rect.bottom < 260 && rect.top > 260);
+    // viewport — or of the hero, which clips — it would otherwise open
+    // somewhere it can't be seen.
+    setPlace(placePanel(triggerRef.current, PANEL_HEIGHT));
     setActiveIndex(startAt);
     setOpen(true);
   }
@@ -156,8 +161,9 @@ export function SelectMenu({
           aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined}
           tabIndex={-1}
           onKeyDown={onKeyDown}
-          className={`menu-panel absolute left-0 z-30 max-h-[260px] min-w-full overflow-auto rounded-[var(--radius-input)] border border-border bg-surface py-1.5 shadow-[0_18px_40px_rgba(31,58,46,0.18)] ${
-            dropUp ? "menu-panel--up bottom-full mb-1.5" : "top-full mt-1.5"
+          style={{ maxHeight: place.maxHeight }}
+          className={`menu-panel absolute left-0 z-30 min-w-full overflow-auto rounded-[var(--radius-input)] border border-border bg-surface py-1.5 shadow-[0_18px_40px_rgba(31,58,46,0.18)] ${
+            place.dropUp ? "menu-panel--up bottom-full mb-1.5" : "top-full mt-1.5"
           }`}
         >
           {all.map((o, i) => {

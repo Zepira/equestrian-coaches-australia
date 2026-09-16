@@ -357,8 +357,12 @@ html[data-overlay-route="true"] {
 .menu-panel {
   animation: menu-in 0.16s var(--ease-out, cubic-bezier(0.22, 0.61, 0.36, 1)) both;
   transform-origin: top center;
-  /* 19 disciplines scroll; the platform's default bar is a grey slab in the
-     middle of a cream panel. */
+}
+/* The scrolling part — the whole panel for a single-select, an inner list
+   for the multi-select (whose action bar must not scroll away). The
+   platform's default bar is a grey slab in the middle of a cream panel. */
+.menu-panel,
+.menu-panel__list {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
   overscroll-behavior: contain;
@@ -651,6 +655,26 @@ html[data-overlay-route="true"] {
 .hero__search {
   position: relative;
   z-index: 2;
+}
+
+/* The stat row steps down out of the suggestion row's way while it's open,
+   rather than being covered by it. `transform` and not margin or height, so
+   this costs no layout: the hero keeps its own height, the card doesn't
+   move, and nothing below the hero shifts — the line of text simply slides.
+   Driven by :has() off the layer's own data-shown, so the transition is
+   already tied to the thing it's reacting to and no state has to be lifted
+   out of the search card to reach a sibling.
+
+   The transform goes on the stat cells, not on .hero__stats itself: that
+   element carries `animation: fade … both`, whose final keyframe sets
+   `transform: none`, and a filling animation outranks a plain declaration in
+   the cascade — so a rule on the row itself computes to none forever and
+   silently does nothing. The cells aren't animated, so they take it. */
+.hero__stats > div {
+  transition: transform 0.24s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.hero__col:has(.suggest-layer[data-shown="true"]) .hero__stats > div {
+  transform: translateY(var(--suggest-step, 48px));
 }
 
 .hero__stats {

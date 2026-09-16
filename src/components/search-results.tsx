@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { CoachResultCard, type CoachResultData, whereLine } from "@/components/coach-result-card";
 import { SearchChips, useChipState } from "@/components/search-chips";
+import { SearchFacets } from "@/components/search-facets";
+import type { TermOption } from "@/components/ui/multi-select-menu";
 import { SearchBar } from "@/components/search-bar";
 import { useWide } from "@/lib/use-wide";
 
@@ -31,6 +33,8 @@ export function SearchResults({
   editing,
   disciplineSlug,
   locationNotFound,
+  skills,
+  attributes,
 }: {
   results: CoachResultData[];
   origin: { lat: number; long: number } | null;
@@ -40,6 +44,8 @@ export function SearchResults({
   editing: boolean;
   disciplineSlug: string;
   locationNotFound: boolean;
+  skills: TermOption[];
+  attributes: TermOption[];
 }) {
   const wide = useWide();
   const [view, setView] = useState<"list" | "map">("list");
@@ -48,6 +54,10 @@ export function SearchResults({
   const [radiusFromUrl, setRadiusFromUrl] = useState(radiusKm);
   const sliderRef = useRef<HTMLInputElement>(null);
   const { params, push } = useChipState();
+  // What the edit card should open pre-filled with — read off the URL rather
+  // than passed down, since the chips and the facet pill both write there.
+  const skillSlugs = (params.get("s") ?? "").split(",").filter(Boolean);
+  const attributeSlugs = (params.get("a") ?? "").split(",").filter(Boolean);
 
   // The slider tracks locally while dragging and commits to the URL on the
   // native `change` (release / key up), so results reload once per pick,
@@ -152,7 +162,16 @@ export function SearchResults({
       {editing && (
         <div className="border-b border-border bg-shade px-[18px] py-4 wide:px-12">
           <div className="mx-auto max-w-[1184px]">
-            <SearchBar tone="plain" defaultDiscipline={disciplineSlug} defaultLocation={locationText} autoFocus />
+            <SearchBar
+              tone="plain"
+              defaultDiscipline={disciplineSlug}
+              defaultLocation={locationText}
+              defaultSkills={skillSlugs}
+              defaultAttributes={attributeSlugs}
+              skills={skills}
+              attributes={attributes}
+              autoFocus
+            />
           </div>
         </div>
       )}
@@ -213,6 +232,7 @@ export function SearchResults({
       <div className="hidden min-h-[728px] grid-cols-[1fr_480px] wide:grid">
         <div className="pb-12 pl-12 pr-8 pt-7">
           <div className="flex flex-wrap items-center gap-2">
+            <SearchFacets skills={skills} attributes={attributes} />
             <SearchChips />
             {origin && (
               <span className="ml-auto flex items-center gap-2.5 text-[13px] text-subtle">

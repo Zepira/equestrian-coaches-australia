@@ -329,7 +329,7 @@
    "text": "Riding coaches, Australia-wide",
    "box": {
     "x": 18,
-    "y": 362,
+    "y": 277,
     "w": 354,
     "h": 18
    },
@@ -382,7 +382,7 @@
    "tag": "h1",
    "box": {
     "x": 18,
-    "y": 398,
+    "y": 313,
     "w": 354,
     "h": 110
    },
@@ -436,7 +436,7 @@
    "text": "Find",
    "box": {
     "x": 18,
-    "y": 398,
+    "y": 313,
     "w": 79,
     "h": 53
    },
@@ -490,7 +490,7 @@
    "text": "a",
    "box": {
     "x": 105,
-    "y": 398,
+    "y": 313,
     "w": 20,
     "h": 53
    },
@@ -544,7 +544,7 @@
    "text": "coach",
    "box": {
     "x": 134,
-    "y": 398,
+    "y": 313,
     "w": 100,
     "h": 53
    },
@@ -598,7 +598,7 @@
    "text": "for",
    "box": {
     "x": 242,
-    "y": 398,
+    "y": 313,
     "w": 50,
     "h": 53
    },
@@ -652,7 +652,7 @@
    "text": "dressage .",
    "box": {
     "x": 18,
-    "y": 420,
+    "y": 335,
     "w": 162,
     "h": 53
    },
@@ -706,7 +706,7 @@
    "text": "western .",
    "box": {
     "x": 18,
-    "y": 451,
+    "y": 366,
     "w": 152,
     "h": 53
    },
@@ -760,7 +760,7 @@
    "text": "liberty .",
    "box": {
     "x": 18,
-    "y": 483,
+    "y": 398,
     "w": 131,
     "h": 53
    },
@@ -814,7 +814,7 @@
    "text": "show jumping .",
    "box": {
     "x": 18,
-    "y": 483,
+    "y": 398,
     "w": 275,
     "h": 53
    },
@@ -868,7 +868,7 @@
    "text": "eventing .",
    "box": {
     "x": 18,
-    "y": 483,
+    "y": 398,
     "w": 169,
     "h": 53
    },
@@ -922,7 +922,7 @@
    "text": "campdrafting .",
    "box": {
     "x": 18,
-    "y": 483,
+    "y": 398,
     "w": 269,
     "h": 53
    },
@@ -976,7 +976,7 @@
    "text": "bridleless .",
    "box": {
     "x": 18,
-    "y": 483,
+    "y": 398,
     "w": 180,
     "h": 53
    },
@@ -1030,7 +1030,7 @@
    "text": "pony club .",
    "box": {
     "x": 18,
-    "y": 483,
+    "y": 398,
     "w": 189,
     "h": 53
    },
@@ -1083,7 +1083,7 @@
    "tag": "p",
    "box": {
     "x": 18,
-    "y": 526,
+    "y": 441,
     "w": 354,
     "h": 49
    },
@@ -1137,7 +1137,7 @@
    "text": "Search by what you ride and where you are. Free for riders, always.",
    "box": {
     "x": 18,
-    "y": 527,
+    "y": 442,
     "w": 333,
     "h": 47
    },
@@ -1191,7 +1191,7 @@
    "text": "Suburb or postcode",
    "box": {
     "x": 40,
-    "y": 627,
+    "y": 542,
     "w": 1,
     "h": 1
    },
@@ -1232,7 +1232,7 @@
     "display": "block",
     "position": "absolute",
     "top": "34px",
-    "bottom": "90px",
+    "bottom": "175px",
     "width": "1px",
     "height": "1px",
     "aspectRatio": "auto",
@@ -1245,7 +1245,7 @@
    "placeholder": "Suburb or postcode",
    "box": {
     "x": 59,
-    "y": 602,
+    "y": 517,
     "w": 280,
     "h": 51
    },
@@ -1298,7 +1298,7 @@
    "tag": "button",
    "box": {
     "x": 27,
-    "y": 659,
+    "y": 574,
     "w": 180,
     "h": 50
    },
@@ -1352,7 +1352,7 @@
    "text": "Any discipline",
    "box": {
     "x": 41,
-    "y": 672,
+    "y": 587,
     "w": 98,
     "h": 24
    },
@@ -1406,7 +1406,7 @@
    "text": "▾",
    "box": {
     "x": 185,
-    "y": 679,
+    "y": 594,
     "w": 8,
     "h": 10
    },
@@ -1459,7 +1459,7 @@
    "tag": "button",
    "box": {
     "x": 213,
-    "y": 659,
+    "y": 574,
     "w": 150,
     "h": 50
    },
@@ -1513,7 +1513,7 @@
    "text": "Find a coach",
    "box": {
     "x": 231,
-    "y": 673,
+    "y": 588,
     "w": 92,
     "h": 21
    },
@@ -1559,6 +1559,275 @@
     "height": "auto",
     "aspectRatio": "auto",
     "textAlign": "left",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "button",
+   "box": {
+    "x": 29,
+    "y": 634,
+    "w": 119,
+    "h": 34
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "19.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "oklab(0.959283 0.00139529 0.0142711 / 0.1)",
+    "backgroundImage": "none",
+    "borderRadius": "999px",
+    "borderTopWidth": "1px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
+    "borderBottomWidth": "1px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
+    "paddingTop": "6px",
+    "paddingRight": "12px",
+    "paddingBottom": "6px",
+    "paddingLeft": "12px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), outline-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-from 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-via 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-to 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "flex",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "119.109px",
+    "height": "33.5px",
+    "aspectRatio": "auto",
+    "textAlign": "center",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "span",
+   "text": "Skills & setup",
+   "box": {
+    "x": 42,
+    "y": 641,
+    "w": 79,
+    "h": 20
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "19.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(246, 241, 231)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(246, 241, 231)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "78.75px",
+    "height": "19.5px",
+    "aspectRatio": "auto",
+    "textAlign": "center",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "span",
+   "text": "▾",
+   "box": {
+    "x": 127,
+    "y": 646,
+    "w": 8,
+    "h": 10
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "10px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "10px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(246, 241, 231)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(246, 241, 231)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), translate 0.2s cubic-bezier(0.4, 0, 0.2, 1), scale 0.2s cubic-bezier(0.4, 0, 0.2, 1), rotate 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "8.35938px",
+    "height": "10px",
+    "aspectRatio": "auto",
+    "textAlign": "center",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "button",
+   "text": "Horses available for lessons",
+   "box": {
+    "x": 154,
+    "y": 634,
+    "w": 190,
+    "h": 34
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "19.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "oklab(0.959283 0.00139529 0.0142711 / 0.1)",
+    "backgroundImage": "none",
+    "borderRadius": "999px",
+    "borderTopWidth": "1px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
+    "borderBottomWidth": "1px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
+    "paddingTop": "6px",
+    "paddingRight": "12px",
+    "paddingBottom": "6px",
+    "paddingLeft": "12px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), outline-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-from 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-via 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-to 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "189.75px",
+    "height": "33.5px",
+    "aspectRatio": "auto",
+    "textAlign": "center",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "button",
+   "text": "Beginners welcome",
+   "box": {
+    "x": 29,
+    "y": 674,
+    "w": 139,
+    "h": 34
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "19.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "oklab(0.959283 0.00139529 0.0142711 / 0.1)",
+    "backgroundImage": "none",
+    "borderRadius": "999px",
+    "borderTopWidth": "1px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
+    "borderBottomWidth": "1px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
+    "paddingTop": "6px",
+    "paddingRight": "12px",
+    "paddingBottom": "6px",
+    "paddingLeft": "12px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), outline-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-from 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-via 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-to 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "139px",
+    "height": "33.5px",
+    "aspectRatio": "auto",
+    "textAlign": "center",
     "maxWidth": "none"
    }
   },
@@ -1620,7 +1889,7 @@
    "tag": "span",
    "text": "Bridleless",
    "box": {
-    "x": -203,
+    "x": -205,
     "y": 796,
     "w": 93,
     "h": 26
@@ -1674,7 +1943,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": -127,
+    "x": -129,
     "y": 796,
     "w": 2,
     "h": 26
@@ -1728,7 +1997,7 @@
    "tag": "span",
    "text": "Campdrafting",
    "box": {
-    "x": -111,
+    "x": -112,
     "y": 796,
     "w": 123,
     "h": 26
@@ -1782,7 +2051,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": -4,
+    "x": -6,
     "y": 796,
     "w": 2,
     "h": 26
@@ -1836,7 +2105,7 @@
    "tag": "span",
    "text": "Carriage Driving",
    "box": {
-    "x": 12,
+    "x": 11,
     "y": 796,
     "w": 138,
     "h": 26
@@ -1890,7 +2159,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 133,
+    "x": 131,
     "y": 796,
     "w": 2,
     "h": 26
@@ -1944,7 +2213,7 @@
    "tag": "span",
    "text": "Dressage",
    "box": {
-    "x": 150,
+    "x": 148,
     "y": 796,
     "w": 88,
     "h": 26
@@ -1998,7 +2267,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 221,
+    "x": 219,
     "y": 796,
     "w": 2,
     "h": 26
@@ -2052,7 +2321,7 @@
    "tag": "span",
    "text": "Endurance",
    "box": {
-    "x": 238,
+    "x": 236,
     "y": 796,
     "w": 102,
     "h": 26
@@ -2106,7 +2375,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 323,
+    "x": 321,
     "y": 796,
     "w": 2,
     "h": 26
@@ -2160,7 +2429,7 @@
    "tag": "span",
    "text": "Eventing",
    "box": {
-    "x": 340,
+    "x": 338,
     "y": 796,
     "w": 88,
     "h": 26
@@ -2214,7 +2483,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 411,
+    "x": 410,
     "y": 796,
     "w": 2,
     "h": 26
@@ -2268,7 +2537,7 @@
    "tag": "span",
    "text": "Liberty",
    "box": {
-    "x": 428,
+    "x": 426,
     "y": 796,
     "w": 77,
     "h": 26
@@ -2322,7 +2591,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 488,
+    "x": 486,
     "y": 796,
     "w": 2,
     "h": 26
@@ -2376,7 +2645,7 @@
    "tag": "span",
    "text": "Mounted Games",
    "box": {
-    "x": 505,
+    "x": 503,
     "y": 796,
     "w": 137,
     "h": 26
@@ -2430,7 +2699,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 625,
+    "x": 623,
     "y": 796,
     "w": 2,
     "h": 26
@@ -2484,7 +2753,7 @@
    "tag": "span",
    "text": "Natural Horsemanship",
    "box": {
-    "x": 642,
+    "x": 640,
     "y": 796,
     "w": 177,
     "h": 26
@@ -2538,7 +2807,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 802,
+    "x": 800,
     "y": 796,
     "w": 2,
     "h": 26
@@ -2592,7 +2861,7 @@
    "tag": "span",
    "text": "Para-Equestrian",
    "box": {
-    "x": 818,
+    "x": 816,
     "y": 796,
     "w": 139,
     "h": 26
@@ -2646,7 +2915,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 940,
+    "x": 938,
     "y": 796,
     "w": 2,
     "h": 26
@@ -2700,7 +2969,7 @@
    "tag": "span",
    "text": "Polocrosse",
    "box": {
-    "x": 957,
+    "x": 955,
     "y": 796,
     "w": 98,
     "h": 26
@@ -2754,7 +3023,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1038,
+    "x": 1037,
     "y": 796,
     "w": 2,
     "h": 26
@@ -2808,7 +3077,7 @@
    "tag": "span",
    "text": "Pony Club",
    "box": {
-    "x": 1055,
+    "x": 1053,
     "y": 796,
     "w": 98,
     "h": 26
@@ -2862,7 +3131,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1136,
+    "x": 1134,
     "y": 796,
     "w": 2,
     "h": 26
@@ -2916,7 +3185,7 @@
    "tag": "span",
    "text": "Show Jumping",
    "box": {
-    "x": 1153,
+    "x": 1151,
     "y": 796,
     "w": 126,
     "h": 26
@@ -2970,7 +3239,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1263,
+    "x": 1261,
     "y": 796,
     "w": 2,
     "h": 26
@@ -3024,7 +3293,7 @@
    "tag": "span",
    "text": "Showing & Hack",
    "box": {
-    "x": 1279,
+    "x": 1277,
     "y": 796,
     "w": 138,
     "h": 26
@@ -3078,7 +3347,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1401,
+    "x": 1399,
     "y": 796,
     "w": 2,
     "h": 26
@@ -3132,7 +3401,7 @@
    "tag": "span",
    "text": "Stock Horse",
    "box": {
-    "x": 1418,
+    "x": 1416,
     "y": 796,
     "w": 106,
     "h": 26
@@ -3186,7 +3455,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1507,
+    "x": 1505,
     "y": 796,
     "w": 2,
     "h": 26
@@ -3240,7 +3509,7 @@
    "tag": "span",
    "text": "Trail Riding",
    "box": {
-    "x": 1524,
+    "x": 1522,
     "y": 796,
     "w": 107,
     "h": 26
@@ -3294,7 +3563,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1614,
+    "x": 1612,
     "y": 796,
     "w": 2,
     "h": 26
@@ -3348,7 +3617,7 @@
    "tag": "span",
    "text": "Vaulting",
    "box": {
-    "x": 1631,
+    "x": 1629,
     "y": 796,
     "w": 85,
     "h": 26
@@ -3402,7 +3671,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1699,
+    "x": 1697,
     "y": 796,
     "w": 2,
     "h": 26
@@ -3456,7 +3725,7 @@
    "tag": "span",
    "text": "Western",
    "box": {
-    "x": 1716,
+    "x": 1714,
     "y": 796,
     "w": 82,
     "h": 26
@@ -3510,7 +3779,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1781,
+    "x": 1779,
     "y": 796,
     "w": 2,
     "h": 26
@@ -3564,7 +3833,7 @@
    "tag": "span",
    "text": "Working Equitation",
    "box": {
-    "x": 1798,
+    "x": 1796,
     "y": 796,
     "w": 156,
     "h": 26
@@ -3618,7 +3887,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1938,
+    "x": 1936,
     "y": 796,
     "w": 2,
     "h": 26
@@ -3672,7 +3941,7 @@
    "tag": "span",
    "text": "Bridleless",
    "box": {
-    "x": 1954,
+    "x": 1953,
     "y": 796,
     "w": 93,
     "h": 26
@@ -3726,7 +3995,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2030,
+    "x": 2028,
     "y": 796,
     "w": 2,
     "h": 26
@@ -3780,7 +4049,7 @@
    "tag": "span",
    "text": "Campdrafting",
    "box": {
-    "x": 2047,
+    "x": 2045,
     "y": 796,
     "w": 123,
     "h": 26
@@ -3834,7 +4103,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2153,
+    "x": 2151,
     "y": 796,
     "w": 2,
     "h": 26
@@ -3888,7 +4157,7 @@
    "tag": "span",
    "text": "Carriage Driving",
    "box": {
-    "x": 2170,
+    "x": 2168,
     "y": 796,
     "w": 138,
     "h": 26
@@ -3942,7 +4211,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2291,
+    "x": 2289,
     "y": 796,
     "w": 2,
     "h": 26
@@ -3996,7 +4265,7 @@
    "tag": "span",
    "text": "Dressage",
    "box": {
-    "x": 2308,
+    "x": 2306,
     "y": 796,
     "w": 88,
     "h": 26
@@ -4050,7 +4319,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2379,
+    "x": 2377,
     "y": 796,
     "w": 2,
     "h": 26
@@ -4104,7 +4373,7 @@
    "tag": "span",
    "text": "Endurance",
    "box": {
-    "x": 2395,
+    "x": 2394,
     "y": 796,
     "w": 102,
     "h": 26
@@ -4158,7 +4427,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2481,
+    "x": 2479,
     "y": 796,
     "w": 2,
     "h": 26
@@ -4212,7 +4481,7 @@
    "tag": "span",
    "text": "Eventing",
    "box": {
-    "x": 2497,
+    "x": 2496,
     "y": 796,
     "w": 88,
     "h": 26
@@ -4266,7 +4535,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2569,
+    "x": 2567,
     "y": 796,
     "w": 2,
     "h": 26
@@ -4320,7 +4589,7 @@
    "tag": "span",
    "text": "Liberty",
    "box": {
-    "x": 2586,
+    "x": 2584,
     "y": 796,
     "w": 77,
     "h": 26
@@ -4374,7 +4643,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2646,
+    "x": 2644,
     "y": 796,
     "w": 2,
     "h": 26
@@ -4428,7 +4697,7 @@
    "tag": "span",
    "text": "Mounted Games",
    "box": {
-    "x": 2662,
+    "x": 2661,
     "y": 796,
     "w": 137,
     "h": 26
@@ -4482,7 +4751,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2783,
+    "x": 2781,
     "y": 796,
     "w": 2,
     "h": 26
@@ -4536,7 +4805,7 @@
    "tag": "span",
    "text": "Natural Horsemanship",
    "box": {
-    "x": 2799,
+    "x": 2797,
     "y": 796,
     "w": 177,
     "h": 26
@@ -4590,7 +4859,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2959,
+    "x": 2957,
     "y": 796,
     "w": 2,
     "h": 26
@@ -4644,7 +4913,7 @@
    "tag": "span",
    "text": "Para-Equestrian",
    "box": {
-    "x": 2976,
+    "x": 2974,
     "y": 796,
     "w": 139,
     "h": 26
@@ -4698,7 +4967,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3098,
+    "x": 3096,
     "y": 796,
     "w": 2,
     "h": 26
@@ -4752,7 +5021,7 @@
    "tag": "span",
    "text": "Polocrosse",
    "box": {
-    "x": 3115,
+    "x": 3113,
     "y": 796,
     "w": 98,
     "h": 26
@@ -4806,7 +5075,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3196,
+    "x": 3194,
     "y": 796,
     "w": 2,
     "h": 26
@@ -4860,7 +5129,7 @@
    "tag": "span",
    "text": "Pony Club",
    "box": {
-    "x": 3213,
+    "x": 3211,
     "y": 796,
     "w": 98,
     "h": 26
@@ -4914,7 +5183,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3294,
+    "x": 3292,
     "y": 796,
     "w": 2,
     "h": 26
@@ -4968,7 +5237,7 @@
    "tag": "span",
    "text": "Show Jumping",
    "box": {
-    "x": 3310,
+    "x": 3309,
     "y": 796,
     "w": 126,
     "h": 26
@@ -5022,7 +5291,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3420,
+    "x": 3418,
     "y": 796,
     "w": 2,
     "h": 26
@@ -5076,7 +5345,7 @@
    "tag": "span",
    "text": "Showing & Hack",
    "box": {
-    "x": 3437,
+    "x": 3435,
     "y": 796,
     "w": 138,
     "h": 26
@@ -5130,7 +5399,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3559,
+    "x": 3557,
     "y": 796,
     "w": 2,
     "h": 26
@@ -5184,7 +5453,7 @@
    "tag": "span",
    "text": "Stock Horse",
    "box": {
-    "x": 3575,
+    "x": 3573,
     "y": 796,
     "w": 106,
     "h": 26
@@ -5238,7 +5507,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3665,
+    "x": 3663,
     "y": 796,
     "w": 2,
     "h": 26
@@ -5292,7 +5561,7 @@
    "tag": "span",
    "text": "Trail Riding",
    "box": {
-    "x": 3682,
+    "x": 3680,
     "y": 796,
     "w": 107,
     "h": 26
@@ -5346,7 +5615,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3772,
+    "x": 3770,
     "y": 796,
     "w": 2,
     "h": 26
@@ -5400,7 +5669,7 @@
    "tag": "span",
    "text": "Vaulting",
    "box": {
-    "x": 3788,
+    "x": 3787,
     "y": 796,
     "w": 85,
     "h": 26
@@ -5454,7 +5723,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3857,
+    "x": 3855,
     "y": 796,
     "w": 2,
     "h": 26
@@ -5508,7 +5777,7 @@
    "tag": "span",
    "text": "Western",
    "box": {
-    "x": 3874,
+    "x": 3872,
     "y": 796,
     "w": 82,
     "h": 26
@@ -5562,7 +5831,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3939,
+    "x": 3937,
     "y": 796,
     "w": 2,
     "h": 26
@@ -5616,7 +5885,7 @@
    "tag": "span",
    "text": "Working Equitation",
    "box": {
-    "x": 3956,
+    "x": 3954,
     "y": 796,
     "w": 156,
     "h": 26
@@ -5670,7 +5939,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 4095,
+    "x": 4093,
     "y": 796,
     "w": 2,
     "h": 26

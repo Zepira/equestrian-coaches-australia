@@ -108,6 +108,8 @@ export default async function SearchPage({
       editing={editing}
       disciplineSlug={disciplineSlugs[0] ?? ""}
       locationNotFound={locationNotFound}
+      skills={skills.map((t) => ({ slug: t.slug, name: t.name }))}
+      attributes={attributes.map((t) => ({ slug: t.slug, name: t.name }))}
     />
   );
 }
