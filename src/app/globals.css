@@ -384,20 +384,27 @@ html[data-overlay-route="true"] {
   }
 }
 
-/* The search card's suggestion row. Always in the DOM as an empty, absolutely
-   positioned layer so its appearance can never push the discipline field, the
-   CTA or the hero's stat row around; `data-shown` fades and lifts it in. */
-.suggest-layer {
+/* The search card's suggestion row, inside the card under the fields. Always
+   in the DOM; `data-shown` opens it. A grid whose single row goes 0fr → 1fr
+   is what makes the height animatable at all — `height: auto` is not an
+   interpolable value, so a plain transition on it does nothing and the row
+   would snap in. The child needs `min-height: 0` and `overflow: hidden` or
+   the grid row refuses to shrink below its content.
+
+   The card growing pushes what's under it — the refine pills, the stat row —
+   but over the same 0.24s, so the whole hero settles rather than jumping. */
+.suggest-row {
+  display: grid;
+  grid-template-rows: 0fr;
   opacity: 0;
-  transform: translateY(-4px);
   pointer-events: none;
   transition:
-    opacity 0.18s ease,
-    transform 0.18s ease;
+    grid-template-rows 0.24s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.18s ease;
 }
-.suggest-layer[data-shown="true"] {
+.suggest-row[data-shown="true"] {
+  grid-template-rows: 1fr;
   opacity: 1;
-  transform: none;
   pointer-events: auto;
 }
 
@@ -597,6 +604,15 @@ html[data-overlay-route="true"] {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  /* Cancels the share of the search card's growth that this column's own
+     anchoring would otherwise take out of the top — see the --suggest-h
+     effect in search-bar.tsx. Bottom-anchored (`justify-content: flex-end`,
+     the phone default below) the whole growth pushes upward, so all of it is
+     compensated; centred, only half is. Either way the fields stay put and
+     the growth lands below, on the refine pills and the stat line. */
+  --suggest-anchor: 1;
+  transform: translateY(calc(var(--suggest-h, 0px) * var(--suggest-anchor)));
+  transition: transform 0.24s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .hero__eyebrow {
@@ -657,25 +673,12 @@ html[data-overlay-route="true"] {
   z-index: 2;
 }
 
-/* The stat row steps down out of the suggestion row's way while it's open,
-   rather than being covered by it. `transform` and not margin or height, so
-   this costs no layout: the hero keeps its own height, the card doesn't
-   move, and nothing below the hero shifts — the line of text simply slides.
-   Driven by :has() off the layer's own data-shown, so the transition is
-   already tied to the thing it's reacting to and no state has to be lifted
-   out of the search card to reach a sibling.
-
-   The transform goes on the stat cells, not on .hero__stats itself: that
-   element carries `animation: fade … both`, whose final keyframe sets
-   `transform: none`, and a filling animation outranks a plain declaration in
-   the cascade — so a rule on the row itself computes to none forever and
-   silently does nothing. The cells aren't animated, so they take it. */
-.hero__stats > div {
-  transition: transform 0.24s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-.hero__col:has(.suggest-layer[data-shown="true"]) .hero__stats > div {
-  transform: translateY(var(--suggest-step, 48px));
-}
+/* The stat row is carried down by the card's own growth (see .suggest-row),
+   so it needs no rule of its own — and could not have one anyway: it carries
+   `animation: fade … both`, whose final keyframe sets `transform: none`, and
+   a filling animation outranks a plain declaration in the cascade, so a
+   transform on this element computes to none forever and silently does
+   nothing. Anything that must move it has to move its cells instead. */
 
 .hero__stats {
   display: none; /* phones get the ↓ instead; flex from `wide` below */
@@ -720,6 +723,9 @@ html[data-overlay-route="true"] {
     width: 640px;
     max-width: 100%;
     gap: 26px;
+    /* .hero__body is `justify-content: center` from here — half the card's
+       growth goes up, so half is what needs cancelling. */
+    --suggest-anchor: 0.5;
   }
   .hero__eyebrow {
     font-size: 13px;

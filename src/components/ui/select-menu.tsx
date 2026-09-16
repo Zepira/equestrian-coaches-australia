@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { placePanel } from "@/lib/anchored-panel";
+import { Caret } from "@/components/ui/caret";
 
 // placePanel() trims this to the space the trigger's clipping ancestor
 // actually leaves visible.
@@ -142,14 +143,11 @@ export function SelectMenu({
         className={triggerClassName}
       >
         <span className={`truncate ${value ? "" : "text-subtle"}`}>{current.label}</span>
-        <span
-          aria-hidden
-          className={`ml-2 shrink-0 text-[10px] leading-none text-subtle transition-transform duration-200 ${
+        <Caret
+          className={`ml-2 h-[1.1em] w-[1.1em] shrink-0 text-subtle transition-transform duration-200 ${
             open ? "-rotate-180" : ""
           }`}
-        >
-          ▾
-        </span>
+        />
       </button>
 
       {open && (

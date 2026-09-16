@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { placePanel } from "@/lib/anchored-panel";
+import { Caret } from "@/components/ui/caret";
 
 // Tall enough for a couple of groups; placePanel() trims it to whatever the
 // trigger's clipping ancestor actually leaves visible.
@@ -106,12 +107,7 @@ export function MultiSelectMenu({
             {count}
           </span>
         )}
-        <span
-          aria-hidden
-          className={`ml-1.5 shrink-0 text-[10px] leading-none transition-transform duration-200 ${open ? "-rotate-180" : ""}`}
-        >
-          ▾
-        </span>
+        <Caret className={`ml-1.5 h-[1.15em] w-[1.15em] shrink-0 transition-transform duration-200 ${open ? "-rotate-180" : ""}`} />
       </button>
 
       {open && (

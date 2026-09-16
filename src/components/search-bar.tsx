@@ -1,11 +1,25 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { disciplines } from "@/lib/disciplines";
 import { SelectMenu } from "@/components/ui/select-menu";
 import { MultiSelectMenu, type TermOption } from "@/components/ui/multi-select-menu";
+import { Caret } from "@/components/ui/caret";
 import type { LocationSuggestion } from "@/app/api/location-suggest/route";
+
+// The two setup terms riders reach for most — worth a one-tap pill on the
+// card rather than two clicks into the panel. Slugs, matched against the
+// real `terms` rows, so a term that's been renamed or deactivated simply
+// drops out of the row instead of rendering a filter that finds nobody.
+const QUICK_ATTRIBUTES = ["horses-available", "beginners-welcome"];
+
+// The suggestion row's height has to reach the hero column in the same frame
+// the row opens, or the column's compensating transform runs a frame behind
+// the row's own growth and the fields visibly kick a few pixels before
+// settling. That means measuring after layout but before paint —
+// useLayoutEffect — which React warns about during SSR, hence the swap.
+const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /**
  * The 1a search card. Location first ("Suburb or postcode", a terracotta
@@ -22,12 +36,6 @@ import type { LocationSuggestion } from "@/app/api/location-suggest/route";
  * `tone="glass"` is the hero's translucent card; `tone="plain"` renders the
  * same fields on a cream plate for pages without a photograph behind them.
  */
-// The two setup terms riders reach for most — worth a one-tap pill on the
-// card rather than two clicks into the panel. Slugs, matched against the
-// real `terms` rows, so a term that's been renamed or deactivated simply
-// drops out of the row instead of rendering a filter that finds nobody.
-const QUICK_ATTRIBUTES = ["horses-available", "beginners-welcome"];
-
 export function SearchBar({
   defaultDiscipline = "",
   defaultLocation = "",
@@ -58,6 +66,7 @@ export function SearchBar({
   const [count, setCount] = useState<number | null>(null);
   const listId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const suggestBodyRef = useRef<HTMLDivElement>(null);
 
   // Prefix suggestions, debounced, cancelling stale requests. Only towns
   // that aren't already exactly what's typed, max three — the canvas's
@@ -108,6 +117,24 @@ export function SearchBar({
     };
   }, [location, discipline]);
 
+  // The card grows downward when the suggestion row opens — but the hero's
+  // column is bottom-anchored on phones and centred from 1100px, so left
+  // alone that growth walks the search fields upward under the rider's
+  // cursor mid-type. Publishing the row's height lets .hero__col cancel
+  // exactly the share its own anchoring would have stolen (all of it when
+  // bottom-anchored, half when centred), which pins the fields and sends the
+  // whole of the growth downward into the pills and the stat line. No-ops
+  // anywhere there is no hero — /search's edit card, the listing pages.
+  useIsomorphicLayoutEffect(() => {
+    const col = suggestBodyRef.current?.closest<HTMLElement>(".hero__col");
+    if (!col) return;
+    const height = suggestions.length > 0 ? (suggestBodyRef.current?.offsetHeight ?? 0) : 0;
+    col.style.setProperty("--suggest-h", `${height}px`);
+    return () => {
+      col.style.removeProperty("--suggest-h");
+    };
+  }, [suggestions]);
+
   const town = location.trim().split(/\s+/)[0];
   const hasLoc = location.trim().length > 0;
   const cta = hasLoc && count != null ? `Show ${count} near ${town}` : "Find a coach";
@@ -133,64 +160,60 @@ export function SearchBar({
   const shell = glass
     ? "bg-ink-fg/12 border border-ink-fg/22 backdrop-blur-[14px] rounded-[14px] wide:rounded-[16px]"
     : "bg-shade border border-border rounded-[14px] wide:rounded-[16px]";
-  // The suggestion row now floats clear of the card, so it lands on top of
-  // whatever sits below — the hero's stat row. It gets its own plate so it
-  // reads as a popover over that content rather than as a collision with it,
-  // and so the chips' contrast no longer depends on what the photograph
-  // happens to show behind them.
-  const plate = glass
-    ? "border-ink-fg/20 bg-ink-deep/88 backdrop-blur-[14px] shadow-[0_18px_44px_rgba(0,0,0,0.38)]"
-    : "border-border bg-surface shadow-[0_16px_38px_rgba(31,58,46,0.16)]";
+  // Suggestion chips sit on the card, so they read against its own plate.
   const chip = glass
     ? "border-ink-fg/35 bg-ink-fg/12 text-ink-fg hover:bg-ink-fg/22"
-    : "border-border bg-shade text-fg hover:bg-accent-soft";
-  // The refine row's pills sit on the card itself, not on a plate, so the
-  // glass variant reads against the photograph through the card's blur.
+    : "border-border bg-surface text-fg hover:bg-accent-soft";
+  // The refine pills stand on their own below the card with nothing behind
+  // them, so on the hero they have to carry their own contrast — a darker
+  // fill and a stronger edge than a chip inside the card needs.
   const quickPill = (on: boolean) =>
     on
       ? "border-accent bg-accent text-accent-fg hover:bg-accent-hover"
       : glass
-        ? "border-ink-fg/30 bg-ink-fg/10 text-ink-fg hover:bg-ink-fg/20"
-        : "border-border bg-surface text-fg hover:bg-accent-soft";
+        ? "border-ink-fg/35 bg-ink-deep/40 text-ink-fg backdrop-blur-[10px] hover:bg-ink-deep/60"
+        : "border-border bg-surface/80 text-fg hover:bg-surface";
 
-  // One set of fields in one row (location + discipline + CTA), with the
-  // suggestion row hanging off the bottom of the card as an absolutely
-  // positioned layer rather than as a flex item. As a flex item it was a
-  // `basis-full` row appearing and disappearing mid-type: on phones it sat
-  // between the location field and the discipline/CTA row and shoved them
-  // down, and on desktop it grew the card and moved the hero's stat row.
-  // Out of flow, nothing around it can move, which is also why the layer is
-  // always rendered and toggled with `data-shown` — that gives it a real
-  // fade/lift both ways instead of a hard cut.
+  // The suggestion row lives inside the card, under the fields. It is always
+  // in the DOM and opens with a grid-rows 0fr→1fr transition rather than
+  // being mounted and unmounted, so the card grows and shrinks smoothly and
+  // whatever sits below it is carried by the same animation instead of
+  // jumping. `order-5`/`basis-full` keep it the last row at every width —
+  // as a mid-order item on phones it used to land between the location field
+  // and the discipline/CTA row and shove them down mid-type.
   const chips = (
     <div
-      className={`suggest-layer absolute left-0 top-full z-20 mt-2 flex max-w-full flex-wrap items-center gap-1.5 rounded-[var(--radius-input)] border p-2 ${plate}`}
+      className="suggest-row order-5 basis-full"
       data-shown={suggestions.length > 0}
       aria-hidden={suggestions.length === 0}
       role="listbox"
       id={listId}
       aria-label="Did you mean"
     >
-      <span className={`hidden px-1 text-[13px] wide:inline ${glass ? "text-ink-fg/80" : "text-subtle"}`}>
-        Did you mean
-      </span>
-      {suggestions.map((s) => (
-        <button
-          key={s.value}
-          type="button"
-          role="option"
-          aria-selected={false}
-          tabIndex={suggestions.length > 0 ? 0 : -1}
-          onClick={() => {
-            setLocation(s.value);
-            setSuggestions([]);
-            inputRef.current?.focus();
-          }}
-          className={`rounded-[var(--radius-pill)] border px-3 py-2 text-[13px] font-medium transition-colors duration-200 ${chip}`}
-        >
-          {s.value}
-        </button>
-      ))}
+      <div className="min-h-0 overflow-hidden">
+        <div ref={suggestBodyRef} className="flex flex-wrap items-center gap-1.5 px-1 pb-0.5 pt-2">
+          <span className={`hidden px-1 text-[13px] wide:inline ${glass ? "text-ink-fg/75" : "text-subtle"}`}>
+            Did you mean
+          </span>
+          {suggestions.map((s) => (
+            <button
+              key={s.value}
+              type="button"
+              role="option"
+              aria-selected={false}
+              tabIndex={suggestions.length > 0 ? 0 : -1}
+              onClick={() => {
+                setLocation(s.value);
+                setSuggestions([]);
+                inputRef.current?.focus();
+              }}
+              className={`rounded-[var(--radius-pill)] border px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${chip}`}
+            >
+              {s.value}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
@@ -230,7 +253,10 @@ export function SearchBar({
         onChange={setDiscipline}
         placeholder="Any discipline"
         options={disciplines.map((d) => ({ value: d.slug, label: d.name }))}
-        className="js-only order-3 min-w-0 flex-1 wide:order-2"
+        // A floor, not a fixed width: the drawn caret is wider than the "▾"
+        // it replaced, and without this "Any discipline" truncates to "Any
+        // discipli…" at 1280 while the row still has room to give.
+        className="js-only order-3 min-w-0 flex-1 wide:order-2 wide:min-w-[190px]"
         triggerClassName="flex h-full w-full items-center justify-between rounded-[9px] bg-surface px-3.5 py-[13px] text-left text-[16px] text-fg outline-none transition-colors duration-200 hover:bg-shade focus-visible:ring-2 focus-visible:ring-accent wide:rounded-[10px] wide:px-4 wide:py-4 wide:text-[18px]"
       />
       {/* JavaScript off: the plain form control takes over (globals.css hides
@@ -249,9 +275,7 @@ export function SearchBar({
             </option>
           ))}
         </select>
-        <span aria-hidden className="pointer-events-none absolute right-3.5 text-[10px] text-subtle wide:right-4">
-          ▾
-        </span>
+        <Caret className="pointer-events-none absolute right-3.5 h-[1.1em] w-[1.1em] text-subtle wide:right-4" />
       </label>
     </>
   );
@@ -272,16 +296,18 @@ export function SearchBar({
     </button>
   );
 
-  // The refine row: one "Skills & setup" pill over the whole skill and
-  // attribute vocabulary, plus one-tap pills for the two setup terms riders
-  // reach for most often — those don't need a panel to say yes to. Marked
-  // js-only: with JavaScript off the menu can't open, and a dead control is
-  // worse than none (the location and discipline fields still submit).
+  // The refine row stands alone under the card — bare pills on the page, no
+  // plate behind them — so the card stays the three fields a rider has to
+  // fill in and these read as the optional extras they are. Outside the
+  // <form> too, which costs nothing: the picks reach /search through
+  // submit()'s own URLSearchParams, never through form serialisation.
+  // Marked js-only, since with JavaScript off the menu can't open and a dead
+  // control is worse than none (location and discipline still submit).
   const quick = QUICK_ATTRIBUTES.map((slug) => attributes.find((a) => a.slug === slug)).filter(
     (a): a is TermOption => Boolean(a)
   );
   const refineRow = (skills.length > 0 || attributes.length > 0) && (
-    <div className="js-only order-5 flex basis-full flex-wrap items-center gap-1.5 px-0.5 pb-0.5 pt-1 wide:order-5">
+    <div className="refine-row js-only mt-2.5 flex items-center gap-1.5">
       <MultiSelectMenu
         label="Skills & setup"
         groups={[
@@ -290,38 +316,48 @@ export function SearchBar({
         ].filter((g) => g.options.length > 0)}
         selected={refine}
         onApply={setRefine}
-        triggerClassName={`flex items-center rounded-[var(--radius-pill)] border px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${quickPill(refine.length > 0)}`}
+        triggerClassName={`flex items-center rounded-[var(--radius-pill)] border px-3.5 py-2 text-[13px] font-medium transition-colors duration-200 ${quickPill(refine.length > 0)}`}
       />
-      {quick.map((a) => {
-        const on = refine.includes(a.slug);
-        return (
-          <button
-            key={a.slug}
-            type="button"
-            aria-pressed={on}
-            onClick={() => setRefine((r) => (on ? r.filter((v) => v !== a.slug) : [...r, a.slug]))}
-            className={`rounded-[var(--radius-pill)] border px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${quickPill(on)}`}
-          >
-            {a.name}
-          </button>
-        );
-      })}
+      {/* The quick pills scroll sideways rather than wrapping: a second
+          wrapped line costs ~80px of column height, and on a 320px phone —
+          where the hero column is bottom-anchored — that pushed the headline
+          up underneath the header. The menu's own trigger stays outside this
+          scroller, since an element that scrolls on one axis clips the
+          other and would cut its panel off at the rail's edge. */}
+      <div className="hs -mr-4 flex min-w-0 flex-1 gap-1.5 overflow-x-auto pr-4 wide:mr-0 wide:flex-wrap wide:overflow-visible wide:pr-0">
+        {quick.map((a) => {
+          const on = refine.includes(a.slug);
+          return (
+            <button
+              key={a.slug}
+              type="button"
+              aria-pressed={on}
+              onClick={() => setRefine((r) => (on ? r.filter((v) => v !== a.slug) : [...r, a.slug]))}
+              className={`shrink-0 whitespace-nowrap rounded-[var(--radius-pill)] border px-3.5 py-2 text-[13px] font-medium transition-colors duration-200 ${quickPill(on)}`}
+            >
+              {a.name}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 
   return (
-    <form
-      action="/search"
-      method="get"
-      onSubmit={submit}
-      className={`relative flex flex-wrap gap-1.5 p-2 ${shell}`}
-      aria-label="Find a coach"
-    >
-      {locationField}
-      {chips}
-      {disciplineField}
-      {button}
+    <div>
+      <form
+        action="/search"
+        method="get"
+        onSubmit={submit}
+        className={`relative flex flex-wrap gap-1.5 p-2 ${shell}`}
+        aria-label="Find a coach"
+      >
+        {locationField}
+        {disciplineField}
+        {button}
+        {chips}
+      </form>
       {refineRow}
-    </form>
+    </div>
   );
 }

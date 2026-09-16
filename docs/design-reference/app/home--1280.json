@@ -546,7 +546,7 @@
    "text": "Riding coaches, Australia-wide",
    "box": {
     "x": 96,
-    "y": 158,
+    "y": 154,
     "w": 640,
     "h": 20
    },
@@ -599,7 +599,7 @@
    "tag": "h1",
    "box": {
     "x": 96,
-    "y": 203,
+    "y": 199,
     "w": 640,
     "h": 191
    },
@@ -653,7 +653,7 @@
    "text": "Find",
    "box": {
     "x": 96,
-    "y": 203,
+    "y": 199,
     "w": 139,
     "h": 90
    },
@@ -707,7 +707,7 @@
    "text": "a",
    "box": {
     "x": 249,
-    "y": 203,
+    "y": 199,
     "w": 36,
     "h": 90
    },
@@ -761,7 +761,7 @@
    "text": "coach",
    "box": {
     "x": 299,
-    "y": 203,
+    "y": 199,
     "w": 176,
     "h": 90
    },
@@ -815,7 +815,7 @@
    "text": "for",
    "box": {
     "x": 488,
-    "y": 203,
+    "y": 199,
     "w": 87,
     "h": 90
    },
@@ -869,7 +869,7 @@
    "text": "dressage .",
    "box": {
     "x": 96,
-    "y": 245,
+    "y": 241,
     "w": 284,
     "h": 90
    },
@@ -923,7 +923,7 @@
    "text": "western .",
    "box": {
     "x": 96,
-    "y": 293,
+    "y": 289,
     "w": 267,
     "h": 90
    },
@@ -950,7 +950,7 @@
     "marginTop": "0px",
     "marginBottom": "0px",
     "gap": "normal",
-    "opacity": "0.9897",
+    "opacity": "0.989634",
     "backdropFilter": "none",
     "boxShadow": "none",
     "animationName": "wordcycle",
@@ -977,7 +977,7 @@
    "text": "liberty .",
    "box": {
     "x": 96,
-    "y": 348,
+    "y": 344,
     "w": 229,
     "h": 90
    },
@@ -1031,7 +1031,7 @@
    "text": "show jumping .",
    "box": {
     "x": 96,
-    "y": 348,
+    "y": 344,
     "w": 483,
     "h": 90
    },
@@ -1085,7 +1085,7 @@
    "text": "eventing .",
    "box": {
     "x": 96,
-    "y": 348,
+    "y": 344,
     "w": 297,
     "h": 90
    },
@@ -1139,7 +1139,7 @@
    "text": "campdrafting .",
    "box": {
     "x": 96,
-    "y": 348,
+    "y": 344,
     "w": 472,
     "h": 90
    },
@@ -1193,7 +1193,7 @@
    "text": "bridleless .",
    "box": {
     "x": 96,
-    "y": 348,
+    "y": 344,
     "w": 315,
     "h": 90
    },
@@ -1247,7 +1247,7 @@
    "text": "pony club .",
    "box": {
     "x": 96,
-    "y": 348,
+    "y": 344,
     "w": 330,
     "h": 90
    },
@@ -1300,7 +1300,7 @@
    "tag": "p",
    "box": {
     "x": 96,
-    "y": 421,
+    "y": 417,
     "w": 493,
     "h": 58
    },
@@ -1354,7 +1354,7 @@
    "text": "Search riding coaches across Australia by what you ride and where you are. Free ",
    "box": {
     "x": 96,
-    "y": 422,
+    "y": 418,
     "w": 459,
     "h": 55
    },
@@ -1408,7 +1408,7 @@
    "text": "Suburb or postcode",
    "box": {
     "x": 120,
-    "y": 543,
+    "y": 539,
     "w": 1,
     "h": 1
    },
@@ -1449,7 +1449,7 @@
     "display": "block",
     "position": "absolute",
     "top": "38px",
-    "bottom": "83.5px",
+    "bottom": "44px",
     "width": "1px",
     "height": "1px",
     "aspectRatio": "auto",
@@ -1462,8 +1462,8 @@
    "placeholder": "Suburb or postcode",
    "box": {
     "x": 139,
-    "y": 514,
-    "w": 164,
+    "y": 510,
+    "w": 140,
     "h": 59
    },
    "style": {
@@ -1504,62 +1504,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "164.281px",
+    "width": "140px",
     "height": "59px",
-    "aspectRatio": "auto",
-    "textAlign": "start",
-    "maxWidth": "none"
-   }
-  },
-  {
-   "tag": "span",
-   "text": "Did you mean",
-   "box": {
-    "x": 106,
-    "y": 639,
-    "w": 87,
-    "h": 20
-   },
-   "style": {
-    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
-    "fontSize": "13px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "19.5px",
-    "letterSpacing": "normal",
-    "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.8)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.8)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.8)",
-    "paddingTop": "0px",
-    "paddingRight": "4px",
-    "paddingBottom": "0px",
-    "paddingLeft": "4px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "block",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "87.3281px",
-    "height": "19.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -1568,9 +1514,9 @@
   {
    "tag": "button",
    "box": {
-    "x": 325,
-    "y": 514,
-    "w": 166,
+    "x": 301,
+    "y": 510,
+    "w": 190,
     "h": 59
    },
    "style": {
@@ -1611,7 +1557,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "165.719px",
+    "width": "190px",
     "height": "59px",
     "aspectRatio": "auto",
     "textAlign": "left",
@@ -1622,8 +1568,8 @@
    "tag": "span",
    "text": "Any discipline",
    "box": {
-    "x": 341,
-    "y": 530,
+    "x": 317,
+    "y": 526,
     "w": 111,
     "h": 27
    },
@@ -1673,64 +1619,10 @@
    }
   },
   {
-   "tag": "span",
-   "text": "▾",
-   "box": {
-    "x": 467,
-    "y": 538,
-    "w": 8,
-    "h": 10
-   },
-   "style": {
-    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
-    "fontSize": "10px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "10px",
-    "letterSpacing": "normal",
-    "textTransform": "none",
-    "color": "rgb(108, 104, 94)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(108, 104, 94)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(108, 104, 94)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), translate 0.2s cubic-bezier(0.4, 0, 0.2, 1), scale 0.2s cubic-bezier(0.4, 0, 0.2, 1), rotate 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "block",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "8.35938px",
-    "height": "10px",
-    "aspectRatio": "auto",
-    "textAlign": "left",
-    "maxWidth": "none"
-   }
-  },
-  {
    "tag": "button",
    "box": {
     "x": 497,
-    "y": 514,
+    "y": 510,
     "w": 230,
     "h": 59
    },
@@ -1784,7 +1676,7 @@
    "text": "Find a coach",
    "box": {
     "x": 519,
-    "y": 532,
+    "y": 528,
     "w": 92,
     "h": 21
    },
@@ -1834,12 +1726,66 @@
    }
   },
   {
+   "tag": "span",
+   "text": "Did you mean",
+   "box": {
+    "x": 109,
+    "y": 583,
+    "w": 87,
+    "h": 20
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "19.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.75)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.75)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.75)",
+    "paddingTop": "0px",
+    "paddingRight": "4px",
+    "paddingBottom": "0px",
+    "paddingLeft": "4px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "87.3281px",
+    "height": "19.5px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
    "tag": "button",
    "box": {
-    "x": 107,
-    "y": 583,
-    "w": 119,
-    "h": 34
+    "x": 96,
+    "y": 594,
+    "w": 130,
+    "h": 38
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -1850,22 +1796,22 @@
     "letterSpacing": "normal",
     "textTransform": "none",
     "color": "rgb(246, 241, 231)",
-    "backgroundColor": "oklab(0.959283 0.00139529 0.0142711 / 0.1)",
+    "backgroundColor": "oklab(0.256496 -0.0301138 0.00877836 / 0.4)",
     "backgroundImage": "none",
     "borderRadius": "999px",
     "borderTopWidth": "1px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.35)",
     "borderBottomWidth": "1px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
-    "paddingTop": "6px",
-    "paddingRight": "12px",
-    "paddingBottom": "6px",
-    "paddingLeft": "12px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.35)",
+    "paddingTop": "8px",
+    "paddingRight": "14px",
+    "paddingBottom": "8px",
+    "paddingLeft": "14px",
     "marginTop": "0px",
     "marginBottom": "0px",
     "gap": "normal",
     "opacity": "1",
-    "backdropFilter": "none",
+    "backdropFilter": "blur(10px)",
     "boxShadow": "none",
     "animationName": "none",
     "animationDuration": "0s",
@@ -1879,8 +1825,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "119.109px",
-    "height": "33.5px",
+    "width": "129.688px",
+    "height": "37.5px",
     "aspectRatio": "auto",
     "textAlign": "center",
     "maxWidth": "none"
@@ -1890,8 +1836,8 @@
    "tag": "span",
    "text": "Skills & setup",
    "box": {
-    "x": 120,
-    "y": 590,
+    "x": 111,
+    "y": 603,
     "w": 79,
     "h": 20
    },
@@ -1941,67 +1887,13 @@
    }
   },
   {
-   "tag": "span",
-   "text": "▾",
-   "box": {
-    "x": 205,
-    "y": 594,
-    "w": 8,
-    "h": 10
-   },
-   "style": {
-    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
-    "fontSize": "10px",
-    "fontWeight": "500",
-    "fontStyle": "normal",
-    "lineHeight": "10px",
-    "letterSpacing": "normal",
-    "textTransform": "none",
-    "color": "rgb(246, 241, 231)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(246, 241, 231)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(246, 241, 231)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), translate 0.2s cubic-bezier(0.4, 0, 0.2, 1), scale 0.2s cubic-bezier(0.4, 0, 0.2, 1), rotate 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "block",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "8.35938px",
-    "height": "10px",
-    "aspectRatio": "auto",
-    "textAlign": "center",
-    "maxWidth": "none"
-   }
-  },
-  {
    "tag": "button",
    "text": "Horses available for lessons",
    "box": {
     "x": 232,
-    "y": 583,
-    "w": 190,
-    "h": 34
+    "y": 594,
+    "w": 194,
+    "h": 38
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -2012,22 +1904,22 @@
     "letterSpacing": "normal",
     "textTransform": "none",
     "color": "rgb(246, 241, 231)",
-    "backgroundColor": "oklab(0.959283 0.00139529 0.0142711 / 0.1)",
+    "backgroundColor": "oklab(0.256496 -0.0301138 0.00877836 / 0.4)",
     "backgroundImage": "none",
     "borderRadius": "999px",
     "borderTopWidth": "1px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.35)",
     "borderBottomWidth": "1px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
-    "paddingTop": "6px",
-    "paddingRight": "12px",
-    "paddingBottom": "6px",
-    "paddingLeft": "12px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.35)",
+    "paddingTop": "8px",
+    "paddingRight": "14px",
+    "paddingBottom": "8px",
+    "paddingLeft": "14px",
     "marginTop": "0px",
     "marginBottom": "0px",
     "gap": "normal",
     "opacity": "1",
-    "backdropFilter": "none",
+    "backdropFilter": "blur(10px)",
     "boxShadow": "none",
     "animationName": "none",
     "animationDuration": "0s",
@@ -2041,8 +1933,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "189.75px",
-    "height": "33.5px",
+    "width": "193.75px",
+    "height": "37.5px",
     "aspectRatio": "auto",
     "textAlign": "center",
     "maxWidth": "none"
@@ -2052,10 +1944,10 @@
    "tag": "button",
    "text": "Beginners welcome",
    "box": {
-    "x": 428,
-    "y": 583,
-    "w": 139,
-    "h": 34
+    "x": 431,
+    "y": 594,
+    "w": 143,
+    "h": 38
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -2066,22 +1958,22 @@
     "letterSpacing": "normal",
     "textTransform": "none",
     "color": "rgb(246, 241, 231)",
-    "backgroundColor": "oklab(0.959283 0.00139529 0.0142711 / 0.1)",
+    "backgroundColor": "oklab(0.256496 -0.0301138 0.00877836 / 0.4)",
     "backgroundImage": "none",
     "borderRadius": "999px",
     "borderTopWidth": "1px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.35)",
     "borderBottomWidth": "1px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.3)",
-    "paddingTop": "6px",
-    "paddingRight": "12px",
-    "paddingBottom": "6px",
-    "paddingLeft": "12px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.35)",
+    "paddingTop": "8px",
+    "paddingRight": "14px",
+    "paddingBottom": "8px",
+    "paddingLeft": "14px",
     "marginTop": "0px",
     "marginBottom": "0px",
     "gap": "normal",
     "opacity": "1",
-    "backdropFilter": "none",
+    "backdropFilter": "blur(10px)",
     "boxShadow": "none",
     "animationName": "none",
     "animationDuration": "0s",
@@ -2095,8 +1987,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "139px",
-    "height": "33.5px",
+    "width": "143px",
+    "height": "37.5px",
     "aspectRatio": "auto",
     "textAlign": "center",
     "maxWidth": "none"
@@ -2107,7 +1999,7 @@
    "text": "disciplines",
    "box": {
     "x": 95,
-    "y": 664,
+    "y": 668,
     "w": 1,
     "h": 1
    },
@@ -2161,7 +2053,7 @@
    "text": "disciplines",
    "box": {
     "x": 96,
-    "y": 665,
+    "y": 669,
     "w": 88,
     "h": 33
    },
@@ -2215,7 +2107,7 @@
    "text": "19",
    "box": {
     "x": 96,
-    "y": 667,
+    "y": 671,
     "w": 14,
     "h": 29
    },
@@ -2269,7 +2161,7 @@
    "text": "for riders",
    "box": {
     "x": 219,
-    "y": 664,
+    "y": 668,
     "w": 1,
     "h": 1
    },
@@ -2323,7 +2215,7 @@
    "text": "for riders",
    "box": {
     "x": 220,
-    "y": 665,
+    "y": 669,
     "w": 97,
     "h": 33
    },
@@ -2377,7 +2269,7 @@
    "text": "Free",
    "box": {
     "x": 220,
-    "y": 667,
+    "y": 671,
     "w": 31,
     "h": 29
    },
@@ -2431,7 +2323,7 @@
    "text": "contact, no commission",
    "box": {
     "x": 353,
-    "y": 664,
+    "y": 668,
     "w": 1,
     "h": 1
    },
@@ -2485,7 +2377,7 @@
    "text": "contact, no commission",
    "box": {
     "x": 354,
-    "y": 665,
+    "y": 669,
     "w": 207,
     "h": 33
    },
@@ -2539,7 +2431,7 @@
    "text": "Direct",
    "box": {
     "x": 354,
-    "y": 667,
+    "y": 671,
     "w": 45,
     "h": 29
    },

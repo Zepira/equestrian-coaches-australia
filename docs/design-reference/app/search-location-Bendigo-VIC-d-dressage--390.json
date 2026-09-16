@@ -490,7 +490,7 @@
    "box": {
     "x": 18,
     "y": 114,
-    "w": 121,
+    "w": 128,
     "h": 38
    },
    "style": {
@@ -531,7 +531,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "121.109px",
+    "width": "127.688px",
     "height": "37.5px",
     "aspectRatio": "auto",
     "textAlign": "center",
@@ -593,64 +593,10 @@
    }
   },
   {
-   "tag": "span",
-   "text": "▾",
-   "box": {
-    "x": 117,
-    "y": 128,
-    "w": 8,
-    "h": 10
-   },
-   "style": {
-    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
-    "fontSize": "10px",
-    "fontWeight": "500",
-    "fontStyle": "normal",
-    "lineHeight": "10px",
-    "letterSpacing": "normal",
-    "textTransform": "none",
-    "color": "rgb(246, 241, 231)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(246, 241, 231)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(246, 241, 231)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), translate 0.2s cubic-bezier(0.4, 0, 0.2, 1), scale 0.2s cubic-bezier(0.4, 0, 0.2, 1), rotate 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "block",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "8.35938px",
-    "height": "10px",
-    "aspectRatio": "auto",
-    "textAlign": "center",
-    "maxWidth": "none"
-   }
-  },
-  {
    "tag": "button",
    "text": "Taking new students",
    "box": {
-    "x": 147,
+    "x": 154,
     "y": 114,
     "w": 147,
     "h": 38
@@ -704,7 +650,7 @@
    "tag": "button",
    "text": "Horses available",
    "box": {
-    "x": 302,
+    "x": 308,
     "y": 114,
     "w": 125,
     "h": 38
@@ -758,7 +704,7 @@
    "tag": "button",
    "text": "Online lessons",
    "box": {
-    "x": 434,
+    "x": 441,
     "y": 114,
     "w": 113,
     "h": 38
@@ -812,7 +758,7 @@
    "tag": "button",
    "text": "Beginners welcome",
    "box": {
-    "x": 555,
+    "x": 561,
     "y": 114,
     "w": 141,
     "h": 38
@@ -866,7 +812,7 @@
    "tag": "button",
    "text": "Indoor arena",
    "box": {
-    "x": 704,
+    "x": 710,
     "y": 114,
     "w": 103,
     "h": 38
@@ -920,7 +866,7 @@
    "tag": "button",
    "text": "Weekends",
    "box": {
-    "x": 815,
+    "x": 821,
     "y": 114,
     "w": 89,
     "h": 38

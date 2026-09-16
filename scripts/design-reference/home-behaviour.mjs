@@ -104,25 +104,43 @@ const browser = await chromium.launch();
   const chipsAfter = await page.locator(".hero__search [role=option]").count();
   row(chipsAfter === 0, "chips clear once a town is chosen", String(chipsAfter));
 
-  // Nothing in or under the card may move while the rider types. The
-  // suggestion row and the discipline menu are both out of flow, and the CTA
-  // has a fixed width so its label changing can't resize the field beside it.
+  // The suggestion row opens inside the card, so the card grows. What must
+  // not move is anything the rider is aiming at: the fields themselves and
+  // the card's top edge. The growth is cancelled out of the hero column's
+  // anchoring (--suggest-h) and so lands entirely below — on the refine
+  // pills and the stat line — and the hero itself never changes height.
+  // The CTA has a fixed width so its label changing can't resize the field
+  // beside it, and the discipline menu is out of flow entirely.
   {
     const box = (sel) => page.locator(sel).boundingBox();
-    const sels = [".hero__search form", '.hero__search [aria-haspopup="listbox"]', ".hero__search button[type=submit]", ".hero__stats"];
+    const fields = ['.hero__search input[name="location"]', '.hero__search [aria-haspopup="listbox"]', ".hero__search button[type=submit]"];
+    const card = ".hero__search form";
+    const below = [".hero__search .refine-row", ".hero__stats"];
+    const all = [...fields, card, ...below, ".hero"];
     await input.fill("");
     await page.waitForTimeout(700);
-    const before = await Promise.all(sels.map(box));
+    const before = await Promise.all(all.map(box));
     await input.fill("Bend");
-    await page.waitForTimeout(900);
-    const during = await Promise.all(sels.map(box));
+    await page.waitForTimeout(1000);
+    const during = await Promise.all(all.map(box));
     await page.locator('.hero__search [aria-haspopup="listbox"]').click();
     await page.waitForTimeout(300);
-    const withMenu = await Promise.all(sels.map(box));
+    const withMenu = await Promise.all(all.map(box));
     await page.keyboard.press("Escape");
-    const same = (a, b) => a.every((r, i) => Math.round(r.x) === Math.round(b[i].x) && Math.round(r.y) === Math.round(b[i].y) && Math.round(r.width) === Math.round(b[i].width) && Math.round(r.height) === Math.round(b[i].height));
-    row(same(before, during), "suggestions appearing moves nothing", sels.map((s, i) => `${s}: ${Math.round(before[i].y)}→${Math.round(during[i].y)}`).join(" | "));
-    row(same(before, withMenu), "opening the discipline menu moves nothing");
+    const at = (snap, sel) => snap[all.indexOf(sel)];
+    const stillY = (a, b, sels) => sels.every((sel) => Math.round(at(a, sel).y) === Math.round(at(b, sel).y));
+    const sameBox = (a, b) => a.every((r, i) => ["x", "y", "width", "height"].every((k) => Math.round(r[k]) === Math.round(b[i][k])));
+
+    row(stillY(before, during, fields), "the fields hold still while suggestions open",
+      fields.map((sel) => `${Math.round(at(before, sel).y)}→${Math.round(at(during, sel).y)}`).join(" | "));
+    row(Math.round(at(before, card).y) === Math.round(at(during, card).y), "the card's top edge holds still");
+    const grew = Math.round(at(during, card).height - at(before, card).height);
+    row(grew > 20, "the card grows to hold the suggestions", `${grew}px`);
+    row(below.every((sel) => Math.round(at(during, sel).y) - Math.round(at(before, sel).y) >= grew - 2),
+      "the pills and stat line are carried down by the growth",
+      below.map((sel) => `${Math.round(at(during, sel).y - at(before, sel).y)}px`).join(" | "));
+    row(Math.round(at(before, ".hero").height) === Math.round(at(during, ".hero").height), "the hero itself never changes height");
+    row(sameBox(during, withMenu), "opening the discipline menu moves nothing");
     // Put the field back the way the rest of this block found it.
     await page.locator(".hero__search [role=option]", { hasText: "Bendigo VIC" }).first().click();
     await page.waitForTimeout(900);
