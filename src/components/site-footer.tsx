@@ -21,6 +21,7 @@ const columns = [
   {
     heading: "About",
     links: [
+      { href: "/about", label: "About us" },
       { href: "/login", label: "Log in" },
       { href: "mailto:hello@equestriancoaches.au", label: "Contact" },
     ],

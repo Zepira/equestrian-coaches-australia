@@ -154,6 +154,7 @@ const NAV = [
   { href: "/search", label: "Find a coach" },
   { href: "/disciplines/dressage", label: "Disciplines", match: "/disciplines" },
   { href: "/for-coaches", label: "For coaches" },
+  { href: "/about", label: "About" },
 ];
 
 export function SiteHeader() {

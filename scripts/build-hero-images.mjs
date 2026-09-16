@@ -18,6 +18,7 @@
  *   for-coaches  /for-coaches hero (Unsplash portrait master, cropped to
  *                3:2 here — `aspect` + `position` below)
  *   founding     the founding-coaches band/card behind a dark wash
+ *   about-*      the two portraits on /about (see the CROPS comment below)
  *
  * Ladder widths follow Next.js's default deviceSizes where the master allows.
  * None of them upscale: a width larger than the master is skipped, so the
@@ -38,6 +39,11 @@ const CROPS = {
   // `position` is sharp's crop gravity ("top", "centre", "attention"…).
   "for-coaches": { widths: [768, 1024, 1280, 1536, 1920], fallback: 1280, aspect: 1, position: "centre" },
   founding: { widths: [640, 1024, 1400], fallback: 1024, aspect: 1.25, position: "centre" },
+  // /about — Rosie (Lisa Gordon / Little More Grace Photographics, permission
+  // pending; the master carries her watermark top-left, kept on purpose until
+  // terms are agreed) and the coach portrait slot, currently a stand-in.
+  "about-rosie": { widths: [640, 1024, 1400, 1800], fallback: 1024, aspect: 1.2, position: "centre" },
+  "about-kim": { widths: [480, 800, 1200], fallback: 800, aspect: 0.8, position: "attention" },
 };
 
 const QUALITY = { avif: 55, webp: 74, jpeg: 80 };
