@@ -73,8 +73,12 @@ export default async function Home() {
         leadShort="Search by what you ride and where you are. Free for riders, always."
         stats={[
           { value: String(disciplines.length), label: "disciplines" },
+          // The same list the page and /search are built from, so the number
+          // is the number a rider actually finds — not a claim about how big
+          // the site is. It falls to the real count on its own the day the
+          // mock coaches come out (src/lib/mock-coaches.ts).
+          { value: String(all.length), label: all.length === 1 ? "coach" : "coaches" },
           { value: "Free", label: "for riders" },
-          { value: "Direct", label: "contact, no commission" },
         ]}
       >
         <SearchBar skills={skills} attributes={attributes} />

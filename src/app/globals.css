@@ -408,6 +408,24 @@ html[data-overlay-route="true"] {
   pointer-events: auto;
 }
 
+/* Whichever of the card and the refine pills has a menu open is raised above
+   the other. Needed because the glass card sets `backdrop-filter`, which
+   makes it a stacking context: the discipline panel's own z-index then only
+   ranks it *inside* the card, and the pill row — later in the DOM, with
+   positioned children of its own — painted straight over the top of it. A
+   fixed order can't work either, since the pills sit near the bottom of the
+   hero and their panel usually flips up over the card. So the open one wins,
+   whichever it is. */
+.search-card > form,
+.search-card > .refine-row {
+  position: relative;
+  z-index: 1;
+}
+.search-card:has(> form [aria-expanded="true"]) > form,
+.search-card:has(> .refine-row [aria-expanded="true"]) > .refine-row {
+  z-index: 3;
+}
+
 /* Progressive enhancement for the discipline picker: the styled menu is the
    real control, with a native <select> kept in the markup purely so the
    search card still submits a discipline with JavaScript off. Default state

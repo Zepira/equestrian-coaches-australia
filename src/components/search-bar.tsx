@@ -289,7 +289,7 @@ export function SearchBar({
   const button = (
     <button
       type="submit"
-      className="order-4 min-h-12 w-[150px] shrink-0 rounded-[9px] bg-accent px-[18px] text-left text-[16px] font-semibold leading-tight text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:order-3 wide:w-[230px] wide:rounded-[10px] wide:px-[22px]"
+      className="order-4 min-h-12 w-[150px] shrink-0 rounded-[9px] bg-accent px-[18px] text-left text-[16px] font-semibold leading-tight text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:order-3 wide:w-[206px] wide:rounded-[10px] wide:px-[18px]"
     >
       <span className="wide:hidden">Find a coach</span>
       <span className="hidden wide:inline">{cta}</span>
@@ -307,7 +307,7 @@ export function SearchBar({
     (a): a is TermOption => Boolean(a)
   );
   const refineRow = (skills.length > 0 || attributes.length > 0) && (
-    <div className="refine-row js-only mt-2.5 flex items-center gap-1.5">
+    <div className="refine-row js-only relative mt-2.5 flex items-center gap-1.5">
       <MultiSelectMenu
         label="Skills & setup"
         groups={[
@@ -344,7 +344,7 @@ export function SearchBar({
   );
 
   return (
-    <div>
+    <div className="search-card">
       <form
         action="/search"
         method="get"
