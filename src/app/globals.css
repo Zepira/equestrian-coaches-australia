@@ -337,6 +337,74 @@ html[data-overlay-route="true"] {
   }
 }
 
+/* Overlays that open off a control — the discipline menu (ui/select-menu.tsx)
+   and the search card's "Did you mean" row. Both are absolutely positioned so
+   opening them never reflows the fields around them; these just stop them
+   appearing as a hard cut. transform-origin follows the edge they hang from,
+   so a menu that flipped above its trigger grows downward-to-up instead of
+   the reverse. The site-wide prefers-reduced-motion reset near the top of
+   this file already collapses these to ~0s. */
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.menu-panel {
+  animation: menu-in 0.16s var(--ease-out, cubic-bezier(0.22, 0.61, 0.36, 1)) both;
+  transform-origin: top center;
+  /* 19 disciplines scroll; the platform's default bar is a grey slab in the
+     middle of a cream panel. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+  overscroll-behavior: contain;
+}
+.menu-panel--up {
+  transform-origin: bottom center;
+}
+.menu-panel--up {
+  animation-name: menu-in-up;
+}
+@keyframes menu-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The search card's suggestion row. Always in the DOM as an empty, absolutely
+   positioned layer so its appearance can never push the discipline field, the
+   CTA or the hero's stat row around; `data-shown` fades and lifts it in. */
+.suggest-layer {
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+.suggest-layer[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* Progressive enhancement for the discipline picker: the styled menu is the
+   real control, with a native <select> kept in the markup purely so the
+   search card still submits a discipline with JavaScript off. Default state
+   hides the native one; the <noscript> block in layout.tsx swaps them. */
+.nojs-only {
+  display: none;
+}
+
 /* The word-by-word headline: each word sits in an overflow-hidden clip so it
    rises up out of nothing. The clip carries a little padding-bottom /
    negative margin so descenders aren't shaved off mid-rise. */
@@ -572,6 +640,17 @@ html[data-overlay-route="true"] {
   font-size: 12px;
   color: rgb(246 241 231 / 0.5);
   animation: bob 2.4s ease-in-out infinite;
+}
+
+/* The card's own popovers (the discipline menu, the "Did you mean" row) hang
+   below it, over the stat row and the scroll arrow. Both of those are later
+   siblings carrying `animation: fade … both`, and an animation that is still
+   filling keeps its own stacking context alive in Chrome — so without a
+   z-index here they paint over an absolutely positioned child of the card
+   regardless of its own z-index, which is not what the DOM order suggests. */
+.hero__search {
+  position: relative;
+  z-index: 2;
 }
 
 .hero__stats {

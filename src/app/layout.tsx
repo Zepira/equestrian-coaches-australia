@@ -113,7 +113,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             failing to hydrate. Never leaves real, SEO-relevant content
             (discipline blurbs, coach cards) permanently invisible. */}
         <noscript>
-          <style>{"[data-reveal] { opacity: 1 !important; transform: none !important; }"}</style>
+          <style>
+            {"[data-reveal] { opacity: 1 !important; transform: none !important; }" +
+              /* The search card's discipline picker is a styled menu (it needs
+                 to be — a native select's option list is drawn by the OS and
+                 can't carry the palette). With JavaScript off that menu can't
+                 open, so the real <select> kept beside it takes over and the
+                 card stays a working GET form. */
+              " .nojs-only { display: flex !important; } .js-only { display: none !important; }"}
+          </style>
         </noscript>
         <a
           href="#main-content"

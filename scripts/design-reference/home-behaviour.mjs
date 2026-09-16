@@ -103,7 +103,35 @@ const browser = await chromium.launch();
   row(m && Number(m[1]) === api.count, `CTA count matches /api/coach-count (${api.count})`);
   const chipsAfter = await page.locator(".hero__search [role=option]").count();
   row(chipsAfter === 0, "chips clear once a town is chosen", String(chipsAfter));
-  await page.locator(".hero__search select").selectOption("dressage");
+
+  // Nothing in or under the card may move while the rider types. The
+  // suggestion row and the discipline menu are both out of flow, and the CTA
+  // has a fixed width so its label changing can't resize the field beside it.
+  {
+    const box = (sel) => page.locator(sel).boundingBox();
+    const sels = [".hero__search form", '.hero__search [aria-haspopup="listbox"]', ".hero__search button[type=submit]", ".hero__stats"];
+    await input.fill("");
+    await page.waitForTimeout(700);
+    const before = await Promise.all(sels.map(box));
+    await input.fill("Bend");
+    await page.waitForTimeout(900);
+    const during = await Promise.all(sels.map(box));
+    await page.locator('.hero__search [aria-haspopup="listbox"]').click();
+    await page.waitForTimeout(300);
+    const withMenu = await Promise.all(sels.map(box));
+    await page.keyboard.press("Escape");
+    const same = (a, b) => a.every((r, i) => Math.round(r.x) === Math.round(b[i].x) && Math.round(r.y) === Math.round(b[i].y) && Math.round(r.width) === Math.round(b[i].width) && Math.round(r.height) === Math.round(b[i].height));
+    row(same(before, during), "suggestions appearing moves nothing", sels.map((s, i) => `${s}: ${Math.round(before[i].y)}→${Math.round(during[i].y)}`).join(" | "));
+    row(same(before, withMenu), "opening the discipline menu moves nothing");
+    // Put the field back the way the rest of this block found it.
+    await page.locator(".hero__search [role=option]", { hasText: "Bendigo VIC" }).first().click();
+    await page.waitForTimeout(900);
+  }
+  // The discipline picker is the styled menu (ui/select-menu.tsx), not the
+  // native <select> — that one is still in the markup but hidden, and only
+  // takes over with JavaScript off.
+  await page.locator('.hero__search [aria-haspopup="listbox"]').click();
+  await page.locator(".hero__search .menu-panel [role=option]", { hasText: "Dressage" }).first().click();
   await page.waitForTimeout(900);
   const cta2 = await page.locator(".hero__search button[type=submit]").innerText();
   const api2 = await page.evaluate(() => fetch("/api/coach-count?location=Bendigo%20VIC&d=dressage").then((r) => r.json()));
