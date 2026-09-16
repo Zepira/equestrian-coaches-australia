@@ -5,7 +5,7 @@ import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
 import { DisciplineMarquee } from "@/components/discipline-marquee";
 import { Reveal } from "@/components/reveal";
-import { disciplines, getDisciplineBySlug } from "@/lib/disciplines";
+import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
 import { searchCoaches } from "@/lib/supabase/queries";
@@ -21,18 +21,9 @@ export const viewport: Viewport = {
   themeColor: "#14281f",
 };
 
-// The eight disciplines the canvas shows in "Start with what you ride", in
-// its order. Counts are real (published + mock coaches tagged with each).
-const FEATURED_DISCIPLINE_SLUGS = [
-  "dressage",
-  "western",
-  "liberty",
-  "show-jumping",
-  "eventing",
-  "campdrafting",
-  "bridleless",
-  "working-equitation",
-];
+// "Start with what you ride" lists every discipline, alphabetically (the
+// order `disciplines` is already exported in). Counts are real (published
+// + mock coaches tagged with each).
 
 const CYCLE = ["dressage", "western", "liberty", "show jumping", "eventing", "campdrafting", "bridleless", "pony club"];
 
@@ -64,10 +55,11 @@ export default async function Home() {
 
   const countByName = new Map<string, number>();
   for (const c of all) for (const n of c.disciplineNames) countByName.set(n, (countByName.get(n) ?? 0) + 1);
-  const featuredDisciplines = FEATURED_DISCIPLINE_SLUGS.map((slug) => {
-    const d = getDisciplineBySlug(slug)!;
-    return { ...d, count: countByName.get(d.name) ?? 0, photo: disciplinePhoto(slug, 600) };
-  });
+  const allDisciplines = disciplines.map((d) => ({
+    ...d,
+    count: countByName.get(d.name) ?? 0,
+    photo: disciplinePhoto(d.slug, 600),
+  }));
 
   return (
     <>
@@ -132,19 +124,19 @@ export default async function Home() {
             </h2>
             <p className="mt-3.5 text-[16px] leading-[1.5] text-ink-fg/78 wide:mt-5 wide:max-w-[36ch] wide:text-[18px]">
               Coaches are listed by the disciplines they actually teach, not by keyword.
-              <span className="hidden wide:inline"> Nineteen so far, from dressage to campdrafting.</span>
+              <span className="hidden wide:inline"> All {disciplines.length} of them, from bridleless to working equitation.</span>
             </p>
             <Link
               href="/search"
               className="mt-5 hidden border-b border-current text-[15px] font-medium text-peach wide:mt-7 wide:inline-block"
             >
-              All {disciplines.length} disciplines
+              Browse every coach
             </Link>
           </div>
 
           {/* phones: divided list */}
           <div className="mt-7 flex flex-col border-t border-ink-fg/20 wide:hidden">
-            {featuredDisciplines.map((d) => (
+            {allDisciplines.map((d) => (
               <Link
                 key={d.slug}
                 href={`/disciplines/${d.slug}`}
@@ -173,12 +165,12 @@ export default async function Home() {
             href="/search"
             className="mt-5 inline-block border-b border-current text-[15px] font-medium text-peach wide:hidden"
           >
-            All {disciplines.length} disciplines
+            Browse every coach
           </Link>
 
           {/* desktop: 2-col photo grid */}
           <div className="hidden grid-cols-2 gap-3.5 wide:grid">
-            {featuredDisciplines.map((d) => (
+            {allDisciplines.map((d) => (
               <Link
                 key={d.slug}
                 href={`/disciplines/${d.slug}`}
