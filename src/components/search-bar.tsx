@@ -4,7 +4,10 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { disciplines } from "@/lib/disciplines";
 import { SelectMenu } from "@/components/ui/select-menu";
-import { MultiSelectMenu, type TermOption } from "@/components/ui/multi-select-menu";
+import { MultiSelectMenu } from "@/components/ui/multi-select-menu";
+import type { TermOption } from "@/lib/term-options";
+import { parseState } from "@/lib/au-states";
+import { LocateButton } from "@/components/locate-button";
 import { Caret } from "@/components/ui/caret";
 import type { LocationSuggestion } from "@/app/api/location-suggest/route";
 
@@ -43,6 +46,7 @@ export function SearchBar({
   defaultAttributes = [],
   skills = [],
   attributes = [],
+  disciplineOptions,
   tone = "glass",
   autoFocus = false,
 }: {
@@ -55,10 +59,14 @@ export function SearchBar({
    *  have them gets exactly the card it had before. */
   skills?: TermOption[];
   attributes?: TermOption[];
+  /** The discipline list from the `terms` table; falls back to the static
+   *  seed so the card still works with no server data. */
+  disciplineOptions?: TermOption[];
   tone?: "glass" | "plain";
   autoFocus?: boolean;
 }) {
   const router = useRouter();
+  const disciplineList: TermOption[] = disciplineOptions ?? disciplines.map((d) => ({ slug: d.slug, name: d.name }));
   const [discipline, setDiscipline] = useState(defaultDiscipline);
   const [location, setLocation] = useState(defaultLocation);
   const [refine, setRefine] = useState<string[]>([...defaultSkills, ...defaultAttributes]);
@@ -68,27 +76,51 @@ export function SearchBar({
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestBodyRef = useRef<HTMLDivElement>(null);
 
-  // Prefix suggestions, debounced, cancelling stale requests. Only towns
-  // that aren't already exactly what's typed, max three — the canvas's
-  // "Did you mean" row, not a full dropdown.
+  // Prefix suggestions. Two things keep this feeling instant even though
+  // the API is a ~200ms round trip: every response is cached by query, and
+  // on each keystroke the longest cached prefix of what's typed is narrowed
+  // client-side and shown at once — the fetch (short debounce, stale
+  // requests cancelled) then confirms or corrects it. Only towns that
+  // aren't already exactly what's typed, max three — the canvas's "Did you
+  // mean" row, not a full dropdown.
+  const suggestCache = useRef(new Map<string, LocationSuggestion[]>());
   useEffect(() => {
     const q = location.trim();
+    const lower = q.toLowerCase();
+    const pick = (list: LocationSuggestion[]) =>
+      list.filter((s) => s.value.toLowerCase() !== lower).slice(0, 3);
+    if (q.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    const cache = suggestCache.current;
+    const exact = cache.get(lower);
+    if (exact) {
+      setSuggestions(pick(exact));
+      return;
+    }
+    // Longest cached prefix, narrowed locally: "bend" → "bendi" needs no
+    // round trip to drop Benda and Bendoc.
+    for (let n = lower.length - 1; n >= 2; n--) {
+      const prev = cache.get(lower.slice(0, n));
+      if (!prev) continue;
+      const isNumeric = /^\d+$/.test(lower);
+      setSuggestions(
+        pick(prev.filter((s) => (isNumeric ? s.postcode.startsWith(lower) : s.suburb.toLowerCase().startsWith(lower))))
+      );
+      break;
+    }
     const controller = new AbortController();
     const timer = setTimeout(() => {
-      if (q.length < 2) {
-        setSuggestions([]);
-        return;
-      }
       fetch(`/api/location-suggest?q=${encodeURIComponent(q)}`, { signal: controller.signal })
         .then((r) => r.json())
         .then((data: { suggestions: LocationSuggestion[] }) => {
-          const lower = q.toLowerCase();
-          setSuggestions(
-            (data.suggestions ?? []).filter((s) => s.value.toLowerCase() !== lower).slice(0, 3)
-          );
+          const list = data.suggestions ?? [];
+          cache.set(lower, list);
+          setSuggestions(pick(list));
         })
         .catch(() => {});
-    }, 200);
+    }, 80);
     return () => {
       clearTimeout(timer);
       controller.abort();
@@ -110,7 +142,7 @@ export function SearchBar({
         .then((r) => r.json())
         .then((data: { count: number | null }) => setCount(data.count ?? null))
         .catch(() => {});
-    }, 300);
+    }, 200);
     return () => {
       clearTimeout(timer);
       controller.abort();
@@ -135,9 +167,11 @@ export function SearchBar({
     };
   }, [suggestions]);
 
-  const town = location.trim().split(/\s+/)[0];
+  // "Show 12 near Bendigo", or "Show 40 across Victoria" for a state.
+  const stateTyped = parseState(location);
+  const town = stateTyped ? stateTyped.name : location.trim().split(/\s+/)[0];
   const hasLoc = location.trim().length > 0;
-  const cta = hasLoc && count != null ? `Show ${count} near ${town}` : "Find a coach";
+  const cta = hasLoc && count != null ? `Show ${count} ${stateTyped ? "across" : "near"} ${town}` : "Find a coach";
 
   // Skills and attributes are separate URL params (`s` and `a`) because the
   // RPC ORs within a kind and ANDs across them — but they share one picker,
@@ -161,18 +195,24 @@ export function SearchBar({
     ? "bg-ink-fg/12 border border-ink-fg/22 backdrop-blur-[14px] rounded-[14px] wide:rounded-[16px]"
     : "bg-shade border border-border rounded-[14px] wide:rounded-[16px]";
   // Suggestion chips sit on the card, so they read against its own plate.
+  // Hover inverts the pill (cream fill, ink text) rather than nudging its
+  // opacity — on the photograph a 10% change in a translucent fill reads as
+  // nothing. Tailwind's preflight also resets buttons to `cursor: default`,
+  // so the pointer has to be asked for.
   const chip = glass
-    ? "border-ink-fg/35 bg-ink-fg/12 text-ink-fg hover:bg-ink-fg/22"
-    : "border-border bg-surface text-fg hover:bg-accent-soft";
+    ? "cursor-pointer border-ink-fg/35 bg-ink-fg/12 text-ink-fg hover:border-ink-fg hover:bg-ink-fg hover:text-ink"
+    : "cursor-pointer border-border bg-surface text-fg hover:border-accent hover:bg-accent-soft";
   // The refine pills stand on their own below the card with nothing behind
   // them, so on the hero they have to carry their own contrast — a darker
   // fill and a stronger edge than a chip inside the card needs.
   const quickPill = (on: boolean) =>
-    on
-      ? "border-accent bg-accent text-accent-fg hover:bg-accent-hover"
-      : glass
-        ? "border-ink-fg/35 bg-ink-deep/40 text-ink-fg backdrop-blur-[10px] hover:bg-ink-deep/60"
-        : "border-border bg-surface/80 text-fg hover:bg-surface";
+    `cursor-pointer hover:-translate-y-px ${
+      on
+        ? "border-accent bg-accent text-accent-fg hover:bg-accent-hover"
+        : glass
+          ? "border-ink-fg/35 bg-ink-deep/40 text-ink-fg backdrop-blur-[10px] hover:border-ink-fg hover:bg-ink-fg hover:text-ink"
+          : "border-border bg-surface/80 text-fg hover:border-ink hover:bg-surface"
+    }`;
 
   // The suggestion row lives inside the card, under the fields. It is always
   // in the DOM and opens with a grid-rows 0fr→1fr transition rather than
@@ -238,8 +278,15 @@ export function SearchBar({
           hasLoc && count != null ? "opacity-100" : "opacity-0"
         }`}
       >
-        {count != null ? `${count} nearby` : ""}
+        {count != null ? `${count} ${stateTyped ? "state-wide" : "nearby"}` : ""}
       </span>
+      <LocateButton
+        onLocated={(loc) => {
+          setLocation(loc.value);
+          setSuggestions([]);
+          inputRef.current?.focus();
+        }}
+      />
     </label>
   );
 
@@ -252,7 +299,7 @@ export function SearchBar({
         value={discipline}
         onChange={setDiscipline}
         placeholder="Any discipline"
-        options={disciplines.map((d) => ({ value: d.slug, label: d.name }))}
+        options={disciplineList.map((d) => ({ value: d.slug, label: d.name, keywords: d.aliases }))}
         // A floor, not a fixed width: the drawn caret is wider than the "▾"
         // it replaced, and without this "Any discipline" truncates to "Any
         // discipli…" at 1280 while the row still has room to give.
@@ -269,7 +316,7 @@ export function SearchBar({
           className="w-full appearance-none bg-transparent py-[13px] pr-[18px] text-[16px] text-fg outline-none wide:py-4 wide:text-[18px]"
         >
           <option value="">Any discipline</option>
-          {disciplines.map((d) => (
+          {disciplineList.map((d) => (
             <option key={d.slug} value={d.slug}>
               {d.name}
             </option>
@@ -289,7 +336,7 @@ export function SearchBar({
   const button = (
     <button
       type="submit"
-      className="order-4 min-h-12 w-[150px] shrink-0 rounded-[9px] bg-accent px-[18px] text-left text-[16px] font-semibold leading-tight text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:order-3 wide:w-[206px] wide:rounded-[10px] wide:px-[18px]"
+      className="order-4 flex min-h-12 w-[150px] shrink-0 items-center justify-center rounded-[9px] bg-accent px-[18px] text-center text-[16px] font-semibold leading-tight text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:order-3 wide:w-[206px] wide:rounded-[10px] wide:px-[18px]"
     >
       <span className="wide:hidden">Find a coach</span>
       <span className="hidden wide:inline">{cta}</span>
@@ -316,7 +363,7 @@ export function SearchBar({
         ].filter((g) => g.options.length > 0)}
         selected={refine}
         onApply={setRefine}
-        triggerClassName={`flex items-center rounded-[var(--radius-pill)] border px-3.5 py-2 text-[13px] font-medium transition-colors duration-200 ${quickPill(refine.length > 0)}`}
+        triggerClassName={`flex items-center rounded-[var(--radius-pill)] border px-3.5 py-2 text-[13px] font-medium transition-[background-color,color,border-color,transform] duration-200 ${quickPill(refine.length > 0)}`}
       />
       {/* The quick pills scroll sideways rather than wrapping: a second
           wrapped line costs ~80px of column height, and on a 320px phone —
@@ -333,7 +380,7 @@ export function SearchBar({
               type="button"
               aria-pressed={on}
               onClick={() => setRefine((r) => (on ? r.filter((v) => v !== a.slug) : [...r, a.slug]))}
-              className={`shrink-0 whitespace-nowrap rounded-[var(--radius-pill)] border px-3.5 py-2 text-[13px] font-medium transition-colors duration-200 ${quickPill(on)}`}
+              className={`shrink-0 whitespace-nowrap rounded-[var(--radius-pill)] border px-3.5 py-2 text-[13px] font-medium transition-[background-color,color,border-color,transform] duration-200 ${quickPill(on)}`}
             >
               {a.name}
             </button>

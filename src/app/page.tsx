@@ -5,11 +5,12 @@ import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
 import { DisciplineMarquee } from "@/components/discipline-marquee";
 import { Reveal } from "@/components/reveal";
-import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
-import { getAttributes, getSkills, searchCoaches } from "@/lib/supabase/queries";
-import { searchMockCoaches, disciplinePhoto } from "@/lib/mock-coaches";
+import { getAttributes, getDisciplineContent, getSkills, searchCoaches } from "@/lib/supabase/queries";
+import { disciplineImage } from "@/lib/discipline-content";
+import { toTermOption } from "@/lib/term-options";
+import { searchMockCoaches } from "@/lib/mock-coaches";
 
 // Overrides the root layout's cream themeColor (src/app/layout.tsx) — this
 // is the one route whose own top edge is the dark hero, not the cream
@@ -48,7 +49,11 @@ const STEPS = [
 export default async function Home() {
   const supabase = await createClient();
   // The skill/attribute vocabulary for the card's "Skills & setup" picker.
-  const [skills, attributes] = await Promise.all([getSkills(supabase), getAttributes(supabase)]);
+  const [skills, attributes, disciplines] = await Promise.all([
+    getSkills(supabase),
+    getAttributes(supabase),
+    getDisciplineContent(supabase),
+  ]);
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const all = supabase
     ? [...(await searchCoaches(supabase, {})), ...searchMockCoaches({})]
@@ -60,8 +65,9 @@ export default async function Home() {
   const allDisciplines = disciplines.map((d) => ({
     ...d,
     count: countByName.get(d.name) ?? 0,
-    photo: disciplinePhoto(d.slug, 600),
+    photo: disciplineImage(d, 600),
   }));
+  const disciplineOptions = disciplines.map(toTermOption);
 
   return (
     <>
@@ -81,10 +87,10 @@ export default async function Home() {
           { value: "Free", label: "for riders" },
         ]}
       >
-        <SearchBar skills={skills} attributes={attributes} />
+        <SearchBar skills={skills.map(toTermOption)} attributes={attributes.map(toTermOption)} disciplineOptions={disciplineOptions} />
       </Hero>
 
-      <DisciplineMarquee />
+      <DisciplineMarquee names={disciplines.map((d) => d.name)} />
 
       {/* ── Featured coaches ─────────────────────────────────────────── */}
       <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] pt-14 wide:px-12 wide:pt-[88px]">
@@ -151,7 +157,7 @@ export default async function Home() {
                 <span className="flex min-w-0 items-center gap-3.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={d.photo}
+                    src={d.photo.src}
                     alt=""
                     className="h-[52px] w-[52px] shrink-0 rounded-t-[26px] rounded-b-[6px] object-cover"
                     loading="lazy"
@@ -185,8 +191,8 @@ export default async function Home() {
                 <span data-parallax="drift" data-parallax-speed="0.08" data-parallax-max="40" className="parallax-drift absolute inset-0 block">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={d.photo}
-                    alt=""
+                    src={d.photo.src}
+                    alt={d.photo.alt}
                     className="block h-full w-full object-cover transition-transform duration-[800ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-105"
                     loading="lazy"
                   />

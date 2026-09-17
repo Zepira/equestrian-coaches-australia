@@ -6,7 +6,7 @@ const columns = [
     heading: "Riders",
     links: [
       { href: "/search", label: "Find a coach" },
-      { href: "/disciplines/dressage", label: "Disciplines" },
+      { href: "/disciplines", label: "Disciplines" },
       { href: "/account", label: "My account" },
     ],
   },

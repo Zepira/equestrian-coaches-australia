@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Wordmark } from "@/components/wordmark";
+import { parseState } from "@/lib/au-states";
 import { SearchChips } from "@/components/search-chips";
 import { SearchFacets } from "@/components/search-facets";
 import { BackToResults } from "@/components/back-to-results";
@@ -109,6 +110,7 @@ function SearchSummary({ className = "" }: { className?: string }) {
     .filter(Boolean)
     .map((s) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
   const radius = params.get("r") ?? "50";
+  const state = parseState(location);
   const edit = new URLSearchParams(params.toString());
   edit.set("edit", "1");
   return (
@@ -119,10 +121,10 @@ function SearchSummary({ className = "" }: { className?: string }) {
     >
       <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-accent" />
       <span className="min-w-0 flex-1 truncate">
-        {location || "Anywhere in Australia"}
+        {state ? state.name : location || "Anywhere in Australia"}
         <span className="text-subtle">
           {disciplines.length ? ` · ${disciplines.join(", ")}` : ""}
-          <span className="hidden md:inline"> · within {radius} km</span>
+          <span className="hidden md:inline">{state ? " · state-wide" : location ? ` · within ${radius} km` : ""}</span>
         </span>
       </span>
       <span className="shrink-0 text-[13px] font-medium text-accent">Edit</span>
@@ -152,7 +154,7 @@ function Avatar({ name, src }: { name: string | null; src?: string | null }) {
 
 const NAV = [
   { href: "/search", label: "Find a coach" },
-  { href: "/disciplines/dressage", label: "Disciplines", match: "/disciplines" },
+  { href: "/disciplines", label: "Disciplines", match: "/disciplines" },
   { href: "/for-coaches", label: "For coaches" },
   { href: "/about", label: "About" },
 ];

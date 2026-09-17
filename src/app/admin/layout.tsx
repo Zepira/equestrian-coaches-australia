@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 };
 
 const tabs = [
+  { href: "/admin/disciplines", label: "Disciplines" },
   { href: "/admin/terms", label: "Terms" },
   { href: "/admin/aliases", label: "Aliases" },
 ];
@@ -26,7 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       <h1 className="font-display text-[40px] leading-none -tracking-[0.02em] text-ink wide:text-[56px] wide:leading-[0.98]">Admin</h1>
       <p className="mt-2 text-[15px] leading-[1.5] text-muted">
-        Taxonomy management — see CLAUDE.md for how the alias pipeline is meant to feed this.
+        Discipline pages, taxonomy and search aliases — see CLAUDE.md for how the alias pipeline is meant to feed this.
       </p>
 
       <nav className="mt-6 flex gap-1 border-b border-border">

@@ -3,12 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { placePanel } from "@/lib/anchored-panel";
 import { Caret } from "@/components/ui/caret";
+import { MenuSearch, matchedAlias, matches, shouldAutofocus } from "@/components/ui/menu-search";
+import type { TermOption } from "@/lib/term-options";
 
 // Tall enough for a couple of groups; placePanel() trims it to whatever the
 // trigger's clipping ancestor actually leaves visible.
-const PANEL_HEIGHT = 320;
+const PANEL_HEIGHT = 360;
 
-export type TermOption = { slug: string; name: string };
+export type { TermOption };
 export type TermGroup = { heading: string; options: TermOption[] };
 
 /**
@@ -22,6 +24,10 @@ export type TermGroup = { heading: string; options: TermOption[] };
  * places it's used, for different reasons: on /search a live-applying
  * checkbox would reload the results under the rider mid-pick, and in the
  * hero it would navigate away from the page after their first tick.
+ *
+ * A search field at the top narrows every group at once (substring match);
+ * groups with nothing left are hidden, and picks made before filtering stay
+ * in the draft whether or not they're currently visible.
  *
  * Like SelectMenu, the panel is absolutely positioned, so opening it never
  * reflows the row it sits in.
@@ -48,6 +54,7 @@ export function MultiSelectMenu({
   const [open, setOpen] = useState(false);
   const [place, setPlace] = useState({ dropUp: false, maxHeight: PANEL_HEIGHT });
   const [draft, setDraft] = useState<string[]>(selected);
+  const [query, setQuery] = useState("");
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -86,8 +93,13 @@ export function MultiSelectMenu({
     // phases hit, and it reads better anyway: the draft starts from whatever
     // is committed at the moment the rider opens the panel.
     setDraft(selected);
+    setQuery("");
     setOpen(true);
   }
+
+  const shown = groups
+    .map((g) => ({ ...g, options: query ? g.options.filter((o) => matches(o.name, query, o.aliases)) : g.options }))
+    .filter((g) => g.options.length > 0);
 
   const count = selected.length;
 
@@ -120,11 +132,33 @@ export function MultiSelectMenu({
             place.dropUp ? "menu-panel--up bottom-full mb-1.5" : "top-full mt-1.5"
           } ${panelAlign === "right" ? "right-0" : "left-0"}`}
         >
-          {/* The list scrolls; the actions don't. A `sticky` footer inside
-              one scrolling box leaves the last row peeking out under it,
-              because the scroll content still extends past the bar. */}
+          <MenuSearch
+            value={query}
+            onChange={setQuery}
+            placeholder="Search skills & setup…"
+            autoFocus={shouldAutofocus()}
+            aria-label={`${label} — type to filter`}
+            onKeyDown={(e) => {
+              // Enter in the field applies, like the button — Escape is
+              // already handled at the document level above.
+              if (e.key === "Enter") {
+                e.preventDefault();
+                commit();
+                triggerRef.current?.focus();
+              }
+            }}
+          />
+          {/* The list scrolls; the search field and the actions don't. A
+              `sticky` footer inside one scrolling box leaves the last row
+              peeking out under it, because the scroll content still extends
+              past the bar. */}
           <div className="menu-panel__list min-h-0 flex-1 overflow-auto p-3">
-            {groups.map((group) => (
+            {shown.length === 0 && (
+              <p className="px-0.5 py-1 text-[14px] text-subtle" aria-live="polite">
+                No matches for &ldquo;{query}&rdquo;
+              </p>
+            )}
+            {shown.map((group) => (
             <div key={group.heading} className="mb-3 last:mb-0">
               <p className="mb-1.5 px-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
                 {group.heading}
@@ -132,6 +166,7 @@ export function MultiSelectMenu({
               <div className="flex flex-col">
                 {group.options.map((o) => {
                   const on = draft.includes(o.slug);
+                  const via = query ? matchedAlias(o.name, query, o.aliases) : null;
                   return (
                     <label
                       key={o.slug}
@@ -145,7 +180,8 @@ export function MultiSelectMenu({
                         }
                         className="h-4 w-4 shrink-0 accent-[var(--color-accent)]"
                       />
-                      <span>{o.name}</span>
+                      <span className="min-w-0 flex-1 truncate">{o.name}</span>
+                      {via && <span className="shrink-0 truncate pl-2 text-[12px] text-subtle">{via}</span>}
                     </label>
                   );
                 })}

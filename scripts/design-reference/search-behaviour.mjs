@@ -71,9 +71,17 @@ const START = "/search?location=Bendigo+VIC&d=dressage";
   await page.goto(base + START, { waitUntil: "load" }); await settle(page);
   await page.waitForTimeout(2500);
 
-  // map + pins
-  const pins = await page.locator(".map-pin").count();
-  row(pins === (await cards()), `one map pin per result (${pins})`);
+  // map + pins — clustered (Phase 27): every result is either its own pin
+  // or counted inside a cluster bubble.
+  const plotted = async () => page.evaluate(() => document.querySelectorAll(".map-pin").length + [...document.querySelectorAll(".map-cluster")].reduce((n, el) => n + Number(el.textContent), 0));
+  const pins = await plotted();
+  row(pins === (await cards()), `every result is on the map as a pin or inside a cluster (${pins})`);
+  // Expand any cluster so the per-pin checks below have pins to look at.
+  for (let i = 0; i < 4 && (await page.locator(".map-cluster").count()) > 0; i++) {
+    await page.locator(".map-cluster").first().click();
+    await page.waitForTimeout(1200);
+  }
+  row((await page.locator(".map-cluster").count()) === 0, "clusters split into pins when clicked");
   row((await page.locator(".map-origin").count()) === 1, "origin dot present");
   row(tiles.length > 0 && tiles.every((s) => s === 200), `vector tiles / style loaded from OpenFreeMap (${tiles.length} responses)`);
   const canvas = await page.locator(".maplibregl-canvas").count();
@@ -126,7 +134,7 @@ const START = "/search?location=Bendigo+VIC&d=dressage";
   await page.waitForTimeout(2500);
   row((await toggle.innerText()).trim() === "List", "phone: toggle flips to List");
   row((await page.locator(".maplibregl-canvas").count()) === 1, "phone: map view mounts the canvas");
-  row((await page.locator(".map-pin").count()) > 0, "phone: pins plotted");
+  row((await page.locator(".map-pin, .map-cluster").count()) > 0, "phone: pins plotted");
   row((await page.locator(".maplibregl-map").count()) === 1, "phone: exactly one map instance (desktop column not mounted)");
   await page.screenshot({ path: "docs/design-reference/app/search--390--map-view.png" });
   const before = page.url();

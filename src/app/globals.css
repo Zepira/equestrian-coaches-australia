@@ -523,28 +523,147 @@ html[data-overlay-route="true"] {
   background: var(--color-accent);
   animation: ring 2.2s ease-out infinite;
 }
+/* Coach pin: a teardrop glyph (SVG in coach-map.tsx, currentColor) with a
+   label pill that appears on hover and stays for the active pin. The
+   entrance animation lives here, on the button, never on the marker
+   wrapper MapLibre positions. */
 .map-pin {
+  position: relative;
+  display: block;
+  width: 28px;
+  height: 38px;
+  padding: 0;
   border: 0;
-  border-radius: 999px;
-  padding: 6px 10px;
-  font: 600 13px var(--font-sans);
-  color: var(--color-ink-fg);
-  background: var(--color-ink);
-  box-shadow: 0 8px 20px rgb(31 58 46 / 0.2);
+  background: none;
+  color: var(--color-ink);
   cursor: pointer;
+  filter: drop-shadow(0 6px 10px rgb(31 58 46 / 0.28));
+  animation: pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: 50% 100%;
+  transition:
+    color 0.2s,
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.map-pin svg {
+  display: block;
+}
+.map-pin:hover,
+.map-pin[data-active="true"] {
+  color: var(--color-accent);
+  transform: scale(1.12);
+}
+.map-pin__label {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 4px);
+  transform: translateX(-50%) translateY(4px);
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-ink-fg);
+  font: 600 12px var(--font-sans);
   white-space: nowrap;
-  animation: pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.18s,
+    transform 0.18s;
+}
+.map-pin:hover .map-pin__label,
+.map-pin[data-active="true"] .map-pin__label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.map-pin[data-active="true"] .map-pin__label {
+  background: var(--color-accent);
+}
+/* Cluster bubble: count in a ring, sized by how many it holds. */
+.map-cluster {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--color-ink);
+  color: var(--color-ink-fg);
+  font: 600 13px var(--font-sans);
+  cursor: pointer;
+  box-shadow:
+    0 0 0 5px rgb(31 58 46 / 0.18),
+    0 8px 20px rgb(31 58 46 / 0.25);
+  animation: pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
   transition:
     background-color 0.2s,
-    color 0.2s;
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-@media (min-width: 1100px) {
-  .map-pin {
-    padding: 7px 11px;
+.map-cluster[data-size="md"] {
+  width: 44px;
+  height: 44px;
+  font-size: 14px;
+}
+.map-cluster[data-size="lg"] {
+  width: 52px;
+  height: 52px;
+  font-size: 15px;
+}
+.map-cluster:hover {
+  background: var(--color-accent);
+  transform: scale(1.08);
+}
+/* "Use my location" while the browser is thinking. */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
-.map-pin[data-active="true"] {
-  background: var(--color-accent);
+.locate-btn[data-state="busy"] svg {
+  animation: spin 1s linear infinite;
+}
+.locate-btn[data-state="error"] {
+  color: var(--color-danger);
+}
+/* The marker element itself: MapLibre owns its inline transform, so it
+   carries no animation of its own (see coach-map.tsx). */
+.map-marker {
+  cursor: pointer;
+}
+.map-marker:hover {
+  z-index: 3 !important;
+}
+/* The rider's own position (GeolocateControl): a green dot, not the
+   library's blue, so it sits in the palette next to the terracotta origin. */
+.maplibregl-user-location-dot,
+.maplibregl-user-location-dot::before {
+  background-color: #2f8a5b !important;
+}
+.maplibregl-user-location-dot::after {
+  border-color: #f6f1e7 !important;
+}
+.maplibregl-user-location-accuracy-circle {
+  background-color: rgb(47 138 91 / 0.15) !important;
+}
+/* Zoom buttons on the palette rather than MapLibre's white defaults. */
+.maplibregl-ctrl-group {
+  background: rgb(246 241 231 / 0.92) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 20px rgb(31 58 46 / 0.18) !important;
+  overflow: hidden;
+}
+.maplibregl-ctrl-group button {
+  width: 34px !important;
+  height: 34px !important;
+}
+.maplibregl-ctrl-group button + button {
+  border-top: 1px solid rgb(34 32 28 / 0.1) !important;
+}
+.maplibregl-ctrl-group button:hover {
+  background: var(--color-shade) !important;
+}
+.maplibregl-cooperative-gesture-screen {
+  font: 500 14px var(--font-sans);
+  background: rgb(20 40 31 / 0.55);
+  color: var(--color-ink-fg);
 }
 .maplibregl-ctrl-attrib {
   font: 400 10px var(--font-sans);

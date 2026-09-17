@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAttributes, getSkills } from "@/lib/supabase/queries";
+import { toTermOption } from "@/lib/term-options";
 
 // The skill and attribute vocabulary for the "Skills & setup" picker.
 // Pages that render the picker server-side pass the terms straight in; this
@@ -12,6 +13,5 @@ export const revalidate = 3600;
 export async function GET() {
   const supabase = await createClient();
   const [skills, attributes] = await Promise.all([getSkills(supabase), getAttributes(supabase)]);
-  const strip = (t: { slug: string; name: string }) => ({ slug: t.slug, name: t.name });
-  return NextResponse.json({ skills: skills.map(strip), attributes: attributes.map(strip) });
+  return NextResponse.json({ skills: skills.map(toTermOption), attributes: attributes.map(toTermOption) });
 }

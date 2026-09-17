@@ -5,17 +5,38 @@ import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 /**
- * The results map (canvas: "map placeholder — coaches plotted from PostGIS
- * results"). MapLibre GL on OpenFreeMap's vector tiles, recoloured into the
- * palette at load — cream ground, tint roads, ink labels — so it reads as
- * part of the page rather than a third-party widget. A dashed terracotta
- * circle for the search radius, a pulsing origin dot, and one "N km" pill
- * per coach; the active pin is terracotta and clicking one selects that
- * coach (the parent shows its card).
+ * The results map. MapLibre GL on OpenFreeMap's vector tiles, recoloured
+ * into the palette at load — cream ground, tint roads, ink labels — so it
+ * reads as part of the page rather than a third-party widget.
+ *
+ * What's on it:
+ *  - a dashed terracotta circle for the search radius and a pulsing origin
+ *    dot, when there is a searched point;
+ *  - one map pin per coach, clustered: coaches close together at the
+ *    current zoom collapse into a numbered bubble, and clicking a bubble
+ *    zooms in until it splits. Clustering is MapLibre's own (a GeoJSON
+ *    source with `cluster: true`); the pins and bubbles themselves are HTML
+ *    markers, re-derived from the visible source features after every
+ *    move, so they can carry the palette, a name label and a real button;
+ *  - the rider's own position (MapLibre's GeolocateControl: a locate button
+ *    top-right and a dot once allowed), zoom buttons, and cooperative
+ *    gestures so a plain scroll wheel scrolls the page.
+ *
+ * Marker positioning gotcha: MapLibre places a marker by setting an inline
+ * `transform` on the element it is given, and a filling CSS animation on
+ * that same element would outrank it (the pin then sits at 0,0 forever). So
+ * the marker element is always a plain wrapper; anything animated lives
+ * inside it.
  */
-export type MapPin = { slug: string; lat: number; long: number; km: number | null };
+export type MapPin = { slug: string; lat: number; long: number; km: number | null; name?: string };
 
 const STYLE_URL = "https://tiles.openfreemap.org/styles/positron";
+const SOURCE = "coaches";
+const CLUSTER_MAX_ZOOM = 13;
+const AUSTRALIA: [[number, number], [number, number]] = [
+  [113.3, -43.7],
+  [153.7, -10.6],
+];
 
 const PALETTE: Record<string, [string, string | number]> = {
   background: ["background-color", "#efe9dc"],
@@ -80,6 +101,75 @@ function circle(lat: number, long: number, km: number, steps = 64): GeoJSON.Feat
   return { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [coords] } };
 }
 
+function pinLabel(p: { km: number | null; name?: string }) {
+  if (p.km != null) return `${Math.round(p.km)} km`;
+  return p.name?.split(" ")[0] ?? "";
+}
+
+/** Bounds around every pin, or Australia when there are none. */
+function pinBounds(pins: MapPin[]): maplibregl.LngLatBoundsLike {
+  if (pins.length === 0) return AUSTRALIA;
+  const b = new maplibregl.LngLatBounds([pins[0].long, pins[0].lat], [pins[0].long, pins[0].lat]);
+  for (const p of pins) b.extend([p.long, p.lat]);
+  return b;
+}
+
+function toGeoJSON(pins: MapPin[]): GeoJSON.FeatureCollection<GeoJSON.Point> {
+  return {
+    type: "FeatureCollection",
+    features: pins.map((p) => ({
+      type: "Feature",
+      properties: { slug: p.slug, name: p.name ?? "", km: p.km },
+      geometry: { type: "Point", coordinates: [p.long, p.lat] },
+    })),
+  };
+}
+
+// The pin glyph: a teardrop with a hollow centre, `currentColor` so the
+// active/idle colour is one CSS rule.
+const PIN_SVG =
+  '<svg viewBox="0 0 28 38" width="28" height="38" aria-hidden="true"><path d="M14 1C6.8 1 1 6.7 1 13.8c0 9.4 11.2 21.4 12.2 22.5a1.1 1.1 0 0 0 1.6 0C15.8 35.2 27 23.2 27 13.8 27 6.7 21.2 1 14 1z" fill="currentColor" stroke="#f6f1e7" stroke-width="1.5"/><circle cx="14" cy="14" r="4.6" fill="#f6f1e7"/></svg>';
+
+function makePin(slug: string, label: string, aria: string, onClick: () => void) {
+  const wrap = document.createElement("div");
+  wrap.className = "map-marker";
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "map-pin";
+  b.dataset.slug = slug;
+  b.setAttribute("aria-label", aria);
+  b.innerHTML = PIN_SVG;
+  if (label) {
+    const l = document.createElement("span");
+    l.className = "map-pin__label";
+    l.textContent = label;
+    b.appendChild(l);
+  }
+  b.addEventListener("click", (e) => {
+    e.stopPropagation();
+    onClick();
+  });
+  wrap.appendChild(b);
+  return wrap;
+}
+
+function makeCluster(count: number, onClick: () => void) {
+  const wrap = document.createElement("div");
+  wrap.className = "map-marker";
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "map-cluster";
+  b.dataset.size = count >= 50 ? "lg" : count >= 10 ? "md" : "sm";
+  b.textContent = String(count);
+  b.setAttribute("aria-label", `${count} coaches here — zoom in`);
+  b.addEventListener("click", (e) => {
+    e.stopPropagation();
+    onClick();
+  });
+  wrap.appendChild(b);
+  return wrap;
+}
+
 export function CoachMap({
   origin,
   radiusKm,
@@ -100,14 +190,96 @@ export function CoachMap({
   const markers = useRef<Map<string, maplibregl.Marker>>(new Map());
   const originMarker = useRef<maplibregl.Marker | null>(null);
   const onSelectRef = useRef(onSelect);
+  const pinsRef = useRef(pins);
+  const activeRef = useRef(activeSlug);
   useEffect(() => {
     onSelectRef.current = onSelect;
-  }, [onSelect]);
+    pinsRef.current = pins;
+    activeRef.current = activeSlug;
+  }, [onSelect, pins, activeSlug]);
+
+  // Rebuild the HTML markers from whatever the clustered source currently
+  // exposes in view. Called after every move and whenever the data changes.
+  // Held in a ref (assigned in an effect, never during render) so the map's
+  // own event listeners, registered once, always call the latest closure.
+  const syncMarkers = useRef(() => {});
+  const sync = () => {
+    const map = mapRef.current;
+    if (!map || !map.getSource(SOURCE)) return;
+    const feats = map.querySourceFeatures(SOURCE);
+    const seen = new Set<string>();
+    // Coincident coaches past the cluster ceiling land on one point; fan
+    // those out in a small pixel ring so every pin stays tappable.
+    const groups = new Map<string, string[]>();
+    for (const f of feats) {
+      if (f.properties?.cluster) continue;
+      const [lng, lat] = (f.geometry as GeoJSON.Point).coordinates;
+      const k = `${lat.toFixed(4)},${lng.toFixed(4)}`;
+      const g = groups.get(k) ?? [];
+      if (!g.includes(f.properties!.slug)) g.push(f.properties!.slug);
+      groups.set(k, g);
+    }
+    for (const f of feats) {
+      const [lng, lat] = (f.geometry as GeoJSON.Point).coordinates;
+      const props = f.properties ?? {};
+      if (props.cluster) {
+        const id = `c:${props.cluster_id}`;
+        if (seen.has(id)) continue;
+        seen.add(id);
+        let m = markers.current.get(id);
+        if (!m) {
+          const clusterId = props.cluster_id as number;
+          const elc = makeCluster(props.point_count as number, async () => {
+            const src = map.getSource(SOURCE) as maplibregl.GeoJSONSource;
+            const zoom = await src.getClusterExpansionZoom(clusterId);
+            map.easeTo({ center: [lng, lat], zoom: Math.min(zoom + 0.3, 16), duration: 500 });
+          });
+          m = new maplibregl.Marker({ element: elc }).setLngLat([lng, lat]).addTo(map);
+          markers.current.set(id, m);
+        }
+        continue;
+      }
+      const slug = props.slug as string;
+      const id = `p:${slug}`;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      let m = markers.current.get(id);
+      if (!m) {
+        const label = pinLabel({ km: props.km ?? null, name: props.name });
+        const aria = `${props.name || "Coach"}${props.km == null ? "" : `, ${Math.round(props.km)} km away`}`;
+        m = new maplibregl.Marker({ element: makePin(slug, label, aria, () => onSelectRef.current(slug)), anchor: "bottom" })
+          .setLngLat([lng, lat])
+          .addTo(map);
+        markers.current.set(id, m);
+      }
+      const g = groups.get(`${lat.toFixed(4)},${lng.toFixed(4)}`) ?? [slug];
+      if (g.length > 1) {
+        const i = g.indexOf(slug);
+        const r = 12 + g.length * 4;
+        const a = (i / g.length) * Math.PI * 2 - Math.PI / 2;
+        m.setOffset([Math.round(Math.cos(a) * r), Math.round(Math.sin(a) * r)]);
+      } else {
+        m.setOffset([0, 0]);
+      }
+      const active = slug === activeRef.current;
+      (m.getElement().firstElementChild as HTMLElement).dataset.active = String(active);
+      m.getElement().style.zIndex = active ? "2" : "1";
+    }
+    for (const [id, m] of markers.current) {
+      if (!seen.has(id)) {
+        m.remove();
+        markers.current.delete(id);
+      }
+    }
+  };
+
+  useEffect(() => {
+    syncMarkers.current = sync;
+  });
 
   // Map lifecycle
   useEffect(() => {
     if (!el.current || mapRef.current) return;
-    const centre: [number, number] = origin ? [origin.long, origin.lat] : [133.7751, -25.2744];
     // Tile parsing runs in a Web Worker. Under Turbopack `import.meta.url`
     // isn't http(s), so MapLibre's default worker URL resolves to "" — the
     // page itself, an HTML document — and every tile stays "loading"
@@ -119,31 +291,54 @@ export function CoachMap({
     const map = new maplibregl.Map({
       container: el.current,
       style: STYLE_URL,
-      center: centre,
-      zoom: origin ? 9 : 3.4,
+      bounds: origin ? radiusBounds(origin, radiusKm) : pinBounds(pinsRef.current),
+      fitBoundsOptions: { padding: 48, maxZoom: 12 },
       attributionControl: { compact: true },
       dragRotate: false,
+      // Plain wheel scrolls the page; ctrl/⌘ + wheel (or the buttons,
+      // pinch, double-click) zooms — the same convention as embedded maps
+      // on property sites, so a rider scrolling past never gets trapped.
+      cooperativeGestures: true,
     });
     map.touchZoomRotate.disableRotation();
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    // The rider's own position: a locate button, then a dot (and accuracy
+    // ring) once the browser permission is granted. Not tracked
+    // continuously — one fix per press is what a search wants.
+    map.addControl(
+      new maplibregl.GeolocateControl({
+        positionOptions: { enableHighAccuracy: false, maximumAge: 5 * 60_000, timeout: 10_000 },
+        trackUserLocation: false,
+        showUserLocation: true,
+        showAccuracyCircle: true,
+        fitBoundsOptions: { maxZoom: 11 },
+      }),
+      "top-right"
+    );
     // A style/tile/worker failure is otherwise silent: the map just stays
     // cream. Surface it.
     map.on("error", (e) => console.error("[coach-map]", e.error?.message ?? e));
     map.on("load", () => {
       recolour(map);
       map.addSource("radius", { type: "geojson", data: origin ? circle(origin.lat, origin.long, radiusKm) : { type: "FeatureCollection", features: [] } });
-      map.addLayer({
-        id: "radius-fill",
-        type: "fill",
-        source: "radius",
-        paint: { "fill-color": "#b4553a", "fill-opacity": 0.06 },
-      });
+      map.addLayer({ id: "radius-fill", type: "fill", source: "radius", paint: { "fill-color": "#b4553a", "fill-opacity": 0.06 } });
       map.addLayer({
         id: "radius-line",
         type: "line",
         source: "radius",
         paint: { "line-color": "#b4553a", "line-opacity": 0.5, "line-width": 1, "line-dasharray": [3, 3] },
       });
-      if (origin) fitToRadius(map, origin, radiusKm);
+      // The coaches, clustered by MapLibre. No layer draws them — the HTML
+      // markers do — but a source only yields query results for features it
+      // has loaded, so an invisible layer keeps it live.
+      map.addSource(SOURCE, { type: "geojson", data: toGeoJSON(pinsRef.current), cluster: true, clusterRadius: 44, clusterMaxZoom: CLUSTER_MAX_ZOOM });
+      map.addLayer({ id: "coaches-anchor", type: "circle", source: SOURCE, paint: { "circle-radius": 0, "circle-opacity": 0 } });
+      map.on("sourcedata", (e) => {
+        if (e.sourceId === SOURCE && e.isSourceLoaded) syncMarkers.current();
+      });
+      map.on("moveend", () => syncMarkers.current());
+      map.on("zoomend", () => syncMarkers.current());
+      syncMarkers.current();
     });
     // Markers don't need the style: add the origin dot straight away.
     if (origin) {
@@ -177,51 +372,45 @@ export function CoachMap({
     const apply = () => {
       const src = map.getSource("radius") as maplibregl.GeoJSONSource | undefined;
       if (src) src.setData(circle(origin.lat, origin.long, radiusKm));
-      fitToRadius(map, origin, radiusKm);
+      map.fitBounds(radiusBounds(origin, radiusKm), { padding: 48, duration: 600, maxZoom: 12 });
     };
     if (map.isStyleLoaded()) apply();
     else map.once("load", apply);
   }, [origin, radiusKm]);
 
-  // Pins
+  // Pin data changes → feed the source; the sourcedata event re-syncs the
+  // markers. Without a searched point, frame whatever is on the map.
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    const keep = new Set(pins.map((p) => p.slug));
-    for (const [slug, m] of markers.current) {
-      if (!keep.has(slug)) {
-        m.remove();
-        markers.current.delete(slug);
-      }
+    const apply = () => {
+      const src = map.getSource(SOURCE) as maplibregl.GeoJSONSource | undefined;
+      if (!src) return;
+      src.setData(toGeoJSON(pins));
+      if (!origin && pins.length > 0) map.fitBounds(pinBounds(pins), { padding: 56, duration: 600, maxZoom: 11 });
+    };
+    if (map.isStyleLoaded()) apply();
+    else map.once("load", apply);
+  }, [pins, origin]);
+
+  // Active pin changes → restyle in place, no re-query.
+  useEffect(() => {
+    for (const [id, m] of markers.current) {
+      if (!id.startsWith("p:")) continue;
+      const active = id === `p:${activeSlug}`;
+      (m.getElement().firstElementChild as HTMLElement).dataset.active = String(active);
+      m.getElement().style.zIndex = active ? "2" : "1";
     }
-    for (const p of pins) {
-      let m = markers.current.get(p.slug);
-      if (!m) {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "map-pin";
-        b.dataset.slug = p.slug;
-        b.textContent = p.km == null ? "·" : `${Math.round(p.km)} km`;
-        b.setAttribute("aria-label", `Coach ${p.km == null ? "" : Math.round(p.km) + " km away"}`);
-        b.addEventListener("click", () => onSelectRef.current(p.slug));
-        m = new maplibregl.Marker({ element: b, anchor: "bottom" }).setLngLat([p.long, p.lat]).addTo(map);
-        markers.current.set(p.slug, m);
-      }
-      m.getElement().dataset.active = String(p.slug === activeSlug);
-    }
-  }, [pins, activeSlug]);
+  }, [activeSlug]);
 
   return <div ref={el} className={`h-full w-full ${className}`} aria-label="Map of coaches" role="region" />;
 }
 
-function fitToRadius(map: maplibregl.Map, origin: { lat: number; long: number }, radiusKm: number) {
+function radiusBounds(origin: { lat: number; long: number }, radiusKm: number): [[number, number], [number, number]] {
   const dLat = radiusKm / 110.574;
   const dLong = radiusKm / (111.32 * Math.cos((origin.lat * Math.PI) / 180));
-  map.fitBounds(
-    [
-      [origin.long - dLong, origin.lat - dLat],
-      [origin.long + dLong, origin.lat + dLat],
-    ],
-    { padding: 40, duration: 600, maxZoom: 12 }
-  );
+  return [
+    [origin.long - dLong, origin.lat - dLat],
+    [origin.long + dLong, origin.lat + dLat],
+  ];
 }

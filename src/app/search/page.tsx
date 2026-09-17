@@ -2,7 +2,8 @@ import { titleCase } from "@/lib/text";
 import { SearchResults } from "@/components/search-results";
 import type { CoachResultData } from "@/components/coach-result-card";
 import { createClient } from "@/lib/supabase/server";
-import { getDisciplines, getSkills, getAttributes, resolveLocation, searchCoaches } from "@/lib/supabase/queries";
+import { getDisciplines, getSkills, getAttributes, resolveSearchLocation, searchCoaches } from "@/lib/supabase/queries";
+import { toTermOption } from "@/lib/term-options";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { searchMockCoaches } from "@/lib/mock-coaches";
 import { logSearchEvent } from "@/lib/search-events";
@@ -43,6 +44,7 @@ export default async function SearchPage({
   let results: CoachResultData[];
   let origin: { lat: number; long: number } | null = null;
   let searchTown: string | null = null;
+  let stateWide: string | null = null;
   let locationNotFound = false;
 
   if (supabase) {
@@ -51,10 +53,16 @@ export default async function SearchPage({
     const attributeIds = attributes.filter((t) => attributeSlugs.includes(t.slug)).map((t) => t.id);
     let lat: number | null = null;
     let long: number | null = null;
+    let state: string | null = null;
 
     if (location) {
-      const resolved = await resolveLocation(supabase, location);
-      if (resolved) {
+      const resolved = await resolveSearchLocation(supabase, location);
+      if (resolved?.kind === "state") {
+        // "VIC" / "Victoria": every coach based in the state, no radius.
+        state = resolved.state.code;
+        stateWide = resolved.state.name;
+        searchTown = resolved.state.name;
+      } else if (resolved) {
         lat = resolved.lat;
         long = resolved.long;
         origin = { lat, long };
@@ -64,12 +72,14 @@ export default async function SearchPage({
       }
     }
 
-    const real = await searchCoaches(supabase, { disciplineIds, skillIds, attributeIds, lat, long, radiusKm });
+    const real = await searchCoaches(supabase, { disciplineIds, skillIds, attributeIds, lat, long, radiusKm, state });
 
     // Mock data merge — see src/lib/mock-coaches.ts to remove.
-    results = [...real, ...searchMockCoaches({ disciplineSlugs, skillSlugs, attributeSlugs, lat, long, radiusKm })]
+    results = [...real, ...searchMockCoaches({ disciplineSlugs, skillSlugs, attributeSlugs, lat, long, radiusKm, state })]
       .filter((c) => !onlyTaking || c.takingStudents === "yes")
-      .sort((x, y) => (x.distanceKm ?? Infinity) - (y.distanceKm ?? Infinity));
+      // Nearest first when there's a point; alphabetical when there isn't
+      // (state-wide or no location), so the order is at least predictable.
+      .sort((x, y) => (origin ? (x.distanceKm ?? Infinity) - (y.distanceKm ?? Infinity) : x.name.localeCompare(y.name)));
 
     // coach_events.impression — one per real coach in the result set,
     // deduped per visitor per day (mock coaches are skipped by the logger).
@@ -103,13 +113,14 @@ export default async function SearchPage({
       results={results}
       origin={origin}
       searchTown={searchTown}
+      stateWide={stateWide}
       locationText={location}
       radiusKm={radiusKm}
       editing={editing}
       disciplineSlug={disciplineSlugs[0] ?? ""}
       locationNotFound={locationNotFound}
-      skills={skills.map((t) => ({ slug: t.slug, name: t.name }))}
-      attributes={attributes.map((t) => ({ slug: t.slug, name: t.name }))}
+      skills={skills.map(toTermOption)}
+      attributes={attributes.map(toTermOption)}
     />
   );
 }

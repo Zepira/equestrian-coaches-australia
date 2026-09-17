@@ -3,9 +3,10 @@ import { SearchBar } from "@/components/search-bar";
 import { CoachResultCard } from "@/components/coach-result-card";
 import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
-import { getDisciplines, searchCoaches } from "@/lib/supabase/queries";
+import { getAttributes, getDisciplines, getSkills, searchCoaches } from "@/lib/supabase/queries";
 import { searchMockCoaches } from "@/lib/mock-coaches";
 import { breadcrumbSchema, itemListSchema } from "@/lib/structured-data";
+import { toTermOption } from "@/lib/term-options";
 
 // Discipline × area — only rendered where indexable_pages says 3+ real
 // coaches teach this discipline in this area (spec: "What earns a page").
@@ -38,7 +39,7 @@ export default async function DisciplineAreaPage({
   const supabase = await createClient();
   if (!supabase) redirect(`/disciplines/${slug}`);
 
-  const disciplines = await getDisciplines(supabase);
+  const [disciplines, skills, attributes] = await Promise.all([getDisciplines(supabase), getSkills(supabase), getAttributes(supabase)]);
   const discipline = disciplines.find((d) => d.slug === slug);
   if (!discipline) redirect("/search");
 
@@ -88,7 +89,7 @@ export default async function DisciplineAreaPage({
       <p className="mt-2 max-w-xl text-muted">{discipline.blurb}</p>
 
       <div className="mt-6">
-        <SearchBar defaultDiscipline={slug} defaultLocation={`${area.name} ${area.state}`} tone="plain" />
+        <SearchBar defaultDiscipline={slug} defaultLocation={`${area.name} ${area.state}`} tone="plain" skills={skills.map(toTermOption)} attributes={attributes.map(toTermOption)} disciplineOptions={disciplines.map(toTermOption)} />
       </div>
 
       <p className="mt-6 text-sm text-muted">
