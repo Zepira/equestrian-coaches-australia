@@ -10,6 +10,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/coaches`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/search`, changeFrequency: "daily", priority: 0.9 },
     { url: `${siteUrl}/for-coaches`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.4 },
+    // /horse-care and its profession pages are deliberately absent: they
+    // are holding pages with no real providers on them yet, and both are
+    // noindex until a profession actually opens.
   ];
 
   const disciplineRoutes: MetadataRoute.Sitemap = disciplines.map((d) => ({

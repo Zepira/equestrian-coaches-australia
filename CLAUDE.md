@@ -10,6 +10,21 @@ Done so far, the rename only:
 - The coaches home page lives at **`/coaches`** as well as `/`. Both routes render one shared component, `src/components/coaches-home.tsx`, so they cannot drift; when `/` becomes a real parent home page covering every profession, only `src/app/page.tsx` changes. `/coaches` is an overlay-header route (`OVERLAY_ROUTES` in `site-header.tsx`, the pre-hydration script in `layout.tsx`) and is in the sitemap.
 - **Email addresses are placeholders**: `hello@equineprofessionals.au` and `notifications@equineprofessionals.com.au` mirror the shape of the old placeholders. Nobody has bought a domain — confirm the real one before launch.
 
+**Second pass (23 Sep 2026) — the front door stops being a coaches page.** The header now carries two navigations, picked by route (`isParentRoute` in `src/components/site-header.tsx`):
+
+- **Parent nav**, on `/`, `/about` and `/horse-care/*`: a **Horse care** menu, a **Coaches** menu, **About**, and the existing account / admin / log-in controls. The coach "List your profile" pill is deliberately absent — it belongs to the coaches section, not the front door.
+- **Coaches nav**, unchanged, on `/coaches`, `/search`, `/disciplines/*`, `/for-coaches` and coach profiles.
+
+`src/components/nav-dropdown.tsx` is the menu: click to open (not hover, so pointer, keyboard and touch behave the same), Escape closes and returns focus to the button, outside click and focus-leave close it, and the panel is always a cream surface because over the hero the bar itself is transparent. It measures itself on mount and nudges left when it would run off a narrow desktop window — that was a real 6px overflow at 768–900px, found by measuring, not looking. Phones get the same links as two flat labelled sections in the burger panel rather than a nested dropdown.
+
+The two menus' contents: **`src/lib/professions.ts`** (the horse-care list — farriers, vets, physiotherapists, bodyworkers, chiropractors, dentists, saddle fitters, nutritionists) and **`topDisciplineSlugs`** in `src/lib/disciplines.ts`. The disciplines are a **curated editorial choice, not a computed "top N"** — the header is a client component on every page, so a real ranking would mean a database read per request for a menu. Revisit when there are enough real coaches for counts to mean anything.
+
+Three new routes, so no menu item is a dead link: **`/about`** (says only what is true today — free for riders, professionals pay to list, no commission, and *we do not vet or accredit anyone*; no founder names, since whose name goes on a public page is the founders' call), **`/horse-care`** and **`/horse-care/[slug]`**. The profession pages are honest holding pages: no listings, no sign-up, `robots: noindex` and absent from the sitemap, because an empty category page is exactly the doorway-page mistake the search spec warns against. `/about` is in the sitemap.
+
+`scripts/design-reference/nav-behaviour.mjs` covers all of it — 22/22, including keyboard operation, focus return and the phone menu. It takes `PLAYWRIGHT_CHROMIUM_EXECUTABLE` like `build-icons.mjs`, for a machine whose Chromium build predates the pinned Playwright.
+
+Still to do on the widening, and not started: the home page itself still sells coaches only — the hero, the marquee and every section below it are the coaches page, which is exactly why `/coaches` exists. `/` needs its own parent content before the split means anything to a visitor.
+
 Not done, and deliberately left for its own pass: the two canvas-name comments that reference the design file "ECA Redesign › 1a" (that is the file's real name); `docs/` and the captured design-reference JSON, which are historical records; the URL taxonomy question of whether discipline pages should move under `/coaches/` (see "One site, subfolders, never subdomains" below — nothing that will eventually hold every profession should carry "coach" in its path, and `/disciplines/[slug]` currently does not say which profession it belongs to); and the site copy itself, which still talks only about coaches.
 
 ## What this is

@@ -112,3 +112,26 @@ export const disciplines: Discipline[] = [...disciplineList].sort((a, b) => a.na
 export function getDisciplineBySlug(slug: string): Discipline | undefined {
   return disciplines.find((d) => d.slug === slug);
 }
+
+/**
+ * The disciplines the "Coaches" navigation menu offers directly, in this
+ * order. A curated editorial choice, not a computed ranking — the header is
+ * a client component on every page, so deriving a real "top N by coach
+ * count" would mean a database read per request for a menu. Revisit once
+ * there are enough real coaches for the counts to mean something; until
+ * then, the menu's last item links to the full list.
+ */
+export const topDisciplineSlugs = [
+  "dressage",
+  "show-jumping",
+  "eventing",
+  "western",
+  "pony-club",
+  "liberty",
+  "natural-horsemanship",
+  "trail-riding",
+] as const;
+
+export const topDisciplines: Discipline[] = topDisciplineSlugs
+  .map((slug) => disciplines.find((d) => d.slug === slug))
+  .filter((d): d is Discipline => Boolean(d));

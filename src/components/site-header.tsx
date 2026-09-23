@@ -6,6 +6,9 @@ import { Suspense, useEffect, useState } from "react";
 import { Wordmark } from "@/components/wordmark";
 import { SearchChips } from "@/components/search-chips";
 import { BackToResults } from "@/components/back-to-results";
+import { NavDropdown, type NavDropdownItem } from "@/components/nav-dropdown";
+import { horseCare } from "@/lib/professions";
+import { topDisciplines } from "@/lib/disciplines";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -149,10 +152,35 @@ function Avatar({ name, src }: { name: string | null; src?: string | null }) {
   );
 }
 
+/**
+ * The coaches section's own navigation — every route below /coaches, /search,
+ * /disciplines and /for-coaches.
+ */
 const NAV = [
   { href: "/search", label: "Find a coach" },
   { href: "/disciplines/dressage", label: "Disciplines", match: "/disciplines" },
   { href: "/for-coaches", label: "For coaches" },
+];
+
+/**
+ * The parent brand's navigation, shown on the routes that belong to the
+ * business as a whole rather than to the coaches section: the home page,
+ * About, and the horse-care section. It offers the two halves of what EPA
+ * will cover — horse care and coaches — and deliberately drops the coach
+ * CTA, which belongs to the coaches section, not the front door.
+ */
+const PARENT_ROUTES = ["/", "/about"];
+const isParentRoute = (pathname: string) =>
+  PARENT_ROUTES.includes(pathname) || pathname.startsWith("/horse-care");
+
+const HORSE_CARE_MENU: NavDropdownItem[] = [
+  ...horseCare.map((p) => ({ href: `/horse-care/${p.slug}`, label: p.name })),
+  { href: "/horse-care", label: "All horse care" },
+];
+
+const COACHES_MENU: NavDropdownItem[] = [
+  ...topDisciplines.map((d) => ({ href: `/disciplines/${d.slug}`, label: d.name })),
+  { href: "/coaches", label: "All disciplines" },
 ];
 
 export function SiteHeader() {
@@ -183,6 +211,9 @@ export function SiteHeader() {
   // + avatar and drops "Log out" (the page has Sign out); phones show
   // "Find a coach" + the avatar instead of the burger.
   const isAccount = pathname.startsWith("/account");
+  // The front door wears the parent brand's nav; every coaches-section
+  // route keeps NAV.
+  const parentNav = isParentRoute(pathname);
   const profileHref = auth.coachSlug ? `/coaches/${auth.coachSlug}` : "/dashboard/profile";
 
   return (
@@ -237,7 +268,17 @@ export function SiteHeader() {
 
         {/* Desktop nav */}
         <nav className={`hidden items-center gap-7 text-[15px] font-medium md:flex ${isDashboard ? "md:hidden" : ""}`} aria-label="Primary">
-          {!isSearch &&
+          {parentNav && (
+            <>
+              <NavDropdown label="Horse care" items={HORSE_CARE_MENU} current={pathname.startsWith("/horse-care")} />
+              <NavDropdown label="Coaches" items={COACHES_MENU} />
+              <Link href="/about" className="site-header__link" aria-current={pathname === "/about" ? "page" : undefined}>
+                About
+              </Link>
+            </>
+          )}
+          {!parentNav &&
+            !isSearch &&
             NAV.filter((l) => !coachProfile || l.label !== "Disciplines").map((l) => {
               const current = pathname === l.href || (l.match ? pathname.startsWith(l.match) : false);
               return (
@@ -280,7 +321,7 @@ export function SiteHeader() {
               <Link href="/login" className="site-header__link">
                 Log in
               </Link>
-              {!isSearch && (
+              {!isSearch && !parentNav && (
                 <Link
                   href="/signup?role=coach"
                   className="site-header__outline rounded-[var(--radius-pill)] px-[18px] py-2.5 hover:bg-ink hover:text-ink-fg"
@@ -341,17 +382,56 @@ export function SiteHeader() {
       {open && (
         <nav className="site-header__menu md:hidden" aria-label="Primary">
           <ul className="flex flex-col">
-            {NAV.map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  onClick={close}
-                  className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
-                >
-                  {l.label}
-                </Link>
-              </li>
-            ))}
+            {/* The parent nav's two menus become flat labelled sections here:
+                a nested dropdown inside an already-open panel is a worse way
+                to reach the same links on a phone. */}
+            {parentNav ? (
+              <>
+                {[
+                  { heading: "Horse care", items: HORSE_CARE_MENU },
+                  { heading: "Coaches", items: COACHES_MENU },
+                ].map((group) => (
+                  <li key={group.heading} className="border-b border-border py-3.5">
+                    <span className="block text-[12px] font-medium uppercase tracking-[0.18em] text-accent">
+                      {group.heading}
+                    </span>
+                    <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5">
+                      {group.items.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={close}
+                          className="font-display text-[20px] text-ink"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </span>
+                  </li>
+                ))}
+                <li>
+                  <Link
+                    href="/about"
+                    onClick={close}
+                    className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
+                  >
+                    About
+                  </Link>
+                </li>
+              </>
+            ) : (
+              NAV.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    onClick={close}
+                    className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))
+            )}
             {auth.loggedIn ? (
               <>
                 {auth.isAdmin && (
@@ -382,7 +462,7 @@ export function SiteHeader() {
                   </form>
                 </li>
               </>
-            ) : (
+            ) : parentNav ? null : (
               <li className="pt-4">
                 <Link
                   href="/signup?role=coach"

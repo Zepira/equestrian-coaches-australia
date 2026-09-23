@@ -895,6 +895,25 @@ html[data-overlay-route="true"] {
 }
 
 /* Mobile menu panel — no canvas for this state; a cream sheet under the bar. */
+/* A desktop navigation menu's panel (NavDropdown). Always a cream surface
+   with ink text, whatever tone the bar is wearing — over the hero the bar
+   is transparent, and an inherited tone would drop links onto the photo. */
+.site-header__panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: -12px;
+  min-width: 250px;
+  padding: 8px;
+  border: 1px solid rgb(34 32 28 / 0.08);
+  border-radius: 14px;
+  background: rgb(255 253 248 / 0.98);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 20px 50px rgb(20 40 31 / 0.16);
+  animation: fade 0.2s both;
+  z-index: 20;
+}
+
 .site-header__menu {
   position: absolute;
   inset-inline: 0;
