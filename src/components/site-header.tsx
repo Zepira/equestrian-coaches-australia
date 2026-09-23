@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { BrandMark } from "@/components/brand-mark";
 import { Wordmark } from "@/components/wordmark";
 import { parseState } from "@/lib/au-states";
 import { SearchChips } from "@/components/search-chips";
@@ -200,14 +201,16 @@ export function SiteHeader() {
         <Link
           href="/"
           className="flex items-baseline gap-3.5"
-          aria-label="Equestrian Coaches Australia — home"
+          aria-label="Equine Professionals Australia, home"
           onClick={close}
         >
-          <Wordmark size={26} className="md:hidden" />
-          <Wordmark size={30} className="hidden md:inline" />
+          {/* Below 360px the words and "Log in" can't share the bar, so the horse stands alone. */}
+          <BrandMark height={24} className="hidden max-[359px]:block" />
+          <Wordmark size={21} className="max-[359px]:hidden md:hidden" />
+          <Wordmark size={26} className="hidden md:block" />
           {!isSearch && !coachProfile && (
             <span className="site-header__muted hidden text-[12px] font-medium uppercase tracking-[0.16em] lg:inline">
-              {isDashboard ? "Coach dashboard" : "Equestrian Coaches Australia"}
+              {isDashboard ? "Coach dashboard" : "Australia"}
             </span>
           )}
         </Link>
