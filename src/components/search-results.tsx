@@ -2,9 +2,11 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { CoachResultCard, type CoachResultData, whereLine } from "@/components/coach-result-card";
 import { SearchChips, useChipState } from "@/components/search-chips";
+import { SearchFacets } from "@/components/search-facets";
+import type { TermOption } from "@/components/ui/multi-select-menu";
 import { SearchBar } from "@/components/search-bar";
 import { useWide } from "@/lib/use-wide";
 
@@ -14,6 +16,24 @@ const CoachMap = dynamic(() => import("@/components/coach-map").then((m) => m.Co
 });
 
 const RADII = [25, 50, 75, 100, 125, 150];
+
+const MAP_PREF_KEY = "eca:search-map";
+const MAP_PREF_EVENT = "eca:search-map-change";
+const subscribeMapPref = (cb: () => void) => {
+  window.addEventListener(MAP_PREF_EVENT, cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    window.removeEventListener(MAP_PREF_EVENT, cb);
+    window.removeEventListener("storage", cb);
+  };
+};
+const readMapPref = () => {
+  try {
+    return sessionStorage.getItem(MAP_PREF_KEY) !== "hidden";
+  } catch {
+    return true;
+  }
+};
 
 /**
  * The results page body (canvas: Search Results). Phones: list first with
@@ -26,28 +46,50 @@ export function SearchResults({
   results,
   origin,
   searchTown,
+  stateWide = null,
   locationText,
   radiusKm,
   editing,
   disciplineSlug,
   locationNotFound,
+  skills,
+  attributes,
 }: {
   results: CoachResultData[];
   origin: { lat: number; long: number } | null;
   searchTown: string | null;
+  /** The state's full name when the search is state-wide, else null. */
+  stateWide?: string | null;
   locationText: string;
   radiusKm: number;
   editing: boolean;
   disciplineSlug: string;
   locationNotFound: boolean;
+  skills: TermOption[];
+  attributes: TermOption[];
 }) {
   const wide = useWide();
   const [view, setView] = useState<"list" | "map">("list");
+  // Desktop: the map column can be folded away, and the choice is kept for
+  // the session — the same "Hide map" affordance property sites use. Read
+  // through useSyncExternalStore so the server render (map shown) and the
+  // stored preference reconcile without a setState in an effect.
+  const showMap = useSyncExternalStore(subscribeMapPref, readMapPref, () => true);
+  function toggleMap() {
+    try {
+      sessionStorage.setItem(MAP_PREF_KEY, showMap ? "hidden" : "shown");
+    } catch {}
+    window.dispatchEvent(new Event(MAP_PREF_EVENT));
+  }
   const [active, setActive] = useState<string | null>(results[0]?.slug ?? null);
   const [radius, setRadiusLocal] = useState(radiusKm);
   const [radiusFromUrl, setRadiusFromUrl] = useState(radiusKm);
   const sliderRef = useRef<HTMLInputElement>(null);
   const { params, push } = useChipState();
+  // What the edit card should open pre-filled with — read off the URL rather
+  // than passed down, since the chips and the facet pill both write there.
+  const skillSlugs = (params.get("s") ?? "").split(",").filter(Boolean);
+  const attributeSlugs = (params.get("a") ?? "").split(",").filter(Boolean);
 
   // The slider tracks locally while dragging and commits to the URL on the
   // native `change` (release / key up), so results reload once per pick,
@@ -75,8 +117,9 @@ export function SearchResults({
   const activeCoach = results.find((c) => c.slug === active) ?? results[0] ?? null;
   const pins = results
     .filter((c) => c.lat != null && c.long != null)
-    .map((c) => ({ slug: c.slug, lat: c.lat as number, long: c.long as number, km: c.distanceKm ?? null }));
-  const near = searchTown ? ` near ${searchTown}` : "";
+    .map((c) => ({ slug: c.slug, lat: c.lat as number, long: c.long as number, km: c.distanceKm ?? null, name: c.name }));
+  const near = stateWide ? ` across ${stateWide}` : searchTown ? ` near ${searchTown}` : "";
+  const orderLabel = origin ? "Nearest first" : "A to Z";
   const countText = `${results.length} coach${results.length === 1 ? "" : "es"}`;
 
   const radiusSlider = (
@@ -117,7 +160,7 @@ export function SearchResults({
       {activeCoach && (
         <Link
           href={`/coaches/${activeCoach.slug}`}
-          className="fade-in absolute inset-x-3.5 bottom-[88px] grid grid-cols-[72px_1fr] gap-3 rounded-[14px] border border-border bg-surface p-2.5 text-inherit shadow-[0_20px_50px_rgba(31,58,46,.18)] wide:inset-x-4 wide:bottom-4"
+          className="fade-in absolute inset-x-3.5 bottom-[88px] z-10 grid grid-cols-[72px_1fr] gap-3 rounded-[14px] border border-border bg-surface p-2.5 text-inherit shadow-[0_20px_50px_rgba(31,58,46,.18)] wide:inset-x-4 wide:bottom-4"
           style={{ animationDuration: "0.4s" }}
         >
           <span className="h-[88px] w-[72px] overflow-hidden rounded-t-[36px] rounded-b-[6px] bg-shade">
@@ -152,7 +195,16 @@ export function SearchResults({
       {editing && (
         <div className="border-b border-border bg-shade px-[18px] py-4 wide:px-12">
           <div className="mx-auto max-w-[1184px]">
-            <SearchBar tone="plain" defaultDiscipline={disciplineSlug} defaultLocation={locationText} autoFocus />
+            <SearchBar
+              tone="plain"
+              defaultDiscipline={disciplineSlug}
+              defaultLocation={locationText}
+              defaultSkills={skillSlugs}
+              defaultAttributes={attributeSlugs}
+              skills={skills}
+              attributes={attributes}
+              autoFocus
+            />
           </div>
         </div>
       )}
@@ -168,8 +220,9 @@ export function SearchResults({
             )}
             <div className="flex items-baseline justify-between">
               <h1 className="font-display text-[30px] leading-none text-ink">{countText}</h1>
-              <span className="text-[13px] text-subtle">Nearest first</span>
+              <span className="text-[13px] text-subtle">{orderLabel}</span>
             </div>
+            {stateWide && <p className="mt-1.5 text-[14px] text-subtle">Every coach based in {stateWide}</p>}
             {origin && (
               <>
                 <p className="mt-1.5 text-[14px] text-subtle">
@@ -210,17 +263,29 @@ export function SearchResults({
       </div>
 
       {/* ── desktop ─────────────────────────────────────────────────── */}
-      <div className="hidden min-h-[728px] grid-cols-[1fr_480px] wide:grid">
-        <div className="pb-12 pl-12 pr-8 pt-7">
+      <div className={`hidden min-h-[728px] wide:grid ${showMap ? "grid-cols-[1fr_480px]" : "grid-cols-1"}`}>
+        <div className={`pb-12 pl-12 pt-7 ${showMap ? "pr-8" : "pr-12"}`}>
           <div className="flex flex-wrap items-center gap-2">
+            <SearchFacets skills={skills} attributes={attributes} />
             <SearchChips />
-            {origin && (
-              <span className="ml-auto flex items-center gap-2.5 text-[13px] text-subtle">
-                Radius
-                <span className="w-[140px]">{radiusSlider}</span>
-                <strong className="font-medium text-fg">{radius} km</strong>
-              </span>
-            )}
+            <span className="ml-auto flex items-center gap-4">
+              {origin && (
+                <span className="flex items-center gap-2.5 text-[13px] text-subtle">
+                  Radius
+                  <span className="w-[140px]">{radiusSlider}</span>
+                  <strong className="font-medium text-fg">{radius} km</strong>
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={toggleMap}
+                aria-pressed={showMap}
+                className="flex items-center gap-2 rounded-[var(--radius-pill)] border border-border bg-surface px-3.5 py-2 text-[13px] font-medium text-fg transition-colors duration-200 hover:border-ink"
+              >
+                <span aria-hidden className={`h-2 w-2 rounded-full ${showMap ? "bg-accent" : "bg-border"}`} />
+                {showMap ? "Hide map" : "Show map"}
+              </button>
+            </span>
           </div>
           {locationNotFound && (
             <p className="mt-5 rounded-[12px] border border-border bg-accent-soft p-3 text-[14px] text-fg">
@@ -232,9 +297,9 @@ export function SearchResults({
               {countText}
               {near && <em className="text-accent">{near}</em>}
             </h1>
-            <span className="text-[14px] text-subtle">Nearest first</span>
+            <span className="text-[14px] text-subtle">{orderLabel}</span>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-4">
+          <div className={`mt-6 grid gap-4 ${showMap ? "grid-cols-2" : "grid-cols-3"}`}>
             {results.map((c) => (
               <CoachResultCard
                 key={c.slug}
@@ -245,7 +310,7 @@ export function SearchResults({
               />
             ))}
             {results.length === 0 && (
-              <div className="col-span-2 rounded-[18px] border border-dashed border-border p-8 text-center text-muted">
+              <div className="col-span-full rounded-[18px] border border-dashed border-border p-8 text-center text-muted">
                 No coaches match that search yet. Try a wider radius or another discipline.
               </div>
             )}
@@ -254,7 +319,7 @@ export function SearchResults({
         </div>
         {/* Mount the map only at desktop widths — CSS hides this column on
             phones, which would otherwise still run a second map. */}
-        <div className="sticky top-[72px] h-[calc(100vh-72px)] min-h-[728px] border-l border-border">{wide && mapPanel}</div>
+        {showMap && <div className="sticky top-[72px] h-[calc(100vh-72px)] min-h-[728px] border-l border-border">{wide && mapPanel}</div>}
       </div>
     </>
   );

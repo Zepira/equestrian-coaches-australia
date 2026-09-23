@@ -3,9 +3,10 @@ import { SearchBar } from "@/components/search-bar";
 import { CoachResultCard } from "@/components/coach-result-card";
 import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
-import { searchCoaches } from "@/lib/supabase/queries";
+import { getAttributes, getDisciplines, getSkills, searchCoaches } from "@/lib/supabase/queries";
 import { searchMockCoaches } from "@/lib/mock-coaches";
 import { breadcrumbSchema, itemListSchema } from "@/lib/structured-data";
+import { toTermOption } from "@/lib/term-options";
 
 // "riding instructor near me" catches far more search volume than any one
 // discipline name (see CLAUDE.md, "How Riders Find Us" spec) — this page
@@ -50,6 +51,7 @@ export default async function RidingInstructorsAreaPage({ params }: { params: Pr
     .maybeSingle();
   if (!page?.eligible) redirect(`/search?location=${encodeURIComponent(`${area.name} ${area.state}`)}`);
 
+  const [skills, attributes, disciplines] = await Promise.all([getSkills(supabase), getAttributes(supabase), getDisciplines(supabase)]);
   const radiusKm = area.default_radius_km ?? 50;
   const coaches = [
     ...(await searchCoaches(supabase, { lat: area.lat, long: area.long, radiusKm })),
@@ -77,7 +79,7 @@ export default async function RidingInstructorsAreaPage({ params }: { params: Pr
       </p>
 
       <div className="mt-6">
-        <SearchBar defaultLocation={`${area.name} ${area.state}`} tone="plain" />
+        <SearchBar defaultLocation={`${area.name} ${area.state}`} tone="plain" skills={skills.map(toTermOption)} attributes={attributes.map(toTermOption)} disciplineOptions={disciplines.map(toTermOption)} />
       </div>
 
       <p className="mt-6 text-sm text-muted">

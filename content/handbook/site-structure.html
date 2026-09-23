@@ -1,0 +1,768 @@
+<title>One Site, Two Professions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --navy:#E7DAC6; --navy-2:#DDCFB6;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8; --claret-hi:#DE8B6C;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7; --band-accent:#1F3A2E;
+  --bar-good:#00794F; --bar-bad:#C0492A;
+  --pick:#9C4229; --pick-bg:#F7F0E1;
+  --code-bg:#FBF7EC; --code-ink:#33312B; --code-key:#1F3A2E; --code-com:#87816F;
+  --on-navy:#22201C; --on-navy-2:#4A4842; --on-navy-3:#5E5A50;
+  --navy-rule:#D3C1A4;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --wrap:1060px; --measure:70ch;
+  --ribbon:polygon(0 0,100% 0,100% 100%,0 100%);
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.7rem,8vw,5.2rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.8rem,4.3vw,2.8rem); line-height:1.03}
+h3{font-size:1.24rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+h4{font-family:var(--body); font-size:.72rem; font-weight:800; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 10px}
+
+code{font-family:var(--mono); font-size:.86em; background:var(--code-bg); color:var(--code-ink);
+  padding:1px 5px; border-radius:2px}
+pre{font-family:var(--mono); font-size:.8rem; line-height:1.6; background:var(--code-bg); color:var(--code-ink);
+  padding:18px 20px; margin:20px 0; overflow-x:auto; border:1px solid var(--line-strong)}
+pre code{background:none; padding:0; font-size:1em}
+pre .k{color:var(--code-key); font-weight:600}
+pre .c{color:var(--code-com); font-style:italic}
+
+.chip{display:inline-block; font-size:.66rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+.band{background:var(--navy); color:var(--on-navy); border-bottom:1px solid var(--line-strong)}
+.masthead{padding:64px 0 68px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:42px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--on-navy-2)}
+.masthead h1{margin-bottom:28px}
+.masthead .lede{font-size:1.14rem; line-height:1.5; color:var(--on-navy-2); max-width:58ch; margin:0}
+.mast-meta{margin-top:38px; padding-top:18px; border-top:1px solid var(--navy-rule);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.75rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--on-navy-3)}
+
+main.wrap{padding-top:70px}
+section{margin-bottom:80px}
+.sec-head{margin-bottom:28px}
+.sec-num{display:block; font-family:var(--display); font-size:.96rem; font-weight:600;
+  letter-spacing:.06em; color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+
+/* kind cards */
+.kinds{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:30px 0}
+.kind{border:1px solid var(--line-strong); background:var(--surface); padding:20px 20px 22px}
+.kind h3{margin:12px 0 8px}
+.kind p{margin:0 0 .7em; font-size:.9rem; line-height:1.5; color:var(--ink-2)}
+.kind p:last-child{margin-bottom:0}
+.kind .ex{font-family:var(--mono); font-size:.76rem; color:var(--ink-3); line-height:1.7}
+@media(max-width:800px){.kinds{grid-template-columns:1fr}}
+
+/* loop */
+.loop{border:1px solid var(--line-strong); background:var(--surface); margin:30px 0}
+.loop-head{padding:20px 22px 4px}
+.loop-head h3{margin-bottom:6px}
+.loop-head p{margin:0; font-size:.88rem; color:var(--ink-3)}
+.loop-steps{display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line);
+  border-top:1px solid var(--line-strong); margin-top:18px}
+.lstep{background:var(--surface); padding:18px 16px 20px}
+.lstep .n{font-family:var(--display); font-size:1.7rem; font-weight:500; color:var(--brass); line-height:1; display:block; margin-bottom:8px}
+.lstep b{display:block; font-size:.9rem; margin-bottom:5px}
+.lstep span{font-size:.82rem; line-height:1.45; color:var(--ink-2)}
+.loop-foot{padding:14px 22px; border-top:1px solid var(--line-strong); background:var(--surface-2);
+  font-size:.84rem; color:var(--ink-2)}
+.loop-foot b{color:var(--ink)}
+@media(max-width:860px){.loop-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.loop-steps{grid-template-columns:1fr}}
+
+/* tables */
+figure{margin:30px 0; border:1px solid var(--line-strong); background:var(--surface); overflow:hidden}
+figcaption{padding:14px 22px; border-top:1px solid var(--line-strong); font-size:.85rem;
+  line-height:1.5; color:var(--ink-2); background:var(--surface-2)}
+figcaption b{font-weight:700; color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:620px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.32rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:12px 22px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.5}
+thead th{font-size:.66rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px; white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code{font-size:.8rem; white-space:nowrap}
+td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
+
+/* steps */
+.steps{margin:28px 0 0}
+.step{display:grid; grid-template-columns:58px 1fr; gap:0 22px; padding:26px 0; border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.smark{font-family:var(--display); font-size:2rem; font-weight:500; letter-spacing:-.025em; color:var(--brass); line-height:1}
+.sbody h3{margin-bottom:9px}
+.sbody p,.sbody ul{max-width:64ch}
+.sbody > :last-child{margin-bottom:0}
+@media(max-width:620px){.step{grid-template-columns:1fr; gap:10px}}
+
+/* callouts */
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:18px 22px; margin:24px 0}
+.note{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:18px 22px; margin:24px 0}
+.flag p,.note p{margin:0; max-width:64ch; font-size:.94rem}
+.flag p + p,.note p + p{margin-top:.65em}
+.flag .chip,.note .chip{margin-bottom:11px}
+.flag ul,.note ul{margin:.6em 0 0; font-size:.94rem; max-width:64ch}
+
+/* vocabulary */
+.vocab{border:1px solid var(--line-strong); background:var(--surface); margin:24px 0}
+.vrow{display:grid; grid-template-columns:190px 1fr; gap:0 22px; padding:15px 22px; border-top:1px solid var(--line)}
+.vrow:first-of-type{border-top:0}
+.vname{font-weight:700; font-size:.95rem}
+.vname small{display:block; font-family:var(--mono); font-size:.72rem; font-weight:400; color:var(--ink-3); margin-top:3px}
+.vals{font-family:var(--mono); font-size:.79rem; line-height:1.85; color:var(--ink-2)}
+.vhead{padding:20px 22px 16px; background:var(--surface-2); border-bottom:1px solid var(--line-strong)}
+.vhead h3{margin-bottom:6px}
+.vhead p{margin:0; font-size:.88rem; color:var(--ink-2); max-width:66ch}
+@media(max-width:700px){.vrow{grid-template-columns:1fr; gap:6px}}
+
+.foot{border-top:1px solid var(--line-strong); padding:44px 0 52px; font-size:.8rem; line-height:1.75; color:var(--on-navy-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--on-navy-3); margin-bottom:10px}
+.foot p{max-width:80ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){
+  th,td,caption,figcaption,.vrow,.vhead,.loop-head,.loop-foot{padding-left:16px;padding-right:16px}
+  pre{padding:14px 16px}
+}
+</style>
+<div class="band">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="mast-top">
+        <span class="mast-mark">ECA</span>
+        <span class="mast-org">Equestrian Coaches Australia</span>
+      </div>
+      <h1>One site, two professions</h1>
+      <p class="lede">Coaches and farriers launching together changes the shape of the thing. This is the recommendation on sites, names and domains, then the routes, redirects, navigation and database work that follow from it. Revised the same day: one domain only, and the coaches name is retired. Section seven, added 23 September, is how the coaching section keeps a clear identity of its own inside one brand.</p>
+      <div class="mast-meta">
+        <span>Site structure</span>
+        <span>September 2026</span>
+        <span>Decision plus build spec</span>
+        <span>Sections 1 to 3 are the decision</span>
+      </div>
+    </header>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>The recommendation</h2></div>
+  <div class="col">
+    <p><strong>One website. One domain. One database. One rider account. Two sections.</strong> There is no site two. There is a coaching section and a farrier section on the same site, and more professions later if the first two work.</p>
+    <p>That was already the plan for the build. What is new is that both professions launch at once, which turns two decisions that were comfortably in the future into decisions for this month: the name at the top of the site, and the domain it lives on.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Four ways to run two professions</caption>
+      <thead><tr><th>Option</th><th>What happens to search</th><th>Upkeep</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>One site, sections underneath</strong><span class="sub">/coaches and /farriers on one domain</span></td>
+          <td>The farrier pages inherit everything the site has earned from day one. Every link, every area page, all of it counts once.</td>
+          <td>One codebase, one database, one sitemap, one Search Console property.</td>
+          <td><span class="chip">Suggested</span></td>
+        </tr>
+        <tr>
+          <td>Two domains, two sites</td>
+          <td>The second site starts at zero and has to earn its own trust. Six to twelve months before either ranks, twice over.</td>
+          <td>Two of everything, forever.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>Subdomains<span class="sub">farriers.oursite.com.au</span></td>
+          <td>Google treats it close to a separate site. You get the cost of splitting without the benefit of a real second brand.</td>
+          <td>One codebase, two properties, two ramps.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>One site, one merged directory<span class="sub">no profession split at all</span></td>
+          <td>Ranks fine, but a rider searching for a farrier gets coaches in the results. The precision is the product.</td>
+          <td>Cheapest of all.</td>
+          <td>No</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p>The search argument is the loudest one, and it is worth being precise about why. Ranking for "farrier Geelong" is not about the words in the domain. It comes from having a real page about farriers in Geelong, internal links pointing at it from pages Google already trusts, and a site that does not look like a thin directory. A subfolder gets all three on the first day it exists. A second domain gets none of them and has to start the six to twelve month climb from scratch, at the same time as the coaching side is still climbing.</p>
+    <p>The second argument matters just as much and gets forgotten. The rider list is the asset. One site means one login, one saved list, one set of alert preferences, and one monthly email that can say a farrier has started taking clients twenty minutes away. Two sites means the rider signs up twice, and you own half a list twice.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Bonus</span>
+    <p>This also dissolves the open question about what to call site two. Sections do not get names registered anywhere. What needs a name is the business and the domain, and that is section two.</p>
+  </div>
+
+  <div class="col">
+    <h3>What everyone else does</h3>
+    <p>Researched 22 September 2026, because it is worth knowing whether this is a solved problem before deciding it from first principles. It is close to solved, and the answer is not the one you would guess from looking at the biggest Australian marketplaces.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>One brand with categories, or a brand per vertical</caption>
+      <thead><tr><th>Who</th><th>Structure</th><th>The useful part</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Horse Deals</strong></td>
+          <td>One brand, categories in the path</td>
+          <td>Horses, transport and floats, property, stallions at stud and saddlery all sit on horsedeals.com.au. Its own sell page says "Sell my horse, float, saddle or property". The category is the first path segment, <code>/search/horse-transport-for-sale/</code>, and a place is pushed behind an explicit <code>/location/</code> segment, which is the same disambiguation as the <code>/in/</code> proposed in section four.</td>
+        </tr>
+        <tr>
+          <td><strong>AgTrader</strong><span class="sub">Same owner as Horse Deals</span></td>
+          <td>One brand, added a category</td>
+          <td>Added rural property to the existing marketplace rather than building a site for it. ACM's agriculture commercial director gave the reason plainly, and it is the same reason that applies here. See the quote below.</td>
+        </tr>
+        <tr>
+          <td>EquiDirectory</td>
+          <td>One brand, 47 categories</td>
+          <td>Agistment, riding lessons, transport, property, insurance, photography, all on one domain. The closest thing to what section two is proposing, already running.</td>
+        </tr>
+        <tr>
+          <td>Horsezone</td>
+          <td>One brand, 8 categories</td>
+          <td>Horses, transport and vehicles, saddlery, property, stallions, products, services.</td>
+        </tr>
+        <tr>
+          <td>hipages, Airtasker, Yelp, Care.com, Thumbtack, Rover, Checkatrade</td>
+          <td>One brand, many categories</td>
+          <td>Every services marketplace checked, without exception. Yelp runs 21 category groups and more than 1,500 categories on one domain. Care.com sells child care, aged care, pet care and housekeeping on one membership.</td>
+        </tr>
+        <tr>
+          <td>Angi</td>
+          <td>Two brands became one</td>
+          <td>Angie's List became Angi in March 2021, after merging with HomeAdvisor.</td>
+        </tr>
+        <tr>
+          <td>Airtasker and Oneflare</td>
+          <td>Two brands became one</td>
+          <td>Oneflare, with 200 or more categories of its own, was retired on 30 June 2026: "We made the difficult decision to retire our sister brand and platform Oneflare, and instead focus solely on Airtasker."</td>
+        </tr>
+        <tr>
+          <td>carsales</td>
+          <td>Seven brands, deliberately kept</td>
+          <td>carsales, bikesales, boatsales, trucksales, caravancampingsales, constructionsales, farmmachinerysales. Refreshed in August 2025 onto one shared design system, with the separate names kept.</td>
+        </tr>
+        <tr>
+          <td>REA Group, Domain</td>
+          <td>Separate brands</td>
+          <td>Residential and commercial property kept apart, on their own domains.</td>
+        </tr>
+        <tr>
+          <td>SEEK</td>
+          <td>Brands kept, one platform</td>
+          <td>SEEK, Jobstreet and Jobsdb were merged onto a single platform "while retaining the individual brands", at a reported cost of about A$180 million over three years.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="chip">What decides it</span>
+    <p><strong>Audience overlap, not the size of each category.</strong> Every business in the list that runs one brand does so because the same person buys across the categories. Every business that runs separate brands is a classifieds business where the buyers do not overlap at all: nobody shopping for a hatchback is also shopping for a combine harvester, and a first home buyer is not buying a warehouse.</p>
+    <p>ACM said it out loud when AgTrader took on property. Craig Chapman, their agriculture commercial director: <em>"Ninety-six per cent of visitors to AgTrader are farmers, so adding property will provide the perfect platform for sellers and agents to increase their exposure to the people most likely to be interested in buying."</em></p>
+    <p>That is this business exactly. The rider who needs a coach is the same person who needs a farrier, often for the same horse in the same month. On the test the whole industry uses, this is a one brand business, and it is not a close call.</p>
+  </div>
+
+  <div class="col">
+    <p>Two things worth noting against the grain. Separate brands are not a cheap hedge: SEEK spent around A$180 million to keep three names alive on one platform, which is the price of brand equity that already exists and is worth protecting. Nothing here has any brand equity yet, so there is nothing to protect. And the direction of travel in services is consistently toward fewer brands, not more, with Angie's List, Oneflare and DogVacay all folded into something else rather than kept.</p>
+    <p>One correction to the premise. I could not find evidence that Horse Deals ever ran separate brands and merged them. An archived version of its old site from years ago already carried horses, transport, property and stallions at stud under the one name, so as far as the record shows it has always been one brand with categories. What changed recently is the site, not the brand structure.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>The name</h2></div>
+  <div class="note">
+    <span class="chip">Decided 22 September, still being mulled</span>
+    <p><strong>Equine Professionals Australia</strong>, at <strong>equineprofessionals.com.au</strong> and <strong>equineprofessionals.au</strong>. One business name, one domain. Both forms of the domain showed no registration record on 22 September and ABR shows no matching business name; the nearest is Equine Professional Hub Pty Ltd in Queensland. The IP Australia search has not been run. Equine rather than Equestrian because a farrier or a dentist serves the horse, not the rider, and because it does not read as an arm of Equestrian Australia.</p>
+    <p>Two rules that come with a descriptive name. <strong>The wordmark is the words, never the initials</strong>: EPA is the Environment Protection Authority in every state. And a descriptive name cannot be protected by registration alone, so the site has to be the one everybody uses, which is a marketing fact rather than a legal one. The section below is the reasoning that ran before the decision, kept because the trade-offs are still true.</p>
+  </div>
+
+  <div class="col">
+    <p>Short version, as it stood before the decision: <strong>Equestrian Coaches Australia is the wrong name for the whole site, and there is no reason left to keep it for anything.</strong> It has not been said to a single coach, so there is no recognition to protect, and a second name in circulation for one site is a cost with no return. It retires. The coaching section is called Coaches, and section seven is about how that section gets an identity of its own without a second name.</p>
+    <p>The reason is not search. It is what happens on the page. A rider who lands on a page of farriers in Geelong and reads "Equestrian Coaches Australia" across the top thinks they have the wrong site and leaves. A farrier that Kim is trying to recruit reads a web address that says the site is for coaches and needs the discrepancy explained before anything else gets discussed. That happens on every page of half the site, on both sides of the marketplace.</p>
+    <p>So the site needs a name above both sections. The name currently written down for that is Equestrian Professionals Australia, and it fails both tests this handbook already set for a parent name. It describes a category, which makes it close to impossible to protect at IP Australia and easy for a competitor to sit next to. And it is forgettable, which is the one thing the parent name cannot afford to be, because remembering it two years later is its entire job.</p>
+    <p>Those were not new objections. <em>Before we start</em> says it in the section on what to avoid, and it lists twenty-odd alternatives that all survive the sentence "find a farrier on ...". That list is still the right place to choose from.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>If you want a recommendation rather than a shortlist</caption>
+      <thead><tr><th>Name</th><th>Case for it</th><th>Case against</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Nearside</strong> <span class="chip">Suggested</span></td>
+          <td>One word. The side you mount from, so it reads as an insider term to anyone who rides. "Near" quietly does a second job for a directory whose whole purpose is finding someone close to you. Easy to say, easy to spell, distinctive enough to register.</td>
+          <td>Means nothing to a non rider, though nor does Horse Deals mean anything to someone outside classifieds.</td>
+        </tr>
+        <tr>
+          <td>Browband</td>
+          <td>Warm, one word, cannot mean anything else to anybody. The piece of tack riders actually choose for looks, which is a nice thing for a brand to be.</td>
+          <td>No second meaning doing work for you.</td>
+        </tr>
+        <tr>
+          <td>Waler</td>
+          <td>The most distinctive of the lot, which makes it the cheapest to defend. Real Australian heritage.</td>
+          <td>Needs explaining to riders who do not know the history, and that cost lands on every cold message Kim sends.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p>The evidence in section one also settles a worry about going wide: a single name really does hold unrelated categories. Horse Deals covers horses, floats, property and saddlery under one word that means none of them, and EquiDirectory covers 47 categories. A wide name does not have to be a vague one.</p>
+    <p>Whichever it is, nothing gets bought until all three checks come back clean: an ASIC business name search, an IP Australia trade mark search on the exact string, and domain availability. The trade mark search is the one that can actually stop you, and someone else's registered mark beats your business name no matter who registered first.</p>
+    <p>One thing to hold onto from the old name. <strong>The parent name does not need to carry the search words, because page titles do the ranking.</strong> "Dressage coaches in Geelong" is the title, the parent name is the suffix, and a coach or a farrier reading a cold message from Kim gets the path instead of a second brand: the address ends in <code>/coaches</code> or <code>/farriers</code>, which explains itself just as well and teaches the site's name at the same time.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>What gets a name, and what does not</caption>
+      <thead><tr><th>Thing</th><th>Name</th><th>Registered as</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>The site and the business</td>
+          <td>The parent name. Header, footer, favicon, email sender, terms, invoices, Kim's messages, the thing a rider remembers.</td>
+          <td>One ASIC business name against the partnership ABN, $108 for three years, and one .com.au.</td>
+        </tr>
+        <tr>
+          <td>The coaching section</td>
+          <td>Coaches. A plain word, the way Horse Deals' transport section is just transport.</td>
+          <td>Nothing. Sections are not registered anywhere.</td>
+        </tr>
+        <tr>
+          <td>The farrier section</td>
+          <td>Farriers. Same rule.</td>
+          <td>Nothing.</td>
+        </tr>
+        <tr>
+          <td>Equestrian Coaches Australia<span class="sub">The name this project carried until 22 September</span></td>
+          <td>Retired. Nobody outside the two of you has heard it, so there is nothing to hand over and no redirect to keep.</td>
+          <td>Not registered. Not bought.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>The domain</h2></div>
+  <div class="col">
+    <p><strong>Launch on the parent domain, and buy only that one.</strong></p>
+    <p>This reverses what this handbook said on 9 September, so it is worth being straight about why. The old recommendation rested on one sentence: do not pick the parent name yet, because there may never be a second profession to hang it on, and checkpoint three at month eight could say stop. That sentence is no longer true. The second profession is launching with the first. The reason for deferring has gone, and the cost it was deferring, one domain migration, now lands exactly where the old text warned it would, in the middle of launching a new profession.</p>
+    <p>The argument for a separate coaches domain was that Kim's cold outreach is better with an address that explains itself. It still is, and the path does that job: a link ending in <code>/coaches</code> tells a coach exactly where they are landing, and it shows them the site covers more than coaches, which is a reason for riders to be there and therefore a reason for the coach to list. A second domain would only have given a rider two addresses for one site, and no way to know that the place they found a coach is the place to find a bodyworker.</p>
+    <p>Nothing has been bought and no business name is registered, so there is no sunk cost in either direction. That will not be true for long, which is what makes this the week to decide it.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">What this costs</span>
+    <p>Less than the September plan. One domain at about $30 a year and one ASIC business name at $108 for three years, instead of two of each. Against it: one guaranteed migration avoided, and one address for riders instead of two.</p>
+  </div>
+
+  <div class="col">
+    <p>The rider retention argument that was correctly demoted in September stays demoted. Riders do search again rather than typing a domain from memory, and the mailing list is the channel that actually brings them back. It is not carrying this decision. The page level legibility problem in section two is.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Addresses</h2></div>
+  <div class="col">
+    <p>The build rule has always been that nothing which will eventually hold every profession gets the word "coach" in its address. Profiles currently sit at <code>/coaches/[slug]</code>, which breaks that rule, because every profession needs a profile page. It has not mattered yet. It matters the moment a farrier needs one.</p>
+    <p>Two segments need thinking about. The first is where profiles live. The second is how a section page tells a place from a speciality.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Now, and what to change it to</caption>
+      <thead><tr><th>Today</th><th>Proposed</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>/coaches/[slug]</code></td>
+          <td><code>/profile/[slug]</code></td>
+          <td>People do more than one job. Kim coaches and communicates with animals, and plenty of bodyworkers also teach. One person, one profile page, listed in every section they work in. Two profile roots would mean either duplicate pages or a canonical tag to maintain forever.</td>
+        </tr>
+        <tr>
+          <td><code>/disciplines</code></td>
+          <td><code>/coaches</code></td>
+          <td>The coaching section landing page. "Disciplines" is a word the industry uses and riders do not.</td>
+        </tr>
+        <tr>
+          <td><code>/disciplines/[slug]</code></td>
+          <td><code>/coaches/[discipline]</code></td>
+          <td>Reads as what it is. The farrier equivalent is <code>/farriers/[speciality]</code>.</td>
+        </tr>
+        <tr>
+          <td><code>/riding-instructors/[area]</code></td>
+          <td><code>/coaches/in/[area]</code></td>
+          <td>Still the highest volume page on the site. The <code>in</code> segment is the important part, see below.</td>
+        </tr>
+        <tr>
+          <td><code>/disciplines/[slug]/[area]</code></td>
+          <td><code>/coaches/[discipline]/in/[area]</code></td>
+          <td>Same shape one level down.</td>
+        </tr>
+        <tr>
+          <td>nothing yet</td>
+          <td><code>/farriers</code>, <code>/farriers/[speciality]</code>, <code>/farriers/in/[area]</code>, <code>/farriers/[speciality]/in/[area]</code></td>
+          <td>Identical shape, different section. Nothing new to design.</td>
+        </tr>
+        <tr>
+          <td><code>/for-coaches</code></td>
+          <td><code>/for-coaches</code> and <code>/for-farriers</code></td>
+          <td>Both render from one template driven by per profession content rows. Coaches search this page; it keeps its address.</td>
+        </tr>
+        <tr>
+          <td><code>/search</code></td>
+          <td><code>/search</code></td>
+          <td>Unchanged, still noindex, gains a profession scope.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="chip">Why the <code>in</code> segment</span>
+    <p><code>/coaches/dressage</code> and <code>/coaches/geelong</code> are the same shape, so the code has to guess from a database lookup which one it is holding. That works until a place and a speciality share a word, and then it silently serves the wrong page. <code>/coaches/in/geelong</code> can only ever be a place. It costs one extra segment, reads like English, and Google is indifferent.</p>
+  </div>
+
+  <div class="col">
+    <p>The profile move is the only change here that costs real work, and it is free this week and a migration after launch. Nothing is indexed, Search Console is not verified yet, and no domain exists, so today these are file renames and a redirect map rather than a ranking event.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Redirects</h2></div>
+  <div class="col">
+    <p>Only old paths redirect now. There is one domain, so there is no domain-level redirect to set up, and sections never redirect because sections are real pages.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>One domain, verified once</h3>
+        <p>Verify the domain property in Search Console the day it exists, even with no coaches on the site yet. It only collects from that day forward and only keeps sixteen months, and the twenty-query rank basket in the marketing plan needs the history.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>Old paths to new ones, one to one</h3>
+        <p>Five rules: profiles to <code>/profile/[slug]</code>, <code>/disciplines</code> to <code>/coaches</code>, a discipline page to <code>/coaches/[discipline]</code>, a discipline and area page to <code>/coaches/[discipline]/in/[area]</code>, and <code>/riding-instructors/[area]</code> to <code>/coaches/in/[area]</code>. Permanent redirects, not temporary ones, and never dumped on the homepage.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>Generated from the database, not typed out</h3>
+        <p>One script walks providers, professions, terms and areas and emits the pairs. Write it now, while there are a handful of rows to test it against, because it is also the script a domain move would need later.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="chip">Trap</span>
+    <p>After the move, <code>/coaches/something</code> is both a discipline page and the old profile address. The middleware has to check the provider slugs first and redirect those to <code>/profile/</code>, then fall through to the discipline lookup. Get that order wrong and a coach called Jane Western breaks a discipline page.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Navigation</h2></div>
+  <div class="col">
+    <p>With two professions the navigation stays flat. At three or more it needs one grouped menu, and it is worth building the header so that change is a data change rather than a rewrite.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Where each profession shows up</caption>
+      <thead><tr><th>Surface</th><th>How it works</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Header</td>
+          <td>Parent wordmark. Then Find a coach, Find a farrier, Clinics, About, and List your profile. At three professions the first two collapse into one Find menu grouped by profession.</td>
+        </tr>
+        <tr>
+          <td>Home search card</td>
+          <td>A two option control above the card, Coaches or Farriers, which swaps the second field between Discipline and Speciality. The card stays at two fields. It defaults to coaches, because coaches are the supply that exists and the queries that convert.</td>
+        </tr>
+        <tr>
+          <td>Home, below the fold</td>
+          <td>One block per profession, each with real counts. The farrier block is honest about being new rather than padded out.</td>
+        </tr>
+        <tr>
+          <td>Search</td>
+          <td>Profession is a scope, not a clearable filter. A result list mixing a dressage coach and a farrier answers nobody's question. Chips, radius and the map all stay as they are.</td>
+        </tr>
+        <tr>
+          <td>Footer</td>
+          <td>A column per profession, listing that profession's top specialities and biggest areas. This is also where a lot of the internal linking that makes the section pages rank comes from.</td>
+        </tr>
+        <tr>
+          <td>Rider account</td>
+          <td>One account, one saved list covering every profession, and alert preferences that take a profession as well as an area. This is the whole reason one site beats two.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>One brand, two front doors</h2></div>
+  <div class="col">
+    <p>The brief from Alana and Kim on 23 September: one name and one domain, but the coaching section has to stand out clearly and be able to stand on its own, and every profession that follows needs the same. This section is how you get that without a second brand.</p>
+    <p>The principle is simple to state. <strong>The brand is the frame; the section is the picture.</strong> Everything structural is shared and identical: the header, the footer, the type, the radii, the motion, the search card, the result cards, the dashboard. Exactly five things change when you step into a section: the front door, the accent colour, the glyph, the words, and the photographs. That is enough for a coach to feel the site was built for coaches, and little enough that it is one codebase and a data change per profession.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>What is shared, and what belongs to the section</caption>
+      <thead><tr><th>Shared, never varies</th><th>Per section, from data</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>The brand mark and wordmark, the header and footer structure, type, radii, motion, the cream and ink grounds, the search card, result and profile cards, the map, the dashboard, the rider account, the email sender.</td>
+          <td>The landing page and its promise, the accent pair, the glyph, the nouns (discipline or speciality, rider or horse owner, lesson or booking), the professional-facing pitch page, the photographs, the section tab in the header, badges and map pins.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>A real front door at <code>/coaches</code></h3>
+        <p>This is what "stand on its own" actually means. The coaching landing page has its own rise headline, its own one-line promise, the search card already scoped to coaches, real counts (coaches and disciplines), its own photograph, the founding offer, and a single "List your coaching profile" call to action. A coach who arrives from Kim's message and never sees the rest of the site has seen a complete coaching site. Kim links to it, flyers print equineprofessionals.com.au/coaches, and the same page shape serves <code>/farriers</code> with different rows in the database.</p>
+        <p>The homepage becomes the switchboard rather than the coaching site: the brand, one search card with the profession control, and one block per section with honest numbers. It is the page a rider lands on from the brand name; the section pages are the ones they land on from a search.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>One accent pair per profession</h3>
+        <p>Coaches keep what they have: terracotta <code>#B4553A</code> on the cream ground and peach <code>#e8b79a</code> for italic emphasis and eyebrows on the ink ground. That is the launch identity and it does not move. Farriers get steel <code>#3F6480</code> on cream and sky <code>#A9C4DA</code> on ink. Measured against the real grounds: steel on cream is 5.6:1 and cream on steel is 5.6:1, so it works for text and for buttons; sky on deep ink is 8.6:1, the same job peach does at 8.6:1. Steel and terracotta are a blue-against-orange pair, which is the one combination that stays distinct for the most common colour blindness. Each later profession gets one pair chosen the same way, against both grounds, at AA, and distinct from its neighbours.</p>
+        <p>The mechanism is one attribute. The layout sets <code>data-section</code> on the html element for anything under a profession path, the same way Phase 18 sets <code>data-overlay-route</code>, and the stylesheet swaps the accent tokens off it. The accent shows in italic emphasis, eyebrows, primary buttons, chips, map pins, the section badge and focus rings. It never touches the brand mark, the footer or body text, which is what keeps it one brand.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>A glyph per profession, and a brand mark that is not initials</h3>
+        <p>One simple line glyph each, used in the header tab, on badges, on result cards and as the map pin: a riding helmet for coaches, a horseshoe for farriers. Small enough to read at 16 pixels, drawn in <code>currentColor</code> so it takes the accent for free.</p>
+        <p>The brand mark needs rethinking anyway, because the current "ECA" wordmark carries the retired name. Do not replace it with "EPA". The suggestion is the arch: it is already the site's photographic signature on every coach and discipline photo, it scales to a favicon, it belongs to nobody, and it means the mark and the photographs are the same shape. The wordmark is the full name in Instrument Serif on desktop and "Equine Professionals" on phones. The favicon and the app icon are the arch alone.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>The words come from the profession row</h3>
+        <p>A coach teaches disciplines to riders and runs clinics; a farrier has specialities, serves horse owners and takes bookings. Those nouns are data, not code: name, plural, tagline, hero title, hero copy, the word for what they specialise in, the word for who they serve, the verb on the call to action, the image and the accent pair. Professions are already terms, and terms already carry description, image and SEO fields from the discipline editor, so this is a handful of extra columns and the same admin screen with a second tab.</p>
+        <p>The professional-facing promise is the one thing not to invent. The coaching pitch exists and is honest because it came from the plan. The farrier pitch gets written after the first ten conversations with farriers, the same way the coaching one did. Until then the farrier page says what is true: riders and owners search here, you get an email when one gets in touch, and here is what it costs.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">5</div>
+      <div class="sbody">
+        <h3>Same photographs, different subject</h3>
+        <p>Same golden-hour grade, same arch crop, same rules about horses showing no stress. Coaches are rider and coach together, the lesson moment, the arena at the end of the day. Farriers are hands and hooves, the forge, the ute with the door open. The photography half-day already in the budget shoots both on the same day, ideally with a founding coach and a founding farrier at the same property.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <h3>How it holds together when someone moves between sections</h3>
+    <p>The header carries the brand mark on the left and the section tabs beside it, Coaches and Farriers, with the active one in its accent. Inside a section the tab stays lit and the accent stays on, so a rider three pages deep still knows where they are. Switching tabs keeps the location they typed. The search card never mixes professions; it changes the second field's label and options when the tab changes. A profile page takes the accent of the provider's primary profession, and someone who coaches and shoes shows both badges on one page. Emails come from the brand, and the template's accent and glyph follow the section the email is about. The dashboard is identical for everyone with the labels read from the profession row.</p>
+    <p>Page titles follow one pattern with the section in the body and the brand as the suffix: "Dressage coaches in Geelong | Equine Professionals Australia", "Farriers in Geelong | Equine Professionals Australia". The word riders search is in the title where it counts; the brand is where it is remembered.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">What this is not</span>
+    <p>It is not two brands. No section logo, no section domain, no section social account, no section email address. Those are the things that make a section feel like a separate company to a rider, and they are also the things that cost two of everything to keep alive. If a section ever genuinely needs them, the answer is the carsales model, and the price of that is what SEEK paid to keep three names on one platform.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>The build list for section identity</caption>
+      <thead><tr><th>Piece</th><th>What</th></tr></thead>
+      <tbody>
+        <tr><td><code>data-section</code></td><td>Set on the html element by the layout for <code>/coaches/*</code>, <code>/farriers/*</code>, <code>/for-coaches</code>, <code>/for-farriers</code>, and on <code>/profile/[slug]</code> from the primary profession. Inline script for first paint plus the header effect for client navigation, exactly as Phase 18 does it.</td></tr>
+        <tr><td>Accent tokens</td><td><code>--accent</code>, <code>--accent-hover</code>, <code>--accent-on-ink</code> swapped per section in <code>globals.css</code>. Every use of the terracotta and peach tokens already goes through these names, so nothing else changes.</td></tr>
+        <tr><td>Profession content</td><td>Columns on <code>terms</code> used when kind is profession: plural, tagline, hero title, hero copy, term noun, audience noun, action verb, accent light, accent dark, glyph. Edited at <code>/admin/professions</code>, a copy of the discipline editor.</td></tr>
+        <tr><td>Section landing</td><td>One page template at <code>/[profession]</code> driven by the row. Coaches first, farriers when there is a row.</td></tr>
+        <tr><td>Pitch page</td><td>One template at <code>/for-[profession]</code>. The coaching copy moves into the coaching row; nothing is lost.</td></tr>
+        <tr><td>Header</td><td>Brand mark plus a section tab component reading the professions list. Active tab from <code>data-section</code>. Collapses to one menu at three or more professions.</td></tr>
+        <tr><td>Badge, pin, glyph</td><td>A badge component and a pin variant that read the accent and the glyph. Result cards and the profile page use the badge; the map uses the pin.</td></tr>
+        <tr><td>Brand mark</td><td>Arch mark, full wordmark on desktop, short on phones, favicon and app icon regenerated. Replaces the ECA wordmark everywhere.</td></tr>
+        <tr><td>Email</td><td>The transactional and monthly templates take a section parameter for accent and glyph. Sender unchanged.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><h2>The database</h2></div>
+  <div class="col">
+    <p>This is the part that turns out to be almost free, because the taxonomy was built for it. <em>How riders find us</em> chose one <code>terms</code> table with a <code>kind</code> column on the grounds that a fourth kind should be a row rather than a migration. That bet pays off here.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>Profession becomes a fourth kind of term</h3>
+        <p>Add <code>profession</code> to <code>term_kind</code>, and a nullable <code>parent_id</code> on <code>terms</code> so a discipline or speciality knows which profession it belongs to. Professions have no parent and generate pages. Seed one profession row for coaching, backfill every existing discipline's parent to it, then add the farrier row and its specialities.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>A provider's profession needs no new column</h3>
+        <p><code>coach_terms</code> already links a provider to any number of terms with a sort order, and professions are now terms. So a provider's professions are simply their profession rows, and the lowest sort order is the primary one, exactly the rule already used for their primary discipline. Somebody who coaches and does bodywork is two rows, which is the honest answer.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>Search takes one more argument</h3>
+        <p><code>nearby_coaches</code> already accepts discipline, skill and attribute arrays plus a state. It gains a profession, and is dropped and recreated because the signature changes, the same way the state parameter was added.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>The page register gains a profession</h3>
+        <p><code>indexable_pages</code> gets a profession column, and its two page types become profession and area, and profession, term and area. The nightly recompute joins the profession through <code>coach_terms</code>. The three provider minimum stays exactly as it is, and it will keep most farrier pages switched off for months, which is correct.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">5</div>
+      <div class="sbody">
+        <h3>Aliases matter more here than they did for coaching</h3>
+        <p>Riders do not say farrier consistently. They say shoer, blacksmith, barefoot trimmer, hoof trimmer. Equine dentist gets searched far more than equine dental technician. The alias layer already exists and the admin screen already edits it, so this is seed data rather than code.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="chip">Migration note</span>
+    <p>Two enums grow here, and <code>alter type ... add value</code> cannot run inside a transaction, which is what the migration runner sends. Run both statements out of band first, the same way the three tier values were added, then run the file.</p>
+  </div>
+
+  <div class="col">
+    <p>Two things deliberately not changed. <code>coach_profiles</code> keeps its name even though it now holds farriers, because renaming it touches every row level security policy, every embed, and the foreign key disambiguation that is already documented as a trap, and no rider ever sees it. And the three tiers stay as they are for both professions at launch. The top tier is called Clinic, which makes less sense for a farrier, so make the label come from settings per profession rather than adding a fourth tier.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">09</span><h2>The order to do it in</h2></div>
+  <div class="col">
+    <p>Sorted by what is free this week and expensive later, not by what is most interesting.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Sequence</caption>
+      <thead><tr><th>Step</th><th>What</th><th>Blocks</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1</strong></td><td>Confirm Equine Professionals Australia. Run the ASIC name check and the IP Australia trade mark search on the exact string; the domain checks are done.</td><td>Everything below.</td></tr>
+        <tr><td><strong>2</strong></td><td>Register the business name, buy the domain, verify it in Search Console.</td><td>Stripe, the marketing plan, every email.</td></tr>
+        <tr><td><strong>3</strong></td><td>Audit that one BASE_URL constant really does drive every canonical, sitemap entry, structured data URL, OG tag and email link.</td><td>Nothing, but it makes step 4 and any future move one variable.</td></tr>
+        <tr><td><strong>4</strong></td><td>Move the routes, add the redirect middleware and the generator script, update the parity assertions and the site sweep.</td><td>Free now. A migration after launch.</td></tr>
+        <tr><td><strong>5</strong></td><td>Schema: the profession kind, <code>parent_id</code>, the seed and backfill, <code>nearby_coaches</code>, <code>indexable_pages</code>.</td><td>All farrier pages.</td></tr>
+        <tr><td><strong>6</strong></td><td>Interface: the profession control, header, footer, search scope, the two section landing pages, <code>/for-farriers</code>.</td><td>Farrier signups.</td></tr>
+        <tr><td><strong>7</strong></td><td>Content: farrier specialities and their aliases, and real writing on the areas where farriers actually clear the gate.</td><td>Ranking for farrier queries.</td></tr>
+        <tr><td><strong>8</strong></td><td>Kim builds the farrier list, the same way she is building the coach list.</td><td>The real constraint. Steps 4 to 7 are a fortnight of build; this is a year of relationships.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <p>Steps 1 and 2 are the only ones with a deadline attached, and the deadline is "before anything is bought or verified". Steps 4 and 5 want to happen before launch. The rest can run alongside recruitment.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">10</span><h2>Four things this needs from you</h2></div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>The final word on the name</h3>
+        <p>Equine Professionals Australia is the working answer. Settle it, run the two remaining checks, and step 2 can start the same day. Step 2 blocks Stripe and the marketing plan.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>Which professions launch, exactly</h3>
+        <p>Suggested: farriers only, and bodyworkers, saddle fitters, dentists and vets after. Each profession needs its own recruited supply, and the three provider minimum means a profession with four names nationally has no pages at all. Farriers are the most numerous and the most searched of the group, so they are the one that reaches a real page count first.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>Whether farriers pay the same three prices</h3>
+        <p>Suggested: yes at launch, and revisit at the twelve month review. A farrier books out further ahead than a coach does, so the argument for the top tier is weaker and the entry tier may be doing all the work.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>Whether farriers get events at launch</h3>
+        <p>Suggested: no. Events are the coaching retention engine and farriers do run the occasional clinic, but it is a second content type to explain during a launch that already has two sides to explain. Keep it for the twelve month review.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p>One thing that is not on this list, because it is already answered: whether to keep the Equestrian Coaches Australia name anywhere. No. It has not been said to anyone, a second name for the same site would only confuse a rider who needs a coach one month and a bodyworker the next, and the path does the self-explaining job in Kim's messages. The repo folder and the old documents will keep the name for a while, which is fine; the site and the business do not.</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="col">
+    <p>Written 22 September 2026. Supersedes decision nine in <em>Before we start</em> on the domain, and the earlier note that the parent name was not blocking anything. It is blocking now.</p>
+    <p>Not legal or financial advice. The name checks at ASIC and IP Australia have not been run yet, and no name in section two should be treated as available until they have.</p>
+  </div>
+</footer>
+
+</main>

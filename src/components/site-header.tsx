@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { BrandMark } from "@/components/brand-mark";
 import { Wordmark } from "@/components/wordmark";
+import { parseState } from "@/lib/au-states";
 import { SearchChips } from "@/components/search-chips";
+import { SearchFacets } from "@/components/search-facets";
 import { BackToResults } from "@/components/back-to-results";
 import { NavDropdown, type NavDropdownItem } from "@/components/nav-dropdown";
 import { horseCare } from "@/lib/professions";
@@ -111,6 +114,7 @@ function SearchSummary({ className = "" }: { className?: string }) {
     .filter(Boolean)
     .map((s) => s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
   const radius = params.get("r") ?? "50";
+  const state = parseState(location);
   const edit = new URLSearchParams(params.toString());
   edit.set("edit", "1");
   return (
@@ -121,10 +125,10 @@ function SearchSummary({ className = "" }: { className?: string }) {
     >
       <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-accent" />
       <span className="min-w-0 flex-1 truncate">
-        {location || "Anywhere in Australia"}
+        {state ? state.name : location || "Anywhere in Australia"}
         <span className="text-subtle">
           {disciplines.length ? ` · ${disciplines.join(", ")}` : ""}
-          <span className="hidden md:inline"> · within {radius} km</span>
+          <span className="hidden md:inline">{state ? " · state-wide" : location ? ` · within ${radius} km` : ""}</span>
         </span>
       </span>
       <span className="shrink-0 text-[13px] font-medium text-accent">Edit</span>
@@ -158,8 +162,9 @@ function Avatar({ name, src }: { name: string | null; src?: string | null }) {
  */
 const NAV = [
   { href: "/search", label: "Find a coach" },
-  { href: "/disciplines/dressage", label: "Disciplines", match: "/disciplines" },
+  { href: "/disciplines", label: "Disciplines", match: "/disciplines" },
   { href: "/for-coaches", label: "For coaches" },
+  { href: "/about", label: "About" },
 ];
 
 /**
@@ -227,14 +232,16 @@ export function SiteHeader() {
         <Link
           href="/"
           className="flex items-baseline gap-3.5"
-          aria-label="Equine Professionals Australia — home"
+          aria-label="Equine Professionals Australia, home"
           onClick={close}
         >
-          <Wordmark size={26} className="md:hidden" />
-          <Wordmark size={30} className="hidden md:inline" />
+          {/* Below 360px the words and "Log in" can't share the bar, so the horse stands alone. */}
+          <BrandMark height={24} className="hidden max-[359px]:block" />
+          <Wordmark size={21} className="max-[359px]:hidden md:hidden" />
+          <Wordmark size={26} className="hidden md:block" />
           {!isSearch && !coachProfile && (
             <span className="site-header__muted hidden text-[12px] font-medium uppercase tracking-[0.16em] lg:inline">
-              {isDashboard ? "Coach dashboard" : "Equine Professionals Australia"}
+              {isDashboard ? "Coach dashboard" : "Australia"}
             </span>
           )}
         </Link>
@@ -374,7 +381,14 @@ export function SiteHeader() {
         <div className="px-[18px] pb-3.5 md:hidden">
           <Suspense fallback={null}>
             <SearchSummary className="mt-0" />
-            <SearchChips rail className="-mx-[18px] mt-2.5 px-[18px]" />
+            {/* The "Skills & setup" pill sits outside the scroller, not in
+                it: `.hs` scrolls on x, and an element that scrolls on one
+                axis clips the other too, which would cut the panel off at
+                the rail's edge. */}
+            <div className="mt-2.5 flex items-center gap-2">
+              <SearchFacets tone="ink" />
+              <SearchChips rail className="-mr-[18px] min-w-0 flex-1 pr-[18px]" />
+            </div>
           </Suspense>
         </div>
       )}

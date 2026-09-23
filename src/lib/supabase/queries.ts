@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { disciplines as staticDisciplines } from "@/lib/disciplines";
+import type { DisciplineContent } from "@/lib/discipline-content";
+import { parseState, type AuState } from "@/lib/au-states";
 
 const AU_STATES = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"];
 
@@ -34,7 +36,39 @@ export async function getTerms(supabase: SupabaseClient | null, kind: TermKind) 
   if (error || !data || data.length === 0) {
     return kind === "discipline" ? staticDisciplines.map((d) => ({ id: d.slug, ...d })) : [];
   }
-  return data;
+
+  return withAliases(supabase, data);
+}
+
+// Search aliases ride along on every term row so any dropdown built from
+// them can match "xc" to Eventing or "flatwork" to Dressage — the same
+// vocabulary the SEO pages already use (term_aliases, phase 9).
+async function withAliases<T extends { id: string }>(supabase: SupabaseClient, rows: T[]): Promise<(T & { aliases: string[] })[]> {
+  const { data: aliasRows } = await supabase
+    .from("term_aliases")
+    .select("term_id, alias")
+    .in("term_id", rows.map((t) => t.id));
+  const aliasesByTerm = new Map<string, string[]>();
+  for (const r of aliasRows ?? []) aliasesByTerm.set(r.term_id, [...(aliasesByTerm.get(r.term_id) ?? []), r.alias]);
+  return rows.map((t) => ({ ...t, aliases: aliasesByTerm.get(t.id) ?? [] }));
+}
+
+// The discipline rows with their page content (0020_discipline_content.sql):
+// what /disciplines, /disciplines/[slug], the sitemap and the homepage
+// tiles read. Same static fallback as getTerms when Supabase isn't there.
+export const DISCIPLINE_CONTENT_COLUMNS =
+  "id, slug, name, blurb, description, image_path, image_alt, image_credit, seo_title, seo_description, active, updated_at";
+
+export async function getDisciplineContent(supabase: SupabaseClient | null): Promise<DisciplineContent[]> {
+  if (!supabase) return staticDisciplines.map((d) => ({ id: d.slug, ...d }));
+  const { data, error } = await supabase
+    .from("terms")
+    .select(DISCIPLINE_CONTENT_COLUMNS)
+    .eq("kind", "discipline")
+    .eq("active", true)
+    .order("name");
+  if (error || !data || data.length === 0) return staticDisciplines.map((d) => ({ id: d.slug, ...d }));
+  return withAliases(supabase, data as DisciplineContent[]);
 }
 
 // Kept as the discipline-specific name since it's used all over the app —
@@ -122,6 +156,22 @@ export async function resolveLocation(
   return data;
 }
 
+/**
+ * What a rider typed into the location field, resolved: a point (town or
+ * postcode, from resolveLocation) or a whole state ("VIC", "Victoria") —
+ * which searches by coach_profiles.state instead of a radius.
+ */
+export type SearchLocation =
+  | ({ kind: "point" } & ResolvedLocation)
+  | { kind: "state"; state: AuState };
+
+export async function resolveSearchLocation(supabase: SupabaseClient, query: string): Promise<SearchLocation | null> {
+  const state = parseState(query);
+  if (state) return { kind: "state", state };
+  const point = await resolveLocation(supabase, query);
+  return point ? { kind: "point", ...point } : null;
+}
+
 export type CoachSearchResult = {
   id: string;
   slug: string;
@@ -147,6 +197,8 @@ export type SearchFilters = {
   lat?: number | null;
   long?: number | null;
   radiusKm?: number;
+  /** State code (VIC, NSW…) for a state-wide search — no radius applied. */
+  state?: string | null;
 };
 
 // Runs the nearby_coaches() RPC (phase 4, rewritten for multi-select in
@@ -156,7 +208,7 @@ export type SearchFilters = {
 // distance/match-count ordering.
 export async function searchCoaches(
   supabase: SupabaseClient,
-  { disciplineIds, skillIds, attributeIds, lat, long, radiusKm = 50 }: SearchFilters
+  { disciplineIds, skillIds, attributeIds, lat, long, radiusKm = 50, state }: SearchFilters
 ): Promise<CoachSearchResult[]> {
   const { data: matches, error } = await supabase.rpc("nearby_coaches", {
     p_discipline_ids: disciplineIds?.length ? disciplineIds : null,
@@ -165,6 +217,7 @@ export async function searchCoaches(
     p_lat: lat ?? null,
     p_long: long ?? null,
     p_radius_km: radiusKm,
+    p_state: state ?? null,
   });
   if (error || !matches || matches.length === 0) return [];
 

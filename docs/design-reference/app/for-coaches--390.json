@@ -1,6 +1,6 @@
 {
  "width": 390,
- "scrollHeight": 6588,
+ "scrollHeight": 6525,
  "elements": [
   {
    "tag": "a",
@@ -975,7 +975,7 @@
    "tag": "span",
    "text": "No commission",
    "box": {
-    "x": -113,
+    "x": -112,
     "y": 721,
     "w": 120,
     "h": 18
@@ -1029,7 +1029,7 @@
    "tag": "span",
    "text": "Cancel any time",
    "box": {
-    "x": 69,
+    "x": 70,
     "y": 721,
     "w": 131,
     "h": 18
@@ -1083,7 +1083,7 @@
    "tag": "span",
    "text": "Real numbers every month",
    "box": {
-    "x": 262,
+    "x": 263,
     "y": 721,
     "w": 216,
     "h": 18
@@ -1137,7 +1137,7 @@
    "tag": "span",
    "text": "No accreditation gatekeeping",
    "box": {
-    "x": 540,
+    "x": 541,
     "y": 721,
     "w": 244,
     "h": 18
@@ -1191,7 +1191,7 @@
    "tag": "span",
    "text": "Riders contact you direct",
    "box": {
-    "x": 847,
+    "x": 848,
     "y": 721,
     "w": 215,
     "h": 18
@@ -1245,7 +1245,7 @@
    "tag": "span",
    "text": "Testimonials are yours",
    "box": {
-    "x": 1124,
+    "x": 1125,
     "y": 721,
     "w": 190,
     "h": 18
@@ -1299,7 +1299,7 @@
    "tag": "span",
    "text": "No commission",
    "box": {
-    "x": 1375,
+    "x": 1376,
     "y": 721,
     "w": 120,
     "h": 18
@@ -1353,7 +1353,7 @@
    "tag": "span",
    "text": "Cancel any time",
    "box": {
-    "x": 1557,
+    "x": 1558,
     "y": 721,
     "w": 131,
     "h": 18
@@ -1407,7 +1407,7 @@
    "tag": "span",
    "text": "Real numbers every month",
    "box": {
-    "x": 1750,
+    "x": 1751,
     "y": 721,
     "w": 216,
     "h": 18
@@ -1461,7 +1461,7 @@
    "tag": "span",
    "text": "No accreditation gatekeeping",
    "box": {
-    "x": 2029,
+    "x": 2030,
     "y": 721,
     "w": 244,
     "h": 18
@@ -1515,7 +1515,7 @@
    "tag": "span",
    "text": "Riders contact you direct",
    "box": {
-    "x": 2335,
+    "x": 2336,
     "y": 721,
     "w": 215,
     "h": 18
@@ -1569,7 +1569,7 @@
    "tag": "span",
    "text": "Testimonials are yours",
    "box": {
-    "x": 2612,
+    "x": 2613,
     "y": 721,
     "w": 190,
     "h": 18
@@ -1626,7 +1626,7 @@
     "x": 0,
     "y": 757,
     "w": 390,
-    "h": 498
+    "h": 435
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -1667,7 +1667,7 @@
     "top": "0px",
     "bottom": "0px",
     "width": "390px",
-    "height": "497.578px",
+    "height": "434.781px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "100%"
@@ -1729,12 +1729,12 @@
   },
   {
    "tag": "h2",
-   "text": "Every coach who signs up in our first",
+   "text": "Free until",
    "box": {
     "x": 18,
     "y": 851,
     "w": 354,
-    "h": 76
+    "h": 38
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
@@ -1775,7 +1775,7 @@
     "top": "auto",
     "bottom": "auto",
     "width": "354px",
-    "height": "76px",
+    "height": "38px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -1783,11 +1783,11 @@
   },
   {
    "tag": "em",
-   "text": "six months",
+   "text": "15 June 2027",
    "box": {
-    "x": 120,
-    "y": 883,
-    "w": 142,
+    "x": 138,
+    "y": 845,
+    "w": 151,
     "h": 50
    },
    "style": {
@@ -1837,12 +1837,12 @@
   },
   {
    "tag": "p",
-   "text": "gets Spotlight free for six months, and $9.99 locked in for as long as they stay",
+   "text": "Sign up before then and you pay nothing until that date. After it, $9.99 a month",
    "box": {
     "x": 18,
-    "y": 943,
+    "y": 905,
     "w": 354,
-    "h": 174
+    "h": 149
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -1883,7 +1883,7 @@
     "top": "auto",
     "bottom": "auto",
     "width": "354px",
-    "height": "173.578px",
+    "height": "148.781px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -1894,7 +1894,7 @@
    "text": "Claim a founding spot",
    "box": {
     "x": 18,
-    "y": 1139,
+    "y": 1076,
     "w": 201,
     "h": 52
    },
@@ -1948,7 +1948,7 @@
    "text": "Every month, good or quiet",
    "box": {
     "x": 18,
-    "y": 1311,
+    "y": 1248,
     "w": 354,
     "h": 18
    },
@@ -2002,7 +2002,7 @@
    "text": "The monthly email, shown",
    "box": {
     "x": 18,
-    "y": 1339,
+    "y": 1276,
     "w": 354,
     "h": 38
    },
@@ -2056,7 +2056,7 @@
    "text": "Example email",
    "box": {
     "x": 37,
-    "y": 1416,
+    "y": 1353,
     "w": 102,
     "h": 17
    },
@@ -2110,7 +2110,7 @@
    "text": "Equestrian Coaches Australia",
    "box": {
     "x": 216,
-    "y": 1414,
+    "y": 1351,
     "w": 137,
     "h": 21
    },
@@ -2164,7 +2164,7 @@
    "text": "Subject",
    "box": {
     "x": 37,
-    "y": 1469,
+    "y": 1406,
     "w": 316,
     "h": 17
    },
@@ -2218,7 +2218,7 @@
    "text": "Your August on Equestrian Coaches Australia",
    "box": {
     "x": 37,
-    "y": 1489,
+    "y": 1426,
     "w": 316,
     "h": 53
    },
@@ -2272,7 +2272,7 @@
    "text": "412",
    "box": {
     "x": 48,
-    "y": 1577,
+    "y": 1514,
     "w": 132,
     "h": 36
    },
@@ -2326,7 +2326,7 @@
    "text": "Appeared in search",
    "box": {
     "x": 48,
-    "y": 1619,
+    "y": 1556,
     "w": 132,
     "h": 16
    },
@@ -2380,7 +2380,7 @@
    "text": "38",
    "box": {
     "x": 210,
-    "y": 1577,
+    "y": 1514,
     "w": 132,
     "h": 36
    },
@@ -2434,7 +2434,7 @@
    "text": "Profile views",
    "box": {
     "x": 210,
-    "y": 1619,
+    "y": 1556,
     "w": 132,
     "h": 16
    },
@@ -2488,7 +2488,7 @@
    "text": "9",
    "box": {
     "x": 48,
-    "y": 1672,
+    "y": 1610,
     "w": 132,
     "h": 36
    },
@@ -2542,7 +2542,7 @@
    "text": "Tapped to call",
    "box": {
     "x": 48,
-    "y": 1714,
+    "y": 1652,
     "w": 132,
     "h": 16
    },
@@ -2596,7 +2596,7 @@
    "text": "4",
    "box": {
     "x": 210,
-    "y": 1672,
+    "y": 1610,
     "w": 132,
     "h": 36
    },
@@ -2650,7 +2650,7 @@
    "text": "Enquiries",
    "box": {
     "x": 210,
-    "y": 1714,
+    "y": 1652,
     "w": 132,
     "h": 16
    },
@@ -2704,7 +2704,7 @@
    "text": "You came up most often for “dressage lessons Geelong” and “flatwork coach Bellar",
    "box": {
     "x": 37,
-    "y": 1765,
+    "y": 1702,
     "w": 316,
     "h": 93
    },
@@ -2758,7 +2758,7 @@
    "text": "(example figures)",
    "box": {
     "x": 85,
-    "y": 1836,
+    "y": 1773,
     "w": 112,
     "h": 20
    },
@@ -2812,7 +2812,7 @@
    "text": "Two of your four enquiries are still marked as no response.",
    "box": {
     "x": 37,
-    "y": 1868,
+    "y": 1805,
     "w": 316,
     "h": 47
    },
@@ -2866,7 +2866,7 @@
    "text": "The quiet months get the same email. If nothing happened, it says so, and tells ",
    "box": {
     "x": 19,
-    "y": 1937,
+    "y": 1874,
     "w": 352,
     "h": 90
    },
@@ -2920,7 +2920,7 @@
    "text": "What’s included",
    "box": {
     "x": 18,
-    "y": 2139,
+    "y": 2077,
     "w": 354,
     "h": 18
    },
@@ -2974,7 +2974,7 @@
    "text": "What we actually do to bring to you",
    "box": {
     "x": 18,
-    "y": 2169,
+    "y": 2107,
     "w": 354,
     "h": 76
    },
@@ -3028,7 +3028,7 @@
    "text": "riders",
    "box": {
     "x": 18,
-    "y": 2201,
+    "y": 2139,
     "w": 77,
     "h": 50
    },
@@ -3082,7 +3082,7 @@
    "text": "01",
    "box": {
     "x": 18,
-    "y": 2292,
+    "y": 2230,
     "w": 36,
     "h": 120
    },
@@ -3136,7 +3136,7 @@
    "text": "We build a page for your suburb and your discipline",
    "box": {
     "x": 64,
-    "y": 2292,
+    "y": 2230,
     "w": 308,
     "h": 48
    },
@@ -3190,7 +3190,7 @@
    "text": "\"Dressage coaches in Geelong\" — and about 400 others. Riders search discipline +",
    "box": {
     "x": 64,
-    "y": 2347,
+    "y": 2284,
     "w": 308,
     "h": 65
    },
@@ -3244,7 +3244,7 @@
    "text": "02",
    "box": {
     "x": 18,
-    "y": 2449,
+    "y": 2386,
     "w": 36,
     "h": 95
    },
@@ -3298,7 +3298,7 @@
    "text": "We write those pages properly",
    "box": {
     "x": 64,
-    "y": 2449,
+    "y": 2386,
     "w": 308,
     "h": 24
    },
@@ -3352,7 +3352,7 @@
    "text": "150 words each on the top 20, by a person. Google's 2024 rules punished director",
    "box": {
     "x": 64,
-    "y": 2479,
+    "y": 2416,
     "w": 308,
     "h": 65
    },
@@ -3406,7 +3406,7 @@
    "text": "03",
    "box": {
     "x": 18,
-    "y": 2581,
+    "y": 2518,
     "w": 36,
     "h": 98
    },
@@ -3460,7 +3460,7 @@
    "text": "We only build a page where three or more real coaches exist",
    "box": {
     "x": 64,
-    "y": 2581,
+    "y": 2518,
     "w": 308,
     "h": 48
    },
@@ -3514,7 +3514,7 @@
    "text": "Keeps the site out of the category Google demotes, which protects your profile t",
    "box": {
     "x": 64,
-    "y": 2636,
+    "y": 2573,
     "w": 308,
     "h": 44
    },
@@ -3568,7 +3568,7 @@
    "text": "04",
    "box": {
     "x": 18,
-    "y": 2716,
+    "y": 2653,
     "w": 36,
     "h": 95
    },
@@ -3622,7 +3622,7 @@
    "text": "Your profile carries structured data",
    "box": {
     "x": 64,
-    "y": 2716,
+    "y": 2653,
     "w": 308,
     "h": 24
    },
@@ -3676,7 +3676,7 @@
    "text": "LocalBusiness and Person markup, so search engines can read who you are and wher",
    "box": {
     "x": 64,
-    "y": 2746,
+    "y": 2683,
     "w": 308,
     "h": 65
    },
@@ -3730,7 +3730,7 @@
    "text": "05",
    "box": {
     "x": 18,
-    "y": 2848,
+    "y": 2786,
     "w": 36,
     "h": 98
    },
@@ -3784,7 +3784,7 @@
    "text": "Kim answers the recommendation posts in equestrian Facebook groups",
    "box": {
     "x": 64,
-    "y": 2848,
+    "y": 2786,
     "w": 308,
     "h": 48
    },
@@ -3838,7 +3838,7 @@
    "text": "By name — not an anonymous account, not an ad.",
    "box": {
     "x": 64,
-    "y": 2903,
+    "y": 2840,
     "w": 308,
     "h": 44
    },
@@ -3892,7 +3892,7 @@
    "text": "06",
    "box": {
     "x": 18,
-    "y": 2983,
+    "y": 2920,
     "w": 36,
     "h": 52
    },
@@ -3946,7 +3946,7 @@
    "text": "We email riders every month",
    "box": {
     "x": 64,
-    "y": 2983,
+    "y": 2920,
     "w": 308,
     "h": 24
    },
@@ -4000,7 +4000,7 @@
    "text": "Clinics near them, new coaches in their area.",
    "box": {
     "x": 64,
-    "y": 3013,
+    "y": 2951,
     "w": 308,
     "h": 22
    },
@@ -4054,7 +4054,7 @@
    "text": "07",
    "box": {
     "x": 18,
-    "y": 3072,
+    "y": 3009,
     "w": 36,
     "h": 74
    },
@@ -4108,7 +4108,7 @@
    "text": "Cards and flyers where riders already stand",
    "box": {
     "x": 64,
-    "y": 3072,
+    "y": 3009,
     "w": 308,
     "h": 24
    },
@@ -4162,7 +4162,7 @@
    "text": "Saddleries, feed stores, pony club, campdraft canteens.",
    "box": {
     "x": 64,
-    "y": 3102,
+    "y": 3039,
     "w": 308,
     "h": 44
    },
@@ -4216,7 +4216,7 @@
    "text": "08",
    "box": {
     "x": 18,
-    "y": 3183,
+    "y": 3120,
     "w": 36,
     "h": 74
    },
@@ -4270,7 +4270,7 @@
    "text": "We give you something to share",
    "box": {
     "x": 64,
-    "y": 3183,
+    "y": 3120,
     "w": 308,
     "h": 24
    },
@@ -4324,7 +4324,7 @@
    "text": "A \"find me on ECA\" graphic and a post you can paste. Free on every plan.",
    "box": {
     "x": 64,
-    "y": 3213,
+    "y": 3150,
     "w": 308,
     "h": 44
    },
@@ -4378,7 +4378,7 @@
    "text": "09",
    "box": {
     "x": 18,
-    "y": 3293,
+    "y": 3231,
     "w": 36,
     "h": 76
    },
@@ -4432,7 +4432,7 @@
    "text": "We help you set up your own Google Business Profile",
    "box": {
     "x": 64,
-    "y": 3293,
+    "y": 3231,
     "w": 308,
     "h": 48
    },
@@ -4486,7 +4486,7 @@
    "text": "Free, and yours to keep.",
    "box": {
     "x": 64,
-    "y": 3348,
+    "y": 3285,
     "w": 308,
     "h": 22
    },
@@ -4540,7 +4540,7 @@
    "text": "All of that happens whether you’re on Listed or Clinic.",
    "box": {
     "x": 18,
-    "y": 3410,
+    "y": 3348,
     "w": 354,
     "h": 45
    },
@@ -4594,7 +4594,7 @@
    "text": "Pick a plan",
    "box": {
     "x": 18,
-    "y": 3573,
+    "y": 3510,
     "w": 134,
     "h": 38
    },
@@ -4648,7 +4648,7 @@
    "text": "Monthly",
    "box": {
     "x": 236,
-    "y": 3571,
+    "y": 3509,
     "w": 72,
     "h": 36
    },
@@ -4701,7 +4701,7 @@
    "tag": "button",
    "box": {
     "x": 308,
-    "y": 3571,
+    "y": 3509,
     "w": 60,
     "h": 36
    },
@@ -4755,7 +4755,7 @@
    "text": "Yearly",
    "box": {
     "x": 320,
-    "y": 3580,
+    "y": 3518,
     "w": 36,
     "h": 17
    },
@@ -4809,7 +4809,7 @@
    "text": "Annual is ten months’ price. Change plan any time, both directions — a coach run",
    "box": {
     "x": 18,
-    "y": 3623,
+    "y": 3560,
     "w": 354,
     "h": 68
    },
@@ -4863,7 +4863,7 @@
    "text": "Listed",
    "box": {
     "x": 39,
-    "y": 3737,
+    "y": 3675,
     "w": 57,
     "h": 30
    },
@@ -4917,7 +4917,7 @@
    "text": "For most coaches",
    "box": {
     "x": 39,
-    "y": 3771,
+    "y": 3709,
     "w": 312,
     "h": 21
    },
@@ -4971,7 +4971,7 @@
    "text": "$9.99",
    "box": {
     "x": 39,
-    "y": 3808,
+    "y": 3746,
     "w": 67,
     "h": 40
    },
@@ -5025,7 +5025,7 @@
    "text": "a month · or $99/yr",
    "box": {
     "x": 114,
-    "y": 3827,
+    "y": 3765,
     "w": 123,
     "h": 21
    },
@@ -5079,7 +5079,7 @@
    "text": "Everything a coach needs to be found and reached: an indexed profile, area and d",
    "box": {
     "x": 39,
-    "y": 3862,
+    "y": 3800,
     "w": 312,
     "h": 87
    },
@@ -5133,7 +5133,7 @@
    "text": "Join as a founding coach",
    "box": {
     "x": 39,
-    "y": 3967,
+    "y": 3905,
     "w": 312,
     "h": 53
    },
@@ -5187,7 +5187,7 @@
    "text": "Spotlight",
    "box": {
     "x": 39,
-    "y": 4078,
+    "y": 4015,
     "w": 87,
     "h": 30
    },
@@ -5241,7 +5241,7 @@
    "text": "Most popular",
    "box": {
     "x": 253,
-    "y": 4091,
+    "y": 4028,
     "w": 98,
     "h": 17
    },
@@ -5295,7 +5295,7 @@
    "text": "For coaches building a book",
    "box": {
     "x": 39,
-    "y": 4112,
+    "y": 4049,
     "w": 312,
     "h": 21
    },
@@ -5349,7 +5349,7 @@
    "text": "$24.95",
    "box": {
     "x": 39,
-    "y": 4149,
+    "y": 4086,
     "w": 83,
     "h": 40
    },
@@ -5403,7 +5403,7 @@
    "text": "a month · or $249/yr",
    "box": {
     "x": 130,
-    "y": 4168,
+    "y": 4105,
     "w": 131,
     "h": 21
    },
@@ -5457,7 +5457,7 @@
    "text": "Everything in Listed, plus a featured slot on your area pages, instant enquiry a",
    "box": {
     "x": 39,
-    "y": 4203,
+    "y": 4140,
     "w": 312,
     "h": 65
    },
@@ -5511,7 +5511,7 @@
    "text": "Choose Spotlight",
    "box": {
     "x": 39,
-    "y": 4286,
+    "y": 4223,
     "w": 312,
     "h": 53
    },
@@ -5565,7 +5565,7 @@
    "text": "Clinic",
    "box": {
     "x": 39,
-    "y": 4397,
+    "y": 4334,
     "w": 55,
     "h": 30
    },
@@ -5619,7 +5619,7 @@
    "text": "For coaches who are already full",
    "box": {
     "x": 39,
-    "y": 4431,
+    "y": 4368,
     "w": 312,
     "h": 21
    },
@@ -5673,7 +5673,7 @@
    "text": "$49.95",
    "box": {
     "x": 39,
-    "y": 4468,
+    "y": 4405,
     "w": 81,
     "h": 40
    },
@@ -5727,7 +5727,7 @@
    "text": "a month · or $499/yr",
    "box": {
     "x": 128,
-    "y": 4487,
+    "y": 4424,
     "w": 131,
     "h": 21
    },
@@ -5781,7 +5781,7 @@
    "text": "Everything in Spotlight, plus your events pushed to riders statewide, waitlist c",
    "box": {
     "x": 39,
-    "y": 4522,
+    "y": 4459,
     "w": 312,
     "h": 65
    },
@@ -5835,7 +5835,7 @@
    "text": "Choose Clinic",
    "box": {
     "x": 39,
-    "y": 4605,
+    "y": 4542,
     "w": 312,
     "h": 53
    },
@@ -5889,7 +5889,7 @@
    "text": "Listed comes with everything a coach needs to be found and reached — it isn’t a ",
    "box": {
     "x": 18,
-    "y": 4696,
+    "y": 4634,
     "w": 354,
     "h": 63
    },
@@ -5942,7 +5942,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 4779,
+    "y": 4717,
     "w": 354,
     "h": 61
    },
@@ -5996,7 +5996,7 @@
    "text": "Full comparison, all 27 features",
    "box": {
     "x": 37,
-    "y": 4798,
+    "y": 4735,
     "w": 226,
     "h": 24
    },
@@ -6050,7 +6050,7 @@
    "text": "+",
    "box": {
     "x": 343,
-    "y": 4796,
+    "y": 4734,
     "w": 10,
     "h": 27
    },
@@ -6104,7 +6104,7 @@
    "text": "We never take a of a lesson.",
    "box": {
     "x": 42,
-    "y": 4932,
+    "y": 4870,
     "w": 306,
     "h": 69
    },
@@ -6158,7 +6158,7 @@
    "text": "percentage",
    "box": {
     "x": 218,
-    "y": 4926,
+    "y": 4864,
     "w": 124,
     "h": 45
    },
@@ -6212,7 +6212,7 @@
    "text": "A flat monthly fee and nothing else, forever. What a rider pays you is between y",
    "box": {
     "x": 42,
-    "y": 5016,
+    "y": 4953,
     "w": 306,
     "h": 68
    },
@@ -6266,7 +6266,7 @@
    "text": "Questions",
    "box": {
     "x": 18,
-    "y": 5175,
+    "y": 5112,
     "w": 354,
     "h": 38
    },
@@ -6319,7 +6319,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5234,
+    "y": 5171,
     "w": 354,
     "h": 64
    },
@@ -6372,7 +6372,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5234,
+    "y": 5171,
     "w": 354,
     "h": 64
    },
@@ -6426,7 +6426,7 @@
    "text": "What if I don't get any enquiries?",
    "box": {
     "x": 18,
-    "y": 5254,
+    "y": 5191,
     "w": 208,
     "h": 24
    },
@@ -6480,7 +6480,7 @@
    "text": "−",
    "box": {
     "x": 344,
-    "y": 5252,
+    "y": 5189,
     "w": 28,
     "h": 28
    },
@@ -6534,7 +6534,7 @@
    "text": "You'll know, because we'll tell you. The monthly email shows the real numbers wh",
    "box": {
     "x": 18,
-    "y": 5298,
+    "y": 5235,
     "w": 354,
     "h": 160
    },
@@ -6587,7 +6587,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5459,
+    "y": 5396,
     "w": 354,
     "h": 64
    },
@@ -6640,7 +6640,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5459,
+    "y": 5396,
     "w": 354,
     "h": 64
    },
@@ -6694,7 +6694,7 @@
    "text": "Can I cancel any time?",
    "box": {
     "x": 18,
-    "y": 5479,
+    "y": 5416,
     "w": 142,
     "h": 24
    },
@@ -6748,7 +6748,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5477,
+    "y": 5414,
     "w": 28,
     "h": 28
    },
@@ -6801,7 +6801,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5524,
+    "y": 5461,
     "w": 354,
     "h": 64
    },
@@ -6854,7 +6854,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5524,
+    "y": 5461,
     "w": 354,
     "h": 64
    },
@@ -6908,7 +6908,7 @@
    "text": "Do you take a cut of my lesson fees?",
    "box": {
     "x": 18,
-    "y": 5544,
+    "y": 5481,
     "w": 223,
     "h": 24
    },
@@ -6962,7 +6962,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5542,
+    "y": 5479,
     "w": 28,
     "h": 28
    },
@@ -7015,7 +7015,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5589,
+    "y": 5526,
     "w": 354,
     "h": 64
    },
@@ -7068,7 +7068,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5589,
+    "y": 5526,
     "w": 354,
     "h": 64
    },
@@ -7122,7 +7122,7 @@
    "text": "What happens to my testimonials if I leave?",
    "box": {
     "x": 18,
-    "y": 5609,
+    "y": 5546,
     "w": 273,
     "h": 24
    },
@@ -7176,7 +7176,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5607,
+    "y": 5544,
     "w": 28,
     "h": 28
    },
@@ -7229,7 +7229,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5654,
+    "y": 5591,
     "w": 354,
     "h": 64
    },
@@ -7282,7 +7282,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5654,
+    "y": 5591,
     "w": 354,
     "h": 64
    },
@@ -7336,7 +7336,7 @@
    "text": "Will you sell my details?",
    "box": {
     "x": 18,
-    "y": 5674,
+    "y": 5611,
     "w": 149,
     "h": 24
    },
@@ -7390,7 +7390,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5672,
+    "y": 5609,
     "w": 28,
     "h": 28
    },
@@ -7443,7 +7443,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5719,
+    "y": 5656,
     "w": 354,
     "h": 64
    },
@@ -7496,7 +7496,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5719,
+    "y": 5656,
     "w": 354,
     "h": 64
    },
@@ -7550,7 +7550,7 @@
    "text": "Do I need to be accredited?",
    "box": {
     "x": 18,
-    "y": 5739,
+    "y": 5676,
     "w": 168,
     "h": 24
    },
@@ -7604,7 +7604,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5737,
+    "y": 5674,
     "w": 28,
     "h": 28
    },
@@ -7657,7 +7657,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5784,
+    "y": 5721,
     "w": 354,
     "h": 64
    },
@@ -7710,7 +7710,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5784,
+    "y": 5721,
     "w": 354,
     "h": 64
    },
@@ -7764,7 +7764,7 @@
    "text": "What if there aren't many coaches in my area?",
    "box": {
     "x": 18,
-    "y": 5804,
+    "y": 5741,
     "w": 293,
     "h": 24
    },
@@ -7818,7 +7818,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5802,
+    "y": 5739,
     "w": 28,
     "h": 28
    },
@@ -7871,7 +7871,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5849,
+    "y": 5786,
     "w": 354,
     "h": 64
    },
@@ -7924,7 +7924,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5849,
+    "y": 5786,
     "w": 354,
     "h": 64
    },
@@ -7978,7 +7978,7 @@
    "text": "How long before I see anything?",
    "box": {
     "x": 18,
-    "y": 5869,
+    "y": 5806,
     "w": 201,
     "h": 24
    },
@@ -8032,7 +8032,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5867,
+    "y": 5804,
     "w": 28,
     "h": 28
    },
@@ -8086,7 +8086,7 @@
    "text": "Tell us what to fix",
    "box": {
     "x": 38,
-    "y": 5966,
+    "y": 5903,
     "w": 314,
     "h": 26
    },
@@ -8140,7 +8140,7 @@
    "text": "This site is new and we’d rather hear what’s not working from you than guess. If",
    "box": {
     "x": 38,
-    "y": 6002,
+    "y": 5939,
     "w": 314,
     "h": 112
    },
@@ -8193,7 +8193,7 @@
    "tag": "a",
    "box": {
     "x": 18,
-    "y": 6238,
+    "y": 6176,
     "w": 53,
     "h": 41
    },
@@ -8247,7 +8247,7 @@
    "text": "ECA",
    "box": {
     "x": 18,
-    "y": 6232,
+    "y": 6170,
     "w": 53,
     "h": 52
    },
@@ -8301,7 +8301,7 @@
    "text": "Equestrian Coaches Australia. The coach who teaches what you ride, wherever you ",
    "box": {
     "x": 18,
-    "y": 6289,
+    "y": 6227,
     "w": 280,
     "h": 63
    },
@@ -8355,7 +8355,7 @@
    "text": "Riders",
    "box": {
     "x": 18,
-    "y": 6380,
+    "y": 6318,
     "w": 167,
     "h": 21
    },
@@ -8409,7 +8409,7 @@
    "text": "Find a coach",
    "box": {
     "x": 18,
-    "y": 6407,
+    "y": 6345,
     "w": 167,
     "h": 29
    },
@@ -8463,7 +8463,7 @@
    "text": "Disciplines",
    "box": {
     "x": 18,
-    "y": 6436,
+    "y": 6373,
     "w": 167,
     "h": 29
    },
@@ -8517,7 +8517,7 @@
    "text": "My account",
    "box": {
     "x": 18,
-    "y": 6464,
+    "y": 6402,
     "w": 167,
     "h": 29
    },
@@ -8571,7 +8571,7 @@
    "text": "Coaches",
    "box": {
     "x": 205,
-    "y": 6380,
+    "y": 6318,
     "w": 167,
     "h": 21
    },
@@ -8625,7 +8625,7 @@
    "text": "List your profile",
    "box": {
     "x": 205,
-    "y": 6407,
+    "y": 6345,
     "w": 167,
     "h": 29
    },
@@ -8679,7 +8679,7 @@
    "text": "Pricing",
    "box": {
     "x": 205,
-    "y": 6436,
+    "y": 6373,
     "w": 167,
     "h": 29
    },
@@ -8733,7 +8733,7 @@
    "text": "Dashboard",
    "box": {
     "x": 205,
-    "y": 6464,
+    "y": 6402,
     "w": 167,
     "h": 29
    },
@@ -8787,7 +8787,7 @@
    "text": "© 2026 Equestrian Coaches Australia",
    "box": {
     "x": 18,
-    "y": 6525,
+    "y": 6462,
     "w": 354,
     "h": 63
    },

@@ -3,7 +3,7 @@
  * (the coaches landing page) and `/` (the site home, until the parent
  * brand gets a home page of its own covering every profession). One
  * implementation so the two can never drift while they are the same
- * page; when `/` becomes the parent home, only that route changes.
+ * page; when `/` becomes the parent home, only `src/app/page.tsx` changes.
  */
 import Link from "next/link";
 import { Hero } from "@/components/hero";
@@ -11,11 +11,12 @@ import { SearchBar } from "@/components/search-bar";
 import { CoachCard } from "@/components/coach-card";
 import { DisciplineMarquee } from "@/components/discipline-marquee";
 import { Reveal } from "@/components/reveal";
-import { disciplines } from "@/lib/disciplines";
 import { placeholderCoaches, toCoachCardData } from "@/lib/placeholder-coaches";
 import { createClient } from "@/lib/supabase/server";
-import { searchCoaches } from "@/lib/supabase/queries";
-import { searchMockCoaches, disciplinePhoto } from "@/lib/mock-coaches";
+import { getAttributes, getDisciplineContent, getSkills, searchCoaches } from "@/lib/supabase/queries";
+import { disciplineImage } from "@/lib/discipline-content";
+import { toTermOption } from "@/lib/term-options";
+import { searchMockCoaches } from "@/lib/mock-coaches";
 
 
 // "Start with what you ride" lists every discipline, alphabetically (the
@@ -44,6 +45,12 @@ const STEPS = [
 
 export async function CoachesHome() {
   const supabase = await createClient();
+  // The skill/attribute vocabulary for the card's "Skills & setup" picker.
+  const [skills, attributes, disciplines] = await Promise.all([
+    getSkills(supabase),
+    getAttributes(supabase),
+    getDisciplineContent(supabase),
+  ]);
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const all = supabase
     ? [...(await searchCoaches(supabase, {})), ...searchMockCoaches({})]
@@ -55,8 +62,9 @@ export async function CoachesHome() {
   const allDisciplines = disciplines.map((d) => ({
     ...d,
     count: countByName.get(d.name) ?? 0,
-    photo: disciplinePhoto(d.slug, 600),
+    photo: disciplineImage(d, 600),
   }));
+  const disciplineOptions = disciplines.map(toTermOption);
 
   return (
     <>
@@ -68,14 +76,18 @@ export async function CoachesHome() {
         leadShort="Search by what you ride and where you are. Free for riders, always."
         stats={[
           { value: String(disciplines.length), label: "disciplines" },
+          // The same list the page and /search are built from, so the number
+          // is the number a rider actually finds — not a claim about how big
+          // the site is. It falls to the real count on its own the day the
+          // mock coaches come out (src/lib/mock-coaches.ts).
+          { value: String(all.length), label: all.length === 1 ? "coach" : "coaches" },
           { value: "Free", label: "for riders" },
-          { value: "Direct", label: "contact, no commission" },
         ]}
       >
-        <SearchBar />
+        <SearchBar skills={skills.map(toTermOption)} attributes={attributes.map(toTermOption)} disciplineOptions={disciplineOptions} />
       </Hero>
 
-      <DisciplineMarquee />
+      <DisciplineMarquee names={disciplines.map((d) => d.name)} />
 
       {/* ── Featured coaches ─────────────────────────────────────────── */}
       <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] pt-14 wide:px-12 wide:pt-[88px]">
@@ -142,7 +154,7 @@ export async function CoachesHome() {
                 <span className="flex min-w-0 items-center gap-3.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={d.photo}
+                    src={d.photo.src}
                     alt=""
                     className="h-[52px] w-[52px] shrink-0 rounded-t-[26px] rounded-b-[6px] object-cover"
                     loading="lazy"
@@ -176,8 +188,8 @@ export async function CoachesHome() {
                 <span data-parallax="drift" data-parallax-speed="0.08" data-parallax-max="40" className="parallax-drift absolute inset-0 block">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={d.photo}
-                    alt=""
+                    src={d.photo.src}
+                    alt={d.photo.alt}
                     className="block h-full w-full object-cover transition-transform duration-[800ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-105"
                     loading="lazy"
                   />

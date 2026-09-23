@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
-import { disciplines } from "@/lib/disciplines";
 import { createClient } from "@/lib/supabase/server";
+import { getDisciplineContent } from "@/lib/supabase/queries";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -11,13 +11,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/search`, changeFrequency: "daily", priority: 0.9 },
     { url: `${siteUrl}/for-coaches`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${siteUrl}/disciplines`, changeFrequency: "weekly", priority: 0.7 },
     // /horse-care and its profession pages are deliberately absent: they
     // are holding pages with no real providers on them yet, and both are
     // noindex until a profession actually opens.
   ];
 
-  const disciplineRoutes: MetadataRoute.Sitemap = disciplines.map((d) => ({
+  const supabase = await createClient();
+  // Active disciplines only, straight from the terms table — a deactivated
+  // discipline leaves the sitemap the moment an admin switches it off.
+  const disciplineRoutes: MetadataRoute.Sitemap = (await getDisciplineContent(supabase)).map((d) => ({
     url: `${siteUrl}/disciplines/${d.slug}`,
+    lastModified: d.updated_at ? new Date(d.updated_at) : undefined,
     changeFrequency: "daily",
     priority: 0.8,
   }));
@@ -27,7 +32,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // and shouldn't be indexed.
   let coachRoutes: MetadataRoute.Sitemap = [];
   let areaRoutes: MetadataRoute.Sitemap = [];
-  const supabase = await createClient();
   if (supabase) {
     const { data } = await supabase.from("coach_profiles").select("slug").eq("published", true);
     coachRoutes = (data ?? []).map((c) => ({

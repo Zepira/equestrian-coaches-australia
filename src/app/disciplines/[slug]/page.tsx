@@ -1,80 +1,200 @@
+import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
-import { CoachResultCard } from "@/components/coach-result-card";
+import { CoachListMap } from "@/components/coach-list-map";
 import { JsonLd } from "@/components/json-ld";
+import { Reveal } from "@/components/reveal";
 import { createClient } from "@/lib/supabase/server";
-import { getDisciplines, searchCoaches } from "@/lib/supabase/queries";
+import { getAttributes, getDisciplineContent, getSkills, searchCoaches } from "@/lib/supabase/queries";
 import { disciplines as staticDisciplines } from "@/lib/disciplines";
 import { getCoachesByDiscipline, toCoachCardData } from "@/lib/placeholder-coaches";
 import { getMockCoachesByDiscipline } from "@/lib/mock-coaches";
+import { descriptionParagraphs, disciplineImage, disciplineSeo } from "@/lib/discipline-content";
+import { toTermOption } from "@/lib/term-options";
 import { breadcrumbSchema, itemListSchema } from "@/lib/structured-data";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+// The seed list pre-renders at build; anything an admin adds afterwards
+// renders on first request (dynamicParams is on by default).
 export function generateStaticParams() {
   return staticDisciplines.map((d) => ({ slug: d.slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const discipline = staticDisciplines.find((d) => d.slug === slug);
+  const supabase = await createClient();
+  const discipline = (await getDisciplineContent(supabase)).find((d) => d.slug === slug);
   if (!discipline) return { title: "Discipline not found" };
+  const seo = disciplineSeo(discipline);
+  const image = disciplineImage(discipline, 1200);
   return {
-    title: `${discipline.name} coaches`,
-    description: `${discipline.blurb} Search ${discipline.name.toLowerCase()} coaches across Australia by location.`,
+    title: seo.title,
+    description: seo.description,
+    alternates: { canonical: `${siteUrl}/disciplines/${slug}` },
+    openGraph: {
+      title: seo.title,
+      description: seo.description,
+      url: `${siteUrl}/disciplines/${slug}`,
+      images: [{ url: image.src, alt: image.alt || `${discipline.name} coaching` }],
+    },
   };
 }
 
+/**
+ * /disciplines/[slug] — one discipline's page, built from its `terms` row:
+ * name, blurb, long description, photo and SEO fields are all admin-edited
+ * (see /admin/disciplines). Then the search card pre-set to it, and every
+ * coach tagged with it.
+ */
 export default async function DisciplinePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const supabase = await createClient();
-  const disciplines = await getDisciplines(supabase);
+  const [disciplines, skills, attributes] = await Promise.all([
+    getDisciplineContent(supabase),
+    getSkills(supabase),
+    getAttributes(supabase),
+  ]);
   const discipline = disciplines.find((d) => d.slug === slug);
   if (!discipline) notFound();
 
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const coaches = supabase
-    ? [
-        ...(await searchCoaches(supabase, { disciplineIds: [discipline.id] })),
-        ...getMockCoachesByDiscipline(slug),
-      ]
+    ? [...(await searchCoaches(supabase, { disciplineIds: [discipline.id] })), ...getMockCoachesByDiscipline(slug)]
     : getCoachesByDiscipline(slug).map(toCoachCardData);
 
+  const image = disciplineImage(discipline, 1200);
+  const paragraphs = descriptionParagraphs(discipline.description);
+  const others = disciplines.filter((d) => d.slug !== slug);
+  const termOptions = disciplines.map(toTermOption);
+  const lower = discipline.name.toLowerCase();
+
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <div>
       <JsonLd
         data={[
           breadcrumbSchema([
             { name: "Home", url: "/" },
+            { name: "Disciplines", url: "/disciplines" },
             { name: `${discipline.name} coaches`, url: `/disciplines/${slug}` },
           ]),
-          ...(coaches.length > 0
-            ? [itemListSchema(coaches.map((c) => ({ name: c.name, url: `/coaches/${c.slug}` })))]
-            : []),
+          ...(coaches.length > 0 ? [itemListSchema(coaches.map((c) => ({ name: c.name, url: `/coaches/${c.slug}` })))] : []),
         ]}
       />
-      <h1 className="font-display text-[38px] leading-none -tracking-[0.01em] text-ink wide:text-[56px] wide:leading-[0.98] wide:-tracking-[0.02em]">
-        <em className="italic text-accent">{discipline.name}</em> coaches
-      </h1>
-      <p className="mt-2 max-w-xl text-muted">{discipline.blurb}</p>
 
-      <div className="mt-6">
-        <SearchBar defaultDiscipline={slug} tone="plain" />
-      </div>
-
-      <p className="mt-6 text-sm text-muted">
-        {coaches.length} {discipline.name.toLowerCase()} coach{coaches.length === 1 ? "" : "es"} listed
-      </p>
-
-      {coaches.length > 0 ? (
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-          {coaches.map((coach) => (
-            <CoachResultCard key={coach.slug} coach={coach} />
-          ))}
+      {/* ── Header: copy left, photograph right ──────────────────────── */}
+      <section className="mx-auto max-w-[1184px] px-[18px] pt-8 wide:px-12 wide:pt-16">
+        <nav aria-label="Breadcrumb" className="fade-in text-[13px] text-subtle">
+          <Link href="/disciplines" className="hover:text-ink">Disciplines</Link>
+          <span className="mx-2">/</span>
+          <span className="text-fg">{discipline.name}</span>
+        </nav>
+        <div className="mt-5 wide:grid wide:grid-cols-[1.15fr_1fr] wide:items-center wide:gap-14">
+          <div>
+            <h1 className="fade-in text-[48px] leading-[0.96] -tracking-[0.02em] text-ink wide:text-[84px] wide:leading-[0.92] wide:-tracking-[0.03em]" style={{ animationDelay: "0.1s" }}>
+              <em className="text-accent">{discipline.name}</em> coaches
+            </h1>
+            <p className="fade-in mt-5 max-w-[46ch] text-[18px] leading-[1.45] text-ink wide:mt-7 wide:text-[22px] wide:leading-[1.35]" style={{ animationDelay: "0.3s" }}>
+              {discipline.blurb}
+            </p>
+            <p className="fade-in mt-4 text-[14px] text-subtle wide:text-[15px]" style={{ animationDelay: "0.45s" }}>
+              {coaches.length} {lower} coach{coaches.length === 1 ? "" : "es"} listed across Australia
+            </p>
+          </div>
+          <figure className="fade-in mt-8 wide:mt-0" style={{ animationDelay: "0.25s" }}>
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[16px] bg-shade wide:aspect-[5/4] wide:rounded-[20px]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={image.src}
+                alt={image.alt}
+                width={1200}
+                height={900}
+                fetchPriority="high"
+                decoding="async"
+                data-parallax="drift"
+                data-parallax-speed="0.08"
+                data-parallax-max="40"
+                className="parallax-drift block h-full w-full object-cover"
+              />
+            </div>
+            {discipline.image_credit ? (
+              <figcaption className="mt-2 text-right text-[12px] text-subtle">Photo: {discipline.image_credit}</figcaption>
+            ) : null}
+          </figure>
         </div>
-      ) : (
-        <div className="mt-8 rounded-[16px] border border-dashed border-[#d9cdb6] p-8 text-center text-[15px] text-muted">
-          No {discipline.name.toLowerCase()} coaches listed yet — check back soon.
+
+        <div className="fade-in mt-8 wide:mt-12" style={{ animationDelay: "0.6s" }}>
+          <SearchBar defaultDiscipline={slug} tone="plain" skills={skills.map(toTermOption)} attributes={attributes.map(toTermOption)} disciplineOptions={termOptions} />
         </div>
+      </section>
+
+      {/* ── About the discipline (only when an admin has written it) ─── */}
+      {paragraphs.length > 0 && (
+        <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] pt-14 wide:px-12 wide:pt-20">
+          <div className="border-t border-border pt-8 wide:grid wide:grid-cols-[1fr_2fr] wide:gap-16 wide:pt-10">
+            <h2 className="text-[30px] leading-[1.02] -tracking-[0.02em] text-ink wide:text-[40px]">
+              About <em className="text-accent">{lower}</em>
+            </h2>
+            <div className="mt-4 flex max-w-[64ch] flex-col gap-4 text-[16px] leading-[1.6] text-muted wide:mt-0 wide:text-[17px]">
+              {paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          </div>
+        </Reveal>
       )}
+
+      {/* ── The coaches ──────────────────────────────────────────────── */}
+      <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] pt-14 wide:px-12 wide:pt-20">
+        <div className="flex items-baseline justify-between border-t border-border pt-8 wide:pt-10">
+          <h2 className="text-[30px] leading-[1.02] -tracking-[0.02em] text-ink wide:text-[40px]">
+            {coaches.length > 0 ? <>The <em className="text-accent">{lower}</em> coaches</> : <>No {lower} coaches yet</>}
+          </h2>
+          {coaches.length > 0 && (
+            <Link href={`/search?d=${slug}`} className="hidden border-b border-current text-[15px] font-medium text-accent wide:inline-block">
+              Search by location
+            </Link>
+          )}
+        </div>
+        {coaches.length > 0 ? (
+          <CoachListMap coaches={coaches} />
+        ) : (
+          <div className="mt-6 rounded-[16px] bg-shade px-6 py-8 wide:px-9 wide:py-10">
+            <p className="max-w-[54ch] text-[16px] leading-[1.55] text-muted">
+              Nobody teaching {lower} has listed yet — that means we haven&rsquo;t reached them, not that they don&rsquo;t exist. If you know one,{" "}
+              <a href={`mailto:hello@equineprofessionals.au?subject=${encodeURIComponent(`A ${lower} coach you should know about`)}`} className="border-b border-current text-accent hover:text-accent-hover">
+                tell us
+              </a>
+              .
+            </p>
+          </div>
+        )}
+      </Reveal>
+
+      {/* ── Other disciplines ────────────────────────────────────────── */}
+      <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] py-14 wide:px-12 wide:py-20">
+        <div className="border-t border-border pt-8 wide:pt-10">
+          <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-accent wide:tracking-[0.2em]">Other disciplines</p>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {others.map((d) => (
+              <li key={d.slug}>
+                <Link
+                  href={`/disciplines/${d.slug}`}
+                  className="inline-block rounded-[var(--radius-pill)] border border-border bg-surface px-3.5 py-2 text-[14px] font-medium text-fg transition-colors duration-200 hover:border-ink hover:bg-shade"
+                >
+                  {d.name}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link href="/disciplines" className="inline-block rounded-[var(--radius-pill)] px-3.5 py-2 text-[14px] font-medium text-accent underline-offset-4 hover:underline">
+                All disciplines →
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </Reveal>
     </div>
   );
 }

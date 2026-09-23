@@ -344,6 +344,7 @@ type SearchFilter = {
   lat?: number | null;
   long?: number | null;
   radiusKm?: number;
+  state?: string | null;
 };
 
 export type MockCoachCard = {
@@ -392,10 +393,12 @@ export function searchMockCoaches({
   lat,
   long,
   radiusKm = 50,
+  state,
 }: SearchFilter): MockCoachCard[] {
   if (!MOCK_COACHES_ENABLED) return [];
 
   return mockCoaches
+    .filter((c) => !state || c.state.toUpperCase() === state.toUpperCase())
     .filter(
       (c) =>
         !disciplineSlugs ||

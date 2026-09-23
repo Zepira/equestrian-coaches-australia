@@ -32,6 +32,7 @@ const MAJOR_TOWNS = new Set(
 );
 
 import { titleCase } from "@/lib/text";
+import { statesMatching } from "@/lib/au-states";
 
 export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get("q")?.trim() ?? "";
@@ -66,5 +67,18 @@ export async function GET(req: NextRequest) {
     (MAJOR_TOWNS.has(s.suburb.toLowerCase()) ? 0 : 1000) + s.suburb.length;
   all.sort((a, b) => rank(a) - rank(b) || a.suburb.localeCompare(b.suburb));
 
-  return NextResponse.json({ suggestions: all.slice(0, 8) });
+  // "vic" / "victoria" / "new s…": offer the whole state first. Its value
+  // is the full name, which resolveSearchLocation() reads as state-wide.
+  const states: LocationSuggestion[] = isNumeric
+    ? []
+    : statesMatching(q).map((s) => ({ label: `${s.name} — state-wide`, value: s.name, suburb: s.name, state: s.code, postcode: "" }));
+  all.unshift(...states);
+
+  // The postcodes table is static, so the browser (and Vercel's CDN, once
+  // deployed) can hold each prefix's answer — a backspace-and-retype costs
+  // nothing, and common prefixes are served without reaching Supabase.
+  return NextResponse.json(
+    { suggestions: all.slice(0, 8) },
+    { headers: { "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800" } }
+  );
 }

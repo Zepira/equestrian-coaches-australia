@@ -1,0 +1,782 @@
+<title>The First 100 Coaches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --navy:#E7DAC6; --navy-2:#DDCFB6;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8; --claret-hi:#DE8B6C;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7; --band-accent:#1F3A2E;
+  --bar-good:#00794F; --bar-bad:#C0492A;
+  --pick:#9C4229; --pick-bg:#F7F0E1;
+  --code-bg:#FBF7EC; --code-ink:#33312B; --code-key:#1F3A2E; --code-com:#87816F;
+  --on-navy:#22201C; --on-navy-2:#4A4842; --on-navy-3:#5E5A50;
+  --navy-rule:#D3C1A4;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --wrap:1040px; --measure:68ch;
+  --ribbon:polygon(0 0,100% 0,100% 100%,0 100%);
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.8rem,8.4vw,5.4rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.9rem,4.6vw,3rem); line-height:1.03}
+h3{font-size:1.26rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+.tnum{font-variant-numeric:tabular-nums}
+
+.chip{display:inline-block; font-size:.68rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+/* ---------- navy bands ---------- */
+.band{background:var(--navy); color:var(--on-navy); border-bottom:1px solid var(--line-strong)}
+.band a{color:var(--claret)}
+
+.masthead{padding:66px 0 70px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:44px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--on-navy-2)}
+.masthead h1{margin-bottom:30px}
+.masthead .lede{font-size:1.16rem; line-height:1.5; color:var(--on-navy-2); max-width:52ch; margin:0}
+.mast-meta{margin-top:40px; padding-top:18px; border-top:1px solid var(--navy-rule);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.76rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--on-navy-3)}
+
+/* ---------- verdict ---------- */
+.verdict{padding:0 0 60px}
+.verdict-lead{max-width:62ch; font-size:1.02rem; color:var(--on-navy-2); margin:0 0 34px}
+.verdict-lead b{color:var(--on-navy); font-weight:700}
+.vgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--navy-rule)}
+.vcell{background:var(--navy); padding:26px 24px 28px}
+.vcell .lbl{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--on-navy-3)}
+.vnum{font-family:var(--display); font-weight:400; font-size:3.3rem; letter-spacing:-.025em; line-height:1;
+  color:var(--band-accent); display:block; margin:14px 0 10px; font-variant-numeric:tabular-nums}
+.vcell.risk .vnum{color:var(--claret)}
+.vcell p{margin:0; font-size:.88rem; line-height:1.5; color:var(--on-navy-2)}
+@media(max-width:760px){.vgrid{grid-template-columns:1fr}}
+
+/* ---------- sections ---------- */
+main.wrap{padding-top:74px}
+section{margin-bottom:82px}
+.sec-head{margin-bottom:30px}
+.sec-num{display:block; font-family:var(--display); font-size:.98rem; font-weight:600; letter-spacing:.06em;
+  color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+
+/* ---------- figures ---------- */
+figure{margin:32px 0; border:1px solid var(--line-strong); background:var(--surface); overflow:hidden}
+figcaption{padding:14px 22px; border-top:1px solid var(--line-strong); font-size:.85rem; line-height:1.5;
+  color:var(--ink-2); background:var(--surface-2)}
+figcaption b{font-weight:700; color:var(--ink)}
+.fig-title{padding:22px 22px 6px}
+.fig-title h3{margin-bottom:6px}
+.fig-title p{margin:0; font-size:.88rem; color:var(--ink-3)}
+
+/* ---------- bar chart ---------- */
+.chart{padding:22px}
+.bars{display:grid; gap:4px; position:relative}
+.brow{position:relative; z-index:1; display:grid; grid-template-columns:190px 1fr; align-items:center; gap:16px; padding:7px 0}
+.blabel{font-size:.88rem; line-height:1.3; font-weight:600}
+.blabel .bsub{display:block; font-size:.72rem; font-weight:400; color:var(--ink-3); margin-top:2px; letter-spacing:.01em}
+.btrack{display:flex; align-items:center; gap:10px; min-height:22px}
+.bfill{height:17px; background:var(--bar-good); flex:0 0 auto; min-width:2px;
+  clip-path:polygon(0 0,100% 0,100% 100%,0 100%); box-shadow:0 0 0 2px var(--surface)}
+.brow.over .bfill{background:var(--bar-bad)}
+.bval{font-size:.82rem; font-weight:700; flex:0 0 auto; font-variant-numeric:tabular-nums; white-space:nowrap}
+.brow.over .bval{color:var(--bar-bad)}
+.bzero .bfill{background:transparent; box-shadow:none; width:0}
+.thresh{position:absolute; z-index:0; top:-2px; bottom:2px; left:calc(206px + (100% - 206px) * 0.1434);
+  border-left:2px dashed var(--line-strong); pointer-events:none}
+.thresh span{position:absolute; z-index:2; top:-14px; left:0; transform:translateX(-50%);
+  font-size:.65rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2);
+  white-space:nowrap; background:var(--surface); padding:2px 8px; border:1px solid var(--line-strong)}
+@media(max-width:780px){
+  .brow{grid-template-columns:1fr; gap:5px; padding:10px 0; border-bottom:1px solid var(--line)}
+  .brow:last-child{border-bottom:0}
+  .thresh{display:none}
+}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.92rem; min-width:600px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.34rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:12px 22px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.45}
+thead th{font-size:.68rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px; white-space:nowrap}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+tr.total td{border-top:2px solid var(--line-strong); font-weight:800; background:var(--surface-2)}
+tr.total td.num{color:var(--claret)}
+td .cellsub{display:block; font-size:.8rem; font-weight:400; color:var(--ink-3); margin-top:3px}
+.pos{color:var(--bar-good)} .neg{color:var(--claret)}
+
+/* ---------- stepped list ---------- */
+.steps{margin:30px 0 0}
+.step{display:grid; grid-template-columns:64px 1fr; gap:0 22px; padding:26px 0; border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.smark{font-family:var(--display); font-size:2.1rem; font-weight:500; letter-spacing:-.025em; color:var(--brass); line-height:1}
+.smark small{display:block; font-family:var(--body); font-size:.68rem; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); margin-top:6px; line-height:1.3}
+.sbody h3{margin-bottom:9px}
+.sbody p,.sbody ul{max-width:62ch}
+.sbody > :last-child{margin-bottom:0}
+.sbody .chip{margin-bottom:12px}
+@media(max-width:620px){.step{grid-template-columns:1fr; gap:12px}.smark{display:flex; align-items:baseline; gap:12px}.smark small{margin-top:0}}
+
+/* ---------- callouts ---------- */
+.gate{border:1px solid var(--line-strong); border-left:5px solid var(--brass); background:var(--surface); padding:22px 24px; margin:22px 0}
+.gate h3{margin:10px 0 8px}
+.gate p{margin-bottom:.7em; max-width:64ch}
+.gate p:last-child{margin-bottom:0}
+.verdicts{display:grid; gap:9px; margin-top:16px; padding-top:15px; border-top:1px solid var(--line)}
+.vline{display:grid; grid-template-columns:112px 1fr; gap:14px; font-size:.9rem; align-items:baseline}
+.vline b{font-size:.7rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
+.vline.go b{color:var(--bar-good)} .vline.stop b{color:var(--claret)} .vline.hold b{color:var(--ink-3)}
+@media(max-width:560px){.vline{grid-template-columns:1fr; gap:2px}}
+
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:18px 22px; margin:26px 0}
+.flag p{margin:0; max-width:62ch; font-size:.95rem}
+.flag p + p{margin-top:.65em}
+.flag .chip{margin-bottom:10px}
+
+.note{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:18px 22px; margin:26px 0}
+.note p{margin:0; max-width:62ch; font-size:.95rem}
+.note p + p{margin-top:.65em}
+.note .chip{margin-bottom:10px}
+
+/* ---------- checklist ---------- */
+.check{list-style:none; padding:0; margin:24px 0 0; max-width:70ch}
+.check li{display:grid; grid-template-columns:auto 1fr; gap:15px; padding:15px 0;
+  border-bottom:1px solid var(--line); margin:0; align-items:start}
+.check li:first-child{border-top:1px solid var(--line)}
+.check .box{width:16px; height:16px; border:2px solid var(--line-strong); margin-top:5px}
+.check b{display:block; margin-bottom:3px}
+.check .hint{font-size:.89rem; color:var(--ink-3)}
+
+/* ---------- footer ---------- */
+.foot{border-top:1px solid var(--line-strong); padding:44px 0 52px; font-size:.8rem; line-height:1.75; color:var(--on-navy-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--on-navy-3); margin-bottom:10px}
+.foot p{max-width:78ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){
+  th,td,caption,figcaption,.fig-title{padding-left:16px;padding-right:16px}
+  .chart{padding:16px}
+}
+</style>
+
+<div class="band">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="mast-top">
+        <span class="mast-mark">ECA</span>
+        <span class="mast-org">Equestrian Coaches Australia</span>
+      </div>
+      <h1>The first 100 coaches</h1>
+      <p class="lede">How we get coaches onto the platform, how we get riders finding them on Google, and what the whole thing costs. Written for Kim and Alana.</p>
+      <div class="mast-meta">
+        <span>Marketing plan</span>
+        <span>Kim &amp; Alana</span>
+        <span>August 2026</span>
+        <span>All figures AUD</span>
+      </div>
+    </header>
+
+    <div class="verdict">
+      <p class="verdict-lead">Running the site costs almost nothing, so we only need <b>five paying coaches</b> to break even. The catch is that the market is small, which means we cannot buy our way in with advertising. Nearly everything in this plan is free and done by hand.</p>
+      <div class="vgrid">
+        <div class="vcell">
+          <span class="lbl">Break even at</span>
+          <span class="vnum">5</span>
+          <p>Paying coaches. Running costs are about $50 a month, and we keep $10.74 per coach.</p>
+        </div>
+        <div class="vcell">
+          <span class="lbl">Year one budget</span>
+          <span class="vnum">$5,400</span>
+          <p>In two parts. Only <b>$1,450</b> is spent up front. The rest waits for results.</p>
+        </div>
+        <div class="vcell risk">
+          <span class="lbl">Limit per coach</span>
+          <span class="vnum">$50</span>
+          <p>The most we can afford to spend signing one. Facebook ads would cost about $270.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- 1 -->
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>How big is this market</h2></div>
+  <div class="col">
+    <p>Somewhere between <strong>3,000 and 6,000 people in Australia coach riders for money</strong>. That is the whole market.</p>
+    <p>The estimate comes from Pony Club Australia (750+ clubs, around 30,000 members), Equestrian Australia's accredited register, and the many coaches nobody accredits at all: Western, liberty, natural horsemanship, trail.</p>
+    <p>The wider industry is much bigger. There are 1.03 million horses in Australia outside racing, more than 700,000 people involved with them, and $15.7 billion a year moving through the sector. But almost all of those people are riders and owners. They will use the site for free.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>What the business earns at each level</caption>
+        <thead><tr><th>Paying coaches</th><th class="num">Per month</th><th class="num">Per year</th><th>What that means</th></tr></thead>
+        <tbody>
+          <tr><td class="tnum">5</td><td class="num">$54</td><td class="num">$644</td><td>Covers the running costs</td></tr>
+          <tr><td class="tnum">100</td><td class="num">$1,074</td><td class="num">$12,888</td><td>Pays for itself and the tools</td></tr>
+          <tr><td class="tnum">250</td><td class="num">$2,685</td><td class="num">$32,220</td><td>A real second income</td></tr>
+          <tr><td class="tnum">500</td><td class="num">$5,370</td><td class="num">$64,440</td><td>A job, if we want it to be</td></tr>
+          <tr><td class="tnum">1,000</td><td class="num">$10,740</td><td class="num">$128,880</td><td>About the ceiling for coaches alone</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Based on</b> three quarters of coaches on the $9.99 plan and a quarter on $14.95, after Stripe's fees. GST is not included, because registration is only required above $75,000 a year, which is around 580 coaches.</figcaption>
+  </figure>
+
+  <div class="note">
+    <span class="chip">What this means</span>
+    <p>Coaching on its own tops out near $130,000 a year, and $30,000 to $65,000 is more likely. Adding farriers, bodyworkers, equine dentists and saddle fitters later is what lifts that ceiling three to five times. It is the second half of the business rather than an optional extra.</p>
+    <p>Handily, every coach we sign already knows their own farrier and bodyworker. The coach list becomes the list we use for stage two.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>What a coach is worth to us</h2></div>
+
+  <div class="flag">
+    <span class="chip claret">Superseded, and not yet re-run</span>
+    <p><strong>Every number in this section predates the three tiers.</strong> It was modelled on two plans at $9.99 and $14.95. The offer is now Listed $9.99, Spotlight $24.95 and Clinic $49.95, which on a 70/25/5 mix is worth about <strong>$15.16</strong> a month per coach rather than $10.74, lifting lifetime value to roughly $212 and the most we can spend winning a coach to about $70.</p>
+    <p>The direction of every conclusion below holds and gets stronger, because there is more room, not less. The arithmetic itself still needs re-running once Kim confirms $24.95 and $49.95. Current numbers are in <em>What they’re buying</em>.</p>
+  </div>
+
+  <div class="col">
+    <p>A $9.99 listing leaves us $9.52 after Stripe takes its cut. A $14.95 listing leaves $14.40. Averaged out, that is <strong>$10.74 a month per coach</strong>.</p>
+    <p>How much that adds up to depends on how long they stay, and that depends on one thing only: whether their listing brings them enquiries.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>How long coaches stay, and what we can spend</caption>
+        <thead><tr><th>If</th><th class="num">Cancel each month</th><th class="num">Average stay</th><th class="num">Total worth</th><th class="num">We can spend</th></tr></thead>
+        <tbody>
+          <tr><td><strong>It goes well</strong><span class="cellsub">Coaches get regular enquiries</span></td><td class="num">4%</td><td class="num">25 months</td><td class="num">$269</td><td class="num pos">$89</td></tr>
+          <tr><td><strong>Middle case</strong><span class="cellsub">Plan for this one</span></td><td class="num">7%</td><td class="num">14 months</td><td class="num">$153</td><td class="num pos">$51</td></tr>
+          <tr><td><strong>It goes badly</strong><span class="cellsub">Listings stay quiet</span></td><td class="num">12%</td><td class="num">8 months</td><td class="num">$89</td><td class="num neg">$30</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Plan for the middle case.</b> Never spend more than <b>$50</b> to sign a coach, and aim for $30. Every channel on the next page gets measured against that.</figcaption>
+  </figure>
+</section>
+
+<!-- 3 -->
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Why ads will not get us coaches</h2></div>
+  <div class="col">
+    <p>Facebook cannot target "riding coach". The closest it offers is people interested in horses, which is around 500,000 Australians. Our coaches are about 1% of them.</p>
+    <p>Showing an ad to that whole group five times costs roughly <strong>$24,500</strong> at current Australian rates. If 2 to 3% of the coaches who see it sign up, we get 60 to 90 coaches at $270 to $410 each. That is five to eight times what we can afford.</p>
+    <p>Google search ads are worse. Nobody types "riding instructor directory" into Google, so there is nothing to bid on.</p>
+  </div>
+
+  <figure>
+    <div class="fig-title">
+      <h3>Cost to sign one coach, by method</h3>
+      <p>Measured against the $50 we can afford</p>
+    </div>
+    <div class="chart">
+      <div class="bars" role="img" aria-label="Cost to sign one coach: people we already know $0, personal messages $2, cards in saddleries $25, referral reward $32, stall at a show $63 which is over budget, and Facebook ads $272 which is far over budget. The limit is $50.">
+
+        <div class="brow bzero">
+          <div class="blabel">People we already know<span class="bsub">Introductions and messages</span></div>
+          <div class="btrack"><div class="bfill" style="width:0"></div><span class="bval">$0 &middot; Affordable</span></div>
+        </div>
+
+        <div class="brow">
+          <div class="blabel">Personal messages<span class="bsub">To coaches who advertise publicly</span></div>
+          <div class="btrack"><div class="bfill" style="width:0.57%"></div><span class="bval">$2 &middot; Affordable</span></div>
+        </div>
+
+        <div class="brow">
+          <div class="blabel">Cards in saddleries<span class="bsub">And pony club noticeboards</span></div>
+          <div class="btrack"><div class="bfill" style="width:7.2%"></div><span class="bval">$25 &middot; Affordable</span></div>
+        </div>
+
+        <div class="brow">
+          <div class="blabel">Referral reward<span class="bsub">Free months, not cash</span></div>
+          <div class="btrack"><div class="bfill" style="width:9.2%"></div><span class="bval">$32 &middot; Affordable</span></div>
+        </div>
+
+        <div class="brow over">
+          <div class="blabel">Stall at a show<span class="bsub">One weekend, regional event</span></div>
+          <div class="btrack"><div class="bfill" style="width:18.1%"></div><span class="bval">$63 &middot; Over</span></div>
+        </div>
+
+        <div class="brow over">
+          <div class="blabel">Facebook ads<span class="bsub">Best realistic case</span></div>
+          <div class="btrack"><div class="bfill" style="width:78%"></div><span class="bval">$272 &middot; Far over</span></div>
+        </div>
+
+        <div class="thresh" aria-hidden="true"><span>$50 limit</span></div>
+      </div>
+    </div>
+    <figcaption><b>The show stall is worth doing anyway.</b> It does not pay for itself in signups, but one weekend also gets us in front of riders and tells us what people actually think. Facebook ads have no such consolation.</figcaption>
+  </figure>
+
+  <div class="col">
+    <p>Our market is 3,000 people we could write down by name. We find them by talking to them.</p>
+
+    <h3 style="margin:36px 0 12px">What the competition actually spends</h3>
+    <p>We went looking for what Horse Deals and the others pay for advertising. Nobody publishes a marketing budget, but three things are visible, and together they change one of the recommendations below.</p>
+    <p><strong>First, Horse Deals is not really a competitor our size.</strong> It is owned by ACM, Australia's largest independent publisher. Its marketing is a line in a national media company's budget, not a startup's. Useful to know before comparing ourselves to it.</p>
+    <p>What is useful is its audience, because ACM publishes it:</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>The biggest equestrian sites in Australia, by audience</caption>
+        <thead><tr><th>Who</th><th class="num">Monthly audience</th><th>Other reach</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Horse Deals</strong><span class="cellsub">Running since 1986, owned by ACM</span></td><td class="num">35,436</td><td>277,523 page views a month, and people come back 7.8 times</td></tr>
+          <tr><td><strong>Equestrian Hub</strong></td><td class="num">10,000</td><td><strong>15,000 email subscribers</strong>, 50,000 podcast downloads</td></tr>
+          <tr><td><strong>Hoofbeats</strong><span class="cellsub">Bi-monthly print magazine</span></td><td class="num">&mdash;</td><td>11,000 circulation, 22,000 readers</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Horse Deals figures are IPSOS IRIS, February to April 2026.</b> Worth sitting with that first number. The biggest equestrian website in the country, forty years old and owned by a national publisher, gets about 35,000 people a month. Our month-six target of 750 rider visits is 2% of the market leader, which is a reasonable thing to aim at.</figcaption>
+  </figure>
+
+  <div class="col">
+    <p><strong>Second, none of them run Facebook ads.</strong> Meta publishes every ad running in Australia in its public Ad Library. Searching it for equestrian advertisers turns up around 1,900 live ads, and they are almost all product sellers: dropshipped saddle pads, horse jewellery, a Chinese stable manufacturer, a Texas ranch for sale. One genuine Australian retailer. <strong>Not one Australian equestrian directory, marketplace or magazine is buying ads.</strong></p>
+    <p>That is the same conclusion as the chart above, arrived at independently. The incumbents run on content, print, email and audiences they already have. If paid social worked in this market, the forty-year-old market leader with a media company behind it would be doing it.</p>
+    <p><strong>Third, and this is the useful part: advertising <em>with</em> them is remarkably cheap.</strong> Because these audiences are small, the rates are nothing like Facebook's.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>What it costs to advertise in equestrian media</caption>
+        <thead><tr><th>What</th><th>Where</th><th class="num">Price</th><th>Reaches</th></tr></thead>
+        <tbody>
+          <tr class="pick"><td><strong>Business card ad</strong><span class="cellsub">Suggested first test</span></td><td>Hoofbeats, print</td><td class="num">$65</td><td>22,000 readers</td></tr>
+          <tr><td>Website banner</td><td>Hoofbeats, online</td><td class="num">$27&ndash;$80/mo</td><td>Their site traffic</td></tr>
+          <tr><td>Quarter page</td><td>Hoofbeats, print</td><td class="num">$295</td><td>22,000 readers</td></tr>
+          <tr><td>Full page</td><td>Hoofbeats, print</td><td class="num">$885</td><td>22,000 readers</td></tr>
+          <tr><td>Mailing list rental</td><td>Hoofbeats</td><td class="num">$40&ndash;$150</td><td>Their subscriber list</td></tr>
+          <tr><td>Newsletter placement</td><td>Equestrian Hub</td><td class="num">Ask</td><td>15,000 subscribers</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>A $65 business-card ad puts us in front of 22,000 horse people.</b> Even a tenth of a percent replying is 22 conversations at about $3 each. Compare that with $272 a coach on Facebook. It may do nothing, but it costs less than a tank of fuel to find out.</figcaption>
+  </figure>
+
+  <div class="rec">
+    <span class="chip">Change to the plan</span>
+    <p><strong>Add $300 to part one for two tests in equestrian media:</strong> a business-card or eighth-page ad in Hoofbeats, and a sponsored placement in the Equestrian Hub newsletter, which reaches 15,000 people who have already put their hand up for equestrian email.</p>
+    <p>Both are aimed at coaches rather than riders, both are cheap enough to write off, and both reach exactly the people we are trying to sign. This is the one paid channel the numbers actually support.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">One number worth copying</span>
+    <p>Equestrian Hub has <strong>15,000 email subscribers and 10,000 monthly website visitors</strong>. The list is bigger than the traffic. Horse Deals gets people back 7.8 times a month, which is classifieds behaviour, people checking for new listings.</p>
+    <p>Both point the same way as the retention thinking: in this market the mailing list is the durable asset and fresh listings are what bring people back. Our clinics feature is doing more work than its price suggests.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>How we get the first 100 coaches</h2></div>
+  <div class="col">
+    <p>This is where Kim is the whole strategy. She teaches, she has a following of her own, and she has the deeper contact list. The only methods that work in a market this small are personal ones, and personal means her name on the message.</p>
+    <p>Alana rides too and knows coaches, so she can carry a share of the outreach, but her main job is building the thing. She has about 1 to 5 hours a week. <strong>Kim’s hours are still an open question</strong>, and the plan below moves at whatever pace she can give it.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">A<small>Free</small></div>
+      <div class="sbody">
+        <h3>One coach at a time</h3>
+        <p>Messages from Kim’s own name, mentioning something real about that coach. Not a template, and not from a business account. Three hours a week at four minutes each is about 45 messages. Coming from a working instructor they already know of, a reply rate of 30 to 50% is realistic, and about a third of those will sign up.</p>
+        <p>That is <strong>4 to 9 coaches a week</strong>, which reaches 100 in roughly four months without spending anything. Work through the warmest contacts first.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">B<small>Free</small></div>
+      <div class="sbody">
+        <h3>Let coaches bring coaches</h3>
+        <p>Every coach knows the other coaches in their area. Give each of them a referral link: <strong>refer two coaches who publish a profile, get three months free.</strong> No cash leaves the business, and it keeps recruiting while we are busy.</p>
+        <p>Build this into the dashboard before the founding group opens. Adding it afterwards, for people who already joined free, does not work.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">C<small>Free</small></div>
+      <div class="sbody">
+        <h3>Let coaches bring riders</h3>
+        <p>Each coach already has an audience of riders, which is exactly the audience we want. Send them a small kit: a "Find me on ECA" graphic sized for Facebook and Instagram, a link straight to their profile, and one post they can paste.</p>
+        <p>Tell them honestly that sharing it helps their own profile get found, because it does. This is the cheapest rider traffic available and it takes an afternoon to make.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">D<small>Free</small></div>
+      <div class="sbody">
+        <h3>Facebook groups, carefully</h3>
+        <p>Australian equestrian groups get asked "can anyone recommend a dressage coach near Toowoomba?" several times a day. That is our product, being done by hand, in public.</p>
+        <p>The approach is to answer those questions properly by naming two or three real coaches and linking. Admins will accept that. Post an advertisement and one ban costs more than the whole ad budget. Read the group rules, message the admin first, and take part for a few weeks before posting any link.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">E<small>$180</small></div>
+      <div class="sbody">
+        <h3>Cards where riders already stand</h3>
+        <p>500 QR cards and 50 A5 flyers for saddleries, feed stores, agistment centres, pony club clubhouses and campdraft canteens. About $180 printed. Ask the coaches who have already signed up to place them, since they know which counters matter.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">F<small>$600</small></div>
+      <div class="sbody">
+        <h3>One event, later on</h3>
+        <p>A stall at a regional show or state championship. It will sign 8 to 12 coaches and put us in front of a hundred riders, and two days of conversations teach more than two months of analytics. Worth doing once, in months 7 to 12. Equitana-sized stands cost $5,000 and up, so they are a year-two question.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">G<small>Free</small></div>
+      <div class="sbody">
+        <h3>The press angle</h3>
+        <p><em>Horses and People</em>, <em>The Horse Magazine</em>, <em>Equestrian Life</em>, <em>Horse Deals</em> and ABC Rural all need Australian equestrian stories. Ours is a new platform listing the coaches the official register leaves out: Western, liberty, natural horsemanship, trail. That is a real gap and it costs one email each.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Winning &ldquo;riding instructor near me&rdquo;</h2></div>
+  <div class="col">
+    <p>This is the biggest long-term prize in the whole plan, and it is free.</p>
+    <p>Riders type things like <em>riding instructor near me</em>, <em>dressage coach Melbourne</em> and <em>bridleless trainer Melbourne</em> into Google every day. Nobody in Australia owns those results. Most coaches have no website. The official register sits behind a search form, and Google usually cannot read those. Facebook posts do not appear in search at all. The pages are sitting there to be won.</p>
+    <p>There is one important catch. Google became far stricter about directory sites in 2024. Sites that automatically generated a page for every town and every category got hit hard, because most of those pages had nothing on them. We have 18,500 postcodes and a dozen disciplines in the database. Multiplying them out would give us 222,000 pages, nearly all empty, and would sink the whole site.</p>
+    <p>So there is one rule underneath everything below: <strong>only build a page when there is something real on it.</strong></p>
+<p>There is one competitor already sitting in these results, and it is worth knowing who. <strong>Coaches4U</strong> is a general Australian coaching directory &mdash; tennis, swimming, athletics &mdash; with "Equine Sports" as one category, broken out by state and region. Its Sydney page, the biggest equestrian market in the country, lists thirteen riding schools and no written content about Sydney at all.</p>
+<p>That is a thin, templated site of exactly the kind Google spent 2024 demoting, and it is the most beatable thing in our way. We beat it with real writing on the area pages, individual coach profiles rather than business listings, suburb-level rather than region-level geography, and the three-coach gate. <a href="https://claude.ai/code/artifact/e11731ff-7c5f-4408-8e5c-e2fc9ea41a66"><em>How Riders Find Us</em></a> has the full breakdown and the query basket we track it against.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>Build three kinds of page, not one</h3>
+        <ul>
+          <li><strong>Coach profiles.</strong> One per coach. These are our strongest pages, because every single one is genuinely different from every other.</li>
+          <li><strong>Discipline and area pages</strong>, like "Dressage coaches in Geelong". Only built where three or more coaches actually exist.</li>
+          <li><strong>Discipline pages</strong>, one per discipline, covering the whole country.</li>
+        </ul>
+        <p>That gives us roughly 400 good pages instead of 222,000 empty ones.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>Never publish a page with fewer than three coaches</h3>
+        <p>Send it to the wider area page instead. This is the single most important rule in this section, and it is the one that most directory sites get wrong.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>Use the words riders actually type</h3>
+        <p>People search for <em>riding lessons</em> and <em>riding instructor</em> far more often than <em>coach</em>. And <em>bridleless trainer Melbourne</em> is a real search with almost no competition, which makes it exactly the kind of thing we can win quickly.</p>
+        <p>So each discipline needs a list of the other names people use for it. Liberty also means bridleless, at liberty and groundwork. Western also means reining, barrel racing and campdraft. Dressage also means flatwork. Those words have to appear in the page title and in the text.</p>
+        <div class="flag" style="margin:16px 0 0">
+          <span class="chip claret">Build task</span>
+          <p>The disciplines table needs a field for these alternative names before any area pages go live. It is a small change now and an expensive one later.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>Write real words on the top 20 area pages</h3>
+        <p>About 150 words each on what riding is like there, which clubs and grounds are nearby, and which disciplines are strong locally. Written by a person, not generated.</p>
+        <p>This is precisely what Google's 2024 update rewards. Pages written properly get indexed noticeably more often than templated ones, and the gap compounds across hundreds of pages.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">5</div>
+      <div class="sbody">
+        <h3>Add structured data</h3>
+        <p>Coach pages get LocalBusiness and Person markup with address, coordinates and disciplines. Area pages get ItemList. This is hidden code that tells Google exactly what each page is for.</p>
+        <p>A few hours of work in the build, and it is the highest-return job on this list after the pages themselves.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">6</div>
+      <div class="sbody">
+        <h3>Get every coach onto Google Business Profile</h3>
+        <p>The map results that sit at the top of "near me" searches only show businesses that have a free Google Business Profile. We cannot appear there ourselves, because we are not a local business in every suburb. Each coach can.</p>
+        <p>So we ask every coach to set one up and link it to their ECA profile. It costs them nothing, it genuinely helps them, and every one of those links points back at us.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">7</div>
+      <div class="sbody">
+        <h3>Testimonials are the real advantage</h3>
+        <p>A profile with eight rider testimonials beats one with a bio, both for riders reading it and for Google ranking it. It is content that exists nowhere else online.</p>
+        <p>Make collecting them as easy as possible for coaches: a link they can send to a student, and a reminder in their monthly email.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="chip">Timing and upkeep</span>
+    <p>Expect six to twelve months before this brings real traffic. That is normal, and it is exactly why we start before we have riders rather than after. Set up Google Search Console on day one and check every month which kinds of page are actually being found.</p>
+    <p>Every 90 days, any page that has had no views at all gets merged into a bigger one or deleted. A small site of pages that work beats a large site of pages that do not.</p>
+    <p>While the free traffic builds, Google ads on searches like "horse riding lessons Bendigo" cost around $1.50 to $3.00 a click in Australia. That fills the gap from month seven.</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>The plan, month by month</h2></div>
+  <div class="col">
+    <p>The site should accept a coach from anywhere in Australia from day one. Our outreach hours, though, should go into <strong>one region</strong> until it looks properly full to a rider searching it. Forty coaches in one region is worth far more than forty scattered across the country.</p>
+    <p>The region to pick is the one Kim teaches in, because knowing people is the whole strategy. For disciplines, lead with Western, liberty and natural horsemanship. Those coaches have no official register to be found on, which makes the pitch to them concrete. We carry dressage and jumping too, we just do not lead with them.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">0<small>Weeks 1&ndash;4</small></div>
+      <div class="sbody">
+        <span class="chip ghost">No spend</span>
+        <h3>Build the list</h3>
+        <p>One spreadsheet of 400 to 600 named coaches, ranked by how well we know them. Sources: state branch coach pages, Pony Club instructor lists, EquiDirectory's coaching category, Google Maps for "riding lessons" in every town in the region, Instagram hashtags with location filters, Western and campdraft association lists, and Horse Deals.</p>
+        <p>Record name, disciplines, town, best contact, and one specific detail we can mention. That last column is what makes a message land.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">1<small>Weeks 5&ndash;12</small></div>
+      <div class="sbody">
+        <span class="chip">Checkpoint 1</span>
+        <h3>The founding 25</h3>
+        <p>Recruited by hand, one at a time, all in the one region. The offer: <strong>free until 30 April 2027, price locked at the launch rate forever, no card needed.</strong> The date is set in the admin settings rather than written into the page, so it can move without a deploy. These people are doing us a favour by making an empty directory look alive, and we should say so.</p>
+        <p>In return we ask for a complete profile: photo, real bio, disciplines tagged, location set. A half-finished profile is worse than none.</p>
+        <p>Do not send riders to the site yet. An empty set of search results is a first impression we only get to make once.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">2<small>Months 4&ndash;6</small></div>
+      <div class="sbody">
+        <span class="chip">Checkpoint 2</span>
+        <h3>Open to 100, and turn on riders</h3>
+        <p>The founding group grows to 100 spots nationally: <strong>six months free, with card details required at signup from number 26 onwards.</strong> Asking for a card roughly doubles how many eventually pay, and by number 26 we have real profiles to show, so asking is fair.</p>
+        <p>Riders start now: press, Facebook groups, the coach sharing kit, cards in saddleries. The referral link goes live. Every coach gets a monthly email telling them how many enquiries they received, whether the number is good or not.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">3<small>Months 7&ndash;9</small></div>
+      <div class="sbody">
+        <span class="chip">Checkpoint 3</span>
+        <h3>Ask them to pay</h3>
+        <p>The founding 25 reach the end of their free year. This is the real test, and we will know within three weeks. Send three emails: 30 days out, 14 days out, 3 days out. Each one leads with <em>their</em> enquiry numbers, not our pricing.</p>
+        <p>The first paid rider ads start here, along with one show or expo.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">4<small>Months 10&ndash;12</small></div>
+      <div class="sbody">
+        <span class="chip ghost">Decide</span>
+        <h3>Scale, hold or stop</h3>
+        <p>Google traffic should be measurable by now. If it is not, that is the problem to fix, and more ad spend will not fix it. A second region opens only once the first is genuinely covered. We start approaching farriers and bodyworkers through the coaches we already have.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>The budget</h2></div>
+  <div class="col">
+    <p><strong>$5,408 for year one, in two parts, with a checkpoint between them.</strong> Only the first $1,450 is spent up front, and about $670 of that is hosting, domains and email we need whatever happens.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Part one &mdash; prove it (months 1 to 6)</caption>
+        <thead><tr><th>Item</th><th>Why</th><th class="num">6 months</th></tr></thead>
+        <tbody>
+          <tr><td>Vercel Pro hosting</td><td>Required once the site is commercial</td><td class="num">$186</td></tr>
+          <tr><td>Domains</td><td>.com.au and .com</td><td class="num">$60</td></tr>
+          <tr><td>Google Workspace</td><td>So messages come from a real address at our domain</td><td class="num">$72</td></tr>
+          <tr><td>Supabase and Resend</td><td>Free plans genuinely cover us at this size</td><td class="num">$0</td></tr>
+          <tr><td>Brand and design</td><td>Done in house from the five directions</td><td class="num">$0</td></tr>
+          <tr><td>Printing</td><td>500 QR cards and 50 flyers</td><td class="num">$180</td></tr>
+          <tr><td>Photography</td><td>Half a day with a founding coach. The one thing stock photos cannot fake</td><td class="num">$350</td></tr>
+          <tr><td>Test ads</td><td>Riders only, months 5 and 6, to learn our real costs</td><td class="num">$300</td></tr>
+          <tr><td>Equestrian media tests</td><td>A small ad in Hoofbeats and a newsletter placement with Equestrian Hub, both aimed at coaches</td><td class="num">$300</td></tr>
+          <tr class="total"><td>Part one</td><td>Spent up front</td><td class="num">$1,448</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>No cold email software.</b> Tools like Instantly cost $170 to $240 a month and are the wrong instrument here. Our whole market is 3,000 people, and our reply rate comes from being known rather than from volume.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Part two &mdash; launch properly (months 7 to 12)</caption>
+        <thead><tr><th>Item</th><th>Why</th><th class="num">6 months</th></tr></thead>
+        <tbody>
+          <tr><td>Hosting and tools</td><td>Vercel Pro, Supabase Pro, Resend, Workspace</td><td class="num">$560</td></tr>
+          <tr><td>Google ads</td><td>$300 a month on local rider searches</td><td class="num">$1,800</td></tr>
+          <tr><td>Facebook ads</td><td>$100 a month, promoting clinics only</td><td class="num">$600</td></tr>
+          <tr><td>Show stall</td><td>One weekend, once</td><td class="num">$600</td></tr>
+          <tr><td>Design and content</td><td>Logo polish, social templates, the coach sharing kit</td><td class="num">$400</td></tr>
+          <tr class="total"><td>Part two</td><td>Only if the checkpoints pass</td><td class="num">$3,960</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Year one total: $5,408.</b> For comparison, one month of Facebook ads aimed at coaches would spend the whole of part two and bring in about fourteen signups.</figcaption>
+  </figure>
+
+  <div class="col">
+    <p>A bigger version exists: a part-time community manager, $1,000 a month in ads, an Equitana stand. It comes to $15,000 to $24,000 a year. That is not worth thinking about until we are past 250 paying coaches with fewer than 6% cancelling each month. At that point it becomes an investment decision with real numbers behind it.</p>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">Not in this budget</span>
+    <p>Public liability and professional indemnity insurance, plus terms of service making clear that we do not vet or accredit coaches. Neither is marketing, but both block launch, and in a community where one bad experience travels quickly the terms matter more than the premium. Budget $600 to $1,200 a year and speak to a broker who knows sport and recreation.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><h2>The three checkpoints</h2></div>
+  <div class="col">
+    <p>The cheapest signals come first, on purpose. Each of these can stop the project before much money has gone out the door.</p>
+  </div>
+
+  <div class="gate">
+    <span class="chip">Checkpoint 1 &middot; Week 12</span>
+    <h3>25 complete profiles, live, in one region</h3>
+    <p>Free listings, offered by someone the community knows, to people who benefit from them. Costs about $250 and 36 hours. If twelve weeks of personal outreach cannot produce twenty-five, no amount of budget will fix it, because it means coaches do not want this.</p>
+    <div class="verdicts">
+      <div class="vline go"><b>25 or more</b><span>Carry on to checkpoint two.</span></div>
+      <div class="vline hold"><b>12 to 24</b><span>Carry on, but find out what the hesitation was before spending anything.</span></div>
+      <div class="vline stop"><b>Under 12</b><span>Stop. Go back and ask ten coaches what they would actually pay for.</span></div>
+    </div>
+  </div>
+
+  <div class="gate">
+    <span class="chip">Checkpoint 2 &middot; Month 6</span>
+    <h3>40+ coaches, 750+ rider visits a month, half reporting an enquiry</h3>
+    <p>If riders are not arriving and enquiries are not landing, asking coaches to pay in month seven will fail no matter how good the email is. Fix the rider side before releasing part two of the budget. Paid traffic on top of a demand problem only makes the problem more expensive.</p>
+  </div>
+
+  <div class="gate">
+    <span class="chip claret">Checkpoint 3 &middot; Month 8</span>
+    <h3>Do the founding coaches pay?</h3>
+    <p>Everything before this is people accepting something free. This is the first time anyone tells us the truth.</p>
+    <div class="verdicts">
+      <div class="vline go"><b>40% or more</b><span>Release part two of the budget. The product works.</span></div>
+      <div class="vline hold"><b>25 to 40%</b><span>The product works, the price or the packaging does not. Fix that first, spend second.</span></div>
+      <div class="vline stop"><b>Under 25%</b><span>A listing is not worth $10 a month to a coach. Look at free listings with paid featured placement instead. A different business, and possibly a better one.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section>
+  <div class="sec-head"><span class="sec-num">09</span><h2>Decisions and risks</h2></div>
+
+  <div class="col">
+    <h3 style="margin-bottom:10px">$9.99 is probably too cheap</h3>
+    <p>This needs deciding before we promise founding coaches a locked-in rate, because that is a promise we cannot take back.</p>
+    <p>EquiDirectory, which is dated and cluttered and covers every kind of equine business rather than coaching specifically, charges $80 to $400 a year. That is $6.67 to $33 a month, so we have priced ourselves at the bottom of a range set by a worse product. Meanwhile a coach charges $70 to $120 an hour, which makes $9.99 a month one extra lesson a year. At $19 it is two. Neither is a real decision for them.</p>
+    <p>At $19 and $29 we keep $20.84 a month per coach instead of $10.74. That doubles what a coach is worth, which doubles what we can afford to spend finding them.</p>
+    <p>Test it in the first ten conversations. Do not lead with a number. Ask what they would expect to pay for a listing that brought them students, and let them answer first.</p>
+
+    <h3 style="margin:34px 0 10px">Two rules worth keeping</h3>
+    <p><strong>Never create profiles for coaches who have not agreed.</strong> Plenty of directories build a thousand unclaimed listings and let people claim them later. In a community this small, one screenshot in one Facebook group defines us before our product does. Build the profile if it helps, then email the coach and ask permission to publish it.</p>
+    <p><strong>Follow the Spam Act.</strong> Any marketing email needs consent, a clear sender name and a working unsubscribe that stays live 30 days and is actioned within five working days. Consent can be assumed where a business has published an address publicly for that purpose and our message relates to it, which covers a coach advertising for students. It does not cover a personal address copied from a Facebook comment. In practice the legal version and the effective version are the same: one message, from a real person, signed properly.</p>
+
+    <h3 style="margin:34px 0 10px">What could make this plan wrong</h3>
+    <ul>
+      <li><strong>Good coaches may already be full.</strong> This is the real risk. A well-regarded coach often has a waiting list and no interest in more students. If that is what the first ten conversations say, the pitch changes from "get students" to "fill your clinics" and "be found when you move or start out", and the $14.95 plan becomes the main product rather than the upgrade. Test this deliberately and early.</li>
+      <li><strong>Somebody may get there first, cheaply.</strong> Coaches4U already generates an equine page for every region in the country. Their pages are thin and they list businesses rather than coaches, so they are beatable &mdash; but they have history we do not, and a well-funded competitor could copy the good version of this in a year. Speed on the founding 25 matters more than it looks.</li>
+      <li><strong>Our real competitor is a Facebook post.</strong> Not Equestrian Australia. It is "does anyone know a good dressage coach near X", which is free, instant and comes with a trusted recommendation attached. We beat it by being faster, more complete and available at 10pm. Good location filtering and real coverage win that. A prettier website does not.</li>
+      <li><strong>The market might be smaller than 3,000.</strong> The list built in weeks 1 to 4 will tell us the truth. If we can only find 200 contactable coaches in a major state, every number here comes down.</li>
+      <li><strong>Free trials without a card mostly do not convert.</strong> That is why the card is required from coach 26. If checkpoint three comes in under 25%, look hard at whether it was the price or the fact that nobody had committed anything.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 10 -->
+<section>
+  <div class="sec-head"><span class="sec-num">10</span><h2>The first four hours</h2></div>
+  <div class="col">
+    <p>Week one, once the partnership questions in <a href="https://claude.ai/code/artifact/5173be3a-497d-4de5-bbf4-8738f0f0d55d"><em>Before We Start</em></a> are settled or close to it.</p>
+  </div>
+  <ul class="check">
+    <li><span class="box"></span><div><b>Settle the partnership terms first.</b> <span class="hint">Nothing below can start from a domain nobody has registered. See <a href="https://claude.ai/code/artifact/5173be3a-497d-4de5-bbf4-8738f0f0d55d"><em>Before We Start</em></a> for the decisions.</span></div></li>
+    <li><span class="box"></span><div><b>Pick the region.</b> <span class="hint">The one Kim teaches in. Write it down so it stops being reconsidered.</span></div></li>
+    <li><span class="box"></span><div><b>Add the 30 coaches we can already name.</b> <span class="hint">Both of us, from memory, before looking anything up. Kim’s list will be longer. Rank them warmest to coldest.</span></div></li>
+    <li><span class="box"></span><div><b>Kim messages five of the warmest, but not to pitch.</b> <span class="hint">Ask what they would want from something like this, and what they would pay. It costs an hour and it settles the pricing question.</span></div></li>
+    <li><span class="box"></span><div><b>Both of us join the six biggest equestrian Facebook groups in the state.</b> <span class="hint">Read the rules. Post nothing for three weeks. Count how often someone asks for a coach recommendation. That count is the demand signal.</span></div></li>
+    <li><span class="box"></span><div><b>Add the alternative-names field to the disciplines table.</b> <span class="hint">Bridleless, groundwork, reining, campdraft, flatwork. Small job now, expensive later.</span></div></li>
+  </ul>
+</section>
+
+</main>
+
+<div class="band">
+  <div class="wrap">
+    <div class="foot">
+      <div class="fh">Where the numbers came from</div>
+      <p>Australian Horse Industry Council and IER, <em>Economic and Social Impact of the Equine Sector</em> (2025). Pony Club Australia. WordStream Australia advertising benchmarks, first quarter 2026. Australian Google Ads cost benchmarks 2026. Directory indexation research, 2026. ACMA and the Spam Act 2003. Stripe Australia pricing.</p>
+      <p>Advertising benchmarks are indicative. Our real costs in a market this narrow will differ, which is what the $300 test budget in part one is for.</p>
+    </div>
+  </div>
+</div>

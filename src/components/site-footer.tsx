@@ -6,7 +6,7 @@ const columns = [
     heading: "Riders",
     links: [
       { href: "/search", label: "Find a coach" },
-      { href: "/disciplines/dressage", label: "Disciplines" },
+      { href: "/disciplines", label: "Disciplines" },
       { href: "/account", label: "My account" },
     ],
   },
@@ -21,6 +21,7 @@ const columns = [
   {
     heading: "About",
     links: [
+      { href: "/about", label: "About us" },
       { href: "/login", label: "Log in" },
       { href: "mailto:hello@equineprofessionals.au", label: "Contact" },
     ],
@@ -40,9 +41,9 @@ export function SiteFooter() {
       <div className="mx-auto max-w-[1184px] px-[18px] pt-11 md:px-12 md:pt-16">
         <div className="grid grid-cols-1 gap-7 md:grid-cols-[2fr_1fr_1fr_1fr] md:gap-10">
           <div>
-            <Link href="/" aria-label="Equine Professionals Australia — home" className="inline-block">
-              <Wordmark size={40} className="md:hidden" />
-              <Wordmark size={48} className="hidden md:inline" />
+            <Link href="/" aria-label="Equine Professionals Australia, home" className="inline-block">
+              <Wordmark size={30} className="md:hidden" />
+              <Wordmark size={36} className="hidden md:block" />
             </Link>
             <p className="mt-2.5 max-w-[280px] text-[14px] leading-[1.5] text-ink-fg/70 md:mt-3 md:max-w-[320px] md:text-[15px]">
               Equine Professionals Australia. The coach who teaches what you ride, wherever you are.

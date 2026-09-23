@@ -6,6 +6,7 @@ import { MonthlyEmailExample } from "@/components/for-coaches/monthly-email-exam
 import { PromiseTicker } from "@/components/for-coaches/promise-ticker";
 import { Plans, type Tier } from "@/components/for-coaches/plans";
 import { RiseWords } from "@/components/hero";
+import { formatLongDate, getFoundingOfferEnd } from "@/lib/settings";
 
 // Dark hero at the top of this route too — see the same export on "/".
 export const viewport: Viewport = {
@@ -174,7 +175,9 @@ const FAQ_ITEMS = [
 const WIDTHS = [768, 1024, 1280, 1536, 1920];
 const srcset = (crop: string, ext: string, widths: number[]) => widths.map((w) => `/hero/${crop}-${w}.${ext} ${w}w`).join(", ");
 
-export default function ForCoachesPage() {
+export default async function ForCoachesPage() {
+  // Editable in /admin/settings; see src/lib/settings.ts for the default.
+  const foundingEnds = formatLongDate(await getFoundingOfferEnd());
   return (
     <div>
       {/* ── 1. Hero ─────────────────────────────────────────────────────── */}
@@ -224,10 +227,10 @@ export default function ForCoachesPage() {
             <div className="relative">
               <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-peach wide:tracking-[0.2em]">Founding coaches</p>
               <h2 className="mt-3 text-[38px] leading-none -tracking-[0.02em] wide:mt-3.5 wide:text-[46px]">
-                Every coach who signs up in our first <em className="text-peach">six months</em>
+                Free until <em className="text-peach">{foundingEnds}</em>
               </h2>
               <p className="mt-4 text-[16px] leading-[1.55] text-ink-fg/85 wide:mt-[18px]">
-                gets Spotlight free for six months, and $9.99 locked in for as long as they stay — even after the price goes up for everyone else. In return we ask for a complete profile: a photo, a real bio, your disciplines tagged and your location set. You&rsquo;re making an empty directory look alive, and that&rsquo;s worth something to us.
+                Sign up before then and you pay nothing until that date. After it, $9.99 a month, and that price stays yours for as long as you keep your listing, even when it goes up for new coaches. All we ask is a finished profile: a photo, a bio in your own words, your disciplines and where you teach.
               </p>
               <Link href="/signup?role=coach&plan=founding" className="mt-[22px] inline-block rounded-[10px] bg-accent px-[22px] py-3.5 text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:mt-6 wide:px-6">
                 Claim a founding spot

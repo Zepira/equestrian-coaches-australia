@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getDisciplines, resolveLocation, searchCoaches } from "@/lib/supabase/queries";
+import { getDisciplines, resolveSearchLocation, searchCoaches } from "@/lib/supabase/queries";
 import { searchMockCoaches } from "@/lib/mock-coaches";
 
 // "N nearby" for the hero search card: how many coaches (real + mock) sit
@@ -15,21 +15,27 @@ export async function GET(req: NextRequest) {
   const supabase = await createClient();
   if (!supabase) return NextResponse.json({ count: null });
 
-  const resolved = await resolveLocation(supabase, location);
+  // The location and the discipline list don't depend on each other — one
+  // round trip to Supabase instead of two before the search can start.
+  const disciplineSlugs = d ? [d] : [];
+  const [resolved, disciplines] = await Promise.all([resolveSearchLocation(supabase, location), getDisciplines(supabase)]);
   if (!resolved) return NextResponse.json({ count: null });
 
-  const disciplineSlugs = d ? [d] : [];
-  const disciplines = await getDisciplines(supabase);
   const disciplineIds = disciplines.filter((t) => disciplineSlugs.includes(t.slug)).map((t) => t.id);
 
-  const real = await searchCoaches(supabase, {
-    disciplineIds,
-    lat: resolved.lat,
-    long: resolved.long,
-    radiusKm: 50,
-  });
+  // A state-wide search counts by coach_profiles.state; a point counts the
+  // default 50 km radius, same as /search's first render.
+  const where =
+    resolved.kind === "state"
+      ? { state: resolved.state.code }
+      : { lat: resolved.lat, long: resolved.long, radiusKm: 50 };
+  const real = await searchCoaches(supabase, { disciplineIds, ...where });
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
-  const mock = searchMockCoaches({ disciplineSlugs, lat: resolved.lat, long: resolved.long, radiusKm: 50 });
+  const mock = searchMockCoaches({ disciplineSlugs, ...where });
 
-  return NextResponse.json({ count: real.length + mock.length, town: resolved.suburb, state: resolved.state });
+  return NextResponse.json(
+    resolved.kind === "state"
+      ? { count: real.length + mock.length, town: resolved.state.name, state: resolved.state.code, scope: "state" }
+      : { count: real.length + mock.length, town: resolved.suburb, state: resolved.state, scope: "point" }
+  );
 }

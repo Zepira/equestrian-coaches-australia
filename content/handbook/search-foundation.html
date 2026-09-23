@@ -1,0 +1,940 @@
+<title>How Riders Find Us</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --navy:#E7DAC6; --navy-2:#DDCFB6;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8; --claret-hi:#DE8B6C;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7; --band-accent:#1F3A2E;
+  --bar-good:#00794F; --bar-bad:#C0492A;
+  --pick:#9C4229; --pick-bg:#F7F0E1;
+  --code-bg:#FBF7EC; --code-ink:#33312B; --code-key:#1F3A2E; --code-com:#87816F;
+  --on-navy:#22201C; --on-navy-2:#4A4842; --on-navy-3:#5E5A50;
+  --navy-rule:#D3C1A4;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --wrap:1060px; --measure:70ch;
+  --ribbon:polygon(0 0,100% 0,100% 100%,0 100%);
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.7rem,8vw,5.2rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.8rem,4.3vw,2.8rem); line-height:1.03}
+h3{font-size:1.24rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+h4{font-family:var(--body); font-size:.72rem; font-weight:800; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 10px}
+
+code{font-family:var(--mono); font-size:.86em; background:var(--code-bg); color:var(--code-ink);
+  padding:1px 5px; border-radius:2px}
+pre{font-family:var(--mono); font-size:.8rem; line-height:1.6; background:var(--code-bg); color:var(--code-ink);
+  padding:18px 20px; margin:20px 0; overflow-x:auto; border:1px solid var(--line-strong)}
+pre code{background:none; padding:0; font-size:1em}
+pre .k{color:var(--code-key); font-weight:600}
+pre .c{color:var(--code-com); font-style:italic}
+
+.chip{display:inline-block; font-size:.66rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+.band{background:var(--navy); color:var(--on-navy); border-bottom:1px solid var(--line-strong)}
+.masthead{padding:64px 0 68px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:42px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--on-navy-2)}
+.masthead h1{margin-bottom:28px}
+.masthead .lede{font-size:1.14rem; line-height:1.5; color:var(--on-navy-2); max-width:58ch; margin:0}
+.mast-meta{margin-top:38px; padding-top:18px; border-top:1px solid var(--navy-rule);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.75rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--on-navy-3)}
+
+main.wrap{padding-top:70px}
+section{margin-bottom:80px}
+.sec-head{margin-bottom:28px}
+.sec-num{display:block; font-family:var(--display); font-size:.96rem; font-weight:600;
+  letter-spacing:.06em; color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+
+/* kind cards */
+.kinds{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:30px 0}
+.kind{border:1px solid var(--line-strong); background:var(--surface); padding:20px 20px 22px}
+.kind h3{margin:12px 0 8px}
+.kind p{margin:0 0 .7em; font-size:.9rem; line-height:1.5; color:var(--ink-2)}
+.kind p:last-child{margin-bottom:0}
+.kind .ex{font-family:var(--mono); font-size:.76rem; color:var(--ink-3); line-height:1.7}
+@media(max-width:800px){.kinds{grid-template-columns:1fr}}
+
+/* loop */
+.loop{border:1px solid var(--line-strong); background:var(--surface); margin:30px 0}
+.loop-head{padding:20px 22px 4px}
+.loop-head h3{margin-bottom:6px}
+.loop-head p{margin:0; font-size:.88rem; color:var(--ink-3)}
+.loop-steps{display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line);
+  border-top:1px solid var(--line-strong); margin-top:18px}
+.lstep{background:var(--surface); padding:18px 16px 20px}
+.lstep .n{font-family:var(--display); font-size:1.7rem; font-weight:500; color:var(--brass); line-height:1; display:block; margin-bottom:8px}
+.lstep b{display:block; font-size:.9rem; margin-bottom:5px}
+.lstep span{font-size:.82rem; line-height:1.45; color:var(--ink-2)}
+.loop-foot{padding:14px 22px; border-top:1px solid var(--line-strong); background:var(--surface-2);
+  font-size:.84rem; color:var(--ink-2)}
+.loop-foot b{color:var(--ink)}
+@media(max-width:860px){.loop-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.loop-steps{grid-template-columns:1fr}}
+
+/* tables */
+figure{margin:30px 0; border:1px solid var(--line-strong); background:var(--surface); overflow:hidden}
+figcaption{padding:14px 22px; border-top:1px solid var(--line-strong); font-size:.85rem;
+  line-height:1.5; color:var(--ink-2); background:var(--surface-2)}
+figcaption b{font-weight:700; color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:620px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.32rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:12px 22px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.5}
+thead th{font-size:.66rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px; white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code{font-size:.8rem; white-space:nowrap}
+td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
+
+/* steps */
+.steps{margin:28px 0 0}
+.step{display:grid; grid-template-columns:58px 1fr; gap:0 22px; padding:26px 0; border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.smark{font-family:var(--display); font-size:2rem; font-weight:500; letter-spacing:-.025em; color:var(--brass); line-height:1}
+.sbody h3{margin-bottom:9px}
+.sbody p,.sbody ul{max-width:64ch}
+.sbody > :last-child{margin-bottom:0}
+@media(max-width:620px){.step{grid-template-columns:1fr; gap:10px}}
+
+/* callouts */
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:18px 22px; margin:24px 0}
+.note{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:18px 22px; margin:24px 0}
+.flag p,.note p{margin:0; max-width:64ch; font-size:.94rem}
+.flag p + p,.note p + p{margin-top:.65em}
+.flag .chip,.note .chip{margin-bottom:11px}
+.flag ul,.note ul{margin:.6em 0 0; font-size:.94rem; max-width:64ch}
+
+/* vocabulary */
+.vocab{border:1px solid var(--line-strong); background:var(--surface); margin:24px 0}
+.vrow{display:grid; grid-template-columns:190px 1fr; gap:0 22px; padding:15px 22px; border-top:1px solid var(--line)}
+.vrow:first-of-type{border-top:0}
+.vname{font-weight:700; font-size:.95rem}
+.vname small{display:block; font-family:var(--mono); font-size:.72rem; font-weight:400; color:var(--ink-3); margin-top:3px}
+.vals{font-family:var(--mono); font-size:.79rem; line-height:1.85; color:var(--ink-2)}
+.vhead{padding:20px 22px 16px; background:var(--surface-2); border-bottom:1px solid var(--line-strong)}
+.vhead h3{margin-bottom:6px}
+.vhead p{margin:0; font-size:.88rem; color:var(--ink-2); max-width:66ch}
+@media(max-width:700px){.vrow{grid-template-columns:1fr; gap:6px}}
+
+.foot{border-top:1px solid var(--line-strong); padding:44px 0 52px; font-size:.8rem; line-height:1.75; color:var(--on-navy-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--on-navy-3); margin-bottom:10px}
+.foot p{max-width:80ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){
+  th,td,caption,figcaption,.vrow,.vhead,.loop-head,.loop-foot{padding-left:16px;padding-right:16px}
+  pre{padding:14px 16px}
+}
+</style>
+
+<div class="band">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="mast-top">
+        <span class="mast-mark">ECA</span>
+        <span class="mast-org">Equestrian Coaches Australia</span>
+      </div>
+      <h1>How riders find us</h1>
+      <p class="lede">Build spec for the discipline, skill and tag system, the alias layer underneath it, multi&#8209;discipline search, and the reporting and freshness jobs that keep the whole thing honest.</p>
+      <div class="mast-meta">
+        <span>Build spec</span>
+        <span>August 2026</span>
+        <span>Phases 4 &amp; 8</span>
+        <span>Written for the build, not the client</span>
+      </div>
+    </header>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- 1 -->
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>One table, three kinds</h2></div>
+  <div class="col">
+    <p>The instinct is to add a <code>tags</code> table beside <code>disciplines</code>, and then a <code>skills</code> table beside that. Resist it. You would build the alias layer three times, the admin screen three times, and the search filter three times, and the three would drift apart within a month.</p>
+    <p>Instead: <strong>one <code>terms</code> table with a <code>kind</code> column.</strong> Adding a fourth kind later becomes a row, not a migration.</p>
+  </div>
+
+  <div class="kinds">
+    <div class="kind">
+      <span class="chip">Discipline</span>
+      <h3>What they teach</h3>
+      <p>The primary facet. The only kind that generates URLs, at least to start with.</p>
+      <p class="ex">dressage<br>western<br>liberty<br>working-equitation</p>
+    </div>
+    <div class="kind">
+      <span class="chip ghost">Skill</span>
+      <h3>What they fix</h3>
+      <p>Specific problems and jobs a rider searches for. Filters and page content, not URLs.</p>
+      <p class="ex">float-loading<br>starting-young-horses<br>confidence-building<br>ottb-retraining</p>
+    </div>
+    <div class="kind">
+      <span class="chip ghost">Attribute</span>
+      <h3>How they work</h3>
+      <p>Practical facts that decide whether a rider bothers enquiring.</p>
+      <p class="ex">horses-available<br>own-arena<br>beginners-welcome<br>ndis-registered</p>
+    </div>
+  </div>
+
+  <div class="col">
+    <p>Disciplines keep their special status. They are what a rider picks first, they order the search, and they are the only kind that gets its own page. Skills and attributes narrow a result set and add real words to a page. That split is the whole design.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Migration note</span>
+    <p>The existing <code>disciplines</code> and <code>coach_disciplines</code> tables fold into <code>terms</code> and <code>coach_terms</code> with a straight insert-select. Do it now, while there are only test coaches. <code>nearby_coaches</code>, <code>getDisciplines</code> and the profile editor all need touching either way once multi-select goes in.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>The schema</h2></div>
+  <div class="col">
+    <p>Six new tables. The interesting ones are <code>term_aliases</code>, which is where search vocabulary lives, and <code>indexable_pages</code>, which is the single source of truth for what is allowed to exist as a URL.</p>
+  </div>
+
+<pre><code><span class="c">-- 0007_taxonomy.sql</span>
+<span class="k">create type</span> public.term_kind <span class="k">as enum</span> ('discipline','skill','attribute');
+
+<span class="k">create table</span> public.terms (
+  id              uuid <span class="k">primary key default</span> gen_random_uuid(),
+  kind            public.term_kind <span class="k">not null</span>,
+  slug            text <span class="k">not null</span>,
+  name            text <span class="k">not null</span>,
+  blurb           text <span class="k">not null default</span> '',
+  <span class="c">-- only disciplines start true; admin promotes a skill once the</span>
+  <span class="c">-- search reports prove riders search it with a location attached</span>
+  generates_pages boolean <span class="k">not null default</span> false,
+  active          boolean <span class="k">not null default</span> true,
+  sort_order      int <span class="k">not null default</span> 0,
+  created_at      timestamptz <span class="k">not null default</span> now(),
+  updated_at      timestamptz <span class="k">not null default</span> now(),
+  <span class="k">unique</span> (kind, slug)
+);
+
+<span class="k">create table</span> public.term_aliases (
+  id         uuid <span class="k">primary key default</span> gen_random_uuid(),
+  term_id    uuid <span class="k">not null references</span> public.terms (id) <span class="k">on delete cascade</span>,
+  alias      text <span class="k">not null</span>,
+  <span class="c">-- seed | admin | search_console | onsite</span>
+  source     text <span class="k">not null default</span> 'seed',
+  created_at timestamptz <span class="k">not null default</span> now()
+);
+<span class="c">-- an alias belongs to exactly one term, or matching becomes ambiguous</span>
+<span class="k">create unique index</span> term_aliases_lower_uniq <span class="k">on</span> public.term_aliases (lower(alias));
+
+<span class="k">create table</span> public.coach_terms (
+  coach_id   uuid <span class="k">not null references</span> public.coach_profiles (id) <span class="k">on delete cascade</span>,
+  term_id    uuid <span class="k">not null references</span> public.terms (id) <span class="k">on delete cascade</span>,
+  <span class="c">-- lowest-ordered discipline is the coach's primary, used in page titles</span>
+  sort_order int <span class="k">not null default</span> 0,
+  <span class="k">primary key</span> (coach_id, term_id)
+);
+
+<span class="c">-- which skills/attributes to offer when a coach picks a discipline</span>
+<span class="k">create table</span> public.term_suggestions (
+  discipline_id uuid <span class="k">not null references</span> public.terms (id) <span class="k">on delete cascade</span>,
+  term_id       uuid <span class="k">not null references</span> public.terms (id) <span class="k">on delete cascade</span>,
+  sort_order    int <span class="k">not null default</span> 0,
+  <span class="k">primary key</span> (discipline_id, term_id)
+);
+
+<span class="c">-- renaming a slug breaks a live URL, so keep the old one and 301 it</span>
+<span class="k">create table</span> public.term_slug_history (
+  kind       public.term_kind <span class="k">not null</span>,
+  old_slug   text <span class="k">not null</span>,
+  term_id    uuid <span class="k">not null references</span> public.terms (id) <span class="k">on delete cascade</span>,
+  changed_at timestamptz <span class="k">not null default</span> now(),
+  <span class="k">primary key</span> (kind, old_slug)
+);
+</code></pre>
+
+  <div class="col">
+    <h3 style="margin:34px 0 12px">Areas, not postcodes</h3>
+    <p>18,500 postcodes is a data source, not a page structure. Riders search for places with names: Geelong, Toowoomba, the Mornington Peninsula, the Hunter Valley. So there is a separate <code>areas</code> table at the level people actually type, and postcodes map into it.</p>
+  </div>
+
+<pre><code><span class="k">create type</span> public.area_kind <span class="k">as enum</span> ('suburb','town','region','state');
+
+<span class="k">create table</span> public.areas (
+  id                 uuid <span class="k">primary key default</span> gen_random_uuid(),
+  slug               text <span class="k">not null unique</span>,
+  name               text <span class="k">not null</span>,
+  kind               public.area_kind <span class="k">not null</span>,
+  state              text <span class="k">not null</span>,
+  parent_id          uuid <span class="k">references</span> public.areas (id),
+  centroid           geography(point, 4326) <span class="k">not null</span>,
+  default_radius_km  int <span class="k">not null default</span> 50,
+  <span class="c">-- hand-written, ~150 words. Only the top 20 need one to start.</span>
+  intro              text <span class="k">not null default</span> '',
+  active             boolean <span class="k">not null default</span> true
+);
+
+<span class="k">alter table</span> public.postcodes
+  <span class="k">add column</span> area_id uuid <span class="k">references</span> public.areas (id);
+</code></pre>
+
+  <div class="col">
+    <h3 style="margin:34px 0 12px">The page register</h3>
+    <p>The three-coach rule cannot live in a page component, because the sitemap, the internal links and the pruning report all need the same answer. Compute it nightly into a table and have everything read from there.</p>
+  </div>
+
+<pre><code><span class="k">create table</span> public.indexable_pages (
+  id                 uuid <span class="k">primary key default</span> gen_random_uuid(),
+  <span class="c">-- 'area' | 'discipline_area' | 'discipline'</span>
+  page_type          text <span class="k">not null</span>,
+  term_id            uuid <span class="k">references</span> public.terms (id) <span class="k">on delete cascade</span>,
+  area_id            uuid <span class="k">references</span> public.areas (id) <span class="k">on delete cascade</span>,
+  path               text <span class="k">not null unique</span>,
+  coach_count        int <span class="k">not null</span>,
+  <span class="c">-- feeds a real lastmod in the sitemap. Google ignores fabricated ones.</span>
+  last_coach_change  timestamptz,
+  first_indexable_at timestamptz,
+  retired_at         timestamptz,
+  checked_at         timestamptz <span class="k">not null default</span> now()
+);
+
+<span class="c">-- every rider search, ours not Google's. The best gap signal you own.</span>
+<span class="k">create table</span> public.search_events (
+  id               bigserial <span class="k">primary key</span>,
+  q                text,
+  term_ids         uuid[] <span class="k">not null default</span> '{}',
+  location_text    text,
+  lat              double precision,
+  lng              double precision,
+  radius_km        int,
+  result_count     int <span class="k">not null</span>,
+  clicked_coach_id uuid <span class="k">references</span> public.coach_profiles (id) <span class="k">on delete set null</span>,
+  created_at       timestamptz <span class="k">not null default</span> now()
+);
+<span class="k">create index</span> search_events_zero <span class="k">on</span> public.search_events (created_at <span class="k">desc</span>)
+  <span class="k">where</span> result_count = 0;
+</code></pre>
+
+  <div class="flag">
+    <span class="chip claret">Do not let the browser write to this table</span>
+    <p>An anon insert policy on <code>search_events</code> is an open spam endpoint. Write it from the server action that already runs the search, using the service-role client, and give the table no anon policy at all.</p>
+  </div>
+
+  <div class="col">
+    <h3 style="margin:34px 0 12px">Admin access</h3>
+    <p>The <code>user_role</code> enum is <code>('rider','coach')</code> and it is set by the signup trigger. Do not add <code>'admin'</code> to it. Adding an enum value means touching the trigger, the signup flow and every role check, and it gives an admin a role they cannot also hold as a coach. A separate table is cleaner.</p>
+  </div>
+
+<pre><code><span class="k">create table</span> public.admin_users (
+  user_id    uuid <span class="k">primary key references</span> auth.users (id) <span class="k">on delete cascade</span>,
+  created_at timestamptz <span class="k">not null default</span> now()
+);
+
+<span class="k">create function</span> public.is_admin() <span class="k">returns</span> boolean
+<span class="k">language</span> sql <span class="k">stable security definer set</span> search_path = public <span class="k">as</span> $$
+  <span class="k">select exists</span> (<span class="k">select</span> 1 <span class="k">from</span> public.admin_users <span class="k">where</span> user_id = auth.uid());
+$$;
+
+<span class="c">-- terms, aliases, areas, suggestions: readable by all, writable by admin</span>
+<span class="k">create policy</span> "terms readable" <span class="k">on</span> public.terms
+  <span class="k">for select using</span> (active = true <span class="k">or</span> public.is_admin());
+<span class="k">create policy</span> "terms admin write" <span class="k">on</span> public.terms
+  <span class="k">for all using</span> (public.is_admin()) <span class="k">with check</span> (public.is_admin());
+</code></pre>
+</section>
+
+<!-- 3 -->
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>What earns a page</h2></div>
+  <div class="col">
+    <p>This is the rule that decides whether the site ranks or gets buried. Every facet you add is a temptation to multiply it by every area, and every time you give in you add thousands of near-empty pages that Google reads as doorway spam.</p>
+    <p>So there are four page types and a hard gate on two of them.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Page types and their rules</caption>
+        <thead><tr><th>Path</th><th>What it is</th><th>Gate</th><th>Indexed</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>/coaches/[slug]</code></td>
+            <td>Coach profile<span class="sub">Strongest pages you have. Every one is genuinely unique.</span></td>
+            <td>Published + subscription active</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td><code>/riding-instructors/[area]</code></td>
+            <td>All coaches in an area<span class="sub">This is the "riding instructor near me" page. Highest-volume query on the whole site.</span></td>
+            <td><strong>3+ coaches</strong></td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td><code>/disciplines/[slug]/[area]</code></td>
+            <td>One discipline in an area<span class="sub">"Dressage coaches in Geelong"</span></td>
+            <td><strong>3+ coaches</strong></td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td><code>/disciplines/[slug]</code></td>
+            <td>One discipline, nationally</td>
+            <td>1+ coach</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td><code>/search?…</code></td>
+            <td>Faceted search<span class="sub">Every filter combination a rider can build</span></td>
+            <td>&mdash;</td>
+            <td><strong>noindex, follow</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Below the gate, redirect rather than 404.</b> A discipline&#8239;&times;&#8239;area page that drops to two coaches 301s to <code>/riding-instructors/[area]</code>. The rider still lands somewhere useful and you keep whatever link equity the page had.</figcaption>
+  </figure>
+
+  <div class="col">
+    <p><code>/riding-instructors/[area]</code> is easy to overlook and it matters most. "Riding lessons" and "riding instructor" are searched far more than "coach", and neither maps to a discipline. That page is where the generic head terms land.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Room for farriers and bodyworkers</span>
+    <p>When the second profession arrives it goes in a sibling folder on the <em>same</em> site: <code>/farriers/[slug]</code>, <code>/farriers/[area]</code>. Never a subdomain. Google treats <code>farriers.oursite.com.au</code> close to a separate website that has to earn its own trust from scratch, while a subfolder inherits everything the site has already built.</p>
+    <p>One rule while building: <strong>nothing that will eventually hold every profession gets the word "coach" in its path.</strong> <code>/coaches/</code> is correct because it is the coaches section. A wrapper like <code>/coach-directory/</code> around the whole site would not be. The <code>terms</code> table already has the right shape for this &mdash; a <code>provider_type</code> is the same pattern as <code>kind</code>.</p>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">The one that quietly kills directories</span>
+    <p>Faceted search URLs. Three disciplines, six skills and eight attributes generate tens of thousands of crawlable combinations, all of them thin, all of them eating crawl budget that should go to coach profiles. Set <code>robots: noindex, follow</code> on <code>/search</code>, canonical every filtered variant to the bare path, and keep filters in query strings rather than path segments so they never look like real pages.</p>
+  </div>
+
+  <div class="col">
+    <h3 style="margin:38px 0 12px">Every coach is on a page &mdash; the fallback ladder</h3>
+    <p>The gate above decides whether a <em>page</em> gets built. It says nothing about where a <em>coach</em> ends up, and that gap has a victim: the only dressage coach in Bright has a profile, no Bright page pointing at her, and no obvious answer to "so where am I listed?"</p>
+    <p>So the gate needs a partner rule. <strong>The gate governs page creation; the ladder governs coach placement.</strong> And there is one invariant worth asserting in code: <strong>every published coach appears on at least one live page, always.</strong></p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>The ladder, most specific first</caption>
+        <thead><tr><th>Level</th><th>Example</th><th>Exists when</th></tr></thead>
+        <tbody>
+          <tr><td>Suburb or town</td><td><code>/riding-instructors/bright</code></td><td>3+ coaches</td></tr>
+          <tr><td>Region</td><td><code>/riding-instructors/alpine-vic</code></td><td>3+ coaches, <strong>or</strong> a written intro</td></tr>
+          <tr><td>State</td><td><code>/riding-instructors/victoria</code></td><td>1+ coach. Effectively always.</td></tr>
+          <tr><td>Discipline, nationally</td><td><code>/disciplines/dressage</code></td><td>1+ coach. Effectively always.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>A coach appears on every level that exists, not the first one that matches.</b> The Bright coach is on the Victoria page, the Alpine region page if it exists, and the national dressage page. She is not <em>either</em> local <em>or</em> regional &mdash; she is in a hierarchy, and rolling her up to exactly one level throws away reach she has already earned.</figcaption>
+  </figure>
+
+  <div class="note">
+    <span class="chip">A refinement to the gate itself</span>
+    <p>Make the rule <strong>three or more coaches <em>or</em> a hand-written intro</strong>, rather than three coaches full stop. What Google punishes is pages that are <em>unhelpful</em>, not pages that are short &mdash; a region page carrying two coaches and 150 real words about riding in that region is a genuinely useful page and always was.</p>
+    <p>This also hands Kim a lever. A region she cares about can go live on two coaches the moment she writes the intro, which is exactly the kind of judgement a person should be allowed to apply and a threshold should not override.</p>
+  </div>
+
+  <div class="col">
+    <p>Three consequences worth building deliberately rather than discovering:</p>
+    <ul>
+      <li><strong>Location text on a profile links to the nearest live page</strong>, never to a dead one. If Bright has no page, "Bright, VIC" links to the Alpine region page. This is the internal-linking half of the ladder and it is easy to forget.</li>
+      <li><strong>A rider search never returns nothing.</strong> If there are no dressage coaches within 25&nbsp;km of Bright, widen automatically and say so: <em>"No dressage coaches within 25&nbsp;km of Bright. Here are the four nearest, 30&ndash;80&nbsp;km away."</em> An empty results page is the worst moment on the site and it is entirely avoidable. Log it as a supply gap either way &mdash; see section 07.</li>
+      <li><strong>Tell the coach where she is, and when that changes.</strong> The dashboard lists the pages she currently appears on. When her suburb reaches three coaches and the page goes live, she gets an email. Better still, tell her how far off it is: <em>"Two more coaches in Bright and we'll build the Bright page. You'll be on it."</em></li>
+    </ul>
+    <p>That last line quietly turns the weakest thing about a thin area into a recruiting prompt aimed at the person best placed to act on it. She knows the other two coaches in town, and the referral scheme already gives her a reason to call them.</p>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">Assert the invariant, don't assume it</span>
+    <p>Add a check to the nightly eligibility job: count published coaches with zero live pages. It should always be zero. If it ever isn't, something in the gate, the ladder or the area mapping has broken silently, and the symptom &mdash; a paying coach who is invisible &mdash; is the single worst bug this site can have.</p>
+    <p>Surface the count in the weekly digest alongside the search-gap reports. One line, almost always reading zero, and the one week it doesn't is the week it earns its place.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Multi-discipline, both directions</h2></div>
+  <div class="col">
+    <p>Two separate problems: a rider who wants to search several things at once, and a coach who teaches several things.</p>
+
+    <h3 style="margin:26px 0 12px">Rider side</h3>
+    <p>The convention riders already expect from every job board and property site: <strong>OR within a kind, AND across kinds.</strong> "Dressage or show jumping" and "travels to you" and "confidence building". Passing one flat array with a match-all flag cannot express that, so pass three arrays.</p>
+  </div>
+
+<pre><code><span class="k">create or replace function</span> public.nearby_coaches(
+  p_discipline_ids uuid[] <span class="k">default null</span>,
+  p_skill_ids      uuid[] <span class="k">default null</span>,
+  p_attribute_ids  uuid[] <span class="k">default null</span>,
+  p_lat            double precision <span class="k">default null</span>,
+  p_long           double precision <span class="k">default null</span>,
+  p_radius_km      double precision <span class="k">default</span> 50
+) ...
+
+<span class="c">-- one of these blocks per array; OR inside, AND between</span>
+<span class="k">and</span> (
+  p_discipline_ids <span class="k">is null or</span> cardinality(p_discipline_ids) = 0
+  <span class="k">or exists</span> (
+    <span class="k">select</span> 1 <span class="k">from</span> public.coach_terms ct
+    <span class="k">where</span> ct.coach_id = cp.id <span class="k">and</span> ct.term_id = <span class="k">any</span>(p_discipline_ids)
+  )
+)
+</code></pre>
+
+  <div class="col">
+    <p>Sort by distance as now, but break ties on how many of the selected terms a coach matches. A coach who ticks four of your five filters should sit above one who ticks two at the same distance.</p>
+    <p>URL shape: <code>/search?d=dressage,show-jumping&amp;s=confidence-building&amp;near=3550&amp;km=50</code>. Slugs rather than UUIDs, so the URL is shareable and readable, resolved server-side.</p>
+
+    <h3 style="margin:34px 0 12px">Coach side</h3>
+    <p>A coach appears on every discipline&#8239;&times;&#8239;area page they qualify for. That is correct and it is free reach. The only thing needing a decision is which discipline leads their page title and card, and <code>coach_terms.sort_order</code> answers it: lowest-ordered discipline wins, and the coach reorders by dragging in the profile editor. No extra column, and it gives them control over how they are presented.</p>
+    <p>Their profile page then reads: <em>Dressage and show jumping coach in Geelong VIC</em>, with the rest listed underneath.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Suggested terms</span>
+    <p>Seed <code>term_suggestions</code> by hand so a coach picking Western immediately sees reining, campdraft, colt starting and stock work offered. Once ten or more coaches share a discipline, add a second row computed from what they actually picked: <em>"Other Western coaches also list&hellip;"</em>. Curated first because there is no data yet, then data-driven as it arrives.</p>
+    <p>Cap the suggestion list at eight or so. A wall of checkboxes gets skipped, and a half-tagged profile is worse than a focused one.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Where aliases go, and where they must not</h2></div>
+  <div class="col">
+    <p>Aliases exist so that a rider typing "flatwork coach" finds your dressage page. They are a matching layer, not page content. The failure mode is dumping the list somewhere visible, which is textbook keyword stuffing and precisely what the 2024 updates hunt for.</p>
+    <p>Four legitimate places, and only four:</p>
+    <ul>
+      <li><strong>The title tag.</strong> <code>Dressage Coaches in Geelong VIC | Riding Lessons &amp; Instructors</code>. One primary alias, worked into a real sentence.</li>
+      <li><strong>One natural sentence of body copy.</strong> "Find dressage instructors and flatwork coaches near Geelong." Not a list.</li>
+      <li><strong>Internal link anchor text.</strong> Vary it across the site. Some links say "dressage coaches", some say "dressage instructors". Identical anchors everywhere is its own signal.</li>
+      <li><strong>Structured data.</strong> <code>knowsAbout</code> on the coach, <code>alternateName</code> on the term. This is where a machine-readable list actually belongs.</li>
+    </ul>
+    <p>Mark one alias per term as the primary so the title generator is deterministic rather than picking at random. Everything else stays in the database doing matching work.</p>
+  </div>
+
+<pre><code><span class="c">// coach page schema — Person for individuals, LocalBusiness for schools</span>
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Marnie Tolhurst",
+  "jobTitle": "Riding Coach",
+  "url": "https://…/coaches/marnie-tolhurst",
+  "image": "…",
+  "address": { "@type": "PostalAddress",
+    "addressLocality": "Geelong", "addressRegion": "VIC", "addressCountry": "AU" },
+  "areaServed": [{ "@type": "City", "name": "Geelong" }],
+  "knowsAbout": ["Dressage", "Flatwork", "Confidence building", "Float loading"],
+  "makesOffer": { "@type": "Offer", "itemOffered":
+    { "@type": "Service", "serviceType": "Riding lessons" } }
+}
+</code></pre>
+
+  <div class="col">
+    <p>Area pages get <code>ItemList</code> wrapping the coach cards, in the order shown. Add <code>BreadcrumbList</code> on every page below the top level. Neither is glamorous and both are a few hours of work with a disproportionate return.</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>The admin screens</h2></div>
+  <div class="col">
+    <p>Yes, admin-editable, and it is not a nice-to-have. Sport vocabulary shifts, new disciplines surface, and the reports in the next section will hand you new alias candidates every week. Hard-coding vocabulary means a deploy for every word, which in practice means the words never get added.</p>
+    <p>Three screens under <code>/admin</code>, gated on <code>is_admin()</code> in the proxy and again in RLS:</p>
+    <ul>
+      <li><strong>Terms.</strong> Create, rename, reorder, deactivate. Toggle <code>generates_pages</code>. Deactivate rather than delete, always, since a deleted term silently unpicks itself from every coach who chose it.</li>
+      <li><strong>Aliases.</strong> Add and remove, with the source shown. A one-click "add as alias" button on each row of the unmapped-query report, which is what closes the loop between reporting and vocabulary.</li>
+      <li><strong>Areas.</strong> Edit the hand-written intro, adjust radius, activate or deactivate. Shows current coach count and indexable status per area.</li>
+    </ul>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">The slug trap</span>
+    <p>A term's slug is in a live URL the moment <code>generates_pages</code> is true. Editing it in an admin form silently 404s every indexed page under it and throws away months of ranking.</p>
+    <p>Two guards. Make the slug field read-only in the UI once the term has ever been indexable, with a separate deliberate "change URL" action behind a confirmation. And have that action write the old slug into <code>term_slug_history</code>, with middleware issuing a 301 from any historical slug. Same pattern for <code>areas.slug</code> and <code>coach_profiles.slug</code>, which has exactly the same problem the first time a coach edits their display name.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>The reports that find your gaps</h2></div>
+  <div class="col">
+    <p>You have two data sources and they answer different questions. Google Search Console tells you what people typed into Google and whether you appeared. Your own search log tells you what they typed into <em>your</em> box and whether you had anything to show them. The second one is the one nobody else has, and it is the more useful of the two.</p>
+  </div>
+
+  <div class="loop">
+    <div class="loop-head">
+      <h3>The loop this is all for</h3>
+      <p>Every report exists to feed the next week's vocabulary and the next month's recruiting</p>
+    </div>
+    <div class="loop-steps">
+      <div class="lstep"><span class="n">1</span><b>Riders search</b><span>On Google, and in your own search box. Both get logged.</span></div>
+      <div class="lstep"><span class="n">2</span><b>Weekly report</b><span>Finds queries that matched no term, and searches that returned nothing.</span></div>
+      <div class="lstep"><span class="n">3</span><b>You add words</b><span>One click adds an alias, or creates a term, in the admin screen.</span></div>
+      <div class="lstep"><span class="n">4</span><b>Pages improve</b><span>Titles, copy and matching all pick up the new vocabulary.</span></div>
+      <div class="lstep"><span class="n">5</span><b>Rankings move</b><span>New queries start landing, which produces new gaps.</span></div>
+    </div>
+    <div class="loop-foot"><b>Then back to step one.</b> Roughly fifteen minutes of your attention a week, which is the only budget this has.</div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>Unmapped queries</h3>
+        <p>Pull Search Console queries and on-site searches, strip location tokens and stop words, then list anything that matches no alias. Rank by impressions and by on-site frequency.</p>
+        <p>This is your alias pipeline. Most rows will be junk, some will be words you had not thought of, and one a month will be a discipline you did not know existed. Each row gets three buttons: add as alias to an existing term, create a new term, or ignore permanently.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>Zero results, split two ways</h3>
+        <p>On-site searches that returned nothing, separated into two very different problems:</p>
+        <ul>
+          <li><strong>Supply gap.</strong> The words matched, but there is no coach in that area. This is a recruiting list, ranked by demand. It answers "which region do we go into next" with evidence instead of a guess.</li>
+          <li><strong>Vocabulary gap.</strong> The words matched nothing at all. Straight into report one.</li>
+        </ul>
+        <p>Distinguish them by re-running the query with the location dropped. If it returns coaches, it is a supply gap.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>Performance by URL pattern</h3>
+        <p>Group Search Console page data by pattern rather than by page: <code>/coaches/*</code>, <code>/disciplines/*</code>, <code>/disciplines/*/*</code>, <code>/riding-instructors/*</code>. Impressions, clicks and average position for each.</p>
+        <p>This tells you which page type is earning its keep, which is the thing total-traffic dashboards hide. It also produces the prune list: any page with zero impressions in 90 days gets merged or retired.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>Near misses</h3>
+        <p>Queries where you rank position 5 to 20 with real impressions. The page already exists and Google already thinks it is roughly relevant. These are the cheapest wins on the site and usually need a hundred more words of intro, a better title, or two internal links.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">5</div>
+      <div class="sbody">
+        <h3>Promotion candidates</h3>
+        <p>Skill and attribute terms that appear in real queries <em>with a location attached</em>. "Float loading training Melbourne" is the signal that <code>float-loading</code> has earned <code>generates_pages = true</code>.</p>
+        <p>This is the mechanism that lets the page structure grow without ever guessing. Nothing gets a URL until riders have demonstrated they search for it that way, which is the opposite of how directories usually expand.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <h3 style="margin:36px 0 12px">Wiring it up</h3>
+    <p>A service account against the Search Console API, not OAuth. It does not expire, needs no refresh token and runs headless. Three steps: enable the API in Google Cloud, create the service account and download the JSON key, then <strong>add the service account's email as a user on the Search Console property</strong>. Skipping that third step is the usual cause of a 403.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Search Console API limits worth designing around</caption>
+        <thead><tr><th>Limit</th><th>Value</th><th>What it means for the job</th></tr></thead>
+        <tbody>
+          <tr><td>Data lag</td><td>2&ndash;3 days</td><td>Never query up to today. Run weekly and end the window three days back.</td></tr>
+          <tr><td>Retention</td><td>16 months</td><td>Store every pull in your own table or you lose the history.</td></tr>
+          <tr><td>Rows per request</td><td>25,000</td><td>Paginate on <code>startRow</code> until a short page comes back.</td></tr>
+          <tr><td>Dimensions per request</td><td>4</td><td>Query <code>query</code> and <code>page</code> separately, join client-side.</td></tr>
+          <tr><td>Rate</td><td>1,200 / 100s, 30,000 / day</td><td>Nowhere near it at this size. Add exponential backoff on 429 anyway.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Use a domain property</b> (<code>sc-domain:equestriancoachesaustralia.com.au</code>) rather than a URL-prefix one, so www, non-www and http all report as a single site.</figcaption>
+  </figure>
+
+  <div class="col">
+    <p>The job itself is a Vercel Cron hitting a route handler, guarded by a <code>CRON_SECRET</code> header check so it cannot be triggered from outside. It writes findings into a <code>seo_findings</code> table and sends one digest email through Resend, which you already have wired for clinic notifications. The email is the product here. A dashboard nobody opens is worth nothing at 1 to 5 hours a week; an email with five rows and three buttons gets actioned.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Freshness and upkeep</h2></div>
+  <div class="col">
+    <p>Directory pages go stale in a specific way: the page stays identical for a year while the underlying reality changes. Two coaches stopped teaching, one moved, three clinics came and went. The fix is not to rewrite pages on a timer. It is to make the page reflect things that genuinely change.</p>
+
+    <h3 style="margin:28px 0 12px">Rendering</h3>
+    <ul>
+      <li><strong>Coach pages.</strong> Static with a long <code>revalidate</code>, plus on-demand <code>revalidatePath</code> the moment a coach saves. Content the user just changed should never wait for a timer. Revalidate their area pages in the same action.</li>
+      <li><strong>Area and discipline&#8239;&times;&#8239;area pages.</strong> ISR at an hour, plus on-demand when a coach in that area publishes, unpublishes or lapses. <code>generateStaticParams</code> reads <code>indexable_pages</code>, so an ineligible combination never gets built at all.</li>
+      <li><strong>Sitemap.</strong> Generated from <code>indexable_pages</code> with <code>lastmod</code> taken from <code>last_coach_change</code>. Real values only. Google learned to ignore sitemaps where everything changed today. Split into a sitemap index once you pass about 5,000 URLs.</li>
+    </ul>
+
+    <h3 style="margin:32px 0 12px">Genuine freshness, not manufactured</h3>
+    <ul>
+      <li><strong>Clinics are the freshness engine.</strong> They have dates, they expire, and they turn over by themselves. An area page that lists upcoming clinics changes honestly and often. Past clinics move to a history section on the coach page rather than vanishing, so the words stay.</li>
+      <li><strong>Stale profile nudge.</strong> Any coach untouched for six months gets an email asking them to confirm they are still taking students. Fresher content, and it catches coaches who quietly stopped teaching before a rider wastes an enquiry on them. It doubles as a retention touchpoint.</li>
+      <li><strong>New testimonials</strong> change the page in the way that matters most, since they are content that exists nowhere else. Prompt for them in the monthly coach email.</li>
+    </ul>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>What runs when</caption>
+        <thead><tr><th>Job</th><th>Cadence</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td>Profile revalidation</td><td>On save</td><td>Rebuilds the coach page and every area page they appear on</td></tr>
+          <tr><td>Clinic expiry</td><td>Nightly</td><td>Moves past clinics to history, revalidates affected pages</td></tr>
+          <tr><td>Page eligibility</td><td>Nightly, 2am AEST</td><td>Recounts coaches per area and per discipline&#8239;&times;&#8239;area, adds and retires <code>indexable_pages</code> rows, writes redirects for retirements</td></tr>
+          <tr><td>Sitemap</td><td>Nightly, after eligibility</td><td>Regenerates from the register with real <code>lastmod</code></td></tr>
+          <tr><td>SEO digest</td><td>Weekly, Monday</td><td>Search Console pull, the five reports, one email</td></tr>
+          <tr><td>Stale profile nudge</td><td>Monthly</td><td>Emails coaches untouched for 6+ months</td></tr>
+          <tr><td>Prune review</td><td>Quarterly</td><td>You look at the 90-day zero-impression list and decide</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Only the last one needs a human.</b> Everything else runs on Vercel Cron against route handlers guarded by <code>CRON_SECRET</code>, using the service-role Supabase client.</figcaption>
+  </figure>
+
+  <div class="note">
+    <span class="chip">Set this up before there is traffic</span>
+    <p>Verify the domain in Search Console and submit the sitemap the day the site goes live, even with twelve coaches on it. Search Console only holds 16 months and only starts collecting from verification. Every week you wait is a week of baseline you can never get back, and the whole reporting loop above is worthless without history to compare against.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section>
+  <div class="sec-head"><span class="sec-num">09</span><h2>The vocabulary to seed</h2></div>
+  <div class="col">
+    <p>Enough to launch with. Everything here is a starting point that the weekly report will correct within a couple of months, so do not agonise over it. The one rule: an alias belongs to exactly one term, so where two disciplines could claim a word, give it to the more specific one.</p>
+  </div>
+
+  <div class="vocab">
+    <div class="vhead">
+      <h3>Disciplines and their aliases</h3>
+      <p>The eleven already seeded, with search vocabulary attached. The bolded alias is the primary, used in generated page titles.</p>
+    </div>
+    <div class="vrow"><div class="vname">Dressage<small>dressage</small></div><div class="vals"><strong>dressage lessons</strong> · dressage instructor · dressage trainer · dressage coaching · flatwork · flatwork coach · competition dressage · dressage tests</div></div>
+    <div class="vrow"><div class="vname">Show Jumping<small>show-jumping</small></div><div class="vals"><strong>showjumping lessons</strong> · show jumping coach · showjumping instructor · jumping lessons · jump training · gridwork · stadium jumping</div></div>
+    <div class="vrow"><div class="vname">Eventing<small>eventing</small></div><div class="vals"><strong>eventing coach</strong> · event rider coach · horse trials · one day event · ODE coaching · cross country coaching · XC coaching · three day eventing</div></div>
+    <div class="vrow"><div class="vname">Western<small>western</small></div><div class="vals"><strong>western riding lessons</strong> · western coach · western trainer · reining · reining trainer · western pleasure · ranch riding · western performance · cutting · pole bending</div></div>
+    <div class="vrow"><div class="vname">Campdrafting<small>campdrafting</small></div><div class="vals"><strong>campdraft coaching</strong> · campdraft · campdraft school · campdraft clinic · drafting lessons</div></div>
+    <div class="vrow"><div class="vname">Liberty<small>liberty</small></div><div class="vals"><strong>liberty training</strong> · liberty coach · at liberty · liberty horsemanship · liberty lessons · free work</div></div>
+    <div class="vrow"><div class="vname">Bridleless<small>bridleless</small></div><div class="vals"><strong>bridleless trainer</strong> · bridleless riding · bridleless lessons · riding without a bridle · neck rope riding</div></div>
+    <div class="vrow"><div class="vname">Natural Horsemanship<small>natural-horsemanship</small></div><div class="vals"><strong>natural horsemanship trainer</strong> · horsemanship lessons · groundwork coach · join up · connection training · relationship training</div></div>
+    <div class="vrow"><div class="vname">Pony Club<small>pony-club</small></div><div class="vals"><strong>pony club coach</strong> · pony club instructor · pony club rally coach · junior riding lessons · gymkhana coaching</div></div>
+    <div class="vrow"><div class="vname">Para-Equestrian<small>para-equestrian</small></div><div class="vals"><strong>para equestrian coach</strong> · para dressage · adaptive riding · disability riding lessons · RDA coach · accessible riding</div></div>
+    <div class="vrow"><div class="vname">Working Equitation<small>working-equitation</small></div><div class="vals"><strong>working equitation coach</strong> · working equitation lessons · WE coaching · ease of handling · obstacle course riding · garrocha</div></div>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">Two words to be careful with</span>
+    <p><em>Bitless</em> gets typed by people who mean bridleless, but it describes tack rather than a discipline and a bitless bridle is still a bridle. Add it as an alias if the reports show it, not before.</p>
+    <p><em>Barrel racing</em> sits under Western here, but in some parts of Australia it is treated as its own thing. Watch the reports and split it out if the volume justifies it.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Disciplines to add</span>
+    <p>Worth seeding now rather than waiting: <strong>Trail Riding</strong>, <strong>Showing &amp; Hack</strong>, <strong>Polocrosse</strong>, <strong>Endurance</strong>, <strong>Stock Horse</strong>, <strong>Mounted Games</strong>, <strong>Vaulting</strong>, <strong>Carriage Driving</strong>. Each is a real Australian discipline with its own coaches and its own small, uncontested set of searches, and eight more rows costs nothing.</p>
+  </div>
+
+  <div class="vocab">
+    <div class="vhead">
+      <h3>Skills</h3>
+      <p>What a coach fixes or teaches. These are the searches that convert best, because a rider searching one of these has a specific problem and is ready to pay someone to solve it.</p>
+    </div>
+    <div class="vrow"><div class="vname">Foundations</div><div class="vals">Starting young horses (colt starting, breaking in) · Groundwork &amp; handling · Lunging &amp; long-reining · Float loading &amp; travel · Trailer training</div></div>
+    <div class="vrow"><div class="vname">Problem solving</div><div class="vals">Problem behaviour &amp; re-schooling · Spooking &amp; napping · Retraining off-the-track thoroughbreds (OTT, OTTB) · Rehabilitation &amp; return to work</div></div>
+    <div class="vrow"><div class="vname">Rider development</div><div class="vals">Confidence building (nervous riders) · Getting back on after a fall · Adult beginners · Returning to riding · Rider biomechanics &amp; position · Fitness &amp; conditioning</div></div>
+    <div class="vrow"><div class="vname">Technical</div><div class="vals">Lateral work · Jumping technique &amp; gridwork · Cross-country schooling · Dressage test riding &amp; scoring · Stock work &amp; cattle handling · Trick training</div></div>
+    <div class="vrow"><div class="vname">Preparation</div><div class="vals">Competition preparation · First-show preparation · Clinics &amp; camps · Trail &amp; road safety</div></div>
+  </div>
+
+  <div class="vocab">
+    <div class="vhead">
+      <h3>Attributes</h3>
+      <p>Practical facts that decide whether a rider bothers enquiring. Filters and profile badges, never their own pages.</p>
+    </div>
+    <div class="vrow"><div class="vname">Access</div><div class="vals"><strong>Horses available for lessons</strong> · Travels to you · Own arena · Indoor arena · Cross-country course on site · Agistment available</div></div>
+    <div class="vrow"><div class="vname">Who they suit</div><div class="vals">Beginners welcome · Children &amp; juniors · Adults only · All ages · Nervous riders · NDIS registered</div></div>
+    <div class="vrow"><div class="vname">Format</div><div class="vals">Private lessons · Group lessons · Clinics &amp; workshops · Online &amp; video coaching · Weekend availability · Weekday availability</div></div>
+    <div class="vrow"><div class="vname">Credentials</div><div class="vals">EA accredited · Pony Club accredited · Working with Children Check · Insured · First aid certified</div></div>
+  </div>
+
+  <div class="col">
+    <p><em>Horses available for lessons</em> is bolded deliberately. Riders without their own horse are a large, under-served group who search specifically for it, and almost no directory lets them filter for it. It is one checkbox and it may be the most valuable single field on the form.</p>
+    <p>Note that <code>travels_to_rider</code> already exists as a column on <code>coach_profiles</code>. Leave it there and surface it as a filter alongside the attribute terms rather than duplicating it as a row, or the two will disagree.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section>
+  <div class="sec-head"><span class="sec-num">10</span><h2>Outranking who is already there</h2></div>
+  <div class="col">
+    <p>Nobody owns "riding instructor near me" in Australia, but the results page is not empty. Four kinds of thing turn up, and each loses for a different reason. Knowing which is which tells us where the effort goes.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Who currently ranks, and where each one is weak</caption>
+        <thead><tr><th>Who</th><th>What they are</th><th>Where they lose</th></tr></thead>
+        <tbody>
+          <tr class="pick">
+            <td><strong>Coaches4U</strong><span class="sub">coaches4u.com.au</span></td>
+            <td>A general Australian coaching directory &mdash; tennis, swimming, athletics &mdash; with "Equine Sports" as one category among many, broken out by state, region and sub-region.</td>
+            <td><strong>Our closest keyword competitor and the most beatable.</strong> See below.</td>
+          </tr>
+          <tr>
+            <td><strong>EquiDirectory</strong></td>
+            <td>Every kind of equine business, coaching included. Paid listings, $80&ndash;$400 a year.</td>
+            <td>Dated and cluttered, and coaching is diluted by float repairers and feed merchants. Broad, not deep.</td>
+          </tr>
+          <tr>
+            <td><strong>The Equestrian Australia register</strong></td>
+            <td>The official accredited-coach list.</td>
+            <td>Sits behind a search form, which Google usually cannot crawl. Also excludes Western, liberty, natural horsemanship and trail coaches entirely &mdash; the gap the whole business is built on.</td>
+          </tr>
+          <tr>
+            <td><strong>Individual coach websites and Facebook pages</strong></td>
+            <td>One coach, one site.</td>
+            <td>Most coaches have no website. Facebook pages barely surface in search at all.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>None of these are strong incumbents.</b> That is the opportunity and also the warning &mdash; the reason nobody owns these results is that nobody has yet built pages worth ranking, not that the queries are hard.</figcaption>
+  </figure>
+
+  <div class="col">
+    <h3 style="margin:34px 0 12px">Coaches4U, in detail</h3>
+    <p>Worth studying because they have built exactly the site this specification is designed to avoid, and they have built it first.</p>
+    <p>Their URLs run <code>/directory/category/equine-sports/location/nsw/sydney-region/</code>, with a deeper variant adding a discipline and a sub-region. So they hold the full programmatic matrix: discipline &times; state &times; region &times; sub-region, generated whether or not there is anything on the page.</p>
+    <p>The Sydney page &mdash; the largest equestrian market in the country &mdash; carries <strong>thirteen listings</strong>. They are mostly riding schools and equestrian centres rather than individual coaches. There is no written content about Sydney, no content about dressage, nothing a person composed for that page. The body copy describes the platform.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Where we beat them, and with what</caption>
+        <thead><tr><th>Their weakness</th><th>Our answer</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Template pages with no unique writing</strong><span class="sub">Body copy describes the platform, not the place</span></td>
+            <td>150 words of real, human-written content on the top 20 area pages. This is precisely what the 2024 helpful-content updates reward, and it is the single biggest lever we have.</td>
+          </tr>
+          <tr>
+            <td><strong>Pages generated whether or not there is anything on them</strong></td>
+            <td>The <strong>three-coach gate</strong>. Around 400 pages that all have something on them, instead of a matrix that is mostly empty.</td>
+          </tr>
+          <tr>
+            <td><strong>They list businesses, not people</strong><span class="sub">Riding schools and centres, with a name and a phone number</span></td>
+            <td>Individual coach profiles with a photo, a real bio, disciplines, skills and rider testimonials. Content that exists nowhere else online, one page per person.</td>
+          </tr>
+          <tr>
+            <td><strong>Region-level geography</strong><span class="sub">"Sydney Region", "Yarra Valley &amp; Dandenong Ranges"</span></td>
+            <td>Suburb and town level, gated on real coverage. A rider searching "dressage coach Strathfieldsaye" is better served by us and Google can tell.</td>
+          </tr>
+          <tr>
+            <td><strong>No equestrian credibility</strong><span class="sub">Equine is one category beside tennis and swimming</span></td>
+            <td>Kim is a working instructor. The site is equine only. That shows up in the writing, the vocabulary and the aliases, and eventually in who links to us.</td>
+          </tr>
+          <tr>
+            <td><strong>Static listings</strong></td>
+            <td>Clinics, new profiles and new testimonials give crawlers a reason to come back. See section 08.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>The strategy was already right; Coaches4U is the proof.</b> Everything in this column was in the plan before we found them. What they add is a live example of the thin-template approach sitting in the results we want, which makes it much easier to explain why the three-coach gate matters.</figcaption>
+  </figure>
+
+  <div class="flag">
+    <span class="chip claret">The title-tag collision</span>
+    <p>They already occupy the pattern <em>"Horse Riding Coaches in the Adelaide Region"</em>. If we publish <em>"Horse Riding Coaches in Adelaide"</em> we are competing on near-identical strings with a site that has more history than us.</p>
+    <p>Differentiate on <strong>specificity and intent</strong> instead: use the suburb or town rather than the region, lead with the discipline where we have one, and use the words riders actually type. <em>"Dressage Coaches in Strathfieldsaye VIC &mdash; riding lessons near you"</em> beats competing head-on for a broader phrase we would lose today.</p>
+  </div>
+
+  <div class="col">
+    <h3 style="margin:34px 0 12px">A fixed basket of queries, checked monthly</h3>
+    <p>Pick twenty queries at the start and never change the list &mdash; the value is in watching the same ones move. Roughly: five "riding instructor / riding lessons + town", five "[discipline] coach + town", five long-tail skill queries such as <em>float loading help Bendigo</em>, and five brand queries.</p>
+    <p>Record our position and whether Coaches4U, EquiDirectory or the EA register appear above us. Search Console gives us our own positions for free; the competitor check is a manual look, ten minutes a month, and it goes in the same monthly review as the search-gap report from section 07.</p>
+    <p>The long-tail skill queries are where we win first. Nobody has written a page about float loading help in a particular town, and those are the searches the skills facet exists to catch.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">One thing not to do</span>
+    <p>Do not respond to a competitor by widening. The instinct on seeing a matrix of thousands of pages is to build a bigger matrix. That is how a small site with 400 good pages turns into a large site with 200,000 bad ones, and it is the only mistake in this document that cannot be undone quickly.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">11</span><h2>Build order</h2></div>
+  <div class="col">
+    <p>Sequenced so nothing gets built twice, and so the reporting starts collecting before it is needed.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Suggested order</caption>
+        <thead><tr><th>#</th><th>Work</th><th>Why here</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Migration <code>0007_taxonomy</code> plus the seed vocabulary</td><td>Everything depends on it, and it is cheapest now with only test coaches in the database</td></tr>
+          <tr><td>2</td><td><code>areas</code> table and postcode mapping</td><td>Needed before any page can know what area it represents</td></tr>
+          <tr><td>3</td><td>Rewrite <code>nearby_coaches</code>, update the search UI to multi-select</td><td>Unblocks the rider side and proves the schema works</td></tr>
+          <tr><td>4</td><td>Profile editor: disciplines, suggested skills, attributes, drag to reorder</td><td>Coaches cannot tag themselves until this exists, and nothing else can be tested without tagged coaches</td></tr>
+          <tr><td>5</td><td><code>search_events</code> logging</td><td>Small job, and it starts collecting the moment the first rider arrives. Do it early for the same reason as Search Console.</td></tr>
+          <tr><td>6</td><td><code>indexable_pages</code>, the nightly job, the new page routes, sitemap</td><td>The actual SEO surface. Needs tagged coaches to be worth building.</td></tr>
+          <tr><td>7</td><td>Structured data and slug-history redirects</td><td>Ship alongside the pages, not after, or you will be retrofitting redirects for URLs already indexed</td></tr>
+          <tr><td>8</td><td><code>/admin</code> screens</td><td>Can wait. Seed data covers launch, and you can edit rows directly until volume justifies a UI.</td></tr>
+          <tr><td>9</td><td>Search Console service account and the weekly digest</td><td>Verify the property on day one regardless. The report job itself has nothing to report until traffic exists.</td></tr>
+          <tr><td>10</td><td>The twenty-query rank basket, and the first manual competitor check</td><td>Set the list before the pages ship, so month one is a baseline rather than a guess. Ten minutes a month after that.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Items 1 to 5 fit inside phases 6 and 7</b> of the existing build plan. Items 6 to 9 are the substance of phase 8, which is currently written as "metadata, sitemap, accessibility" and needs expanding.</figcaption>
+  </figure>
+</section>
+
+</main>
+
+<div class="band">
+  <div class="wrap">
+    <div class="foot">
+      <div class="fh">References</div>
+      <p>Google Search Console API developer documentation and quota limits. Directory indexation research, 2026. Google helpful-content and core update guidance, 2024 onwards. Existing schema read from <code>supabase/migrations/0001_init.sql</code> and <code>0003_search.sql</code>.</p>
+      <p>Written for the build. The client-facing version of the SEO argument lives in the marketing plan.</p>
+    </div>
+  </div>
+</div>
