@@ -1,0 +1,538 @@
+<title>What They're Buying</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7;
+  --good:#00794F;
+  --pick-bg:#F7F0E1;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+  --wrap:1040px; --measure:68ch;
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.7rem,8vw,5.1rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.8rem,4.4vw,2.85rem); line-height:1.03}
+h3{font-size:1.24rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+.tnum{font-variant-numeric:tabular-nums}
+
+.chip{display:inline-block; font-size:.67rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+/* ---------- masthead ---------- */
+.band{background:var(--ground); color:var(--ink); border-bottom:1px solid var(--line-strong)}
+.masthead{padding:64px 0 60px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:42px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-2)}
+.masthead h1{margin-bottom:28px}
+.masthead .lede{font-size:1.15rem; line-height:1.5; color:var(--ink-2); max-width:56ch; margin:0}
+.mast-meta{margin-top:38px; padding-top:18px; border-top:1px solid var(--line);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.75rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--ink-3)}
+
+.verdict{padding:0 0 58px}
+.verdict-lead{max-width:64ch; font-size:1.02rem; color:var(--ink-2); margin:0 0 32px}
+.verdict-lead b{color:var(--ink); font-weight:700}
+.vgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line)}
+.vcell{background:var(--ground); padding:24px 22px 26px}
+.vcell .lbl{font-size:.67rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3)}
+.vnum{font-family:var(--display); font-weight:400; font-size:3rem; letter-spacing:-.025em; line-height:1;
+  color:var(--brass); display:block; margin:13px 0 9px; font-variant-numeric:tabular-nums}
+.vcell.up .vnum{color:var(--good)}
+.vcell p{margin:0; font-size:.87rem; line-height:1.5; color:var(--ink-2)}
+@media(max-width:760px){.vgrid{grid-template-columns:1fr}}
+
+/* ---------- sections ---------- */
+main.wrap{padding-top:70px}
+section{margin-bottom:78px}
+.sec-head{margin-bottom:28px}
+.sec-num{display:block; font-family:var(--display); font-size:.96rem; font-weight:600;
+  letter-spacing:.06em; color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+
+/* ---------- tables ---------- */
+figure{margin:28px 0; border:1px solid var(--line-strong); background:var(--surface); overflow:hidden}
+figcaption{padding:14px 22px; border-top:1px solid var(--line-strong); font-size:.85rem;
+  line-height:1.5; color:var(--ink-2); background:var(--surface-2)}
+figcaption b{font-weight:700; color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:620px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.3rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:11px 20px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.5}
+thead th{font-size:.66rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px}
+tbody tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600}
+td.mid,th.mid{text-align:center}
+tr.total td{border-top:2px solid var(--line-strong); font-weight:800; background:var(--surface-2)}
+td .sub{display:block; font-size:.83rem; color:var(--ink-3); margin-top:3px; font-weight:400}
+tr.grp td{background:var(--surface-2); font-size:.66rem; font-weight:800; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-3); padding-top:14px; padding-bottom:8px}
+.y{color:var(--good); font-weight:800}
+.n{color:var(--line-strong); font-weight:700}
+.pricerow td{background:var(--pick-bg); font-family:var(--display); font-size:1.5rem; font-weight:500;
+  letter-spacing:-.02em; padding-top:6px; padding-bottom:14px; border-bottom:2px solid var(--line-strong)}
+.pricerow td span{display:block; font-family:var(--body); font-size:.76rem; font-weight:600;
+  letter-spacing:.04em; color:var(--ink-3); margin-top:5px; text-transform:none}
+
+/* ---------- tier panels ---------- */
+.tiers{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:28px 0}
+.tiers > div{border:1px solid var(--line-strong); background:var(--surface); padding:22px 20px;
+  display:flex; flex-direction:column; gap:0}
+.tiers h3{margin:12px 0 4px}
+.tiers .price{font-family:var(--display); font-size:1.9rem; font-weight:500; letter-spacing:-.025em;
+  color:var(--brass); line-height:1; margin:0 0 12px; font-variant-numeric:tabular-nums}
+.tiers .who{font-size:.72rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--claret); margin:0 0 8px}
+.tiers p{margin:0 0 .7em; font-size:.9rem; line-height:1.55; color:var(--ink-2)}
+.tiers p:last-child{margin-bottom:0}
+@media(max-width:820px){.tiers{grid-template-columns:1fr}}
+
+/* ---------- callouts ---------- */
+.rec{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:16px 21px; margin:22px 0}
+.rec p{margin:0; font-size:.94rem; max-width:66ch}
+.rec p + p{margin-top:.6em}
+.rec .chip{margin-bottom:10px}
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:17px 21px; margin:22px 0}
+.flag p{margin:0; max-width:66ch; font-size:.94rem}
+.flag p + p{margin-top:.6em}
+.flag .chip{margin-bottom:10px}
+.note{border:1px solid var(--line-strong); background:var(--surface); padding:17px 21px; margin:22px 0}
+.note p{margin:0; max-width:66ch; font-size:.94rem}
+.note p + p{margin-top:.6em}
+.note .chip{margin-bottom:10px}
+
+/* ---------- rules list ---------- */
+.rules{list-style:none; padding:0; margin:26px 0 0; max-width:74ch}
+.rules li{display:grid; grid-template-columns:auto 1fr; gap:16px; padding:16px 0;
+  border-bottom:1px solid var(--line); margin:0; align-items:start}
+.rules li:first-child{border-top:1px solid var(--line)}
+.rules .mark{font-family:var(--display); font-size:1.15rem; color:var(--claret); line-height:1.3}
+.rules b{display:block; margin-bottom:3px}
+.rules .hint{font-size:.89rem; color:var(--ink-3)}
+
+/* ---------- mocked coach email ---------- */
+.mail{border:1px solid var(--line-strong); background:var(--surface); margin:28px 0; overflow:hidden}
+.mail-head{padding:14px 22px; border-bottom:1px solid var(--line); background:var(--surface-2);
+  font-size:.78rem; color:var(--ink-3); letter-spacing:.03em}
+.mail-head b{color:var(--ink); font-weight:700}
+.mail-body{padding:24px 22px 26px; max-width:60ch}
+.mail-body p{font-size:.95rem; margin:0 0 .9em}
+.mail-body p:last-child{margin-bottom:0}
+.stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line);
+  border:1px solid var(--line); margin:18px 0}
+.stats div{background:var(--surface); padding:14px 12px; text-align:center}
+.stats .s-num{font-family:var(--display); font-size:1.7rem; font-weight:500; color:var(--brass);
+  line-height:1; display:block; font-variant-numeric:tabular-nums}
+.stats .s-lbl{font-size:.66rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--ink-3); display:block; margin-top:7px; line-height:1.3}
+@media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* ---------- open questions ---------- */
+.qs{list-style:none; padding:0; margin:24px 0 0; max-width:74ch}
+.qs li{padding:15px 0; border-bottom:1px solid var(--line); margin:0}
+.qs li:first-child{border-top:1px solid var(--line)}
+.qs b{display:block; margin-bottom:3px}
+.qs .hint{font-size:.89rem; color:var(--ink-3)}
+
+.foot{border-top:1px solid var(--line-strong); padding:42px 0 50px; font-size:.8rem; line-height:1.75; color:var(--ink-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-3); margin-bottom:10px}
+.foot p{max-width:80ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){th,td,caption,figcaption,.mail-body,.mail-head{padding-left:16px;padding-right:16px}}
+</style>
+
+<div class="band">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="mast-top">
+        <span class="mast-mark">ECA</span>
+        <span class="mast-org">Equestrian Coaches Australia</span>
+      </div>
+      <h1>What they're buying</h1>
+      <p class="lede">Three tiers, what goes in each, and the argument a coach has to believe before they hand over a card. Written to settle the offer before it goes on the For Coaches page.</p>
+      <div class="mast-meta">
+        <span>Packages and positioning</span>
+        <span>Kim &amp; Alana</span>
+        <span>September 2026</span>
+        <span>All figures AUD</span>
+      </div>
+    </header>
+
+    <div class="verdict">
+      <p class="verdict-lead">The entry price stays at <b>$9.99</b>. What changes is that it is no longer the only price. Splitting the offer into three lifts what an average coach is worth by about <b>40%</b> without asking a single coach to pay more than they were going to.</p>
+      <div class="vgrid">
+        <div class="vcell">
+          <span class="lbl">Entry price</span>
+          <span class="vnum">$9.99</span>
+          <p>Unchanged. Listed is the same listing at the same price it always was.</p>
+        </div>
+        <div class="vcell up">
+          <span class="lbl">Average per coach</span>
+          <span class="vnum">$15.16</span>
+          <p>A month, after Stripe, on the expected mix. Was $10.74 with one flat price.</p>
+        </div>
+        <div class="vcell">
+          <span class="lbl">Break even at</span>
+          <span class="vnum">4</span>
+          <p>Paying coaches, against about $50 a month of running costs.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- the promise -->
+<section>
+  <div class="sec-head"><span class="sec-num">The promise</span><h2>Nobody pays for exposure twice</h2></div>
+  <div class="col">
+    <p>Every directory a coach has ever been in sold them "exposure", took the money, and then went quiet. That is the wall this page has to get over, and no amount of feature bullets does it.</p>
+    <p>What gets over it is the one thing we can say and they can't:</p>
+  </div>
+
+  <div class="rec">
+    <span class="chip">The line the page should lead with</span>
+    <p><strong>Most directories take your money and show you nothing. We email you every month with how many riders saw your profile, how many clicked to call, and how many got in touch — including the months when the answer is none.</strong></p>
+  </div>
+
+  <div class="col">
+    <p>That is already built. The events table, the click-to-reveal buttons and the enquiry form all exist to make a coach's month countable, and the monthly email has an honest zero-month version as well as a good one. It is the most valuable thing we have and it should be the headline of the page rather than a line in a comparison table.</p>
+    <p>The second thing worth saying loudly: <strong>we never take a commission on a lesson.</strong> Booking platforms take 10 to 20% of every booking. We take a flat monthly fee and nothing else, forever. It costs us nothing to promise and it is a real difference.</p>
+  </div>
+</section>
+
+<!-- tiers -->
+<section>
+  <div class="sec-head"><span class="sec-num">The offer</span><h2>Three tiers</h2></div>
+  <div class="col">
+    <p><strong>Travel radius is not a tier.</strong> Every coach sets how far they travel, on every plan. Driving to your students is the normal case rather than an upgrade, and some coaches teach by video, where distance means nothing at all. The one place distance does scale is how far a <em>clinic</em> gets promoted.</p>
+    <p>Everything a coach needs to be found and contacted is in Listed. The two tiers above it sell <em>reach</em> and <em>information</em>, never a better position in the organic results.</p>
+  </div>
+
+  <div class="tiers">
+    <div>
+      <p class="who">For most coaches</p>
+      <p class="price">$9.99<span style="font-family:var(--body);font-size:.8rem;font-weight:600;color:var(--ink-3)"> /month</span></p>
+      <h3>Listed</h3>
+      <p>A real profile, a working contact button, your full travel radius, and the monthly numbers email. Everything needed to be found and hired.</p>
+      <p>This is the tier we expect most coaches to sit on, and it has to be good enough that they never feel short-changed.</p>
+    </div>
+    <div>
+      <p class="who">For coaches building a book</p>
+      <p class="price">$24.95<span style="font-family:var(--body);font-size:.8rem;font-weight:600;color:var(--ink-3)"> /month</span></p>
+      <h3>Spotlight</h3>
+      <p>A featured slot on the area pages, alerts the moment an enquiry lands, and the search data behind the numbers — which queries you appeared for, and where you sat.</p>
+      <p>For the coach with room in the diary who wants to fill it.</p>
+    </div>
+    <div>
+      <p class="who">For coaches who are already full</p>
+      <p class="price">$49.95<span style="font-family:var(--body);font-size:.8rem;font-weight:600;color:var(--ink-3)"> /month</span></p>
+      <h3>Clinic</h3>
+      <p>Events pushed to riders by email across the state, event pages Google can put in its results, and a waitlist that captures the riders you can't take yet.</p>
+      <p>Not more of Spotlight. A different job for a different coach.</p>
+    </div>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>What is in each</caption>
+        <thead><tr><th>&nbsp;</th><th class="mid">Listed</th><th class="mid">Spotlight</th><th class="mid">Clinic</th></tr></thead>
+        <tbody>
+          <tr class="pricerow"><td>Per month<span>or ten months' price paid yearly</span></td><td class="mid tnum">$9.99<span>$99/yr</span></td><td class="mid tnum">$24.95<span>$249/yr</span></td><td class="mid tnum">$49.95<span>$499/yr</span></td></tr>
+
+          <tr class="grp"><td colspan="4">Being found</td></tr>
+          <tr><td>Profile page, indexed by Google<span class="sub">With LocalBusiness and Person markup</span></td><td class="mid y">✓</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Listed on area and discipline pages</td><td class="mid y">✓</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td><strong>Travel radius, set by you</strong><span class="sub">Not a tier. The same on every plan</span></td><td class="mid y">✓</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td><strong>Remote and online lessons</strong><span class="sub">For coaches who teach by video, where distance doesn't apply</span></td><td class="mid y">✓</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Featured slot on your area pages<span class="sub">Labelled, capped at three, rotating evenly</span></td><td class="mid n">—</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Second and third locations<span class="sub">For coaches who teach from more than one base</span></td><td class="mid n">—</td><td class="mid n">—</td><td class="mid y">✓</td></tr>
+
+          <tr class="grp"><td colspan="4">Being contacted</td></tr>
+          <tr><td>Enquiry form</td><td class="mid y">✓</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Contact methods shown</td><td class="mid">Phone or email</td><td class="mid">All, plus website link</td><td class="mid">All, plus website link</td></tr>
+          <tr><td><strong>Enquiry alert within seconds</strong><span class="sub">Email and SMS the moment one lands</span></td><td class="mid n">—</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Enquiry inbox with outcomes<span class="sub">Booked, replied, not suitable, no response</span></td><td class="mid n">—</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Waitlist capture<span class="sub">For when you can't take anyone right now</span></td><td class="mid n">—</td><td class="mid n">—</td><td class="mid y">✓</td></tr>
+
+          <tr class="grp"><td colspan="4">The profile itself</td></tr>
+          <tr><td>Photos</td><td class="mid">1</td><td class="mid">10</td><td class="mid">10</td></tr>
+          <tr><td>Intro video</td><td class="mid n">—</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Bio, disciplines, qualifications</td><td class="mid y">✓</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td><strong>Testimonials</strong><span class="sub">Never capped — see below</span></td><td class="mid">Unlimited</td><td class="mid">Unlimited</td><td class="mid">Unlimited</td></tr>
+          <tr><td>Testimonial request link and reminders<span class="sub">One-click ask, plus a nudge in the monthly email</span></td><td class="mid n">—</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Pin a testimonial to the top</td><td class="mid n">—</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Taking new students: yes / waitlist / no</td><td class="mid y">✓</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+
+          <tr class="grp"><td colspan="4">Clinics and events</td></tr>
+          <tr><td>List an event</td><td class="mid">1 at a time</td><td class="mid">Unlimited</td><td class="mid">Unlimited</td></tr>
+          <tr><td><strong>Event pushed to riders by email</strong><span class="sub">The monthly what's-on-near-you, statewide</span></td><td class="mid n">—</td><td class="mid n">—</td><td class="mid y">✓</td></tr>
+          <tr><td>Event gets its own indexed page<span class="sub">With Event markup, so Google can surface it</span></td><td class="mid n">—</td><td class="mid n">—</td><td class="mid y">✓</td></tr>
+
+          <tr class="grp"><td colspan="4">Knowing what happened</td></tr>
+          <tr><td>Profile views, contact reveals, enquiries</td><td class="mid y">✓</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Monthly numbers email</td><td class="mid y">✓</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td><strong>Google search impressions and queries</strong><span class="sub">How often you appeared, for what, and where you sat</span></td><td class="mid n">—</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Twelve-month trend and the full funnel<span class="sub">Impression → view → reveal → enquiry</span></td><td class="mid n">—</td><td class="mid y">✓</td><td class="mid y">✓</td></tr>
+          <tr><td>Benchmarks against similar coaches<span class="sub">Anonymised, same discipline and region</span></td><td class="mid n">—</td><td class="mid n">—</td><td class="mid y">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Nothing above is withheld to make a lower tier worse.</b> Listed is a complete, working listing. The paid tiers add reach and information, which is why a coach on Listed who gets enquiries has a reason to upgrade rather than a grievance.</figcaption>
+  </figure>
+
+  <div class="note">
+    <span class="chip">Two build rules that come with an untiered radius</span>
+    <p><strong>Rank by distance, don't cap it.</strong> If radius is free on every plan, nothing stops a coach setting 300&nbsp;km and landing on forty area pages they will never drive to. The answer is not a cap to police. It is ordering: a coach based in the area sits above a coach who travels to it, and the card says which. Riders get the right answer and nobody has to argue about a number.</p>
+    <p><strong>Remote coaches don't go on suburb pages.</strong> A coach teaching by video belongs on the discipline pages, on a dedicated online-lessons page, and in national searches. Putting them on all 400 area pages would undo the three-coach gate and hand Google exactly the thin-page pattern it spent 2024 demoting.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Where the 40% comes from</span>
+    <p>After Stripe we keep <strong>$9.52</strong>, <strong>$24.21</strong> and <strong>$48.78</strong>. On an expected mix of 70% Listed, 25% Spotlight and 5% Clinic, the average coach is worth <strong>$15.16 a month</strong> instead of $10.74. A pessimistic mix of 85/13/2 still gives $12.22; an optimistic 60/30/10 gives $17.85.</p>
+    <p>At fourteen months' average stay that lifts what a coach is worth over their life from $153 to about <strong>$212</strong>, which raises the most we can afford to spend signing one from $50 to roughly <strong>$70</strong>. That matters more than the monthly number, because it is what decides which recruiting channels are affordable.</p>
+  </div>
+
+  <div class="rec">
+    <span class="chip">Moving between tiers</span>
+    <p><strong>Coaches change plan themselves, whenever they like, both directions.</strong> A coach running a clinic in March goes up to Clinic for March and back down in April. That is the intended use rather than a loophole, and it is why there is no separate one-off event product to build or explain.</p>
+    <p>Annual is <strong>ten months' price</strong> — $99, $249 and $499 — which is the usual reason to pay up front and helps a business with no cash. A coach on annual who wants a clinic month upgrades and pays the difference for the remainder of the term.</p>
+  </div>
+</section>
+
+<!-- marketing -->
+<section>
+  <div class="sec-head"><span class="sec-num">The pitch</span><h2>What we actually do to bring riders to you</h2></div>
+  <div class="col">
+    <p>This is the section the page is missing, and it is more persuasive than the tier table. A coach does not want to know what a feature is called. They want to know what happens after they pay, and who does it.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>The work, and what it does for a coach</caption>
+        <thead><tr><th>What we do</th><th>What it means for the coach</th></tr></thead>
+        <tbody>
+          <tr><td><strong>We build a page for your suburb and your discipline</strong><span class="sub">"Dressage coaches in Geelong", and about 400 others</span></td><td>Riders search for a discipline plus a place far more often than they search for a name. These pages are how a rider who has never heard of you finds you.</td></tr>
+          <tr><td><strong>We write those pages properly</strong><span class="sub">150 words each on the top 20, by a person</span></td><td>Google's 2024 rules punished directories that generated thin pages for every town. Written pages get indexed far more often, which is the whole game.</td></tr>
+          <tr><td><strong>We only build a page where there are real coaches on it</strong><span class="sub">Three or more, or it doesn't get made</span></td><td>Keeps the site out of the category Google demotes, which protects every profile on it — including yours.</td></tr>
+          <tr><td><strong>Your profile carries structured data</strong><span class="sub">LocalBusiness and Person markup</span></td><td>Tells Google exactly what you are, where you are and what you teach, in the format it wants.</td></tr>
+          <tr><td><strong>Kim answers the recommendation posts</strong><span class="sub">In the equestrian Facebook groups, by name</span></td><td>"Can anyone recommend a dressage coach near Toowoomba" gets asked several times a day. She answers properly, naming real coaches.</td></tr>
+          <tr><td><strong>We email riders every month</strong><span class="sub">Clinics near them, new coaches in their area</span></td><td>The mailing list is the asset that brings riders back. Every send is another chance for a rider to land on your profile.</td></tr>
+          <tr><td><strong>Cards and flyers where riders already stand</strong><span class="sub">Saddleries, feed stores, pony club, campdraft canteens</span></td><td>500 QR cards in the places riders physically go, pointing at the directory you're in.</td></tr>
+          <tr><td><strong>We give you something to share</strong><span class="sub">A "find me on ECA" graphic and a post you can paste</span></td><td>Free on every tier. Sharing your own profile helps it get found, which is why we make it easy rather than charge for it.</td></tr>
+          <tr><td><strong>We help you set up a Google Business Profile</strong><span class="sub">Yours, not ours, and free</span></td><td>The map results at the top of "near me" searches only show businesses with one. We can't be in them. You can.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Every line above happens whether a coach is on Listed or Clinic.</b> That is deliberate. The marketing is the product; the tiers change how much of the resulting attention lands on one profile rather than another.</figcaption>
+  </figure>
+</section>
+
+<!-- rider side -->
+<section>
+  <div class="sec-head"><span class="sec-num">The other side</span><h2>What riders get, and why it matters to coaches</h2></div>
+  <div class="col">
+    <p>None of the coach-facing promises work unless riders keep coming back. Horse Deals gets people returning 7.8 times a month, which is classifieds behaviour — people checking for what's new. A directory that never changes does not earn that.</p>
+    <p>Three things bring riders back, and each one is worth explaining on the coach page because each one is a coach's traffic.</p>
+  </div>
+
+  <ul class="rules">
+    <li><span class="mark">→</span><div><b>A monthly rider email</b><span class="hint">What's on near you, new coaches in your area, and one useful thing to read. This is the durable asset — Equestrian Hub has 15,000 subscribers against 10,000 monthly website visitors, so in this market the list is bigger than the traffic.</span></div></li>
+    <li><span class="mark">→</span><div><b>Events near me</b><span class="hint">A rider sets their area once. When a clinic is posted within reach, they hear about it. This is the single strongest reason for a rider to open the email rather than delete it, which is why events are free to list on every tier and only the promotion is paid.</span></div></li>
+    <li><span class="mark">→</span><div><b>A saved search that tells them when someone new joins</b><span class="hint">A rider looking for a liberty coach in an area with none today gets told the day one appears. Cheap to build, and it turns an empty search — our worst moment — into a future visit.</span></div></li>
+  </ul>
+
+  <div class="flag">
+    <span class="chip claret">The conflict worth naming</span>
+    <p>Putting events behind the top tier would starve the thing that brings riders back. At launch almost nobody will be on Clinic, so almost no events would exist, and the feature never gets going.</p>
+    <p><strong>So listing an event is free on every tier and the distribution is what's paid for.</strong> We want the maximum number of events on the site for rider traffic; coaches pay for reach, not for permission.</p>
+  </div>
+</section>
+
+<!-- dashboard -->
+<section>
+  <div class="sec-head"><span class="sec-num">The proof</span><h2>Clicks that aren't invisible</h2></div>
+  <div class="col">
+    <p>The reason a coach cancels is not that the listing was expensive. It is that they had no idea whether it did anything. Every number below already has somewhere to come from in the build.</p>
+    <p>The monthly email is the part that does the work, because it arrives whether or not they log in. This is roughly what it should look like.</p>
+  </div>
+
+  <div class="mail">
+    <div class="mail-head">
+      <b>Your August on Equestrian Coaches Australia</b><br>
+      To Jane Mercer · Sent 1 September
+    </div>
+    <div class="mail-body">
+      <p>Hi Jane,</p>
+      <p>Here's how your profile did last month.</p>
+      <div class="stats">
+        <div><span class="s-num">412</span><span class="s-lbl">Appeared in search</span></div>
+        <div><span class="s-num">38</span><span class="s-lbl">Profile views</span></div>
+        <div><span class="s-num">9</span><span class="s-lbl">Tapped to call</span></div>
+        <div><span class="s-num">4</span><span class="s-lbl">Enquiries</span></div>
+      </div>
+      <p>You came up most often for <em>dressage lessons Geelong</em> and <em>flatwork coach Bellarine</em>. Nine riders tapped to see your number, which is up from five in July.</p>
+      <p>Two of your four enquiries are still marked as no response. If they've gone quiet that's worth knowing; if you booked them, tap here and we'll stop counting them as open.</p>
+      <p>Your profile has four testimonials. Coaches with eight or more get roughly twice the profile views, so if you've had a good lesson lately, here's a link you can send.</p>
+    </div>
+  </div>
+
+  <div class="col">
+    <p>The zero-month version of that email is the one that matters more. It says so plainly, gives the same numbers, and tells them the two things most likely to fix it. A coach who gets an honest zero month and a suggestion trusts the next email. A coach who gets silence cancels.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Why the search number is on the paid tiers</span>
+    <p>Profile views, reveals and enquiries go to everyone, because those are the proof that the listing works and the reason anyone upgrades. <strong>Search impressions and the queries behind them are the Spotlight feature</strong>, because they answer a different question: not "did it work" but "why not, and what would fix it".</p>
+    <p>That data comes from Google Search Console, is free to us, and starts producing numbers before the site has meaningful traffic — which makes it the strongest thing we can show a coach in the first six months.</p>
+  </div>
+</section>
+
+<!-- testimonials -->
+<section>
+  <div class="sec-head"><span class="sec-num">One decision</span><h2>Testimonials are never capped</h2></div>
+  <div class="col">
+    <p>The obvious move is to cap them on the cheap tier. It is the wrong one, for three reasons.</p>
+    <p><strong>They are the thing that makes us rank.</strong> A profile with eight rider testimonials is content that exists nowhere else on the internet, and it is the main reason our area pages can beat a templated competitor. Capping them on the tier that holds most of our coaches means taxing the exact content that makes the site work.</p>
+    <p><strong>They are the thing that converts a rider.</strong> A parent choosing a coach for their child reads the testimonials and nothing else. Fewer of them means fewer enquiries, which means a coach with a worse month, which means a cancellation.</p>
+    <p><strong>It reads as mean.</strong> In a community this small, "you may only display three of your happy students" is the kind of thing that gets screenshotted.</p>
+  </div>
+
+  <div class="rec">
+    <span class="chip">Sell the tools instead</span>
+    <p>Unlimited testimonials on every tier. <strong>Spotlight buys the one-click request link, the automatic reminder in the monthly email, the ability to pin a favourite quote to the top of the profile, and a right of reply.</strong></p>
+    <p>Same revenue, none of the damage — and it pushes coaches to collect more of the content we need rather than fewer.</p>
+  </div>
+</section>
+
+<!-- rules -->
+<section>
+  <div class="sec-head"><span class="sec-num">The line</span><h2>Four things we don't sell</h2></div>
+  <div class="col">
+    <p>Worth agreeing now and writing on the page, because each one is a temptation that would make money next month and cost the business later.</p>
+  </div>
+
+  <ul class="rules">
+    <li><span class="mark">01</span><div><b>We never sell a place in the organic results</b><span class="hint">A featured slot is a labelled block above the list, capped at three per area, rotating evenly between the coaches who bought it. The list underneath is ordered on relevance and nothing else. Sell the ordering and the value of featured collapses as more coaches buy it, and riders stop getting the best match — which is the only thing that makes the site worth visiting.</span></div></li>
+    <li><span class="mark">02</span><div><b>We don't sell featured in areas with fewer than eight coaches</b><span class="hint">Featuring one of three is absurd. The coach will feel cheated and ask for their money back, and they'll be right. Where the area is thin, Spotlight still buys everything else and we say so honestly at signup.</span></div></li>
+    <li><span class="mark">03</span><div><b>We never say "verified", "accredited" or "recommended"</b><span class="hint">Unless we have genuinely checked, which we haven't. Coaches can upload a qualification or a certificate of currency and we'll display it as something they supplied. A real checked badge is possible later as a paid add-on, but it's Kim's time, not a tier feature.</span></div></li>
+    <li><span class="mark">04</span><div><b>We never take a percentage of a lesson</b><span class="hint">A flat monthly fee and nothing else. This is the sharpest difference between us and every booking platform, and it should be said in large type on the page.</span></div></li>
+  </ul>
+</section>
+
+<!-- founding -->
+<section>
+  <div class="sec-head"><span class="sec-num">The launch</span><h2>Free first, then $9.99</h2></div>
+  <div class="col">
+    <p>The founding group is free so the directory has something on it, and free is also the only offer Kim can make at volume before there are riders to point at. Then it becomes a paid site, because at ten dollars it should be.</p>
+    <p>The risk in that plan is the moment the free period ends. It is the same cliff as before, and it is still the single biggest test the business faces.</p>
+  </div>
+
+  <div class="rec">
+    <span class="chip">Three things that soften it</span>
+    <p><strong>Land them on Listed, not on the bill.</strong> Founding coaches get Spotlight free for the founding period. When it ends they drop to Listed at $9.99 rather than being asked to choose between $24.95 and leaving. The step down is small and the decision is easy.</p>
+    <p><strong>Lock the rate.</strong> Founding coaches keep $9.99 for as long as they stay, even after the price rises for everyone else. It costs nothing today and it is the reason they'll say yes to Kim now.</p>
+    <p><strong>Let the numbers do the asking.</strong> The three conversion emails lead with <em>their</em> figures, not our pricing. A coach who has watched eleven enquiries arrive over six months is not really being asked to start paying; they're being asked to keep something.</p>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">Still unresolved from the marketing plan</span>
+    <p>The founding coaches were promised <strong>twelve months free</strong> but the paid checkpoint sits at <strong>month eight</strong>. Both can't be true. The recommendation has not changed: make it six months free with the rate locked forever, and find out whether coaches will pay while there is still time and money to change course.</p>
+  </div>
+</section>
+
+<!-- open -->
+<section>
+  <div class="sec-head"><span class="sec-num">Not settled</span><h2>What is still open, and what we're watching</h2></div>
+  <div class="col">
+    <p>Most of the offer is now decided. Three things genuinely aren't, and two more are decided but need checking against real behaviour rather than argument.</p>
+  </div>
+
+  <h3 style="margin:8px 0 4px">Open</h3>
+  <ul class="qs">
+    <li><b>Kim has not seen $24.95 and $49.95</b><span class="hint">$9.99 for Listed is settled. The two prices above it are a first proposal and nobody has tested them on a coach. Worth putting into the first ten conversations the same way as the entry price: don't lead with a number, ask what they would expect to pay for a listing that filled a clinic, and let them answer first.</span></li>
+    <li><b>Six months free or twelve</b><span class="hint">Carried over from the marketing plan and still unresolved. The founding coaches were promised twelve, but the paid checkpoint sits at month eight. Recommendation unchanged: six, with the rate locked forever.</span></li>
+    <li><b>How wide "statewide" is for a clinic push</b><span class="hint">A rider in Cairns does not want a clinic in Toowoomba, and Western Australia is a state you can't drive across in a day. Probably a distance rather than a state boundary, but it needs a number before the rider email goes out.</span></li>
+  </ul>
+
+  <h3 style="margin:34px 0 4px">Decided, but being measured</h3>
+  <ul class="qs">
+    <li><b>Indicative pricing is optional and tracked</b><span class="hint">Riders want it badly and plenty of coaches won't publish it, so we don't enforce it. We record who fills it in, then compare enquiries per profile view between the coaches who show a price and the ones who don't. If it lifts enquiries we can tell coaches that with a number in month six, which is a far better conversation than pushing it now.</span></li>
+    <li><b>Riding schools list individual coaches, or get in touch</b><span class="hint">No separate product for now. The likely behaviour is that a school creates one coach profile and fans enquiries out to whoever is free — we can't stop that and it isn't worth stopping. What we can do is notice it: a profile taking far more enquiries than its peers, or a bio naming several instructors, is the signal that there's demand for a venue account worth building.</span></li>
+  </ul>
+
+  <div class="note">
+    <span class="chip">Off the table, for a reason worth remembering</span>
+    <p>A <strong>"responds within 24 hours"</strong> badge would be excellent and we can't measure it. Enquiries go straight to the coach's own phone and inbox, so we never see the reply. It only becomes possible if messages route through the platform, which is a year-two question and a real trade-off — routing them adds friction to the exact thing we most want to happen.</p>
+  </div>
+</section>
+
+<!-- page -->
+<section>
+  <div class="sec-head"><span class="sec-num">The page</span><h2>What goes on For Coaches, in order</h2></div>
+  <div class="col">
+    <p>The current page is thin because it opens with the tiers. The tiers are the last thing a coach reads, not the first.</p>
+  </div>
+
+  <ul class="rules">
+    <li><span class="mark">01</span><div><b>The honest-measurement promise</b><span class="hint">One sentence, large. The line from the top of this document. It is the only thing on the page a competitor can't copy this year.</span></div></li>
+    <li><span class="mark">02</span><div><b>A real monthly email, shown</b><span class="hint">The mock above, or something close to it. Nothing else on the page makes "we'll show you what happened" concrete as fast as seeing the numbers laid out.</span></div></li>
+    <li><span class="mark">03</span><div><b>What we do to bring riders to you</b><span class="hint">The nine-line table. This is the section that answers "what am I paying for", and it does more work than the tier comparison.</span></div></li>
+    <li><span class="mark">04</span><div><b>The three tiers</b><span class="hint">Cards first, full comparison underneath for the people who want it. Listed shown as a complete product, not as the crippled one.</span></div></li>
+    <li><span class="mark">05</span><div><b>No commission, ever</b><span class="hint">Its own band across the page. Short.</span></div></li>
+    <li><span class="mark">06</span><div><b>Questions coaches will actually ask</b><span class="hint">What if I get no enquiries. Can I cancel any time. Do you take a cut. What happens to my testimonials if I leave. Will you sell my details. Do I need to be accredited.</span></div></li>
+    <li><span class="mark">07</span><div><b>The founding offer</b><span class="hint">Last, with the rate lock and the number of spots left. Until there are testimonials from real coaches to put here, this is the closing argument.</span></div></li>
+  </ul>
+
+  <div class="note">
+    <span class="chip">One thing the page can't have yet</span>
+    <p>Coach testimonials, because there are no coaches. Don't invent them and don't leave an empty section where they'll go. Use the founding offer as the close until the first five founding coaches can be asked for a line each — then it becomes the strongest block on the page.</p>
+  </div>
+</section>
+
+</main>
+
+<div class="band">
+  <div class="wrap">
+    <div class="foot">
+      <div class="fh">Where the numbers came from</div>
+      <p>Stripe Australia domestic card pricing, 1.75% plus 30 cents. Coach lifetime and churn assumptions from <em>The First 100 Coaches</em>. Equestrian Hub and Horse Deals audience figures from published media kits and IPSOS IRIS, February to April 2026. EquiDirectory pricing of $80 to $400 a year sets the known range for this market, which is why $49.95 a month sits at the top of it and needs the events case to justify it.</p>
+      <p>The tier mix of 70 / 25 / 5 is an assumption, not a measurement. It is the number most worth replacing with real data at month eight.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,647 @@
+<title>Worth Paying For</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --navy:#E7DAC6;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7;
+  --good:#00794F; --bad:#C0492A;
+  --code-bg:#FBF7EC; --code-ink:#33312B; --code-key:#1F3A2E; --code-com:#87816F;
+  --on-navy:#22201C; --on-navy-2:#4A4842; --on-navy-3:#5E5A50;
+  --navy-rule:#D3C1A4;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --wrap:1040px; --measure:68ch;
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.8rem,8.4vw,5.4rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.9rem,4.6vw,3rem); line-height:1.03}
+h3{font-size:1.24rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+h4{font-family:var(--body); font-size:.72rem; font-weight:800; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 10px}
+
+code{font-family:var(--mono); font-size:.86em; background:var(--code-bg); color:var(--code-ink);
+  padding:1px 5px; border-radius:2px}
+pre{font-family:var(--mono); font-size:.8rem; line-height:1.6; background:var(--code-bg); color:var(--code-ink);
+  padding:18px 20px; margin:20px 0; overflow-x:auto; border:1px solid var(--line-strong)}
+pre code{background:none; padding:0; font-size:1em}
+pre .k{color:var(--code-key); font-weight:600}
+pre .c{color:var(--code-com); font-style:italic}
+
+.chip{display:inline-block; font-size:.66rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+.band{background:var(--navy); color:var(--on-navy); border-bottom:1px solid var(--line-strong)}
+.masthead{padding:66px 0 70px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:44px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--on-navy-2)}
+.masthead h1{margin-bottom:30px}
+.masthead .lede{font-size:1.16rem; line-height:1.5; color:var(--on-navy-2); max-width:56ch; margin:0}
+.mast-meta{margin-top:40px; padding-top:18px; border-top:1px solid var(--navy-rule);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.76rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--on-navy-3)}
+
+.verdict{padding:0 0 60px}
+.verdict-lead{max-width:64ch; font-size:1.02rem; color:var(--on-navy-2); margin:0 0 34px}
+.verdict-lead b{color:var(--on-navy); font-weight:700}
+.vgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--navy-rule)}
+.vcell{background:var(--navy); padding:26px 24px 28px}
+.vcell .lbl{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--on-navy-3)}
+.vnum{font-family:var(--display); font-weight:400; font-size:2.7rem; letter-spacing:-.025em; line-height:1;
+  color:var(--brass); display:block; margin:14px 0 10px; font-variant-numeric:tabular-nums}
+.vcell.risk .vnum{color:var(--claret)}
+.vcell p{margin:0; font-size:.88rem; line-height:1.5; color:var(--on-navy-2)}
+@media(max-width:760px){.vgrid{grid-template-columns:1fr}}
+
+main.wrap{padding-top:74px}
+section{margin-bottom:80px}
+.sec-head{margin-bottom:30px}
+.sec-num{display:block; font-family:var(--display); font-size:.98rem; font-weight:600; letter-spacing:.06em;
+  color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+.sec-head + p{max-width:var(--measure)}
+
+.tablewrap{overflow-x:auto; border:1px solid var(--line-strong); background:var(--surface); margin:30px 0}
+table{width:100%; border-collapse:collapse; font-size:.92rem; min-width:620px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.3rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:12px 22px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.45}
+thead th{font-size:.68rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px; white-space:nowrap}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+tr.pick td{background:var(--brass-soft)}
+td .cellsub{display:block; font-size:.8rem; font-weight:400; color:var(--ink-3); margin-top:3px}
+td code{white-space:nowrap}
+.rank{font-family:var(--display); font-size:1.1rem; font-weight:600; color:var(--brass)}
+
+.gate{border:1px solid var(--line-strong); border-left:5px solid var(--brass); background:var(--surface); padding:22px 24px; margin:26px 0}
+.gate h3{margin:10px 0 8px}
+.gate p,.gate ul{margin-bottom:.7em; max-width:64ch}
+.gate > :last-child{margin-bottom:0}
+
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:18px 22px; margin:26px 0}
+.flag p{margin:0; max-width:62ch; font-size:.95rem}
+.flag p + p{margin-top:.65em}
+.flag .chip{margin-bottom:10px}
+
+.note{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:18px 22px; margin:26px 0}
+.note p{margin:0; max-width:62ch; font-size:.95rem}
+.note p + p{margin-top:.65em}
+.note .chip{margin-bottom:10px}
+
+/* the mocked-up rider-facing contact block */
+.mock{border:1px solid var(--line-strong); background:var(--surface); padding:24px; margin:26px 0; max-width:460px}
+.mock .who{font-family:var(--display); font-size:1.3rem; font-weight:500; margin-bottom:2px}
+.mock .where{font-size:.85rem; color:var(--ink-3); margin-bottom:18px}
+.mock .btn{display:block; width:100%; text-align:center; padding:12px; margin-bottom:9px;
+  font-family:var(--body); font-size:.94rem; font-weight:600; border:1px solid var(--brass);
+  background:var(--brass); color:var(--chip-ink)}
+.mock .btn.alt{background:var(--surface); color:var(--brass)}
+.mock .btn.ghost{background:var(--surface); color:var(--ink-2); border-color:var(--line-strong); font-weight:500}
+.mock .mention{margin:14px 0 0; font-size:.85rem; line-height:1.5; color:var(--ink-2);
+  border-top:1px solid var(--line); padding-top:13px}
+.mock .mention b{color:var(--ink)}
+
+/* the monthly email mock */
+.mail{border:1px solid var(--line-strong); background:var(--surface); margin:26px 0}
+.mail-subj{padding:14px 22px; border-bottom:1px solid var(--line-strong); background:var(--surface-2);
+  font-size:.86rem}
+.mail-subj b{font-weight:700}
+.mail-body{padding:22px}
+.mail-body p{font-size:.95rem; margin-bottom:.85em; max-width:60ch}
+.mail-body > :last-child{margin-bottom:0}
+.mail-stat{display:flex; flex-wrap:wrap; gap:1px; background:var(--line); border:1px solid var(--line);
+  margin:16px 0}
+.mail-stat div{background:var(--surface-2); padding:12px 16px; flex:1 1 120px}
+.mail-stat .n{font-family:var(--display); font-size:1.7rem; font-weight:500; line-height:1;
+  color:var(--brass); font-variant-numeric:tabular-nums}
+.mail-stat .t{font-size:.74rem; color:var(--ink-3); margin-top:5px; line-height:1.35}
+.mail-list{list-style:none; padding:0; margin:0 0 1em}
+.mail-list li{border-bottom:1px solid var(--line); padding:9px 0; font-size:.9rem; margin:0}
+.mail-list li:last-child{border-bottom:0}
+.mail-list b{display:block}
+.mail-list .q{color:var(--ink-3); font-style:italic}
+.ask{border:1px solid var(--brass-line); background:var(--brass-soft); padding:13px 16px; margin:16px 0;
+  font-size:.9rem}
+.ask .opts{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap}
+.ask .opts span{border:1px solid var(--brass); padding:5px 13px; font-size:.82rem; font-weight:600; color:var(--brass)}
+
+.steps{margin:30px 0 0}
+.step{display:grid; grid-template-columns:60px 1fr; gap:0 22px; padding:24px 0; border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.smark{font-family:var(--display); font-size:1.9rem; font-weight:500; letter-spacing:-.025em; color:var(--brass); line-height:1}
+.sbody h3{margin-bottom:8px}
+.sbody p,.sbody ul{max-width:62ch}
+.sbody > :last-child{margin-bottom:0}
+@media(max-width:620px){.step{grid-template-columns:1fr; gap:10px}}
+
+.check{list-style:none; padding:0; margin:24px 0 0; max-width:72ch}
+.check li{display:grid; grid-template-columns:auto 1fr; gap:15px; padding:14px 0;
+  border-bottom:1px solid var(--line); margin:0; align-items:start}
+.check li:first-child{border-top:1px solid var(--line)}
+.check .box{width:16px; height:16px; border:2px solid var(--line-strong); margin-top:5px; background:var(--surface)}
+.check b{display:block; margin-bottom:3px}
+.check .hint{font-size:.89rem; color:var(--ink-3)}
+
+.foot{border-top:1px solid var(--line-strong); padding:44px 0 52px; font-size:.8rem; line-height:1.75; color:var(--on-navy-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--on-navy-3); margin-bottom:10px}
+.foot p{max-width:78ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){
+  th,td,caption{padding-left:16px;padding-right:16px}
+  pre{padding:14px 16px}
+}
+</style>
+
+<header class="band">
+  <div class="wrap masthead">
+    <div class="mast-top">
+      <span class="mast-mark">The Paddock Edit</span>
+      <span class="mast-org">Analytics &amp; reporting &middot; Build spec</span>
+    </div>
+    <h1>Worth Paying For</h1>
+    <p class="lede">How we measure our own reach, and how we prove to a coach that the platform earned its keep &mdash; before we ask any of them for money.</p>
+    <div class="mast-meta">
+      <span>Build spec</span>
+      <span>Ships before coach profile #1</span>
+      <span>Supabase &middot; Search Console &middot; Resend</span>
+      <span>September 2026</span>
+    </div>
+  </div>
+  <div class="wrap verdict">
+    <p class="verdict-lead">Two different jobs get confused here. <b>Reach</b> tells Kim and Alana where the budget goes. <b>Value</b> is what a coach will pay for, and it is a completely different number. Everything below is built backwards from one moment: the month-eight email that asks a founding coach for real money.</p>
+    <div class="vgrid">
+      <div class="vcell risk">
+        <span class="lbl">Cannot be added later</span>
+        <span class="vnum">Day 1</span>
+        <p>Events can't be backfilled. Every week without logging is a week of evidence gone, and it's the evidence we need most.</p>
+      </div>
+      <div class="vcell">
+        <span class="lbl">Everything serves this</span>
+        <span class="vnum">Month 8</span>
+        <p>The founding coaches move from free to paid. Whatever makes that email work is what we instrument now.</p>
+      </div>
+      <div class="vcell">
+        <span class="lbl">The strongest early number</span>
+        <span class="vnum">Google</span>
+        <p>Search Console impressions, per coach profile. Third-party, free, and it works before we have any traffic of our own.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <h2>What we are proving, and to whom</h2>
+  </div>
+  <p>Page views are ours. Enquiries are theirs. A coach who is shown a view count and asked for $19 will conclude, correctly, that we are charging them for a number they cannot check.</p>
+
+  <div class="tablewrap">
+    <table>
+      <caption>What a coach actually believes, weakest to strongest</caption>
+      <thead>
+        <tr><th class="num">&nbsp;</th><th>The claim</th><th>Why it lands, or doesn't</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num"><span class="rank">1</span></td>
+          <td>"Your profile was viewed 47 times"</td>
+          <td>Weakest. Unverifiable, and it reads like a number invented to justify an invoice.</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank">2</span></td>
+          <td>"You appeared in Google search results 89 times"</td>
+          <td>Much stronger, because it is <em>Google's</em> number rather than ours. Free, and it works in month three when we have almost no traffic. No other Australian equine directory shows a coach this.</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank">3</span></td>
+          <td>"12 people tapped to see your phone number"</td>
+          <td>Real intent, and hard to wave away. This is the number the contact design exists to capture.</td>
+        </tr>
+        <tr class="pick">
+          <td class="num"><span class="rank">4</span></td>
+          <td><strong>"3 riders sent you an enquiry &mdash; here they are"</strong></td>
+          <td>Named, timestamped, undeniable. The one that carries the month-eight email.</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank">5</span></td>
+          <td>"You told us 2 of them booked"</td>
+          <td>The closer. It only exists if we ask, so we ask &mdash; one click, every month.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">The risk that kills directories</span>
+    <p><strong>A rider finds a coach here, texts them directly, books a lesson &mdash; and the coach never knows where it came from.</strong> Six months of that and they cancel, honestly believing they got nothing. Attribution isn't a reporting nicety; it is the product.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <h2>The contact block</h2>
+  </div>
+  <p>Decided: coaches choose how they're contacted, and we log both paths. Nobody is forced through a form, and nothing goes untracked.</p>
+
+  <div class="mock">
+    <div class="who">Jane Whitmore</div>
+    <div class="where">Dressage &amp; flatwork &middot; Strathfieldsaye VIC</div>
+    <button class="btn" type="button">Send an enquiry</button>
+    <button class="btn alt" type="button">Show phone number</button>
+    <button class="btn ghost" type="button">Show email</button>
+    <p class="mention">When you get in touch, <b>let Jane know you found her on Equestrian Coaches Australia.</b> It helps her see the listing is working.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>What each path gives us</caption>
+      <thead><tr><th>Path</th><th>Friction</th><th>What it logs</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Send an enquiry</strong><span class="cellsub">Name, suburb, contact, message</span></td><td>Highest</td><td>A full record with the rider's own words. Emailed to the coach immediately and kept in their dashboard.</td></tr>
+        <tr><td><strong>Show phone number</strong><span class="cellsub">Reveals on tap, tel: link on mobile</span></td><td>Almost none</td><td><code>contact_reveal</code> with channel <code>phone</code>. We never learn the outcome, but we know intent existed.</td></tr>
+        <tr><td><strong>Show email</strong></td><td>Almost none</td><td><code>contact_reveal</code> with channel <code>email</code>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="chip">Why not just print the number</span>
+    <p>A phone number rendered straight onto the page is invisible to us. One extra tap converts an untrackable page view into a recorded signal of intent, and riders are entirely used to it. This is the single highest-value instrumentation decision in the build.</p>
+  </div>
+
+  <h3 style="margin:34px 0 10px">The mention prompt</h3>
+  <p>Shown under the contact buttons and repeated in the enquiry confirmation. It costs nothing and it is the only thing that closes the loop on the phone path.</p>
+  <p>Use the coach's first name, never "the coach". Keep it a sentence, not a banner &mdash; it should read as a favour to Jane rather than a request from us.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <h2>The event log</h2>
+  </div>
+  <p>One append-only table in Postgres, written server-side. Not GA4 &mdash; GA4 is for aggregate campaign attribution and cannot answer "which coach, which rider, when" in a way we can query for an email.</p>
+
+<pre><code><span class="c">-- everything a rider does, in one place</span>
+<span class="k">create type</span> public.event_kind <span class="k">as enum</span> (
+  'search_performed','result_impression','result_click',
+  'profile_view','contact_reveal','enquiry_sent',
+  'clinic_view','clinic_enquiry','share_click','referral_signup'
+);
+
+<span class="k">create type</span> public.contact_channel <span class="k">as enum</span> ('phone','email','website','facebook','instagram');
+
+<span class="k">create table</span> public.events (
+  id             <span class="k">bigint generated always as identity primary key</span>,
+  kind           public.event_kind  <span class="k">not null</span>,
+  occurred_at    <span class="k">timestamptz not null default</span> now(),
+  coach_id       <span class="k">uuid</span> <span class="k">references</span> public.coaches(id) <span class="k">on delete cascade</span>,
+  area_id        <span class="k">uuid</span> <span class="k">references</span> public.areas(id),
+  term_id        <span class="k">uuid</span> <span class="k">references</span> public.terms(id),   <span class="c">-- discipline or skill</span>
+  channel        public.contact_channel,
+  position       <span class="k">int</span>,                              <span class="c">-- rank in the result list</span>
+  query          <span class="k">text</span>,                             <span class="c">-- what the rider typed</span>
+  source         <span class="k">text</span>,                             <span class="c">-- utm_source, or 'organic' / 'direct'</span>
+  campaign       <span class="k">text</span>,                             <span class="c">-- utm_campaign</span>
+  referrer_host  <span class="k">text</span>,
+  session_hash   <span class="k">text</span>,                             <span class="c">-- salted DAILY, deliberately not stable</span>
+  device_class   <span class="k">text</span>,                             <span class="c">-- mobile | desktop | bot</span>
+  meta           <span class="k">jsonb not null default</span> '{}'
+);
+
+<span class="k">create index</span> events_coach_time <span class="k">on</span> public.events (coach_id, occurred_at <span class="k">desc</span>);
+<span class="k">create index</span> events_kind_time  <span class="k">on</span> public.events (kind, occurred_at <span class="k">desc</span>);
+<span class="k">create index</span> events_campaign   <span class="k">on</span> public.events (campaign) <span class="k">where</span> campaign <span class="k">is not null</span>;</code></pre>
+
+  <div class="note">
+    <span class="chip">Two decisions inside that schema</span>
+    <p><strong><code>position</code> on impressions and clicks.</strong> It's what lets us tell a coach "you appeared in 140 searches and were opened 12 times", and it's how we spot coaches who are consistently being scrolled past.</p>
+    <p><strong><code>session_hash</code> salted daily, not monthly.</strong> Enough to de-duplicate a single visitor refreshing a page; not enough to follow anyone around. Cheaper than a consent banner and a better answer to a rider who asks.</p>
+  </div>
+
+  <h3 style="margin:34px 0 10px">Two fields on the coach record, from day one</h3>
+  <p><code>cohort</code> (<code>founding_25</code> / <code>founding_100</code> / <code>open</code>) and <code>acquisition_source</code>. Different offers convert differently, and if we can't split them at month eight we will misread the only result that matters.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <h2>Enquiries, and whether they turned into anything</h2>
+  </div>
+  <p>Enquiries get their own table &mdash; they hold personal information and they have a lifecycle, so they don't belong in an append-only log.</p>
+
+<pre><code><span class="k">create table</span> public.enquiries (
+  id                <span class="k">uuid primary key default</span> gen_random_uuid(),
+  coach_id          <span class="k">uuid not null references</span> public.coaches(id) <span class="k">on delete cascade</span>,
+  created_at        <span class="k">timestamptz not null default</span> now(),
+  rider_name        <span class="k">text not null</span>,
+  rider_email       <span class="k">text</span>,
+  rider_phone       <span class="k">text</span>,
+  rider_suburb      <span class="k">text</span>,
+  term_id           <span class="k">uuid references</span> public.terms(id),
+  message           <span class="k">text not null</span>,
+  source            <span class="k">text</span>,
+  notified_at       <span class="k">timestamptz</span>,      <span class="c">-- when we emailed the coach</span>
+  opened_at         <span class="k">timestamptz</span>,
+  outcome           <span class="k">text check</span> (outcome <span class="k">in</span> ('booked','replied','not_suitable','no_response')),
+  outcome_at        <span class="k">timestamptz</span>
+);</code></pre>
+
+  <p>The <code>outcome</code> column is the only place ground truth lives. We get it by asking, once a month, with one click in the email &mdash; not by building a booking system.</p>
+
+  <div class="gate">
+    <h3>Why the outcome question earns its place</h3>
+    <p>It converts our claim into their claim. At month eight the email doesn't say "we sent you three enquiries" &mdash; it says "<em>you told us two of these turned into lessons</em>". That is a much harder thing to argue with, and it is the sentence that closes the sale.</p>
+    <p>It also gives us the only honest aggregate figure for recruiting cohort two: <strong>coaches who reported at least one booking, as a share of all paying coaches.</strong> Never quote it until it is real.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <h2>Google Search Console</h2>
+  </div>
+  <p>A weekly cron pulling the Search Analytics API into Postgres. This is the most undervalued piece of the whole spec, because coach profile pages <em>are</em> pages &mdash; so Google's impression data attributes to individual coaches for free.</p>
+
+<pre><code><span class="k">create table</span> public.gsc_daily (
+  date         <span class="k">date not null</span>,
+  page         <span class="k">text not null</span>,
+  query        <span class="k">text</span>,
+  device       <span class="k">text</span>,
+  impressions  <span class="k">int not null</span>,
+  clicks       <span class="k">int not null</span>,
+  position     <span class="k">numeric</span>(4,1),
+  <span class="k">primary key</span> (date, page, query, device)
+);
+
+<span class="c">-- map a profile URL back to the coach it belongs to</span>
+<span class="k">create index</span> gsc_page <span class="k">on</span> public.gsc_daily (page, date <span class="k">desc</span>);</code></pre>
+
+  <p>Service account, <code>webmasters.readonly</code>, one row per date/page/query/device. Google holds roughly sixteen months, so a weekly pull is plenty &mdash; but start it on day one, because you cannot query what was never verified.</p>
+
+  <div class="note">
+    <span class="chip">The same query data does three jobs</span>
+    <p>It tells a <strong>coach</strong> what riders near them are searching for. It tells <strong>us</strong> which area pages are close to page one and worth writing properly. And it feeds the <strong>search-gap report</strong> already spec'd in <em>How Riders Find Us</em> &mdash; which is also Kim's best cold-outreach line.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <h2>The monthly email</h2>
+  </div>
+  <p>This ships <strong>before</strong> the dashboard. A dashboard is something a coach has to remember to visit; the email arrives whether they remember us or not, and it is the entire retention mechanism for months three to eight.</p>
+
+  <p>A nightly job rolls events into <code>coach_month_stats</code>, one row per coach per month. Freeze it &mdash; never recompute a past month from raw events, because if last month's number moves, every number we've ever sent becomes suspect.</p>
+
+<pre><code><span class="k">create table</span> public.coach_month_stats (
+  coach_id            <span class="k">uuid not null references</span> public.coaches(id) <span class="k">on delete cascade</span>,
+  month               <span class="k">date not null</span>,          <span class="c">-- first of month</span>
+  result_impressions  <span class="k">int not null default</span> 0, <span class="c">-- appeared in OUR search results</span>
+  result_clicks       <span class="k">int not null default</span> 0,
+  profile_views       <span class="k">int not null default</span> 0,
+  contact_reveals     <span class="k">int not null default</span> 0,
+  enquiries           <span class="k">int not null default</span> 0,
+  bookings_reported   <span class="k">int not null default</span> 0,
+  google_impressions  <span class="k">int not null default</span> 0, <span class="c">-- from gsc_daily</span>
+  google_clicks       <span class="k">int not null default</span> 0,
+  google_position     <span class="k">numeric</span>(4,1),
+  area_median_views   <span class="k">int</span>,                     <span class="c">-- benchmark, needs 10+ coaches nearby</span>
+  area_median_enq     <span class="k">int</span>,
+  frozen_at           <span class="k">timestamptz not null default</span> now(),
+  <span class="k">primary key</span> (coach_id, month)
+);</code></pre>
+
+  <h3 style="margin:36px 0 12px">A good month</h3>
+  <div class="mail">
+    <div class="mail-subj"><b>Subject:</b> 3 riders asked about lessons this month</div>
+    <div class="mail-body">
+      <p>Hi Jane,</p>
+      <p>Here's how your listing went in September.</p>
+      <div class="mail-stat">
+        <div><div class="n">3</div><div class="t">Enquiries</div></div>
+        <div><div class="n">14</div><div class="t">Tapped your phone number</div></div>
+        <div><div class="n">89</div><div class="t">Times you appeared in Google</div></div>
+      </div>
+      <ul class="mail-list">
+        <li><b>Sarah M &middot; Strathfieldsaye &middot; 4 Sep</b><span class="q">"Looking for weekend lessons for my 12yo, she's done pony club but wants to try dressage."</span></li>
+        <li><b>Dan R &middot; Junortoun &middot; 11 Sep</b><span class="q">"Coming back after a long break, need someone patient."</span></li>
+        <li><b>Priya N &middot; Bendigo &middot; 22 Sep</b><span class="q">"Do you travel? I'm agisted at Maiden Gully."</span></li>
+      </ul>
+      <div class="ask">
+        Did any of these turn into a lesson?
+        <div class="opts"><span>Yes</span><span>Not yet</span><span>No</span></div>
+      </div>
+      <p>Coaches within 50km averaged 1 enquiry this month.</p>
+      <p><b>What riders near you searched for:</b> riding lessons bendigo (22), dressage coach near me (14), float loading help (9)</p>
+      <p><b>One thing worth doing:</b> your profile has one photo. Coaches with five or more get around three times the enquiries. <a href="#">Add photos</a></p>
+    </div>
+  </div>
+
+  <h3 style="margin:40px 0 12px">A month with nothing in it</h3>
+  <p>This is the version that decides whether the business survives to month eight. Around month four a coach will open an email that says zero, and quietly decide to cancel. The email has to be worth opening anyway.</p>
+
+  <div class="mail">
+    <div class="mail-subj"><b>Subject:</b> What riders searched for near you in September</div>
+    <div class="mail-body">
+      <p>Hi Jane,</p>
+      <p>No enquiries this month. Here's what did happen, and the one thing I'd change.</p>
+      <div class="mail-stat">
+        <div><div class="n">41</div><div class="t">Times you appeared in Google</div></div>
+        <div><div class="n">6</div><div class="t">Opened your profile</div></div>
+        <div><div class="n">0</div><div class="t">Enquiries</div></div>
+      </div>
+      <p><b>What riders near you searched for:</b> float loading help (9), starting young horses (6), confidence building (5)</p>
+      <p>Two of those are things you do and haven't tagged. Adding them takes a minute and puts you on three more pages. <a href="#">Add skills</a></p>
+      <p>For context: coaches within 50km averaged 0 enquiries too. The rider side only opened six weeks ago, and Google takes six to twelve months to properly find a new site.</p>
+    </div>
+  </div>
+
+  <div class="gate">
+    <h3>The rule the email is built on</h3>
+    <p>Every month, give a coach something they cannot get anywhere else. Search terms near them, a benchmark against comparable coaches, and one specific gap in <em>their</em> profile &mdash; never a generic tip.</p>
+    <p>And lead with the strongest honest number available. In a zero month that is the Google figure, because it is still true and it is still Google's.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <h2>The coach dashboard</h2>
+  </div>
+  <p>Same numbers, self-serve, plus the two things an email can't do well: a twelve-month trend, and a profile score that tells them what to fix.</p>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Profile completeness &mdash; scored, and pointed at what earns enquiries</caption>
+      <thead><tr><th>Item</th><th class="num">Points</th><th>Why it's weighted that way</th></tr></thead>
+      <tbody>
+        <tr><td>At least one photo of them coaching</td><td class="num">25</td><td>The single biggest driver of a rider clicking through.</td></tr>
+        <tr><td>Bio of 150 words or more</td><td class="num">20</td><td>Thin profiles are also what Google penalises. Same fix, two benefits.</td></tr>
+        <tr><td>Location set precisely</td><td class="num">15</td><td>Without it they appear on no area page at all.</td></tr>
+        <tr><td>Disciplines tagged</td><td class="num">15</td><td>Drives which searches they surface in.</td></tr>
+        <tr><td>Five or more photos</td><td class="num">10</td><td>Correlates with roughly triple the enquiries.</td></tr>
+        <tr><td>At least one rider testimonial</td><td class="num">10</td><td>Content that exists nowhere else online. Our strongest SEO asset.</td></tr>
+        <tr><td>Skills tagged (float loading, starting young horses&hellip;)</td><td class="num">5</td><td>Low-competition searches we can win quickly.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="chip">This is not busywork for the coach</span>
+    <p>Every item on that list is simultaneously the thing that gets them found and the thing that makes our pages rank. The score gives a coach something to <em>do</em> in a bad month instead of cancelling &mdash; and it generates exactly the content the SEO plan needs.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <h2>Measuring our own marketing</h2>
+  </div>
+  <p>Different job, different audience: this one exists so that month six is a decision rather than a guess. Everything gets a tagged link, agreed before anything is printed.</p>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Campaign tagging &mdash; fix this before the printer runs</caption>
+      <thead><tr><th>Channel</th><th>Link</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>QR cards, saddleries</td><td><code>/?utm_source=card&amp;utm_medium=print&amp;utm_campaign=saddlery</code></td><td>Print three variants &mdash; saddlery, pony club, feed store. Same cost, tells us which counter works.</td></tr>
+        <tr><td>Hoofbeats ad</td><td><code>/hoofbeats</code></td><td>A vanity path, because it has to be readable in print and typed by hand. Redirects with the UTMs attached.</td></tr>
+        <tr><td>Equestrian Hub newsletter</td><td><code>/?utm_source=eqhub&amp;utm_medium=email&amp;utm_campaign=sept</code></td><td>&nbsp;</td></tr>
+        <tr><td>Facebook group answers</td><td><code>/?utm_source=fb&amp;utm_medium=group&amp;utm_campaign=&lt;group&gt;</code></td><td>Per group, so we learn which communities actually convert.</td></tr>
+        <tr><td>Coach sharing kit</td><td><code>/c/&lt;slug&gt;?utm_source=coach</code></td><td>Already per-coach by the slug.</td></tr>
+        <tr><td>Referral links</td><td><code>/join?ref=&lt;code&gt;</code></td><td>Logs <code>referral_signup</code> against the referring coach.</td></tr>
+        <tr><td>Google Ads</td><td>Auto-tagged</td><td>Link the Ads account to Analytics; don't hand-build these.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Kim's outreach is measured in the coach spreadsheet rather than in the app: <strong>messages sent, replies, signups</strong>, split by source list. That ratio is the real cost per coach, and it's the number that tells us whether the $50 ceiling holds.</p>
+
+  <div class="note">
+    <span class="chip">What the marketing dashboard shows</span>
+    <p>Rider sessions by source, coach signups by source, cost per coach and cost per rider by channel, and progress against the three checkpoint targets. Nothing else. It is read once a month, not watched.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <h2>Build order</h2>
+  </div>
+  <p>Strictly in this sequence. The first two are the ones with a deadline attached, because they can't be backfilled.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>The events table and a logging helper</h3>
+        <p>Before coach profile number one goes live. A single server-side <code>logEvent()</code> called from the page handlers, with bot filtering and self-view exclusion built in from the start rather than added when the numbers look odd.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>Contact block and enquiry form</h3>
+        <p>Reveal buttons, the enquiry form, the mention prompt, and the coach notification email. This is the product decision that makes everything downstream possible.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>Search Console verification and the weekly pull</h3>
+        <p>Verify the domain the day it resolves. The ingest job can come later; the verification cannot, because Google only backfills from the day it knows you exist.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>The nightly rollup</h3>
+        <p><code>coach_month_stats</code>, frozen at month end. Benchmarks switch on once an area has ten or more coaches; until then the column stays null and the email simply omits that line.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">5</div>
+      <div class="sbody">
+        <h3>The monthly email</h3>
+        <p>Both variants, with the outcome question. Send the first one to five coaches by hand and read their replies before automating it.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">6</div>
+      <div class="sbody">
+        <h3>The coach dashboard, then ours</h3>
+        <p>Theirs first, because it carries the conversion. Ours can be a Supabase view and a saved query for a long time before it needs to be a page.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">Deliberately not building</span>
+    <p>Real-time dashboards, cohort retention curves, funnel charts, session recording, or a paid analytics tool. At a hundred coaches a nightly aggregation and a monthly email cover almost all of the value. GA4's free tier handles campaign attribution; revisit Plausible when there is revenue to spend.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <h2>Honesty, and the rules that protect it</h2>
+  </div>
+  <p>In a community this small, one coach posting "their stats are made up" in one Facebook group costs more than the entire first-year ad budget. These are cheap now and unrecoverable later.</p>
+
+  <ul class="check">
+    <li><span class="box"></span><span><b>Filter bots before counting, not after</b><span class="hint">A coach shown 89 views that were all crawlers will find out. User-agent classification on write, and exclude anything flagged from every number we ever display.</span></span></li>
+    <li><span class="box"></span><span><b>Don't count a coach viewing their own profile</b><span class="hint">Or us viewing anything. Both are trivially easy to exclude and embarrassing to explain later.</span></span></li>
+    <li><span class="box"></span><span><b>Freeze each month when it closes</b><span class="hint">Never recompute history. A number that moves after it was sent poisons every number that follows it.</span></span></li>
+    <li><span class="box"></span><span><b>Never round up, and never estimate silently</b><span class="hint">If the benchmark needs ten coaches and an area has six, omit the line. Missing is fine; invented is not.</span></span></li>
+    <li><span class="box"></span><span><b>Say what a number does not mean</b><span class="hint">"Appeared in Google" is not "someone read your profile", and the email should say so. Coaches trust the numbers more when we mark their limits.</span></span></li>
+    <li><span class="box"></span><span><b>A privacy policy before the first enquiry form</b><span class="hint">We're storing riders' names, suburbs and contact details. The Privacy Act's small business exemption applies under $3m turnover, but the policy costs an afternoon and the alternative is answering it badly in public.</span></span></li>
+    <li><span class="box"></span><span><b>Delete enquiry contact details after 24 months</b><span class="hint">Keep the counts forever, keep the personal details only while they're useful. One scheduled job.</span></span></li>
+  </ul>
+</section>
+
+</main>
+
+<footer class="band">
+  <div class="wrap foot">
+    <p class="fh">How this fits the other documents</p>
+    <p>The taxonomy, area pages and the <code>search_events</code> table are spec'd in <em>How Riders Find Us</em>. The checkpoint targets and the month-eight conversion test come from <em>The First 100 Coaches</em>. This document covers only the measurement layer that sits under both.</p>
+    <p>Written for the build. Figures used as examples are illustrative &mdash; the correlations quoted for photos and profile length come from general directory research, not from our own data, and should be replaced with our own numbers as soon as we have three months of them.</p>
+  </div>
+</footer>

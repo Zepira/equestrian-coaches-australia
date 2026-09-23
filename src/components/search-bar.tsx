@@ -258,7 +258,7 @@ export function SearchBar({
   );
 
   const locationField = (
-    <label className="order-1 flex min-w-0 basis-full items-center gap-2.5 rounded-[9px] bg-surface px-3.5 text-fg wide:basis-0 wide:flex-[1.1] wide:rounded-[10px] wide:px-4">
+    <label className="order-1 flex min-w-0 basis-full items-center gap-2.5 rounded-[9px] bg-surface px-3.5 text-fg wide:basis-0 wide:flex-[1.6] wide:rounded-[10px] wide:px-4">
       <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-accent" />
       <span className="sr-only">Suburb or postcode</span>
       <input

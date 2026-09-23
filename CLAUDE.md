@@ -4,7 +4,21 @@
 
 A new online marketplace/directory business connecting riders with riding coaches and instructors across Australia. Riders search by discipline and location; coaches create paid profiles to be found. Think a niche, higher-style version of a classifieds/directory site — closer in spirit to [Horse Deals](https://www.horsedeals.com.au/) functionally, but with a more premium, editorial design treatment rather than a classifieds look.
 
-This is a pre-launch venture — no existing site, brand assets, or codebase yet. This file (and this Cowork project folder) is the source of truth for the concept as it develops.
+### The structure (revised 22 Sep 2026)
+
+**One website, two professions, one database.** There is no second site. Coaches and other equestrian professionals are two sections of the same Next.js app on the same domain, sharing one Supabase project, one rider account, one mailing list and one sitemap. Both sections launch together, which is a change to the timeline and roughly doubles the recruitment job.
+
+| Level | Name | Status |
+|---|---|---|
+| Business and site | **Equine Professionals Australia** (chosen 22 Sep 2026, still being mulled) at **equineprofessionals.com.au** + **equineprofessionals.au** | One business name, one domain. Both domain forms showed no registration on 22 Sep; ABR has no matching name. IP Australia search not yet run. **The wordmark is the words, never "EPA"** (that is the Environment Protection Authority in every state). |
+| Section 1 | **Coaches** (the name Equestrian Coaches Australia is retired — never said to anyone, never registered) | Built through Phase 28, pre-launch |
+| Section 2 | farriers, then bodyworkers / saddle fitters / dentists / vets | Not built, not scoped |
+
+The full reasoning, the route changes, the redirect map and the schema plan are in **`content/handbook/site-structure.html`** ("One Site, Two Professions"), readable at `/admin/handbook/site-structure`. Read it before touching routes.
+
+**Equestrian Coaches Australia is retired as a name (22 Sep 2026).** It was never mentioned to a coach, so there is no recognition to carry and no second domain or business name to buy — one domain, one ASIC name, one Search Console property. The coaching section is just "Coaches", the way Horse Deals' transport section is just transport. Kim's outreach links end in `/coaches` or `/farriers`, which explains itself and teaches the site's name at the same time. "Equestrian Professionals Australia" was written down as the parent for a while; it fails this repo's own two tests for a parent name (descriptive, so near impossible to trade mark, and forgettable), so it is not the answer either. The repo folder keeps its old name; do not rename it.
+
+**State of the build:** the app is built and unlaunched. No domain is registered, no ASIC business name exists, Search Console is not verified, and nothing is indexed. That is why the route move in the handbook doc is free this week and a migration after launch. This file (and this Cowork project folder) is the source of truth for the concept as it develops.
 
 ## Core concept
 
@@ -27,6 +41,50 @@ This is a pre-launch venture — no existing site, brand assets, or codebase yet
 ## Discipline categories (launch scope)
 
 Coaches tag their profile with the discipline(s) they teach so riders can filter accurately. Named examples so far: **Western, Dressage, Liberty**. This list is expected to grow (e.g. showjumping, eventing, campdrafting, natural horsemanship, pony club, para-equestrian) — the category taxonomy should be built to be extensible, not hard-coded to 3.
+
+## Professions above disciplines (added 22 Sep 2026)
+
+A profession is the level above a discipline: coaching is a profession, dressage is one of its disciplines; farriery is a profession, remedial shoeing is one of its specialities. Full spec in `content/handbook/site-structure.html`. The short version, because it decides schema:
+
+- **Profession is a fourth `term_kind`,** not a new table. `terms` gains a nullable `parent_id` self-reference so a discipline or speciality knows its profession. Professions have `parent_id is null` and `generates_pages = true`. This is the payoff on the "one terms table with a kind column" bet in the search spec.
+- **A provider's profession needs no new column.** `coach_terms` already links a provider to any number of terms with a `sort_order`, and professions are terms, so professions are rows and the lowest `sort_order` is primary — the same rule already used for the primary discipline. Somebody who coaches *and* does bodywork is two rows.
+- **`coach_profiles` keeps its name** even though it will hold farriers. Renaming it touches every RLS policy, every PostgREST embed and the documented `coach_profiles_id_fkey` disambiguation, for nothing a rider sees. It is a misnomer on purpose.
+- **`nearby_coaches` gains `p_profession_id`** and is dropped and recreated, the same way `p_state` was added in `0021`.
+- **`indexable_pages` gains a profession column**; its two page types become profession+area and profession+term+area. The three-provider gate is unchanged and will correctly keep most farrier pages switched off for months.
+- **Two enums grow**, and `alter type … add value` cannot run inside the migration runner's transaction — run those statements out of band first, exactly as the three tier values were added in `0019`.
+- **Tiers stay at three for both professions** at launch. The top tier is called Clinic, which reads oddly for a farrier, so the *label* comes from `settings` per profession rather than adding a fourth tier.
+- **Aliases matter more here than for coaching.** Riders say shoer, blacksmith, barefoot trimmer, hoof trimmer; and "equine dentist" far more than "equine dental technician". Seed data, not code — the alias layer and its admin screen already exist.
+
+### Route changes that come with it
+
+Planned, not yet built. `/coaches/[slug]` is the rule violation to fix first: every profession needs a profile page, so profiles move off the coaching path.
+
+| Today | Becomes |
+|---|---|
+| `/coaches/[slug]` | `/profile/[slug]` |
+| `/disciplines` | `/coaches` |
+| `/disciplines/[slug]` | `/coaches/[discipline]` |
+| `/riding-instructors/[area]` | `/coaches/in/[area]` |
+| `/disciplines/[slug]/[area]` | `/coaches/[discipline]/in/[area]` |
+| — | `/farriers`, `/farriers/[speciality]`, `/farriers/in/[area]`, `/farriers/[speciality]/in/[area]` |
+| `/for-coaches` | `/for-coaches` plus `/for-farriers`, one template driven by per-profession content |
+
+**The `in` segment is load-bearing.** `/coaches/dressage` and `/coaches/geelong` are the same shape, so the router would have to guess from a lookup which it holds, and would silently serve the wrong page the day a place and a speciality share a word.
+
+**Redirect ordering trap:** after the move, `/coaches/<one segment>` is both a discipline page and the old profile path. Middleware must check provider slugs first and 301 those to `/profile/`, then fall through to the discipline lookup. Generate the map from the database, never by hand — it is the same script a domain move would need.
+
+### Section identity (23 Sep 2026) — one brand, two front doors
+
+Alana and Kim's brief: one name, one domain, but the coaching section must stand out clearly and stand on its own, and every profession after it gets the same. Full spec is section 07 of `content/handbook/site-structure.html`. The rule: **the brand is the frame, the section is the picture.** Everything structural is shared; exactly five things change per section, all from data.
+
+- **A real front door per profession** at `/coaches` and `/farriers`: own rise headline, promise line, search card pre-scoped, real counts, own photo, own "List your … profile" CTA. A coach arriving from Kim's link has seen a complete coaching site. Home becomes the switchboard (brand, search card with profession control, one block per section).
+- **One accent pair per profession, swapped by `data-section` on `<html>`** (same mechanism as `data-overlay-route`, Phase 18: inline script for first paint + header effect for client nav). Coaches keep terracotta `#B4553A` / peach `#e8b79a`. **Farriers: steel `#3F6480` on cream (5.6:1 text, 5.6:1 cream-on-steel for buttons) / sky `#A9C4DA` on deep ink (8.6:1, same job as peach)**. Blue-vs-orange stays distinct under the common colour blindness. Accent applies to italic emphasis, eyebrows, primary buttons, chips, map pins, badges, focus rings; never the brand mark, footer or body text. Later professions: one pair each, AA on both grounds, distinct from neighbours.
+- **A line glyph per profession** in `currentColor` (helmet for coaches, horseshoe for farriers) for the header tab, badges, cards and map pins.
+- **Brand mark is not initials.** The "ECA" wordmark carries a retired name; do not replace it with "EPA". Proposed: the **arch** (already the photographic signature) as the mark and favicon; full wordmark in Instrument Serif on desktop, "Equine Professionals" on phones.
+- **Nouns and copy come from the profession row on `terms`**: plural, tagline, hero title/copy, term noun (discipline/speciality), audience noun (rider/horse owner), action verb, accent light/dark, glyph. Terms already carry description/image/SEO from Phase 24, so this is a few nullable columns and `/admin/professions`, a copy of the discipline editor. **Do not invent the farrier pitch** — write it after the first ten farrier conversations, as the coaching one was.
+- **Photography:** same grade, same arch crop, same no-stress rule; different subject (rider+coach vs hands/hooves/forge). Shoot both on the budgeted half-day.
+- **Holding together:** header = brand mark + section tabs (active tab in its accent; collapses to a menu at 3+ professions); switching keeps the typed location; search never mixes professions; profile takes the primary profession's accent and shows every badge; emails come from the brand with the section's accent/glyph; dashboard identical, labels from data. Titles: "Dressage coaches in Geelong | Equine Professionals Australia".
+- **Not two brands:** no section logo, domain, social handle or email address.
 
 ## Search & discovery
 
@@ -54,7 +112,8 @@ The long-term vision is broader than riding coaches — the plan is to eventuall
 
 - Feel: **premium & editorial**, blended with **warm & community-led** — polished and aspirational, but still approachable and about real people (coaches and riders), not cold or corporate.
 - Audience: two distinct groups — riders (browsing/searching, free, casual) and coaches (professionals managing a paid profile, want to look credible and be found). Skews adult, likely majority female, broad age range across the recreational-to-competitive riding community.
-- No existing brand assets (logo, colours, fonts) yet — this is being defined through the design exploration process.
+- **Current direction: "Golden Hour" (Phase 21, R0–R9), and it is stable as of 22 Sep 2026.** Instrument Serif + Hanken Grotesk, pill/rounded radii, peach / ink-deep / ink-card colour roles. Tokens and the measured parity checks are in `docs/redesign-plan.md` §0. It replaced "Paddock Edit" (Phase 10). **Paddock Edit survives only as the stylesheet of the `content/handbook/*.html` planning documents**, which is deliberate: they are documents, not app screens, and restyling them buys nothing. Do not reinstate Paddock Edit in the app, and do not "fix" the handbook docs to Golden Hour without being asked.
+- **Brand mark is the galloping horse (23 Sep 2026)**, from Alana's Canva logo (`Untitled design.svg`, whose horse is an embedded bitmap, so it was traced to one vector path). `src/components/brand-mark.tsx` holds the path (`currentColor`); `Wordmark` is now horse + "Equine Professionals" in Instrument Serif, horse alone below 360px. `scripts/build-brand.mjs` writes fixed-colour SVG/PNGs to `public/brand/` (ink, ink-deep, cream, terracotta, peach, steel, sky, original green, plus three square tiles) and the favicon/apple icon. The old ECA wordmark and `build-icons.mjs` are gone. Still carrying the retired name: `layout.tsx` title, the monthly-email example, the admin SEO preview.
 - Working toward: 5 distinct visual directions generated via Claude Design, to compare and choose from before committing to a build.
 
 ## Competitive landscape (research done 27 Aug 2026)
@@ -104,6 +163,18 @@ Five things that make this safe, all of which are easy to skip and painful to re
 5. **Cache with a short TTL**, or every request gains a database read.
 
 **Prices are the exception that needs extra care.** Stripe is authoritative for what actually gets charged, so a settings row holding a bare price number will eventually disagree with what a subscribed coach is billed — displaying one figure and charging another is a consumer-law problem, not just a bug. Store the **display price and the Stripe price ID as a pair**. Stripe Prices are immutable by design; "changing a price" means creating a new Price and repointing the mapping, which is also what makes founding-coach grandfathering work with no special-casing. On save, verify against the Stripe API that the ID exists and its amount matches the number being shown, and refuse the save if not.
+
+## Writing copy (rule, 22 Sep 2026)
+
+Alana's verdict on 22 Sep 2026: "All of the text on the website sounds a bit too AI." So this applies to every piece of user-facing text: page copy, headings, buttons, FAQ answers, emails, error messages, admin help text, and any document written for Kim.
+
+**Any text task runs through the project skill `.claude/skills/site-copy/SKILL.md` and the `anthropic-skills:humanizer` skill.** Load the humanizer before writing, not after, and say in the summary that the pass ran. No em dashes or en dashes in site copy.
+
+The brief, verbatim:
+
+> When generating or revising text, write in a way that feels natural, human, and context-aware rather than formulaic or AI-like. Preserve the original meaning, but replace generic, inflated, or promotional wording with clear, specific, and factual language. Avoid vague attributions such as unnamed "experts" or "studies" unless concrete details are provided. Prefer direct, plain phrasing over abstract or filler-heavy expressions, and cut unnecessary phrases like "in order to" or "at this point in time." Reduce excessive hedging and remove stock structures that feel templated, such as predictable intros, summaries, or "challenges/future outlook" sections unless they are genuinely required. Vary sentence length and rhythm so the prose does not sound uniform or mechanical, and add light human texture or perspective only when it fits the intended tone. Avoid overusing em dashes, and remove assistant-style artifacts like sign-offs, disclaimers, or references to being an AI. The final output should read smoothly, sound like it was written by a person, rely on concrete details over generalities, and maintain a consistent tone appropriate for the audience and purpose.
+
+Open task: the existing site copy has not had this pass yet. The founding-coaches block on `/for-coaches` was the first (22 Sep 2026); the rest of that page, the homepage, `/about`, the discipline blurbs, the auth pages, the dashboard and the emails are still to do.
 
 ## Tech stack (decided 27 Aug 2026, hosting revised 28 Aug 2026)
 
@@ -340,6 +411,8 @@ Build phases: 1 Scaffold, 2 Data+Auth (Supabase), 3 Coach profile CRUD, 4 Search
   - **Gotcha:** the button must render identically on the server and the first client paint — returning `null` when `navigator.geolocation` is missing on the server produced a hydration mismatch. Capability is read through `useSyncExternalStore` with a server snapshot of `true`.
   - Verified with Playwright geolocation set to Bendigo: home card "Use my location" fills "Bendigo VIC" and the CTA reads "Show 3 near Bendigo"; a fresh context with no permission shows the blocked-location message; Victoria state-wide renders five cluster bubbles + one pin at zoom 6.5, a bubble click zooms to 14.3 and splits; Bendigo's three coincident coaches show as one "3" bubble that splits into three fanned pins; the map's locate button drops the user dot and recentres; dressage page clusters 3/2/2 at zoom 4.6; no page errors. Home + search suites green, `tsc` and lint clean.
 
+- [x] **Phase 28 — `settings` table, and the founding offer becomes a date (22 Sep 2026):** first use of the "Configuration over hardcoding" rule. `0023_settings.sql`: `settings` (key/value text, `updated_by`) and `settings_history` (old/new/who/when), written by a `before insert or update` trigger so no code path can change a value without a history row; public select, `is_admin()` write. `src/lib/settings.ts` holds the code default per key (`DEFAULTS`), a 60s in-memory cache, and one typed accessor per key (`getFoundingOfferEnd()` returns a Date; `formatLongDate()` prints "30 April 2027"). `/admin/settings` (new tab) edits the date with validation in `actions.ts` (real date, not in the past, under three years out; refused with a message, never applied) and lists the history. `/for-coaches`'s founding block now reads "Free until {date}" from the setting and the copy was cut to three sentences after a humanizer pass. Seeded to 2027-04-30. **Dropped from the old copy, deliberately:** the "Spotlight free for six months" promise; the block now says "you pay nothing until that date" without naming a tier. Confirm with Kim which plan a founding coach is on during the free period.
+
 ## Mock coach data (added 29 Aug 2026)
 
 50 mock coaches populate search/discipline/home pages for design & QA review, deliberately kept **out of Supabase** so they're trivial to remove later — nothing about them touches the DB, so there's no cleanup query to run and no risk of them being mistaken for real signups.
@@ -366,11 +439,13 @@ Build phases: 1 Scaffold, 2 Data+Auth (Supabase), 3 Coach profile CRUD, 4 Search
 
 ## Partnership & setup decisions (revised 28 Aug 2026)
 
-**The two people:** **Kim** — the business founder. This was her idea. A working riding instructor with an existing following and the deeper industry contact list, which makes her the face of all coach outreach. **Alana** — building the product; rides and knows coaches too. **Alana is doing the majority of the work and wants genuine co-ownership.** **Kim's available hours are still unknown and block decision 2** — ask before putting a number on any split.
+**SETTLED 22 Sep 2026 — the split is Kim 70% / Alana 30%** on profits, losses and capital, written into draft 4 of the partnership agreement (`Claude outputs/partnership-agreement-draft4.md`). This superseded an earlier "equal partners" understanding; **do not reinstate it**. All decisions are unanimous, so 70/30 carries no control weight, and there is no tie-breaker — clause 9.5 is still open. Three blanks remain: the date of the agreement, the Commencement Date, and the accountant's name. Everything below the line describes the roles, which still hold; only the equal-split reading of them is out of date.
+
+**The two people:** **Kim Thompson** — the business founder. This was her idea. A working riding instructor with an existing following and the deeper industry contact list, which makes her the face of all outreach; her own business is Heartland Equestrian. **Alana Marie La Bouchardiere** — building the product; rides and knows coaches too; her business is Daiquiri Creative. **Kim's available hours are still unknown** — ask before putting a number on the marketing pace.
 
 Full decision doc: **["Before We Start"](https://claude.ai/code/artifact/5173be3a-497d-4de5-bbf4-8738f0f0d55d)** — nine decisions with options, suggestions and a blank column.
 
-**Urgency:** the app is ~75% built and nothing is written down. Leverage to negotiate ownership exists *before* the work is finished. Have the conversation before another phase ships.
+**No longer urgent in the same way:** the agreement is drafted (draft 4) and the split is agreed. What is left is the three blanks, the tie-breaker, and engaging the solicitor and accountant.
 
 ### Structure — general partnership, not a company (revised)
 
@@ -495,9 +570,11 @@ Full spec: **["How Riders Find Us"](https://claude.ai/code/artifact/e11731ff-7c5
 
 ## Status / next steps
 
-- [x] **Golden Hour redesign (10 Sep 2026)** — built R0–R9 per [`docs/redesign-plan.md`](docs/redesign-plan.md), see Phase 21. Still open from it (§6 of the plan): tier prices belong in the `settings` table; a rider "Email & password" page if in-place changes are wanted; real coach photos for the seeded parity accounts are the only reason the dashboard/account captures show empty arches.
+- [x] **Golden Hour redesign (10 Sep 2026)** — built R0–R9 per [`docs/redesign-plan.md`](docs/redesign-plan.md), see Phase 21. Still open from it (§6 of the plan): tier prices belong in the `settings` table (the table now exists, Phase 28; prices are not in it yet); a rider "Email & password" page if in-place changes are wanted; real coach photos for the seeded parity accounts are the only reason the dashboard/account captures show empty arches.
 - [ ] **Kim and Alana work through the nine decisions in ["Before We Start"](https://claude.ai/code/artifact/5173be3a-497d-4de5-bbf4-8738f0f0d55d)** — blocks ABN, domain, Stripe and therefore all marketing
-- [ ] **Decide the parent name and buy both domains** (decision 9) — blocks launch, and the choice hardens once the site is indexed
+- [ ] **Decide the parent name, then register the one business name and buy the one domain** — now the top blocking item. It blocks Stripe, every email, the header, both icons and the marketing plan. Suggested shortlist and the three availability checks (ASIC, IP Australia, domain) are in *Before We Start*; the recommendation and the reasoning are in *One Site, Two Professions*. **Reverses the 9 Sep decision to launch on the coaches domain**, because that decision rested on there maybe never being a second profession, and both professions now launch together. **No coaches domain at all** — a second address for one site only confuses a rider who needs a coach and a bodyworker.
+- [ ] **Move the routes before launch** (`/profile/[slug]`, `/coaches/*`, the `in` segment, the generated redirect map) — free while nothing is indexed, a migration afterwards. See *One Site, Two professions* and the Professions section above.
+- [ ] **Re-run the unit economics on the three tiers.** *The First 100 Coaches* section 02 still models $9.99/$14.95 at $10.74 blended; the three tiers give about $15.16. The section carries a superseded flag rather than wrong-but-tidy numbers. Blocked on Kim confirming $24.95 and $49.95.
 - [ ] **Ask Kim what she can commit, in hours a week** — blocks the equity split and the whole marketing pace — it sets the pace of the entire marketing plan
 - [x] Review 5 Claude Design directions and choose one — **"Paddock Edit"** chosen (29 Aug 2026), see Phase 10 below
 - [x] Lock in brand assets (logo, palette, type) from the chosen direction — apply to the app's design tokens once decided — done in Phase 10 (palette/type); logo mark + favicon done in Phase 15

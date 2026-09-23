@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+
+  // The admin handbook reads these HTML files from disk at request time. Next
+  // cannot trace a dynamic fs.readFile, so without this the files are left out
+  // of the serverless bundle and every document 404s on Vercel while working
+  // perfectly in dev.
+  outputFileTracingIncludes: {
+    "/admin/handbook/[slug]/raw": ["./content/handbook/**"],
+  },
 };
 
 export default nextConfig;

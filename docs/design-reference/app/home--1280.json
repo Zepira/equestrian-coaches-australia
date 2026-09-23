@@ -1,6 +1,6 @@
 {
  "width": 1280,
- "scrollHeight": 5166,
+ "scrollHeight": 4919,
  "elements": [
   {
    "tag": "a",
@@ -221,7 +221,7 @@
    "tag": "a",
    "text": "Find a coach",
    "box": {
-    "x": 634,
+    "x": 565,
     "y": 25,
     "w": 86,
     "h": 23
@@ -275,7 +275,7 @@
    "tag": "a",
    "text": "Disciplines",
    "box": {
-    "x": 747,
+    "x": 679,
     "y": 25,
     "w": 72,
     "h": 23
@@ -329,7 +329,7 @@
    "tag": "a",
    "text": "For coaches",
    "box": {
-    "x": 847,
+    "x": 778,
     "y": 25,
     "w": 83,
     "h": 23
@@ -373,6 +373,60 @@
     "top": "auto",
     "bottom": "auto",
     "width": "82.5156px",
+    "height": "22.5px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "About",
+   "box": {
+    "x": 889,
+    "y": 25,
+    "w": 41,
+    "h": 23
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "22.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(246, 241, 231)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(246, 241, 231)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "color 0.3s",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "40.7031px",
     "height": "22.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -491,10 +545,10 @@
    "tag": "img",
    "src": "/hero/wide-1280.jpg",
    "box": {
-    "x": -13,
-    "y": -105,
-    "w": 1307,
-    "h": 915
+    "x": -6,
+    "y": -101,
+    "w": 1293,
+    "h": 905
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -547,7 +601,7 @@
    "box": {
     "x": 96,
     "y": 154,
-    "w": 640,
+    "w": 690,
     "h": 20
    },
    "style": {
@@ -588,7 +642,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "640px",
+    "width": "690px",
     "height": "19.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -600,7 +654,7 @@
    "box": {
     "x": 96,
     "y": 199,
-    "w": 640,
+    "w": 690,
     "h": 191
    },
    "style": {
@@ -641,7 +695,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "640px",
+    "width": "690px",
     "height": "191.031px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -869,7 +923,7 @@
    "text": "dressage .",
    "box": {
     "x": 96,
-    "y": 240,
+    "y": 260,
     "w": 284,
     "h": 90
    },
@@ -923,7 +977,7 @@
    "text": "western .",
    "box": {
     "x": 96,
-    "y": 290,
+    "y": 242,
     "w": 267,
     "h": 90
    },
@@ -950,7 +1004,7 @@
     "marginTop": "0px",
     "marginBottom": "0px",
     "gap": "normal",
-    "opacity": "1",
+    "opacity": "0",
     "backdropFilter": "none",
     "boxShadow": "none",
     "animationName": "wordcycle",
@@ -977,7 +1031,7 @@
    "text": "liberty .",
    "box": {
     "x": 96,
-    "y": 344,
+    "y": 256,
     "w": 229,
     "h": 90
    },
@@ -1004,7 +1058,7 @@
     "marginTop": "0px",
     "marginBottom": "0px",
     "gap": "normal",
-    "opacity": "0",
+    "opacity": "0.380142",
     "backdropFilter": "none",
     "boxShadow": "none",
     "animationName": "wordcycle",
@@ -1031,7 +1085,7 @@
    "text": "show jumping .",
    "box": {
     "x": 96,
-    "y": 344,
+    "y": 324,
     "w": 483,
     "h": 90
    },
@@ -1058,7 +1112,7 @@
     "marginTop": "0px",
     "marginBottom": "0px",
     "gap": "normal",
-    "opacity": "0",
+    "opacity": "0.372878",
     "backdropFilter": "none",
     "boxShadow": "none",
     "animationName": "wordcycle",
@@ -1463,7 +1517,7 @@
    "box": {
     "x": 139,
     "y": 510,
-    "w": 164,
+    "w": 172,
     "h": 59
    },
    "style": {
@@ -1504,7 +1558,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "164px",
+    "width": "172px",
     "height": "59px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -1514,7 +1568,60 @@
   {
    "tag": "button",
    "box": {
-    "x": 325,
+    "x": 321,
+    "y": 523,
+    "w": 32,
+    "h": 32
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "16px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "24px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(108, 104, 94)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "999px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(108, 104, 94)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(108, 104, 94)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), outline-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-from 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-via 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-to 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "grid",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "32px",
+    "height": "32px",
+    "aspectRatio": "auto",
+    "textAlign": "center",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "button",
+   "box": {
+    "x": 375,
     "y": 510,
     "w": 190,
     "h": 59
@@ -1568,7 +1675,7 @@
    "tag": "span",
    "text": "Any discipline",
    "box": {
-    "x": 341,
+    "x": 391,
     "y": 526,
     "w": 111,
     "h": 27
@@ -1621,7 +1728,7 @@
   {
    "tag": "button",
    "box": {
-    "x": 521,
+    "x": 571,
     "y": 510,
     "w": 206,
     "h": 59
@@ -1660,14 +1767,14 @@
     "transition": "color 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), outline-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), fill 0.25s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.25s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-from 0.25s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-via 0.25s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-to 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
     "objectFit": "fill",
     "objectPosition": "50% 50%",
-    "display": "block",
+    "display": "flex",
     "position": "static",
     "top": "auto",
     "bottom": "auto",
     "width": "206px",
     "height": "59px",
     "aspectRatio": "auto",
-    "textAlign": "left",
+    "textAlign": "center",
     "maxWidth": "none"
    }
   },
@@ -1675,10 +1782,10 @@
    "tag": "span",
    "text": "Find a coach",
    "box": {
-    "x": 539,
-    "y": 528,
+    "x": 628,
+    "y": 529,
     "w": 92,
-    "h": 21
+    "h": 20
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -1714,14 +1821,14 @@
     "transition": "all",
     "objectFit": "fill",
     "objectPosition": "50% 50%",
-    "display": "inline",
+    "display": "block",
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "auto",
-    "height": "auto",
+    "width": "91.5312px",
+    "height": "20px",
     "aspectRatio": "auto",
-    "textAlign": "left",
+    "textAlign": "center",
     "maxWidth": "none"
    }
   },
@@ -1818,7 +1925,7 @@
     "animationDelay": "0s",
     "animationTimingFunction": "ease",
     "animationIterationCount": "1",
-    "transition": "color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), outline-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-from 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-via 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-to 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "transition": "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
     "objectFit": "fill",
     "objectPosition": "50% 50%",
     "display": "flex",
@@ -1926,7 +2033,7 @@
     "animationDelay": "0s",
     "animationTimingFunction": "ease",
     "animationIterationCount": "1",
-    "transition": "color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), outline-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-from 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-via 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-to 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "transition": "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
     "objectFit": "fill",
     "objectPosition": "50% 50%",
     "display": "block",
@@ -1980,7 +2087,7 @@
     "animationDelay": "0s",
     "animationTimingFunction": "ease",
     "animationIterationCount": "1",
-    "transition": "color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), outline-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-from 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-via 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-to 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "transition": "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
     "objectFit": "fill",
     "objectPosition": "50% 50%",
     "display": "block",
@@ -2054,7 +2161,7 @@
    "box": {
     "x": 96,
     "y": 669,
-    "w": 88,
+    "w": 89,
     "h": 33
    },
    "style": {
@@ -2095,7 +2202,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "88.1719px",
+    "width": "88.8594px",
     "height": "33px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -2104,11 +2211,11 @@
   },
   {
    "tag": "strong",
-   "text": "19",
+   "text": "18",
    "box": {
     "x": 96,
     "y": 671,
-    "w": 14,
+    "w": 15,
     "h": 29
    },
    "style": {
@@ -2160,7 +2267,7 @@
    "tag": "dt",
    "text": "coaches",
    "box": {
-    "x": 219,
+    "x": 220,
     "y": 668,
     "w": 1,
     "h": 1
@@ -2214,7 +2321,7 @@
    "tag": "dd",
    "text": "coaches",
    "box": {
-    "x": 220,
+    "x": 221,
     "y": 669,
     "w": 73,
     "h": 33
@@ -2268,7 +2375,7 @@
    "tag": "strong",
    "text": "51",
    "box": {
-    "x": 220,
+    "x": 221,
     "y": 671,
     "w": 14,
     "h": 29
@@ -2484,7 +2591,7 @@
    "tag": "span",
    "text": "Bridleless",
    "box": {
-    "x": -230,
+    "x": -330,
     "y": 819,
     "w": 119,
     "h": 34
@@ -2538,7 +2645,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": -132,
+    "x": -232,
     "y": 819,
     "w": 2,
     "h": 34
@@ -2592,7 +2699,7 @@
    "tag": "span",
    "text": "Campdrafting",
    "box": {
-    "x": -110,
+    "x": -211,
     "y": 819,
     "w": 159,
     "h": 34
@@ -2646,7 +2753,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 27,
+    "x": -73,
     "y": 819,
     "w": 2,
     "h": 34
@@ -2700,7 +2807,7 @@
    "tag": "span",
    "text": "Carriage Driving",
    "box": {
-    "x": 49,
+    "x": -52,
     "y": 819,
     "w": 178,
     "h": 34
@@ -2754,7 +2861,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 205,
+    "x": 105,
     "y": 819,
     "w": 2,
     "h": 34
@@ -2808,7 +2915,7 @@
    "tag": "span",
    "text": "Dressage",
    "box": {
-    "x": 226,
+    "x": 126,
     "y": 819,
     "w": 113,
     "h": 34
@@ -2862,7 +2969,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 318,
+    "x": 218,
     "y": 819,
     "w": 2,
     "h": 34
@@ -2916,7 +3023,7 @@
    "tag": "span",
    "text": "Endurance",
    "box": {
-    "x": 340,
+    "x": 239,
     "y": 819,
     "w": 132,
     "h": 34
@@ -2970,7 +3077,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 450,
+    "x": 350,
     "y": 819,
     "w": 2,
     "h": 34
@@ -3024,7 +3131,7 @@
    "tag": "span",
    "text": "Eventing",
    "box": {
-    "x": 471,
+    "x": 371,
     "y": 819,
     "w": 114,
     "h": 34
@@ -3078,7 +3185,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 564,
+    "x": 464,
     "y": 819,
     "w": 2,
     "h": 34
@@ -3132,7 +3239,7 @@
    "tag": "span",
    "text": "Liberty",
    "box": {
-    "x": 585,
+    "x": 485,
     "y": 819,
     "w": 99,
     "h": 34
@@ -3186,7 +3293,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 663,
+    "x": 562,
     "y": 819,
     "w": 2,
     "h": 34
@@ -3240,7 +3347,7 @@
    "tag": "span",
    "text": "Mounted Games",
    "box": {
-    "x": 684,
+    "x": 584,
     "y": 819,
     "w": 177,
     "h": 34
@@ -3294,7 +3401,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 839,
+    "x": 739,
     "y": 819,
     "w": 2,
     "h": 34
@@ -3348,7 +3455,7 @@
    "tag": "span",
    "text": "Natural Horsemanship",
    "box": {
-    "x": 861,
+    "x": 760,
     "y": 819,
     "w": 229,
     "h": 34
@@ -3402,7 +3509,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1068,
+    "x": 968,
     "y": 819,
     "w": 2,
     "h": 34
@@ -3456,7 +3563,7 @@
    "tag": "span",
    "text": "Para-Equestrian",
    "box": {
-    "x": 1089,
+    "x": 989,
     "y": 819,
     "w": 179,
     "h": 34
@@ -3510,7 +3617,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1247,
+    "x": 1147,
     "y": 819,
     "w": 2,
     "h": 34
@@ -3564,7 +3671,7 @@
    "tag": "span",
    "text": "Polocrosse",
    "box": {
-    "x": 1269,
+    "x": 1168,
     "y": 819,
     "w": 127,
     "h": 34
@@ -3618,7 +3725,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1374,
+    "x": 1274,
     "y": 819,
     "w": 2,
     "h": 34
@@ -3672,7 +3779,7 @@
    "tag": "span",
    "text": "Pony Club",
    "box": {
-    "x": 1395,
+    "x": 1295,
     "y": 819,
     "w": 126,
     "h": 34
@@ -3726,7 +3833,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1500,
+    "x": 1400,
     "y": 819,
     "w": 2,
     "h": 34
@@ -3780,7 +3887,7 @@
    "tag": "span",
    "text": "Show Jumping",
    "box": {
-    "x": 1521,
+    "x": 1421,
     "y": 819,
     "w": 163,
     "h": 34
@@ -3834,7 +3941,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1663,
+    "x": 1563,
     "y": 819,
     "w": 2,
     "h": 34
@@ -3888,7 +3995,7 @@
    "tag": "span",
    "text": "Showing & Hack",
    "box": {
-    "x": 1685,
+    "x": 1584,
     "y": 819,
     "w": 179,
     "h": 34
@@ -3942,115 +4049,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 1842,
-    "y": 819,
-    "w": 2,
-    "h": 34
-   },
-   "style": {
-    "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "26px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "39px",
-    "letterSpacing": "-0.52px",
-    "textTransform": "none",
-    "color": "rgb(232, 183, 154)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(232, 183, 154)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(232, 183, 154)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "inline",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "auto",
-    "height": "auto",
-    "aspectRatio": "auto",
-    "textAlign": "start",
-    "maxWidth": "none"
-   }
-  },
-  {
-   "tag": "span",
-   "text": "Stock Horse",
-   "box": {
-    "x": 1863,
-    "y": 819,
-    "w": 137,
-    "h": 34
-   },
-   "style": {
-    "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "26px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "39px",
-    "letterSpacing": "-0.52px",
-    "textTransform": "none",
-    "color": "rgb(246, 241, 231)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(246, 241, 231)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(246, 241, 231)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "inline",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "auto",
-    "height": "auto",
-    "aspectRatio": "auto",
-    "textAlign": "start",
-    "maxWidth": "none"
-   }
-  },
-  {
-   "tag": "span",
-   "text": "·",
-   "box": {
-    "x": 1979,
+    "x": 1742,
     "y": 819,
     "w": 2,
     "h": 34
@@ -4104,7 +4103,7 @@
    "tag": "span",
    "text": "Trail Riding",
    "box": {
-    "x": 2001,
+    "x": 1763,
     "y": 819,
     "w": 138,
     "h": 34
@@ -4158,7 +4157,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2117,
+    "x": 1880,
     "y": 819,
     "w": 2,
     "h": 34
@@ -4212,7 +4211,7 @@
    "tag": "span",
    "text": "Vaulting",
    "box": {
-    "x": 2139,
+    "x": 1901,
     "y": 819,
     "w": 110,
     "h": 34
@@ -4266,7 +4265,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2227,
+    "x": 1990,
     "y": 819,
     "w": 2,
     "h": 34
@@ -4320,7 +4319,7 @@
    "tag": "span",
    "text": "Western",
    "box": {
-    "x": 2248,
+    "x": 2011,
     "y": 819,
     "w": 106,
     "h": 34
@@ -4374,7 +4373,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2333,
+    "x": 2095,
     "y": 819,
     "w": 2,
     "h": 34
@@ -4428,7 +4427,7 @@
    "tag": "span",
    "text": "Working Equitation",
    "box": {
-    "x": 2354,
+    "x": 2116,
     "y": 819,
     "w": 202,
     "h": 34
@@ -4482,7 +4481,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2535,
+    "x": 2298,
     "y": 819,
     "w": 2,
     "h": 34
@@ -4536,7 +4535,7 @@
    "tag": "span",
    "text": "Bridleless",
    "box": {
-    "x": 2556,
+    "x": 2319,
     "y": 819,
     "w": 119,
     "h": 34
@@ -4590,7 +4589,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2654,
+    "x": 2417,
     "y": 819,
     "w": 2,
     "h": 34
@@ -4644,7 +4643,7 @@
    "tag": "span",
    "text": "Campdrafting",
    "box": {
-    "x": 2676,
+    "x": 2438,
     "y": 819,
     "w": 159,
     "h": 34
@@ -4698,7 +4697,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2813,
+    "x": 2576,
     "y": 819,
     "w": 2,
     "h": 34
@@ -4752,7 +4751,7 @@
    "tag": "span",
    "text": "Carriage Driving",
    "box": {
-    "x": 2835,
+    "x": 2597,
     "y": 819,
     "w": 178,
     "h": 34
@@ -4806,7 +4805,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 2991,
+    "x": 2754,
     "y": 819,
     "w": 2,
     "h": 34
@@ -4860,7 +4859,7 @@
    "tag": "span",
    "text": "Dressage",
    "box": {
-    "x": 3012,
+    "x": 2775,
     "y": 819,
     "w": 113,
     "h": 34
@@ -4914,7 +4913,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3104,
+    "x": 2867,
     "y": 819,
     "w": 2,
     "h": 34
@@ -4968,7 +4967,7 @@
    "tag": "span",
    "text": "Endurance",
    "box": {
-    "x": 3126,
+    "x": 2888,
     "y": 819,
     "w": 132,
     "h": 34
@@ -5022,7 +5021,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3236,
+    "x": 2998,
     "y": 819,
     "w": 2,
     "h": 34
@@ -5076,7 +5075,7 @@
    "tag": "span",
    "text": "Eventing",
    "box": {
-    "x": 3257,
+    "x": 3020,
     "y": 819,
     "w": 114,
     "h": 34
@@ -5130,7 +5129,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3350,
+    "x": 3112,
     "y": 819,
     "w": 2,
     "h": 34
@@ -5184,7 +5183,7 @@
    "tag": "span",
    "text": "Liberty",
    "box": {
-    "x": 3371,
+    "x": 3133,
     "y": 819,
     "w": 99,
     "h": 34
@@ -5238,7 +5237,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3449,
+    "x": 3211,
     "y": 819,
     "w": 2,
     "h": 34
@@ -5292,7 +5291,7 @@
    "tag": "span",
    "text": "Mounted Games",
    "box": {
-    "x": 3470,
+    "x": 3232,
     "y": 819,
     "w": 177,
     "h": 34
@@ -5346,7 +5345,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3625,
+    "x": 3388,
     "y": 819,
     "w": 2,
     "h": 34
@@ -5400,7 +5399,7 @@
    "tag": "span",
    "text": "Natural Horsemanship",
    "box": {
-    "x": 3647,
+    "x": 3409,
     "y": 819,
     "w": 229,
     "h": 34
@@ -5454,7 +5453,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 3854,
+    "x": 3616,
     "y": 819,
     "w": 2,
     "h": 34
@@ -5508,7 +5507,7 @@
    "tag": "span",
    "text": "Para-Equestrian",
    "box": {
-    "x": 3875,
+    "x": 3638,
     "y": 819,
     "w": 179,
     "h": 34
@@ -5562,7 +5561,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 4033,
+    "x": 3796,
     "y": 819,
     "w": 2,
     "h": 34
@@ -5616,7 +5615,7 @@
    "tag": "span",
    "text": "Polocrosse",
    "box": {
-    "x": 4054,
+    "x": 3817,
     "y": 819,
     "w": 127,
     "h": 34
@@ -5670,7 +5669,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 4160,
+    "x": 3922,
     "y": 819,
     "w": 2,
     "h": 34
@@ -5724,7 +5723,7 @@
    "tag": "span",
    "text": "Pony Club",
    "box": {
-    "x": 4181,
+    "x": 3944,
     "y": 819,
     "w": 126,
     "h": 34
@@ -5778,7 +5777,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 4286,
+    "x": 4048,
     "y": 819,
     "w": 2,
     "h": 34
@@ -5832,7 +5831,7 @@
    "tag": "span",
    "text": "Show Jumping",
    "box": {
-    "x": 4307,
+    "x": 4070,
     "y": 819,
     "w": 163,
     "h": 34
@@ -5886,7 +5885,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 4449,
+    "x": 4212,
     "y": 819,
     "w": 2,
     "h": 34
@@ -5940,7 +5939,7 @@
    "tag": "span",
    "text": "Showing & Hack",
    "box": {
-    "x": 4470,
+    "x": 4233,
     "y": 819,
     "w": 179,
     "h": 34
@@ -5994,115 +5993,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 4628,
-    "y": 819,
-    "w": 2,
-    "h": 34
-   },
-   "style": {
-    "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "26px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "39px",
-    "letterSpacing": "-0.52px",
-    "textTransform": "none",
-    "color": "rgb(232, 183, 154)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(232, 183, 154)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(232, 183, 154)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "inline",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "auto",
-    "height": "auto",
-    "aspectRatio": "auto",
-    "textAlign": "start",
-    "maxWidth": "none"
-   }
-  },
-  {
-   "tag": "span",
-   "text": "Stock Horse",
-   "box": {
-    "x": 4649,
-    "y": 819,
-    "w": 137,
-    "h": 34
-   },
-   "style": {
-    "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "26px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "39px",
-    "letterSpacing": "-0.52px",
-    "textTransform": "none",
-    "color": "rgb(246, 241, 231)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(246, 241, 231)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(246, 241, 231)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "inline",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "auto",
-    "height": "auto",
-    "aspectRatio": "auto",
-    "textAlign": "start",
-    "maxWidth": "none"
-   }
-  },
-  {
-   "tag": "span",
-   "text": "·",
-   "box": {
-    "x": 4765,
+    "x": 4391,
     "y": 819,
     "w": 2,
     "h": 34
@@ -6156,7 +6047,7 @@
    "tag": "span",
    "text": "Trail Riding",
    "box": {
-    "x": 4787,
+    "x": 4412,
     "y": 819,
     "w": 138,
     "h": 34
@@ -6210,7 +6101,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 4903,
+    "x": 4529,
     "y": 819,
     "w": 2,
     "h": 34
@@ -6264,7 +6155,7 @@
    "tag": "span",
    "text": "Vaulting",
    "box": {
-    "x": 4925,
+    "x": 4550,
     "y": 819,
     "w": 110,
     "h": 34
@@ -6318,7 +6209,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 5013,
+    "x": 4638,
     "y": 819,
     "w": 2,
     "h": 34
@@ -6372,7 +6263,7 @@
    "tag": "span",
    "text": "Western",
    "box": {
-    "x": 5034,
+    "x": 4659,
     "y": 819,
     "w": 106,
     "h": 34
@@ -6426,7 +6317,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 5119,
+    "x": 4744,
     "y": 819,
     "w": 2,
     "h": 34
@@ -6480,7 +6371,7 @@
    "tag": "span",
    "text": "Working Equitation",
    "box": {
-    "x": 5140,
+    "x": 4765,
     "y": 819,
     "w": 202,
     "h": 34
@@ -6534,7 +6425,7 @@
    "tag": "span",
    "text": "·",
    "box": {
-    "x": 5321,
+    "x": 4946,
     "y": 819,
     "w": 2,
     "h": 34
@@ -8363,7 +8254,7 @@
   },
   {
    "tag": "span",
-   "text": "All 19 of them, from bridleless to working equitation.",
+   "text": "All 18 of them, from bridleless to working equitation.",
    "box": {
     "x": 96,
     "y": 1919,
@@ -11588,11 +11479,11 @@
   },
   {
    "tag": "span",
-   "text": "Stock Horse",
+   "text": "Trail Riding",
    "box": {
     "x": 605,
     "y": 3620,
-    "w": 97,
+    "w": 98,
     "h": 39
    },
    "style": {
@@ -11633,7 +11524,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "97.0156px",
+    "width": "97.7344px",
     "height": "39px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -11642,7 +11533,7 @@
   },
   {
    "tag": "span",
-   "text": "0",
+   "text": "1",
    "box": {
     "x": 853,
     "y": 3634,
@@ -11803,11 +11694,11 @@
   },
   {
    "tag": "span",
-   "text": "Trail Riding",
+   "text": "Vaulting",
    "box": {
     "x": 910,
     "y": 3620,
-    "w": 98,
+    "w": 69,
     "h": 39
    },
    "style": {
@@ -11848,7 +11739,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "97.7344px",
+    "width": "69.4219px",
     "height": "39px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -11857,7 +11748,7 @@
   },
   {
    "tag": "span",
-   "text": "1",
+   "text": "0",
    "box": {
     "x": 1159,
     "y": 3634,
@@ -11964,7 +11855,7 @@
   },
   {
    "tag": "img",
-   "src": "https://images.unsplash.com/photo-1579113813543-fa41eb8bf556?auto=format&fit=crop&w=600&q=80",
+   "src": "https://images.unsplash.com/photo-1624125278758-c0572f6ebc55?auto=format&fit=crop&w=600&q=80",
    "box": {
     "x": 569,
     "y": 3635,
@@ -12018,11 +11909,11 @@
   },
   {
    "tag": "span",
-   "text": "Vaulting",
+   "text": "Western",
    "box": {
     "x": 605,
     "y": 3868,
-    "w": 69,
+    "w": 65,
     "h": 39
    },
    "style": {
@@ -12063,7 +11954,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "69.4219px",
+    "width": "65.375px",
     "height": "39px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -12072,7 +11963,7 @@
   },
   {
    "tag": "span",
-   "text": "0",
+   "text": "6",
    "box": {
     "x": 853,
     "y": 3882,
@@ -12179,7 +12070,7 @@
   },
   {
    "tag": "img",
-   "src": "https://images.unsplash.com/photo-1624125278758-c0572f6ebc55?auto=format&fit=crop&w=600&q=80",
+   "src": "https://images.unsplash.com/photo-1726209503049-a705ac3fe28f?auto=format&fit=crop&w=600&q=80",
    "box": {
     "x": 875,
     "y": 3635,
@@ -12233,225 +12124,10 @@
   },
   {
    "tag": "span",
-   "text": "Western",
+   "text": "Working Equitation",
    "box": {
     "x": 910,
     "y": 3868,
-    "w": 65,
-    "h": 39
-   },
-   "style": {
-    "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "26px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "39px",
-    "letterSpacing": "-0.52px",
-    "textTransform": "none",
-    "color": "rgb(246, 241, 231)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(246, 241, 231)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(246, 241, 231)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "block",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "65.375px",
-    "height": "39px",
-    "aspectRatio": "auto",
-    "textAlign": "start",
-    "maxWidth": "none"
-   }
-  },
-  {
-   "tag": "span",
-   "text": "6",
-   "box": {
-    "x": 1159,
-    "y": 3882,
-    "w": 7,
-    "h": 20
-   },
-   "style": {
-    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
-    "fontSize": "13px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "19.5px",
-    "letterSpacing": "normal",
-    "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.7)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.7)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.7)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "block",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "7.28125px",
-    "height": "19.5px",
-    "aspectRatio": "auto",
-    "textAlign": "start",
-    "maxWidth": "none"
-   }
-  },
-  {
-   "tag": "a",
-   "box": {
-    "x": 587,
-    "y": 3937,
-    "w": 292,
-    "h": 233
-   },
-   "style": {
-    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
-    "fontSize": "16px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "24px",
-    "letterSpacing": "normal",
-    "textTransform": "none",
-    "color": "rgb(246, 241, 231)",
-    "backgroundColor": "rgb(20, 40, 31)",
-    "backgroundImage": "none",
-    "borderRadius": "14px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(246, 241, 231)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(246, 241, 231)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "block",
-    "position": "relative",
-    "top": "0px",
-    "bottom": "0px",
-    "width": "291.672px",
-    "height": "233.328px",
-    "aspectRatio": "1.25 / 1",
-    "textAlign": "start",
-    "maxWidth": "none"
-   }
-  },
-  {
-   "tag": "img",
-   "src": "https://images.unsplash.com/photo-1726209503049-a705ac3fe28f?auto=format&fit=crop&w=600&q=80",
-   "box": {
-    "x": 569,
-    "y": 3883,
-    "w": 327,
-    "h": 261
-   },
-   "style": {
-    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
-    "fontSize": "16px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "24px",
-    "letterSpacing": "normal",
-    "textTransform": "none",
-    "color": "rgb(246, 241, 231)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(246, 241, 231)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(246, 241, 231)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), translate 0.8s cubic-bezier(0.16, 1, 0.3, 1), scale 0.8s cubic-bezier(0.16, 1, 0.3, 1), rotate 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
-    "objectFit": "cover",
-    "objectPosition": "50% 50%",
-    "display": "block",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "291.672px",
-    "height": "233.328px",
-    "aspectRatio": "auto",
-    "textAlign": "start",
-    "maxWidth": "100%"
-   }
-  },
-  {
-   "tag": "span",
-   "text": "Working Equitation",
-   "box": {
-    "x": 605,
-    "y": 4115,
     "w": 162,
     "h": 39
    },
@@ -12504,8 +12180,8 @@
    "tag": "span",
    "text": "7",
    "box": {
-    "x": 853,
-    "y": 4129,
+    "x": 1159,
+    "y": 3882,
     "w": 7,
     "h": 20
    },
@@ -12559,7 +12235,7 @@
    "text": "How it works",
    "box": {
     "x": 96,
-    "y": 4346,
+    "y": 4099,
     "w": 512,
     "h": 55
    },
@@ -12613,7 +12289,7 @@
    "text": "01",
    "box": {
     "x": 96,
-    "y": 4452,
+    "y": 4205,
     "w": 56,
     "h": 81
    },
@@ -12667,7 +12343,7 @@
    "text": "Tell us what you ride, and where",
    "box": {
     "x": 168,
-    "y": 4452,
+    "y": 4205,
     "w": 440,
     "h": 27
    },
@@ -12721,7 +12397,7 @@
    "text": "Pick your discipline and your town. Every listing is a real coach, not an agency",
    "box": {
     "x": 168,
-    "y": 4485,
+    "y": 4238,
     "w": 394,
     "h": 48
    },
@@ -12775,7 +12451,7 @@
    "text": "02",
    "box": {
     "x": 96,
-    "y": 4578,
+    "y": 4331,
     "w": 56,
     "h": 81
    },
@@ -12829,7 +12505,7 @@
    "text": "Read their profile",
    "box": {
     "x": 168,
-    "y": 4578,
+    "y": 4331,
     "w": 440,
     "h": 27
    },
@@ -12883,7 +12559,7 @@
    "text": "Qualifications, disciplines, how far they travel, and words from riders they've ",
    "box": {
     "x": 168,
-    "y": 4611,
+    "y": 4364,
     "w": 394,
     "h": 48
    },
@@ -12937,7 +12613,7 @@
    "text": "03",
    "box": {
     "x": 96,
-    "y": 4704,
+    "y": 4457,
     "w": 56,
     "h": 81
    },
@@ -12991,7 +12667,7 @@
    "text": "Get in touch, direct",
    "box": {
     "x": 168,
-    "y": 4704,
+    "y": 4457,
     "w": 440,
     "h": 27
    },
@@ -13045,7 +12721,7 @@
    "text": "No commission, no booking fee. You deal with your coach the way riders always ha",
    "box": {
     "x": 168,
-    "y": 4737,
+    "y": 4490,
     "w": 394,
     "h": 48
    },
@@ -13099,7 +12775,7 @@
    "text": "For coaches",
    "box": {
     "x": 712,
-    "y": 4386,
+    "y": 4139,
     "w": 432,
     "h": 18
    },
@@ -13153,7 +12829,7 @@
    "text": "Be the coach they find.",
    "box": {
     "x": 712,
-    "y": 4418,
+    "y": 4171,
     "w": 432,
     "h": 92
    },
@@ -13207,7 +12883,7 @@
    "text": "A full profile — bio, photo, disciplines, travel radius, testimonials — from . R",
    "box": {
     "x": 712,
-    "y": 4526,
+    "y": 4279,
     "w": 381,
     "h": 77
    },
@@ -13261,7 +12937,7 @@
    "text": "$9.99 a month",
    "box": {
     "x": 926,
-    "y": 4553,
+    "y": 4305,
     "w": 109,
     "h": 22
    },
@@ -13315,7 +12991,7 @@
    "text": "List your profile",
    "box": {
     "x": 712,
-    "y": 4627,
+    "y": 4379,
     "w": 165,
     "h": 54
    },
@@ -13368,7 +13044,7 @@
    "tag": "a",
    "box": {
     "x": 96,
-    "y": 4959,
+    "y": 4712,
     "w": 63,
     "h": 48
    },
@@ -13422,7 +13098,7 @@
    "text": "ECA",
    "box": {
     "x": 96,
-    "y": 4951,
+    "y": 4704,
     "w": 63,
     "h": 63
    },
@@ -13476,7 +13152,7 @@
    "text": "Equestrian Coaches Australia. The coach who teaches what you ride, wherever you ",
    "box": {
     "x": 96,
-    "y": 5019,
+    "y": 4772,
     "w": 320,
     "h": 45
    },
@@ -13530,7 +13206,7 @@
    "text": "Riders",
    "box": {
     "x": 523,
-    "y": 4959,
+    "y": 4712,
     "w": 194,
     "h": 22
    },
@@ -13584,7 +13260,7 @@
    "text": "Find a coach",
    "box": {
     "x": 523,
-    "y": 4989,
+    "y": 4742,
     "w": 194,
     "h": 30
    },
@@ -13638,7 +13314,7 @@
    "text": "Disciplines",
    "box": {
     "x": 523,
-    "y": 5019,
+    "y": 4772,
     "w": 194,
     "h": 30
    },
@@ -13692,7 +13368,7 @@
    "text": "My account",
    "box": {
     "x": 523,
-    "y": 5049,
+    "y": 4802,
     "w": 194,
     "h": 30
    },
@@ -13746,7 +13422,7 @@
    "text": "Coaches",
    "box": {
     "x": 757,
-    "y": 4959,
+    "y": 4712,
     "w": 194,
     "h": 22
    },
@@ -13800,7 +13476,7 @@
    "text": "List your profile",
    "box": {
     "x": 757,
-    "y": 4989,
+    "y": 4742,
     "w": 194,
     "h": 30
    },
@@ -13854,7 +13530,7 @@
    "text": "Pricing",
    "box": {
     "x": 757,
-    "y": 5019,
+    "y": 4772,
     "w": 194,
     "h": 30
    },
@@ -13908,7 +13584,7 @@
    "text": "Dashboard",
    "box": {
     "x": 757,
-    "y": 5049,
+    "y": 4802,
     "w": 194,
     "h": 30
    },
@@ -13962,7 +13638,7 @@
    "text": "About",
    "box": {
     "x": 990,
-    "y": 4959,
+    "y": 4712,
     "w": 194,
     "h": 22
    },
@@ -14013,10 +13689,64 @@
   },
   {
    "tag": "a",
+   "text": "About us",
+   "box": {
+    "x": 990,
+    "y": 4742,
+    "w": 194,
+    "h": 30
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "30px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "193.609px",
+    "height": "30px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
    "text": "Log in",
    "box": {
     "x": 990,
-    "y": 4989,
+    "y": 4772,
     "w": 194,
     "h": 30
    },
@@ -14070,7 +13800,7 @@
    "text": "Contact",
    "box": {
     "x": 990,
-    "y": 5019,
+    "y": 4802,
     "w": 194,
     "h": 30
    },
@@ -14124,7 +13854,7 @@
    "text": "© 2026 Equestrian Coaches Australia",
    "box": {
     "x": 96,
-    "y": 5119,
+    "y": 4872,
     "w": 1088,
     "h": 48
    },

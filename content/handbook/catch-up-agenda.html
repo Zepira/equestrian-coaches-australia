@@ -1,0 +1,470 @@
+<title>Nutting It Out</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --navy:#E7DAC6; --navy-2:#DDCFB6;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7; --band-accent:#1F3A2E;
+  --bar-good:#00794F; --bar-bad:#C0492A;
+  --on-navy:#22201C; --on-navy-2:#4A4842; --on-navy-3:#5E5A50;
+  --navy-rule:#D3C1A4;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --wrap:1040px; --measure:68ch;
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.8rem,8.4vw,5.4rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.9rem,4.6vw,3rem); line-height:1.03}
+h3{font-size:1.26rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+
+.chip{display:inline-block; font-size:.68rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+.band{background:var(--navy); color:var(--on-navy); border-bottom:1px solid var(--line-strong)}
+.masthead{padding:66px 0 70px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:44px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--on-navy-2)}
+.masthead h1{margin-bottom:30px}
+.masthead .lede{font-size:1.16rem; line-height:1.5; color:var(--on-navy-2); max-width:54ch; margin:0}
+.mast-meta{margin-top:40px; padding-top:18px; border-top:1px solid var(--navy-rule);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.76rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--on-navy-3)}
+
+.verdict{padding:0 0 60px}
+.verdict-lead{max-width:64ch; font-size:1.02rem; color:var(--on-navy-2); margin:0 0 34px}
+.verdict-lead b{color:var(--on-navy); font-weight:700}
+.vgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--navy-rule)}
+.vcell{background:var(--navy); padding:26px 24px 28px}
+.vcell .lbl{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--on-navy-3)}
+.vnum{font-family:var(--display); font-weight:400; font-size:2.9rem; letter-spacing:-.025em; line-height:1;
+  color:var(--band-accent); display:block; margin:14px 0 10px; font-variant-numeric:tabular-nums}
+.vcell.risk .vnum{color:var(--claret)}
+.vcell p{margin:0; font-size:.88rem; line-height:1.5; color:var(--on-navy-2)}
+@media(max-width:760px){.vgrid{grid-template-columns:1fr}}
+
+main.wrap{padding-top:74px}
+section{margin-bottom:78px}
+.sec-head{margin-bottom:30px}
+.sec-num{display:block; font-family:var(--display); font-size:.98rem; font-weight:600; letter-spacing:.06em;
+  color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+.sec-head + p{max-width:var(--measure)}
+
+/* agreed list */
+.agreed{list-style:none; padding:0; margin:26px 0 0; display:grid; gap:1px;
+  background:var(--line); border:1px solid var(--line-strong)}
+.agreed li{background:var(--surface); margin:0; padding:17px 22px; display:grid;
+  grid-template-columns:auto 1fr; gap:15px; align-items:start; font-size:.95rem}
+.agreed .tick{width:15px; height:15px; margin-top:5px; background:var(--brass);
+  clip-path:polygon(14% 47%,0 61%,40% 100%,100% 22%,86% 8%,38% 71%)}
+.agreed b{font-weight:700}
+
+/* agenda steps */
+.steps{margin:30px 0 0}
+.step{display:grid; grid-template-columns:74px 1fr; gap:0 24px; padding:26px 0; border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.smark{font-family:var(--display); font-size:2.1rem; font-weight:500; letter-spacing:-.025em; color:var(--brass); line-height:1}
+.smark small{display:block; font-family:var(--body); font-size:.66rem; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); margin-top:6px; line-height:1.3}
+.sbody h3{margin-bottom:9px}
+.sbody p,.sbody ul{max-width:62ch}
+.sbody > :last-child{margin-bottom:0}
+.sbody ul{margin-bottom:0}
+@media(max-width:620px){.step{grid-template-columns:1fr; gap:12px}.smark{display:flex; align-items:baseline; gap:12px}.smark small{margin-top:0}}
+
+/* tables */
+.tablewrap{overflow-x:auto; border:1px solid var(--line-strong); background:var(--surface); margin:30px 0}
+table{width:100%; border-collapse:collapse; font-size:.92rem; min-width:620px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.34rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:12px 22px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.45}
+thead th{font-size:.68rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px; white-space:nowrap}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+tr.total td{border-top:2px solid var(--line-strong); font-weight:800; background:var(--surface-2)}
+tr.total td.num{color:var(--claret)}
+td .cellsub{display:block; font-size:.8rem; font-weight:400; color:var(--ink-3); margin-top:3px}
+.muted{color:var(--ink-3); font-weight:400}
+.pos{color:var(--bar-good)} .neg{color:var(--claret)}
+
+/* callouts */
+.gate{border:1px solid var(--line-strong); border-left:5px solid var(--brass); background:var(--surface); padding:22px 24px; margin:26px 0}
+.gate h3{margin:10px 0 8px}
+.gate p,.gate ul{margin-bottom:.7em; max-width:64ch}
+.gate > :last-child{margin-bottom:0}
+
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:18px 22px; margin:26px 0}
+.flag p{margin:0; max-width:62ch; font-size:.95rem}
+.flag p + p{margin-top:.65em}
+.flag .chip{margin-bottom:10px}
+
+.note{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:18px 22px; margin:26px 0}
+.note p{margin:0; max-width:62ch; font-size:.95rem}
+.note p + p{margin-top:.65em}
+.note .chip{margin-bottom:10px}
+
+/* checklist */
+.check{list-style:none; padding:0; margin:24px 0 0; max-width:72ch}
+.check li{display:grid; grid-template-columns:auto 1fr; gap:15px; padding:15px 0;
+  border-bottom:1px solid var(--line); margin:0; align-items:start}
+.check li:first-child{border-top:1px solid var(--line)}
+.check .box{width:16px; height:16px; border:2px solid var(--line-strong); margin-top:5px; background:var(--surface)}
+.check b{display:block; margin-bottom:3px}
+.check .hint{font-size:.89rem; color:var(--ink-3)}
+
+/* park list */
+.park{display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line);
+  border:1px solid var(--line-strong); margin-top:26px}
+.park div{background:var(--surface); padding:18px 22px}
+.park b{display:block; font-size:.95rem; margin-bottom:4px}
+.park span{font-size:.87rem; color:var(--ink-3); line-height:1.5}
+@media(max-width:640px){.park{grid-template-columns:1fr}}
+
+.foot{border-top:1px solid var(--line-strong); padding:44px 0 52px; font-size:.8rem; line-height:1.75; color:var(--on-navy-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--on-navy-3); margin-bottom:10px}
+.foot p{max-width:78ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){
+  th,td,caption{padding-left:16px;padding-right:16px}
+}
+@media print{
+  body{background:#fff; font-size:11.5pt}
+  .band{background:#fff; border-bottom:1px solid #999}
+  .vcell{background:#fff; border:1px solid #ccc}
+  .vgrid{background:#fff; gap:8px}
+  .masthead{padding:0 0 24px}
+  main.wrap{padding-top:24px}
+  section{margin-bottom:34px; break-inside:auto}
+  .step,.gate,.flag,.note,.tablewrap,.agreed li{break-inside:avoid}
+  h2{break-after:avoid}
+  .foot{display:none}
+}
+</style>
+
+<header class="band">
+  <div class="wrap masthead">
+    <div class="mast-top">
+      <span class="mast-mark">The Paddock Edit</span>
+      <span class="mast-org">Alana &amp; Kim &middot; Partnership</span>
+    </div>
+    <h1>Nutting It Out</h1>
+    <p class="lede">An agenda for our proper sit-down, updated for what the smaller catch-ups have already settled, plus a one-page summary of where the launch plan sits.</p>
+    <div class="mast-meta">
+      <span>About 75 minutes</span>
+      <span>Roles already agreed</span>
+      <span>Four things to walk out with</span>
+      <span>Draft &mdash; change anything</span>
+    </div>
+  </div>
+  <div class="wrap verdict">
+    <p class="verdict-lead">Most of the big questions are answered. We're <b>both partners</b> with shared responsibility, Alana leads the <b>technical side</b> and Kim leads <b>marketing and the public face</b>, and we're launching as <b>Equestrian Coaches Australia</b> with a parent brand later. What's left is the money: the split said out loud, and who pays for what. Three numbers worth having in front of us while we talk about it.</p>
+    <div class="vgrid">
+      <div class="vcell risk">
+        <span class="lbl">Year one, out of pocket</span>
+        <span class="vnum">$7&ndash;9k</span>
+        <p>Setup, hosting, insurance and marketing across twelve months. Split two ways, roughly $250&ndash;325 each per month.</p>
+      </div>
+      <div class="vcell">
+        <span class="lbl">First real revenue</span>
+        <span class="vnum">Month 8</span>
+        <p>When the founding coaches move from free to paid. Nothing comes in before that, under any version of the plan.</p>
+      </div>
+      <div class="vcell">
+        <span class="lbl">Covering our costs</span>
+        <span class="vnum">Month 13</span>
+        <p>Monthly break-even, not paying us back. Recovering the year-one spend lands somewhere in year three.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">Part one</span>
+    <h2>What we already agree on</h2>
+  </div>
+  <p>A fair amount got settled in the smaller catch-ups since this was first written. Worth reading out loud at the start so we don't spend the session re-arguing it.</p>
+  <ul class="agreed">
+    <li><span class="tick"></span><span><b>We're both partners.</b> Not a website Alana builds and Kim pays a percentage on. Shared responsibility for the business as a whole. The original 30% framing is superseded and the revenue share is off the table.</span></li>
+    <li><span class="tick"></span><span><b>Alana leads the technical side, Kim leads marketing and is the face of the business.</b> Alana picks up maintenance and marketing work once the build settles down.</span></li>
+    <li><span class="tick"></span><span><b>We're launching as Equestrian Coaches Australia.</b> Register that business name, buy that domain, build the site there. The broader parent name can wait until there's actually a second profession.</span></li>
+    <li><span class="tick"></span><span><b>A parent brand comes later, not instead.</b> Coaches launch first. Farriers, bodyworkers, saddle fitters, dentists and trainers come later under the same roof, on the same site.</span></li>
+    <li><span class="tick"></span><span><b>Riders coming back is the point.</b> Whether they come for a coach or a farrier, the goal is the same platform every time.</span></li>
+    <li><span class="tick"></span><span><b>Written properly from the start.</b> Ownership, contributions, and what happens if someone leaves &mdash; agreed now, not patched later. Kim is taking the structure and tax questions to her accountant.</span></li>
+    <li><span class="tick"></span><span><b>Stage one is not passive.</b> Getting professionals and riders onto an empty marketplace is the hard part, and it's mostly manual.</span></li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">Part two</span>
+    <h2>The agenda</h2>
+  </div>
+  <p>Shorter than it was, because several items have answers now. Timings are a guide. <strong>The split and who pays for what are the two that matter</strong> &mdash; if we run out of time, we run out of time on the small stuff, not on those.</p>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="smark">5<small>Minutes</small></div>
+      <div class="sbody">
+        <h3>Where we're going</h3>
+        <p>Quick check that we're picturing the same thing in three years: how many professions, how many states, and whether the ambition is a solid side business or something we'd want to sell one day. It changes a lot of the answers below.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">10<small>Minutes</small></div>
+      <div class="sbody">
+        <h3>The numbers, before anything else</h3>
+        <p>Walk through part three of this document. Splitting a business that costs money for a year is a different conversation from splitting one that makes money, and it's fairer to both of us to have that in the open first.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">15<small>Minutes</small></div>
+      <div class="sbody">
+        <h3>Put a number on what we're each committing</h3>
+        <p>The roles are agreed. What's missing is the size of them. Best done by writing our own down separately first, then comparing &mdash; it stops one answer anchoring the other.</p>
+        <ul>
+          <li>Hours a week, now and ongoing. Kim's number sets the pace of the whole first six months</li>
+          <li>Specific jobs, not categories &mdash; "sign up ten coaches a month", not "marketing"</li>
+          <li><strong>The flex, written both ways.</strong> We've agreed Alana moves into marketing when the build eases. Worth writing the mirror at the same time: Kim takes on more when recruiting is the constraint. Otherwise the sentence only points one direction, and the person whose work has a natural end quietly ends up doing both jobs</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">20<small>Minutes</small></div>
+      <div class="sbody">
+        <h3>The split, and how it's earned</h3>
+        <p><strong>Settled: Kim 70, Alana 30</strong>, on profits, losses and capital, and it's in draft 4. Every decision is unanimous, so the number carries no control with it. What's left in this slot is how a share is earned and what happens if one of us stops.</p>
+        <ul>
+          <li>How a share is earned over time, so neither of us ends up owning part of a business we stopped working on. <strong>This matters whatever the number</strong> &mdash; a split with nothing attached is the one where someone who walks in month five keeps their share of what the other goes on to build. Draft 4 uses a buy-out at independent valuation for the first 24 months instead of a vesting schedule</li>
+          <li>Whether money in and work in are weighted the same</li>
+          <li>What happens if someone's contribution drops off for a while &mdash; illness, work, life</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">10<small>Minutes</small></div>
+      <div class="sbody">
+        <h3>Who pays for what</h3>
+        <p><strong>The biggest thing still open, and the one with real invoices behind it.</strong> Roughly $7,000&ndash;9,000 across year one, with the solicitor and the domain due within weeks. Options: split it down the middle, split it in line with ownership, or one of us fronts it and gets paid back out of revenue before anything is shared.</p>
+        <p>Also worth agreeing when we each start taking money out, and what happens if one of us can't cover a bill that month. Kim's accountant can advise on whether money fronted is best treated as a loan or a capital contribution &mdash; but which of us fronts it is ours to decide.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">10<small>Minutes</small></div>
+      <div class="sbody">
+        <h3>Structure, and who owns what</h3>
+        <p>A general partnership with a proper written agreement (around $1,500&ndash;3,000 &mdash; the one cost genuinely worth paying). ABN and business name registration. And the important one: <strong>the domain, the code and the brand are owned by the business, not by either of us personally.</strong> That's much easier to agree now than after it's built.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">10<small>Minutes</small></div>
+      <div class="sbody">
+        <h3>If one of us wants out</h3>
+        <p>Not a pessimistic conversation &mdash; it's the one that lets us both relax. How someone exits, how their share is valued, whether the other gets first refusal, what happens if someone stops contributing without formally leaving, and what we do if someone offers to buy the whole thing.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">2<small>Minutes</small></div>
+      <div class="sbody">
+        <h3>The name &mdash; now the blocking one</h3>
+        <p>Equestrian Coaches Australia stays, as the name of the coaching section and the name on everything we send a coach. <strong>What we still need is the name above it</strong>, because farriers are launching alongside coaches and a farrier cannot sit under a site called Equestrian Coaches Australia. The parent name now blocks both business names, both domains and Stripe. The shortlist is still in the setup document, and the reasoning is in <em>One site, two professions</em>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">5<small>Minutes</small></div>
+      <div class="sbody">
+        <h3>Who does what by when</h3>
+        <p>Three or four actions with names and dates on them. Chiefly: who books the solicitor, who registers the ABN, and when we next sit down.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">Part three</span>
+    <h2>The launch plan, in short</h2>
+  </div>
+  <p>The full version is in <em>The First 100 Coaches</em>. This is the shape of it, for the ten minutes we spend on it.</p>
+
+  <div class="gate">
+    <span class="chip">The one finding that shapes everything</span>
+    <h3>We can't buy coaches. We have to go and get them.</h3>
+    <p>There are only about 3,000&ndash;6,000 riding coaches in Australia. That's a tiny audience, and advertising to a tiny audience is expensive &mdash; roughly <strong>$272 to acquire one coach on Facebook</strong>, against the <strong>$50 maximum</strong> a coach is worth to us. We checked what the competition does: no Australian equestrian directory, marketplace or magazine is running ads either. They're not missing a trick, the numbers just don't work.</p>
+    <p>So the first hundred coaches come from Kim's contacts, Facebook groups, events and direct approaches. Riders are the opposite &mdash; there are hundreds of thousands of them, and they arrive through Google searching "riding instructor near me". That's where the site build is pointed.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Twelve months, two months at a time</caption>
+      <thead>
+        <tr><th>Months</th><th>What happens</th><th class="num">Spend</th><th class="num">Revenue</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1&ndash;2</td>
+          <td>Agreement signed, ABN and business name, domains bought. First profiles built by hand.<span class="cellsub">Nothing public yet.</span></td>
+          <td class="num">$500</td><td class="num muted">&mdash;</td>
+        </tr>
+        <tr>
+          <td>3&ndash;4</td>
+          <td>Recruiting starts. Kim's contacts first, then Facebook groups discipline by discipline, then events.<span class="cellsub">Target: 25 profiles live by week 12.</span></td>
+          <td class="num">$270</td><td class="num muted">&mdash;</td>
+        </tr>
+        <tr>
+          <td>5&ndash;6</td>
+          <td>Rider-side pages go live. Small ad tests, plus two cheap equestrian media tests.<span class="cellsub">Target: 40 coaches, 750 rider sessions.</span></td>
+          <td class="num">$678</td><td class="num muted">&mdash;</td>
+        </tr>
+        <tr>
+          <td>7&ndash;8</td>
+          <td>Founding coaches switch from free to paid. Google Ads begin. Insurance starts.<span class="cellsub">The moment we find out whether this works.</span></td>
+          <td class="num">$986</td><td class="num">$172</td>
+        </tr>
+        <tr>
+          <td>9&ndash;10</td>
+          <td>Growth. Facebook ads for riders, one show stall.</td>
+          <td class="num">$1,786</td><td class="num">$484</td>
+        </tr>
+        <tr>
+          <td>11&ndash;12</td>
+          <td>Second cohort of coaches converting. Steady state.</td>
+          <td class="num">$1,186</td><td class="num">$698</td>
+        </tr>
+        <tr class="total">
+          <td colspan="2">Year one</td>
+          <td class="num">$5,406</td><td class="num">$1,354</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>What year one actually costs us</caption>
+      <thead><tr><th>Item</th><th class="num">Amount</th></tr></thead>
+      <tbody>
+        <tr><td>Setup &mdash; partnership agreement, business name, terms of use<span class="cellsub">The agreement is the bulk of it, and the range depends on how bespoke we go.</span></td><td class="num">$1,668&ndash;3,668</td></tr>
+        <tr><td>Running and marketing &mdash; hosting, tools, insurance, ads, events</td><td class="num">$5,406</td></tr>
+        <tr><td>Revenue in</td><td class="num pos">&minus;$1,354</td></tr>
+        <tr class="total"><td>Net, year one<span class="cellsub" style="color:inherit;font-weight:400;opacity:.75">Roughly $250&ndash;325 each per month, if split evenly.</span></td><td class="num">$5,720&ndash;7,720</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="gate">
+    <h3>Three points where we stop and check</h3>
+    <p>Built into the plan so we're never spending on autopilot. At each one we decide to keep going, change something, or stop.</p>
+    <ul>
+      <li><strong>Week 12 &mdash;</strong> 25 coach profiles live. If we can't get 25 for free, we won't get 100.</li>
+      <li><strong>Month 6 &mdash;</strong> 40+ coaches and 750+ rider sessions. Proof that riders can find us.</li>
+      <li><strong>Month 8 &mdash;</strong> 40% of free coaches convert to paid. The only checkpoint that really matters.</li>
+    </ul>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">Needs a decision</span>
+    <p><strong>Resolved. The founding offer is a date now, not a number of months.</strong> It runs free until 30 April 2027, and that date lives in the admin settings so it can move without a deploy. It lands close to the six months this page recommended, and it keeps the paid test at month eight where the checkpoints need it.</p>
+    <p>One piece left: which plan a founding coach is actually on during the free period. The old wording promised Spotlight, and the current wording says only that they pay nothing until the date.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Worth ten minutes on its own</span>
+    <p><strong>Price is the biggest lever we have, and it costs nothing to pull.</strong> At $9.99 a month we clear $10.74 per coach after fees. At $19 we clear $18.20 &mdash; nearly double, with the same coaches, the same work and the same spend. Break-even drops from nine paying coaches to five, and from around month thirteen to month ten.</p>
+    <p>A coach charging $80&ndash;120 an hour needs <strong>one lesson every six months</strong> from the platform to justify $19. That's not a hard sell if the platform works. Suggest we test $19 with the founding group rather than $9.99.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">Part four</span>
+    <h2>What we need to walk out with</h2>
+  </div>
+  <p>Everything else can wait. These four unblock the next month of work.</p>
+  <ul class="check">
+    <li><span class="box"></span><span><b>Who's paying the first invoices</b><span class="hint">The one with real deadlines behind it. The solicitor and the domain are due within weeks, not months.</span></span></li>
+    <li><span class="box"></span><span><b>The three blanks in draft 4, and the tie-breaker</b><span class="hint">The split is agreed at 70/30 and written down. What's left is the date, the commencement date, the accountant's name, and whether clause 9.5 gets a tie-breaker.</span></span></li>
+    <li><span class="box"></span><span><b>Kim's hours a week &mdash; an actual number</b><span class="hint">It sets the pace of the whole first six months. The roles are agreed; this is the size of hers.</span></span></li>
+    <li><span class="box"></span><span><b>A date to have the agreement drafted</b><span class="hint">Ideally with the solicitor booked before we leave. Kim's accountant conversation can happen in parallel &mdash; it doesn't block this one.</span></span></li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">Part five</span>
+    <h2>What we're not deciding yet</h2>
+  </div>
+  <p>Naming these upfront keeps the session from sprawling. All of them are real, none of them are ready.</p>
+  <div class="park">
+    <div><b>The parent name</b><span>Not blocking anything now that we're launching as Equestrian Coaches Australia. Whenever it suits.</span></div>
+    <div><b>Final pricing</b><span>We can agree to test $19. The real answer arrives at month eight.</span></div>
+    <div><b>The exact wording of the agreement</b><span>That's the solicitor's job. We just need the decisions written in our own words first.</span></div>
+    <div><b>Farriers, bodyworkers, dentists</b><span>Right idea, wrong year. Coaches first, and the structure leaves room.</span></div>
+    <div><b>Anything about the app build</b><span>It's well underway. It isn't blocked by any of this.</span></div>
+    <div><b>Insurance</b><span>Not needed until month seven, when real money starts moving.</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="sec-num">Before the day</span>
+    <h2>Three things to bring</h2>
+  </div>
+  <div class="gate">
+    <p><strong>A number for your own hours.</strong> Not "as much as I can" &mdash; an actual figure for a normal week, and an honest one. Everything in part two hangs off it.</p>
+    <p><strong>A split you'd be happy with in three years.</strong> Not what feels polite in the room. Write it down before we sit down, and we compare. If they're close, this takes five minutes. If they're not, far better to find out now than after the agreement is drafted.</p>
+    <p><strong>What you're each willing to put in, in cash.</strong> A figure for the first year, and whether you'd rather front it and be repaid or split every invoice as it lands. Both work. Not deciding is the only option that doesn't.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="band">
+  <div class="wrap foot">
+    <p class="fh">About this document</p>
+    <p>A draft agenda, not a proposal. Every item is up for changing, reordering or dropping &mdash; if something important is missing, add it before we meet.</p>
+    <p>The figures come from the marketing plan (<em>The First 100 Coaches</em>) and the setup document (<em>Before We Start</em>). They're estimates built on Australian market data and competitor research, and they'll move as we learn more. Nothing here is legal or financial advice &mdash; the partnership agreement needs a solicitor.</p>
+  </div>
+</footer>

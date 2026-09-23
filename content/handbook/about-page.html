@@ -1,0 +1,345 @@
+<title>Who We Are</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7;
+  --good:#00794F;
+  --pick-bg:#F7F0E1;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+  --wrap:1040px; --measure:68ch;
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.7rem,8vw,5.1rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.8rem,4.4vw,2.85rem); line-height:1.03}
+h3{font-size:1.24rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+.tnum{font-variant-numeric:tabular-nums}
+
+.chip{display:inline-block; font-size:.67rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+/* ---------- masthead ---------- */
+.band{background:var(--ground); color:var(--ink); border-bottom:1px solid var(--line-strong)}
+.masthead{padding:64px 0 60px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:42px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-2)}
+.masthead h1{margin-bottom:28px}
+.masthead .lede{font-size:1.15rem; line-height:1.5; color:var(--ink-2); max-width:56ch; margin:0}
+.mast-meta{margin-top:38px; padding-top:18px; border-top:1px solid var(--line);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.75rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--ink-3)}
+
+.verdict{padding:0 0 58px}
+.verdict-lead{max-width:64ch; font-size:1.02rem; color:var(--ink-2); margin:0 0 32px}
+.verdict-lead b{color:var(--ink); font-weight:700}
+.vgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line)}
+.vcell{background:var(--ground); padding:24px 22px 26px}
+.vcell .lbl{font-size:.67rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3)}
+.vnum{font-family:var(--display); font-weight:400; font-size:3rem; letter-spacing:-.025em; line-height:1;
+  color:var(--brass); display:block; margin:13px 0 9px; font-variant-numeric:tabular-nums}
+.vcell.up .vnum{color:var(--good)}
+.vcell p{margin:0; font-size:.87rem; line-height:1.5; color:var(--ink-2)}
+@media(max-width:760px){.vgrid{grid-template-columns:1fr}}
+
+/* ---------- sections ---------- */
+main.wrap{padding-top:70px}
+section{margin-bottom:78px}
+.sec-head{margin-bottom:28px}
+.sec-num{display:block; font-family:var(--display); font-size:.96rem; font-weight:600;
+  letter-spacing:.06em; color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+
+/* ---------- tables ---------- */
+figure{margin:28px 0; border:1px solid var(--line-strong); background:var(--surface); overflow:hidden}
+figcaption{padding:14px 22px; border-top:1px solid var(--line-strong); font-size:.85rem;
+  line-height:1.5; color:var(--ink-2); background:var(--surface-2)}
+figcaption b{font-weight:700; color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:620px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.3rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:11px 20px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.5}
+thead th{font-size:.66rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px}
+tbody tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600}
+td.mid,th.mid{text-align:center}
+tr.total td{border-top:2px solid var(--line-strong); font-weight:800; background:var(--surface-2)}
+td .sub{display:block; font-size:.83rem; color:var(--ink-3); margin-top:3px; font-weight:400}
+tr.grp td{background:var(--surface-2); font-size:.66rem; font-weight:800; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-3); padding-top:14px; padding-bottom:8px}
+.y{color:var(--good); font-weight:800}
+.n{color:var(--line-strong); font-weight:700}
+.pricerow td{background:var(--pick-bg); font-family:var(--display); font-size:1.5rem; font-weight:500;
+  letter-spacing:-.02em; padding-top:6px; padding-bottom:14px; border-bottom:2px solid var(--line-strong)}
+.pricerow td span{display:block; font-family:var(--body); font-size:.76rem; font-weight:600;
+  letter-spacing:.04em; color:var(--ink-3); margin-top:5px; text-transform:none}
+
+/* ---------- tier panels ---------- */
+.tiers{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:28px 0}
+.tiers > div{border:1px solid var(--line-strong); background:var(--surface); padding:22px 20px;
+  display:flex; flex-direction:column; gap:0}
+.tiers h3{margin:12px 0 4px}
+.tiers .price{font-family:var(--display); font-size:1.9rem; font-weight:500; letter-spacing:-.025em;
+  color:var(--brass); line-height:1; margin:0 0 12px; font-variant-numeric:tabular-nums}
+.tiers .who{font-size:.72rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--claret); margin:0 0 8px}
+.tiers p{margin:0 0 .7em; font-size:.9rem; line-height:1.55; color:var(--ink-2)}
+.tiers p:last-child{margin-bottom:0}
+@media(max-width:820px){.tiers{grid-template-columns:1fr}}
+
+/* ---------- callouts ---------- */
+.rec{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:16px 21px; margin:22px 0}
+.rec p{margin:0; font-size:.94rem; max-width:66ch}
+.rec p + p{margin-top:.6em}
+.rec .chip{margin-bottom:10px}
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:17px 21px; margin:22px 0}
+.flag p{margin:0; max-width:66ch; font-size:.94rem}
+.flag p + p{margin-top:.6em}
+.flag .chip{margin-bottom:10px}
+.note{border:1px solid var(--line-strong); background:var(--surface); padding:17px 21px; margin:22px 0}
+.note p{margin:0; max-width:66ch; font-size:.94rem}
+.note p + p{margin-top:.6em}
+.note .chip{margin-bottom:10px}
+
+/* ---------- rules list ---------- */
+.rules{list-style:none; padding:0; margin:26px 0 0; max-width:74ch}
+.rules li{display:grid; grid-template-columns:auto 1fr; gap:16px; padding:16px 0;
+  border-bottom:1px solid var(--line); margin:0; align-items:start}
+.rules li:first-child{border-top:1px solid var(--line)}
+.rules .mark{font-family:var(--display); font-size:1.15rem; color:var(--claret); line-height:1.3}
+.rules b{display:block; margin-bottom:3px}
+.rules .hint{font-size:.89rem; color:var(--ink-3)}
+
+/* ---------- mocked coach email ---------- */
+.mail{border:1px solid var(--line-strong); background:var(--surface); margin:28px 0; overflow:hidden}
+.mail-head{padding:14px 22px; border-bottom:1px solid var(--line); background:var(--surface-2);
+  font-size:.78rem; color:var(--ink-3); letter-spacing:.03em}
+.mail-head b{color:var(--ink); font-weight:700}
+.mail-body{padding:24px 22px 26px; max-width:60ch}
+.mail-body p{font-size:.95rem; margin:0 0 .9em}
+.mail-body p:last-child{margin-bottom:0}
+.stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line);
+  border:1px solid var(--line); margin:18px 0}
+.stats div{background:var(--surface); padding:14px 12px; text-align:center}
+.stats .s-num{font-family:var(--display); font-size:1.7rem; font-weight:500; color:var(--brass);
+  line-height:1; display:block; font-variant-numeric:tabular-nums}
+.stats .s-lbl{font-size:.66rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--ink-3); display:block; margin-top:7px; line-height:1.3}
+@media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* ---------- open questions ---------- */
+.qs{list-style:none; padding:0; margin:24px 0 0; max-width:74ch}
+.qs li{padding:15px 0; border-bottom:1px solid var(--line); margin:0}
+.qs li:first-child{border-top:1px solid var(--line)}
+.qs b{display:block; margin-bottom:3px}
+.qs .hint{font-size:.89rem; color:var(--ink-3)}
+
+.foot{border-top:1px solid var(--line-strong); padding:42px 0 50px; font-size:.8rem; line-height:1.75; color:var(--ink-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-3); margin-bottom:10px}
+.foot p{max-width:80ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){th,td,caption,figcaption,.mail-body,.mail-head{padding-left:16px;padding-right:16px}}
+</style>
+<div class="band">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="mast-top">
+        <span class="mast-mark">ECA</span>
+        <span class="mast-org">Equestrian Coaches Australia</span>
+      </div>
+      <h1>Who we are</h1>
+      <p class="lede">The About page, written out in full, plus the two decisions it can't be finished without. Drafted from Alana's story and Kim's website bio, with the gaps left visible rather than invented.</p>
+      <div class="mast-meta">
+        <span>Page copy</span>
+        <span>Kim &amp; Alana</span>
+        <span>September 2026</span>
+        <span>Draft 2</span>
+      </div>
+    </header>
+
+    <div class="verdict">
+      <p class="verdict-lead">Personalise it. Every competitor in this market is a faceless listing site, Kim's outreach to coaches is personal and the page has to match it, and Alana's reason for building this <b>is</b> the product thesis. The convention: <b>&ldquo;we&rdquo; for the business, &ldquo;I&rdquo; for the bios.</b></p>
+      <div class="vgrid">
+        <div class="vcell">
+          <span class="lbl">Title tag</span>
+          <span class="vnum">38</span>
+          <p>Characters. &ldquo;About Equestrian Coaches Australia&rdquo; — under the 60 Google renders.</p>
+        </div>
+        <div class="vcell up">
+          <span class="lbl">Facts invented</span>
+          <span class="vnum">0</span>
+          <p>Every gap is a bracket, not a guess. Nine of them are waiting on Kim.</p>
+        </div>
+        <div class="vcell">
+          <span class="lbl">Open decisions</span>
+          <span class="vnum">2</span>
+          <p>Where &ldquo;animal communicator&rdquo; sits, and whether the photos are licensed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- the copy -->
+<section>
+  <div class="sec-head"><span class="sec-num">The copy</span><h2>The page, in order</h2></div>
+  <div class="col">
+    <p>Everything below is final copy, not notes. Square brackets mark the facts nobody has supplied yet — they are deliberately blank.</p>
+  </div>
+
+  <div class="rec">
+    <span class="chip">Metadata</span>
+    <p><strong>Title tag</strong> — About Equestrian Coaches Australia</p>
+    <p><strong>Meta description</strong> — A rider and a coach built a directory for Australian riding coaches, because finding the right one shouldn't come down to luck.</p>
+  </div>
+
+  <div class="col">
+    <h3>H1 — About us</h3>
+    <p>Finding a riding coach in Australia still runs on word of mouth. You ask at a competition, you ask in a Facebook group, you ask the person whose horse goes the way you'd like yours to go. It works, eventually, if you already know people. If you're new, or you've moved, or you want something more specific than general ridden work, it mostly doesn't.</p>
+    <p>We built this so that finding a coach is a search, not a stroke of luck.</p>
+
+    <h3>H2 — Why we built it</h3>
+    <p>Alana found her coach by accident. Kim's posts turned up on Instagram, and that was it — no directory, no search, no recommendation. There are very few coaches in Australia teaching what Kim teaches, and there was no way to go looking for one on purpose.</p>
+    <p>That's the whole idea. Somewhere a rider is looking for a liberty coach, or a Western coach, or a dressage coach who works with nervous riders, and somewhere near them is exactly that person, and neither of them will ever hear about the other. A directory is an unglamorous fix for that, but it is the fix.</p>
+
+    <h3>H2 — The rider</h3>
+    <p><em>First person, Alana.</em></p>
+    <p>I came to horses late. My first lesson was at fifteen, which in pony-club terms is close to a mature-age student, and I bought my first horse at eighteen.</p>
+    <p>My mare now is Rosie, a grey Australian Andalusian who would much rather learn a trick than do another twenty-metre circle. She is clever, opinionated and genuinely willing, which is a combination that doesn't let you get away with anything. Most of what I know about working with a horse rather than at one, I know because she made it clear when I'd asked badly.</p>
+    <p>I build software for a living. So I built this.</p>
+
+    <h3>H2 — The coach</h3>
+    <p><em>First person, Kim. Needs her sign-off before it goes live.</em></p>
+    <p>I coach foundational connection, lightness and body feel — the things that sit underneath every discipline, whether you're jumping, doing dressage or riding bridleless in an open paddock.</p>
+    <p>I've been working with horses for [X] years and teaching for [X] of them, in Australia and [countries]. I work with youngsters through to advanced horses, and with riders from their first lessons through to competition. My specialties are liberty, bridleless riding, classical dressage, showjumping and the transition to bitless, and a lot of what I teach is confidence, biomechanics and mindset as much as it is technique.</p>
+    <p>What I'm actually after, in all of it, is harmony — a horse and rider who understand each other well enough that the aids stop being instructions and start being a conversation. Bridleless riding is the clearest test of that, but it isn't the point. The point is the partnership that makes it possible.</p>
+    <p>[One or two sentences from Kim: how she started, or the horse that changed how she teaches.]</p>
+
+    <h3>H2 — How we do things</h3>
+    <p><strong>We don't take a commission.</strong> Coaches pay a flat monthly fee to be listed. What you agree with your coach is between you and your coach, and we never see a cent of it.</p>
+    <p><strong>We don't vet coaches, and we'd rather say that plainly.</strong> We check that a listing belongs to a real person who agreed to be listed. We don't inspect facilities, verify qualifications or assess teaching. Ask the questions you'd ask anyone you were about to get on a horse for.</p>
+    <p><strong>Nobody gets listed without saying yes.</strong> We don't scrape profiles or build pages about coaches who haven't heard of us.</p>
+    <p><strong>We tell coaches the truth about their numbers.</strong> Every listed coach can see how many riders saw their profile and how many got in touch — including when the answer is none. A directory that hides that is selling hope.</p>
+    <p><strong>We don't sell anyone's details.</strong> Not riders', not coaches'.</p>
+
+    <h3>H2 — Who we are, for the record</h3>
+    <p>We're Alana and Kim, based in south-east Victoria, and we're in the process of registering as a partnership. Kim coaches, and she's listed on this site like any other coach — she gets no ranking advantage, no editorial preference and no discount. If that ever changes, we'll say so here.</p>
+
+    <h3>H2 — We're new, and we'd rather say so</h3>
+    <p>This site launched in [month/year] and the coach list is still filling out. If there's nobody in your area yet, that's because we haven't reached them — not because they don't exist. Tell us who's missing, or tell your coach we're here.</p>
+
+    <h3>Calls to action</h3>
+    <p>Riders — <b>Find a coach</b>. Coaches — <b>List your coaching</b>. Questions, corrections, or a coach we should know about: [shared inbox address].</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Why the disclosure paragraph is in there</span>
+    <p>Kim is a listed coach on a site she co-owns. That is fine, and it is much better said on the About page than discovered by a coach paying $24.95 a month. It is the same promise as &ldquo;we tell coaches the truth about their numbers&rdquo;, pointed at ourselves.</p>
+  </div>
+</section>
+
+<!-- kim's bio -->
+<section>
+  <div class="sec-head"><span class="sec-num">The source</span><h2>What Kim's website bio does and doesn't give us</h2></div>
+  <div class="col">
+    <p>Her existing bio is usable, but it is not droppable in. Three things about it:</p>
+  </div>
+
+  <ul class="rules">
+    <li><span class="mark">01</span><div><b>It's third-person marketing copy</b><span class="hint">Written for her own site, where it works. This page is in first person, so the section above is a rewrite, not a paste. Kim needs to read it and confirm it sounds like her.</span></div></li>
+    <li><span class="mark">02</span><div><b>It's a &ldquo;what&rdquo;, not a &ldquo;how I got here&rdquo;</b><span class="hint">It lists every modality she teaches — right for a services page, wrong for an About page, where it reads as a keyword list. The missing part is the human one: how long, how she started, the horse that shifted her thinking. Five short facts would lift this section more than anything else on the page.</span></div></li>
+    <li><span class="mark">03</span><div><b>&ldquo;International equestrian coach&rdquo; needs one clause after it</b><span class="hint">Which countries, or what the international work actually is. Unbacked it reads as a claim; supported it reads as a credential.</span></div></li>
+  </ul>
+</section>
+
+<!-- decisions -->
+<section>
+  <div class="sec-head"><span class="sec-num">Two decisions</span><h2>Things to settle before this goes live</h2></div>
+
+  <div class="rec">
+    <span class="chip">Decision one — where &ldquo;animal communicator&rdquo; sits</span>
+    <p>This is a positioning choice, not a detail. It will land strongly with part of the liberty and ethical-horsemanship audience, and it will cost credibility with part of the competition dressage and showjumping audience. The whole pitch of this site is that it serves every discipline.</p>
+    <p><strong>Recommendation:</strong> leave it off the shared About page and put it on Kim's coach profile, where riders searching for exactly that will find it. The About page's job is to explain the business; a full specialisation list there makes the site look like Kim's shopfront. Kim makes the call — but deliberately, not by copy-paste.</p>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">Decision two — the photographs</span>
+    <p>Both images are credited to <b>Lisa Gordon / Little More Grace Photographics</b> and one carries a visible watermark. Get written permission before either goes on the site. A watermarked photo on a commercial page is both a licensing exposure and a bad look. A short email asking for permission and terms is usually enough, and photographers generally say yes when they're credited.</p>
+  </div>
+</section>
+
+<!-- blanks -->
+<section>
+  <div class="sec-head"><span class="sec-num">The gaps</span><h2>Left blank rather than invented</h2></div>
+  <div class="col">
+    <h3>Waiting on Kim</h3>
+    <ul>
+      <li>Years working with horses; years teaching</li>
+      <li>Which countries the &ldquo;international&rdquo; work covers</li>
+      <li>Where she's based and how far she travels</li>
+      <li>What she rides now, and their names</li>
+      <li>The horse that changed how she teaches</li>
+      <li>Whether she wants qualifications listed</li>
+      <li>Whether she prefers &ldquo;coach&rdquo;, &ldquo;trainer&rdquo; or &ldquo;instructor&rdquo;</li>
+      <li>Whether &ldquo;animal communicator&rdquo; goes on the About page, her profile, or both</li>
+    </ul>
+
+    <h3>Waiting on Alana</h3>
+    <ul>
+      <li>The shared inbox address</li>
+      <li>Launch month and year, for the &ldquo;we're new&rdquo; section</li>
+      <li>Whether to name the partnership entity once ASIC registration is through</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <span class="chip">The rule this page was written under</span>
+    <p>Nothing on an About page is worth a fabricated fact. A bracket that stays visible for a month is cheaper than a claim a coach can catch us on.</p>
+  </div>
+</section>
+
+</main>
+
+<div class="band">
+  <div class="wrap">
+    <div class="foot">
+      <div class="fh">Where this came from</div>
+      <p>Alana's own account of coming to horses at fifteen and finding Kim through Instagram; Kim's published website bio, quoted as source material rather than copy; and the commitments already settled in <em>What They're Buying</em> — no commission, no vetting theatre, honest numbers.</p>
+      <p>Draft 2. The first draft was written before Kim's bio arrived and had her section entirely scaffolded.</p>
+    </div>
+  </div>
+</div>

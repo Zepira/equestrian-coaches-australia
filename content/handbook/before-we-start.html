@@ -1,0 +1,901 @@
+<title>Before We Start</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --navy:#E7DAC6; --navy-2:#DDCFB6;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8; --claret-hi:#DE8B6C;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7; --band-accent:#1F3A2E;
+  --bar-good:#00794F; --bar-bad:#C0492A;
+  --pick:#9C4229; --pick-bg:#F7F0E1;
+  --code-bg:#FBF7EC; --code-ink:#33312B; --code-key:#1F3A2E; --code-com:#87816F;
+  --on-navy:#22201C; --on-navy-2:#4A4842; --on-navy-3:#5E5A50;
+  --navy-rule:#D3C1A4;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --wrap:1040px; --measure:68ch;
+  --ribbon:polygon(0 0,100% 0,100% 100%,0 100%);
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.7rem,8vw,5.1rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.8rem,4.4vw,2.85rem); line-height:1.03}
+h3{font-size:1.24rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+h4{font-family:var(--body); font-size:.72rem; font-weight:800; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 10px}
+
+.chip{display:inline-block; font-size:.67rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+.band{background:var(--navy); color:var(--on-navy); border-bottom:1px solid var(--line-strong)}
+.band a{color:var(--claret)}
+.masthead{padding:64px 0 66px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:42px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--on-navy-2)}
+.masthead h1{margin-bottom:28px}
+.masthead .lede{font-size:1.15rem; line-height:1.5; color:var(--on-navy-2); max-width:54ch; margin:0}
+.mast-meta{margin-top:38px; padding-top:18px; border-top:1px solid var(--navy-rule);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.75rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--on-navy-3)}
+
+main.wrap{padding-top:66px}
+section{margin-bottom:76px}
+.sec-head{margin-bottom:28px}
+.sec-num{display:block; font-family:var(--display); font-size:.96rem; font-weight:600;
+  letter-spacing:.06em; color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+
+/* tables */
+figure{margin:28px 0; border:1px solid var(--line-strong); background:var(--surface); overflow:hidden}
+figcaption{padding:14px 22px; border-top:1px solid var(--line-strong); font-size:.85rem;
+  line-height:1.5; color:var(--ink-2); background:var(--surface-2)}
+figcaption b{font-weight:700; color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:600px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.3rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:12px 22px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.5}
+thead th{font-size:.66rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px; white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600}
+tr.total td{border-top:2px solid var(--line-strong); font-weight:800; background:var(--surface-2)}
+td .sub{display:block; font-size:.83rem; color:var(--ink-3); margin-top:3px}
+tr.pick td{background:var(--pick-bg)}
+tr.pick td:first-child{box-shadow:inset 4px 0 0 var(--pick)}
+.blank{display:inline-block; min-width:120px; border-bottom:1.5px dotted var(--line-strong); height:1.1em}
+
+/* decision blocks */
+.dec{margin:0 0 8px}
+.rec{border-left:5px solid var(--brass); background:var(--brass-soft); padding:15px 20px; margin:20px 0;
+  border:1px solid var(--brass-line); border-left-width:5px}
+.rec p{margin:0; font-size:.94rem; max-width:66ch}
+.rec p + p{margin-top:.6em}
+.rec .chip{margin-bottom:10px}
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:17px 21px; margin:22px 0}
+.flag p{margin:0; max-width:66ch; font-size:.94rem}
+.flag p + p{margin-top:.6em}
+.flag .chip{margin-bottom:10px}
+/* quiet aside — distinct from .rec (a recommendation) and .flag (a warning) */
+.note{border:1px solid var(--line-strong); background:var(--surface); padding:17px 21px; margin:22px 0}
+.note p{margin:0; max-width:66ch; font-size:.94rem}
+.note p + p{margin-top:.6em}
+.note .chip{margin-bottom:10px}
+
+/* both-sides */
+.settled{border:1px solid var(--brass-line); background:var(--brass-soft); padding:20px 24px; margin:26px 0}
+.settled ul{list-style:none; padding:0; margin:14px 0 0}
+.settled li{position:relative; padding-left:26px; margin-bottom:11px; font-size:.94rem; line-height:1.55; max-width:66ch}
+.settled li:last-child{margin-bottom:0}
+.settled li::before{content:"\2713"; position:absolute; left:0; top:0; color:var(--brass); font-weight:700}
+.settled li b{font-weight:700}
+.settled > p{margin:0; font-size:.94rem; max-width:66ch}
+.settled .chip{margin-bottom:10px}
+.open-q{border:1px solid var(--claret-line); background:var(--surface); padding:20px 24px; margin:26px 0}
+.open-q ul{list-style:none; padding:0; margin:14px 0 0}
+.open-q li{position:relative; padding-left:26px; margin-bottom:11px; font-size:.94rem; line-height:1.55; max-width:66ch}
+.open-q li:last-child{margin-bottom:0}
+.open-q li::before{content:"?"; position:absolute; left:2px; top:0; color:var(--claret); font-weight:800}
+.open-q > p{margin:0; font-size:.94rem; max-width:66ch}
+.open-q .chip{margin-bottom:10px}
+.fair{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:26px 0}
+.fair > div{border:1px solid var(--line-strong); background:var(--surface); padding:20px}
+.fair h3{margin:11px 0 8px; font-size:1.1rem}
+.fair p{margin:0; font-size:.9rem; line-height:1.55; color:var(--ink-2)}
+@media(max-width:720px){.fair{grid-template-columns:1fr}}
+
+/* checklist */
+.check{list-style:none; padding:0; margin:24px 0 0}
+.check li{display:grid; grid-template-columns:auto 30px 1fr auto; gap:14px; padding:14px 0;
+  border-bottom:1px solid var(--line); margin:0; align-items:baseline}
+.check li:first-child{border-top:1px solid var(--line)}
+.check .box{width:16px; height:16px; border:2px solid var(--line-strong); align-self:start; margin-top:5px}
+.check .n{font-family:var(--display); font-weight:500; color:var(--brass); font-size:1.05rem}
+.check b{display:block; margin-bottom:2px}
+.check .hint{font-size:.87rem; color:var(--ink-3)}
+.check .cost{font-size:.8rem; font-weight:700; color:var(--ink-2); white-space:nowrap; font-variant-numeric:tabular-nums}
+@media(max-width:640px){
+  .check li{grid-template-columns:auto 24px 1fr; }
+  .check .cost{grid-column:3; margin-top:4px}
+}
+
+.foot{border-top:1px solid var(--line-strong); padding:42px 0 50px; font-size:.8rem; line-height:1.75; color:var(--on-navy-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--on-navy-3); margin-bottom:10px}
+.foot p{max-width:80ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){th,td,caption,figcaption{padding-left:16px;padding-right:16px}}
+</style>
+
+<div class="band">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="mast-top">
+        <span class="mast-mark">ECA</span>
+        <span class="mast-org">Equestrian Coaches Australia</span>
+      </div>
+      <h1>Before we start</h1>
+      <p class="lede">Nine things Kim and Alana need to agree on before a single coach gets contacted. Five now have an answer. This is the record of those, and the options for the four that are left.</p>
+      <div class="mast-meta">
+        <span>Kim &amp; Alana</span>
+        <span>Updated September 2026</span>
+        <span>Read time: about 15 minutes</span>
+      </div>
+    </header>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section style="margin-bottom:60px">
+  <div class="col">
+    <p>Almost none of the marketing plan can start until these are settled. You cannot email coaches from a domain nobody has registered, and you cannot take a subscription without a Stripe account attached to an ABN and a bank account.</p>
+    <p>The good news is that most of it is one conversation. The expensive part is not the paperwork, it is the terms that never got written down and then got remembered differently two years later.</p>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">Read this bit</span>
+    <p>This is not legal or financial advice, and neither of us is a lawyer or an accountant. It is a list of the things to decide, so that when you do sit down with a solicitor and an accountant it is a short conversation about your actual choices rather than an expensive one where they work out what you want from scratch.</p>
+    <p>Get the agreement drafted or at least reviewed by a solicitor before you sign it, and talk to an accountant about the structure and the tax. Both are cheap next to what they prevent.</p>
+  </div>
+</section>
+
+<!-- where you got to -->
+<section>
+  <div class="sec-head"><span class="sec-num">Since this was written</span><h2>What you have already agreed</h2></div>
+  <div class="col">
+    <p>Kim and Alana have had several smaller conversations rather than one big one, and a fair amount is now settled. This section is the record of that, so the rest of the page can be read as <em>what is left</em> rather than starting from scratch.</p>
+  </div>
+
+  <div class="settled">
+    <span class="chip">Agreed between you</span>
+    <ul>
+      <li><b>You are both partners.</b> Not a client and a contractor, and not Kim's business with Alana paid a cut. Equal footing, shared responsibility for the business as a whole.</li>
+      <li><b>Alana leads the technical side.</b> Building it, running it, keeping it up.</li>
+      <li><b>Kim leads marketing and is the face of the business.</b> The outreach, the community, the public presence.</li>
+      <li><b>Alana picks up maintenance and marketing work once the build settles down.</b> The technical load is front-heavy; her hours move across as it eases.</li>
+      <li><b>Kim is taking the structure and tax questions to her accountant.</b> That covers most of decision one and part of decision four.</li>
+    </ul>
+  </div>
+
+  <div class="open-q">
+    <span class="chip claret">Still open</span>
+    <ul>
+      <li><b>Who pays for what</b>, and how anyone who fronts money gets it back. Decision four.</li>
+      <li><b>The actual split</b>, and what happens if one of you stops. Decision two &mdash; "shared responsibility" describes how you work, not what each of you owns.</li>
+      <li><b>The written agreement itself.</b> Nothing above is written down yet.</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <span class="chip">One thing worth naming, kindly</span>
+    <p>"Alana picks up marketing when the tech workload dies down" is a sensible arrangement and it is also the one asymmetry in the shape you have agreed. Kim's role has a natural ceiling &mdash; there are only so many coaches to message in a week. Alana's does not: the build finishes, and then she absorbs the overflow from the other side too.</p>
+    <p>The fix is small. Write the flex as running <em>both</em> ways &mdash; Kim takes on more when recruitment is the constraint, Alana takes on more when it is the product &mdash; and put a rough hours expectation on each of you rather than only on Kim. Then revisit it at each of the three checkpoints. That turns a goodwill arrangement into one that survives a bad month.</p>
+  </div>
+</section>
+
+<!-- glance -->
+<section>
+  <div class="sec-head"><span class="sec-num">The short version</span><h2>Nine decisions</h2></div>
+  <div class="col">
+    <p>If you only read one page, read this one. Five of the nine now have an answer; the detail behind each is below.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Decide these together, write them down</caption>
+        <thead><tr><th>Decision</th><th>Suggested</th><th>Agreed</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. How it is owned</strong></td><td>A general partnership with a properly drafted agreement. Review incorporating at month 8</td><td><strong>Partnership</strong><span class="sub">Kim confirming with her accountant</span></td></tr>
+          <tr><td><strong>2. The split, and vesting</strong></td><td>Settled 22 Sep 2026. Kim 70, Alana 30, on profits, losses and capital. Every decision unanimous, so the number carries no control</td><td>Agreed, in draft 4</td></tr>
+          <tr><td><strong>3. How Alana is paid</strong></td><td>A share of the business instead of a revenue share, not both. The build is her founding contribution</td><td><strong>Ownership</strong><span class="sub">The revenue share is off the table</span></td></tr>
+          <tr><td><strong>4. Who pays the bills</strong></td><td>Costs off the top. Whoever fronts money early gets repaid first. Insurance from month 7</td><td><span class="blank"></span></td></tr>
+          <tr><td><strong>5. What each of you commits to</strong></td><td>Written scope and rough hours for both, revisited at each checkpoint</td><td><strong>Roles agreed</strong><span class="sub">Hours still to put a number on</span></td></tr>
+          <tr><td><strong>6. Who owns what</strong></td><td>The business owns everything. Both have admin access to every account</td><td><span class="blank"></span></td></tr>
+          <tr><td><strong>7. Who does what</strong></td><td>Alana leads build and billing. Kim leads coaches, community and the public face. Shared inbox</td><td><strong>Agreed</strong><span class="sub">Write the flex both ways</span></td></tr>
+          <tr><td><strong>8. Leaving, and selling</strong></td><td>Written both ways, agreed now while neither of you knows who will want out</td><td><span class="blank"></span></td></tr>
+          <tr><td><strong>9. The name and the domains</strong></td><td>Launch on Equestrian Coaches Australia. The parent name can wait until there is a second profession</td><td><strong>Equestrian Coaches Australia</strong><span class="sub">Parent name deferred</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Nothing here is permanent.</b> All of it can be renegotiated later by agreement. The point is a written starting position, so a disagreement in a year is a conversation about changing something rather than an argument about what was meant.</figcaption>
+  </figure>
+
+  <div class="flag">
+    <span class="chip claret">The thing that makes this urgent</span>
+    <p>The app is already about three quarters built and nothing is written down. Alana has done the majority of the work so far on a handshake. Every phase that ships without an agreement makes the imbalance bigger and the conversation harder, because the leverage to negotiate ownership exists <em>before</em> the work is finished, not after.</p>
+    <p>This is not a reason to rush the terms. It is a reason to have the conversation this week rather than after phase eight.</p>
+  </div>
+</section>
+
+<!-- 1 -->
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>How this is owned</h2></div>
+
+  <div class="rec">
+    <span class="chip">Changed</span>
+    <p>The earlier version of this page said form a company now. <strong>That was over-engineered for the size of this business, and the partnership instinct is the better call.</strong> What follows is the revised version, including where the first one overstated the difference.</p>
+  </div>
+
+  <div class="col">
+    <p>Everyone repeats the same warning about general partnerships: each partner is personally liable for the whole of the debts, including ones the other person ran up. That is true. It is also worth asking what this business could actually owe.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>What the exposure actually is</caption>
+        <thead><tr><th>Kind of risk</th><th>In this business</th><th>How big</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Ordinary debts</strong></td><td>Hosting, domains, email, ad spend, printing. No premises lease, no stock, no staff, no equipment finance.</td><td>Around $50 a month plus whatever you deliberately choose to spend on marketing. Known and small.</td></tr>
+          <tr><td><strong>One partner binding the other</strong></td><td>In principle either of you could commit the partnership to something without asking.</td><td>Fixable in the agreement with a spending limit. See below.</td></tr>
+          <tr><td><strong>A claim from a coach</strong></td><td>"You took my money and did not deliver", or "you presented me wrongly".</td><td>Real once money changes hands. Small in dollars, and insurable.</td></tr>
+          <tr><td><strong>A claim from a rider</strong></td><td>Someone gets hurt in a lesson and comes after the platform that introduced them.</td><td>Low probability, potentially large. This is the only genuine tail risk, and it is exactly what insurance is for.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>The tail risk is the whole argument for a company</b> &mdash; and insurance covers the same thing for less money. At this size you are choosing which of the two to buy, not whether to have both.</figcaption>
+  </figure>
+
+  <div class="col">
+    <p>One correction to the earlier version. It compared a cheap handshake agreement under a sole trader against an expensive shareholders agreement under a company, which made the gap look bigger than it is. <strong>You need a proper written agreement whichever structure you pick</strong>, and it is the largest single cost either way. The structure is the cheap decision. The agreement is the one worth paying for.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>What the structure choice actually costs</caption>
+        <thead><tr><th></th><th class="num">To set up</th><th class="num">Every year</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr class="pick">
+            <td><strong>General partnership</strong><span class="sub">Suggested</span></td>
+            <td class="num">$108</td>
+            <td class="num">$400&ndash;900</td>
+            <td>ABN and partnership TFN are free. Trading name to ASIC. Nothing to ASIC each year. A partnership tax return is simpler and cheaper than a company one.</td>
+          </tr>
+          <tr>
+            <td><strong>Company (Pty Ltd)</strong></td>
+            <td class="num">$744</td>
+            <td class="num">$1,340&ndash;2,340</td>
+            <td>$636 to ASIC to register, $342 a year after that, plus roughly $1,000 to $2,000 for the company return and compliance.</td>
+          </tr>
+          <tr class="total"><td>Difference</td><td class="num">$636</td><td class="num">~$900&ndash;1,600/yr</td><td>Roughly $3,300&ndash;5,900 over three years</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Against a business that might earn $12,888 in its first year</b> at 100 paying coaches, that is a real number rather than a rounding error. Your instinct on cost is right. Both routes still need the agreement, which is $1,500 to $3,000 either way.</figcaption>
+  </figure>
+
+  <div class="col">
+    <h3 style="margin:30px 0 12px">Two things that make a partnership safe enough here</h3>
+    <ul>
+      <li><strong>A binding limit in the agreement.</strong> Neither partner can commit the partnership beyond an agreed amount, say $200, without the other's written consent. That closes most of the "liable for debts I did not agree to" worry between two people who already trust each other. It is one clause.</li>
+      <li><strong>Insurance from the first payment.</strong> Public liability and professional indemnity cover the injury-claim tail that limited liability would otherwise absorb, and they cost less than running a company. Same trigger as decision four: buy before the first coach pays.</li>
+    </ul>
+    <p>Those two together get you most of what incorporating would have bought, for a fraction of the ongoing cost.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Converting later is not a trap</span>
+    <p>The usual reason to incorporate early is that moving assets into a company later triggers capital gains tax. The ATO's <strong>small business restructure roll-over</strong> exists precisely for this: businesses under $10 million turnover can move active assets from a partnership into a company without an immediate tax bill, as long as it is a genuine restructure and each person's economic share stays the same.</p>
+    <p>It defers rather than erases the tax, and stamp duty and accountant fees still apply, so ask the accountant what the move would actually cost before you decide. But "we will be stuck" is not a reason to incorporate now.</p>
+  </div>
+
+  <div class="rec">
+    <span class="chip">Suggested</span>
+    <p><strong>A general partnership with a properly drafted agreement, a binding limit clause, insurance from the first payment, and a written note to review incorporating at month 8.</strong> Month 8 is when the founding coaches convert to paid, which is the same moment the business first has real revenue, real obligations and something worth protecting.</p>
+    <p>Spend the money on the agreement, not the structure.</p>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">The one thing that would change this</span>
+    <p>If either of you has personal assets you would be badly hurt to lose, and a broker cannot quote sensible professional indemnity cover for a directory, then limited liability is worth the $1,400 a year and you should incorporate instead.</p>
+    <p>That is a question only the two of you can answer, and it is worth answering out loud rather than assuming. Everything above assumes the answer is no.</p>
+  </div>
+
+  <div class="col">
+    <p>One piece of vocabulary that still matters. A general partnership is a legal structure, and a written <em>partnership agreement</em> is a separate thing that sits on top of it. Without the agreement, the default rules apply &mdash; and one of those is that the partnership dissolves when a partner leaves. Make sure the agreement covers continuity, or the structure you picked for simplicity becomes the thing that ends the business when someone gets busy.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>The split, and why vesting matters more</h2></div>
+
+  <div class="rec">
+    <span class="chip">Where this has landed</span>
+    <p>Kim has said she wants both of you to be partners with shared responsibility. That is the answer to the <em>shape</em> of the deal, and it is a good one — it settles decision three entirely and most of decision one.</p>
+    <p><strong>The number is now settled: Kim 70, Alana 30</strong>, on profits, losses and capital, and it is written into draft 4 of the agreement. Every decision is unanimous, so the split carries no control with it. The rest of this section is about what protects it, which is the half that still matters.</p>
+  </div>
+
+  <div class="col">
+    <p>The hours are lopsided in the first year, and it is worth being honest that they will be. Alana is finishing a build; Kim is starting outreach that does not fully begin until there are profiles to point at. That question is now answered, and it did not turn on the hours: the agreed number is Kim 70 and Alana 30, on the basis that Kim's contacts and the idea are worth what they are worth regardless of who is busier in year one. Nobody raises it again in month nine.</p>
+    <p>Both contributions are necessary and neither is replaceable. Alana is building a product that would otherwise cost tens of thousands to commission. Kim brought the idea and, more importantly, <em>is</em> the entire go-to-market plan, because coach recruitment runs on her name and her contacts. Neither of you gets anywhere alone.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Four ways to divide it</caption>
+        <thead><tr><th>Split</th><th>The argument for it</th></tr></thead>
+        <tbody>
+          <tr class="pick"><td><strong>50 / 50</strong><span class="sub">Suggested starting point</span></td><td>Both contributions are essential and different, so measuring them against each other invites resentment either way. Simple, and it is what most two-founder businesses land on.</td></tr>
+          <tr><td><strong>Weighted to Alana</strong><span class="sub">say 60 / 40</span></td><td>Reflects that she is putting in the larger share of hours and has already delivered most of the build.</td></tr>
+          <tr><td><strong>Weighted to Kim</strong><span class="sub">say 60 / 40</span></td><td>Reflects that it was her idea and her industry standing is the thing that makes coach recruitment possible at all.</td></tr>
+          <tr><td><strong>Sweat-equity ledger</strong></td><td>Both log hours at an agreed rate and the split follows the totals. Precise on paper. In practice it turns every week into an accounting exercise and it undervalues Kim's contacts, which take no hours at all.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>The split matters less than what happens if someone stops.</b> A split with proper vesting is more robust than a carefully calculated one with nothing else attached.</figcaption>
+  </figure>
+
+  <div class="col">
+    <h3 style="margin:28px 0 12px">Earning your share, in one paragraph</h3>
+    <p>Your split is agreed now, but the agreement says a partner who leaves early gives most of it back, with the amount they hand over shrinking as time passes. A common shape is four years with a one-year cliff: leave in the first year and you keep nothing, then you keep a growing slice each year until it is fully yours. Companies call this vesting; a partnership agreement can do exactly the same thing in its own words.</p>
+    <p>It protects both of you from the same thing. If Kim stops recruiting in month four, Alana is not left carrying the business with a silent half-owner. If Alana stops building in month four, Kim is not paying half the business to someone who left her with an unfinished site.</p>
+  </div>
+
+  <div class="rec">
+    <span class="chip">Changed</span>
+    <p>This page recommended 50/50. <strong>The agreed split is Kim 70 and Alana 30</strong>, on profits, losses and capital, and it is in draft 4. Alana's call, and it stands. The argument above is left in place because the reasoning still matters, not because the number is open.</p>
+    <p>Two things carried across unchanged. Every decision is unanimous, so 70/30 gives Kim no control she would not have had at 50/50. And the earn-over-time question is still the more important half: a split with nothing attached is the arrangement where a partner who walks away in month five keeps their share of everything the other one goes on to build. Draft 4 answers it with a buy-out at independent valuation for the first 24 months rather than a vesting schedule.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>How Alana is paid</h2></div>
+
+  <div class="settled">
+    <span class="chip">Settled</span>
+    <p>Ownership, not a revenue share. Kim's co-ownership offer replaced the 30% arrangement rather than sitting alongside it, and both of you are treating the build as Alana's founding contribution the same way Kim's contacts and idea are hers. The rest of this section is kept as the reasoning, and because the revenue definition in it is worth reading once even though you are not using it.</p>
+  </div>
+
+  <div class="col">
+    <p>The 30% revenue share was designed for a different arrangement, where Alana was a contractor building a site for Kim's business. Now that she is a co-owner, it is replaced rather than kept alongside.</p>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">Do not stack the two</span>
+    <p>Taking 30% off the top <em>and</em> half of what is left means Alana receives around 65% of every dollar. Kim will spot that, and she will be right to. Pick one mechanism.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Two mechanisms, one to choose</caption>
+        <thead><tr><th>Approach</th><th>What it means</th><th>Best when</th></tr></thead>
+        <tbody>
+          <tr class="pick">
+            <td><strong>A share of the business, no revenue share</strong><span class="sub">Suggested</span></td>
+            <td>The build is Alana's founding contribution, the same way Kim's contacts and idea are hers. Both are recognised in the equity split rather than paid out. Money comes out later as distributions, when there is money.</td>
+            <td>You are genuinely co-owners and both expect to be here in three years.</td>
+          </tr>
+          <tr>
+            <td><strong>Revenue share, no ownership</strong></td>
+            <td>Alana is paid for work and takes no ownership. Defined as money actually received less Stripe fees, refunds and chargebacks &mdash; $2.86 on a $9.99 listing, not $3.00.</td>
+            <td>Alana wants paying rather than owning, and neither of you wants shared responsibility for the business.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>A middle exists if you want one:</b> a smaller equity share plus a modest revenue share that ends after an agreed total, treating part of the build as deferred payment. It works, but it is two mechanisms to track instead of one, and simple arrangements survive better.</figcaption>
+  </figure>
+
+  <div class="col">
+    <p>If you do keep a revenue share for any period, write the definition down in a sentence. "Revenue means money actually received into the business account from coach subscriptions, less payment processing fees, refunds and chargebacks." Paid monthly against an invoice, with the Stripe payout report attached, so nobody has to take anyone's word for the number.</p>
+    <p>Under the ownership route, neither of you should expect to take money out for a while. At 100 paying coaches the business nets about $1,074 a month, and the running costs come out of that first.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Who pays the bills</h2></div>
+
+  <div class="open-q">
+    <span class="chip claret">The main thing still open</span>
+    <p>This is now the biggest unanswered question between you, and it is worth settling before the next build phase rather than after. Kim is seeing her accountant, which is the right person for the tax half — but who fronts the money is a decision the two of you make, not one the accountant makes for you.</p>
+  </div>
+
+  <div class="col">
+    <p>Running costs are about $50 a month for hosting, domain and email. The marketing budget is $1,448 in the first six months and up to $3,960 more after that if the checkpoints pass. All of it happens before there is any revenue.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Three ways to handle it</caption>
+        <thead><tr><th>Approach</th><th>How it feels to Kim</th><th>How it feels to Alana</th></tr></thead>
+        <tbody>
+          <tr><td>Kim pays everything</td><td>Carrying all the cash risk while sharing the ownership</td><td>Comfortable now, awkward to argue from later</td></tr>
+          <tr><td>Split to match the ownership shares</td><td>Fair, and shares the risk properly</td><td>Also fair, but real money out of pocket for months</td></tr>
+          <tr class="pick"><td><strong>Costs off the top, money fronted is repaid first</strong><span class="sub">Suggested</span></td><td>Gets her money back before anyone takes a distribution</td><td>Same. Neither is quietly subsidising the other</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>How it works.</b> One shared spreadsheet, two columns: what each of you has put in, and what has been repaid. Revenue pays running costs first, then repays what is outstanding, then anything left is split. Ten minutes a month, and it removes the most common cause of resentment in a small business.</figcaption>
+  </figure>
+
+  <div class="col">
+    <h3 style="margin:32px 0 12px">Do you actually need insurance?</h3>
+    <p>Not yet. The blanket "get public liability and professional indemnity before launch" was too cautious for what you are actually doing on day one, which is running a website with twenty-five free listings on it.</p>
+    <p>Public liability covers injury or damage to other people arising from your business activities. You do not run lessons, own premises the public visits, or handle horses. The usual trigger barely exists. Professional indemnity covers claims that your service caused someone financial loss, and for a directory the realistic version is a coach or rider saying you presented someone as qualified when they were not.</p>
+    <p>Which means the thing that actually protects you early is free:</p>
+    <ul>
+      <li><strong>Never say "verified", "accredited" or "recommended"</strong> about a coach unless you have genuinely checked. Say the information was supplied by the coach.</li>
+      <li><strong>Terms of service that state plainly you do not vet or accredit anyone</strong>, and that arrangements are between the rider and the coach.</li>
+      <li><strong>Insurance itself</strong>, once there is revenue. In a partnership it is doing the job that limited liability would otherwise do, which is exactly why decision one leans on it. See the trigger table below.</li>
+    </ul>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>When to buy it</caption>
+        <thead><tr><th>Trigger</th><th>Why</th><th>When that lands</th></tr></thead>
+        <tbody>
+          <tr><td><strong>The first coach pays you</strong></td><td>A paying customer can claim you did not deliver what you sold. This is the real one.</td><td>Around month 7</td></tr>
+          <tr><td><strong>You stand at a show or expo</strong></td><td>Organisers almost always require a certificate of currency before they will give you a site, and there is genuine public exposure at an event.</td><td>Months 7&ndash;12, if you do it</td></tr>
+          <tr><td><strong>You make any claim about a coach</strong></td><td>Badges, verification, editorial picks. The moment you assert something beyond what the coach told you, the professional indemnity risk becomes real.</td><td>Only if you choose to</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Get quotes now, buy later.</b> Ask a broker who knows sport and recreation for an indicative number this month, so you know what the year-two cost looks like. Then buy the policy before the first payment lands, not before the first free listing. That moves $600 to $1,200 out of your setup budget and into month seven, where there is revenue to pay it from.</figcaption>
+  </figure>
+
+  <div class="rec">
+    <span class="chip">Also agree</span>
+    <p>A spending limit neither of you crosses alone. <strong>$200 is a sensible line.</strong> Under it, whoever runs that area just spends it. Over it, you both say yes first.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>What each of you is committing to</h2></div>
+  <div class="col">
+    <p>The roles are agreed. What is not written down is the size of them — how much time each of you is actually putting in, and what happens when that changes. Write it in plain terms or it becomes a running argument.</p>
+  </div>
+
+  <div class="fair">
+    <div>
+      <span class="chip ghost">Alana</span>
+      <h3>Build and keep it running</h3>
+      <p>Ship the remaining phases. Then bugs, security and dependency updates, hosting, small content changes, the search and SEO work, and technical and billing questions from coaches. Roughly four to six hours a month once it is live, on top of whatever new features you both agree to.</p>
+      <p style="margin-top:.7em">Front-loaded, and everyone knows it. As the build settles she moves hours across into maintenance and marketing.</p>
+    </div>
+    <div>
+      <span class="chip ghost">Kim</span>
+      <h3>Bring the coaches, and be the face</h3>
+      <p>Personal outreach at an agreed volume, Facebook group presence, press, events, and coach-facing support. The public presence of the business is hers. The marketing plan runs on roughly three hours a week of messages.</p>
+      <p style="margin-top:.7em">If three hours a week is not realistic, say so now and the plan changes rather than quietly failing. This is the one number the whole first year depends on.</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="chip">Write the flex both ways</span>
+    <p>You have agreed that Alana takes on marketing and maintenance work once the technical load eases. Write the mirror of it down at the same time: <strong>Kim takes on more when recruitment is the constraint.</strong></p>
+    <p>Otherwise the sentence only points in one direction, and a year from now the person whose work has a natural end is doing both jobs. Nobody intends that; it just happens if only half of it is written.</p>
+  </div>
+
+  <div class="col">
+    <p>Rough response times stop "I'll get to it" from meaning nothing. Site down: same day. Something broken but the site works: five business days. Small change or new content: two weeks.</p>
+    <p>Revisit both commitments at each of the three checkpoints in the marketing plan. Circumstances change, and a scheduled review is much easier than one person raising it out of the blue.</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Who owns what?</h2></div>
+  <div class="col">
+    <p>One rule covers nearly all of it: <strong>every account is in the business's name, with both of you as administrators.</strong> Nothing sits in a personal account.</p>
+    <p>This is the thing that quietly wrecks small businesses. One person registers the domain on their personal card, and three years later nobody can move it, transfer it, or sell without them.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Who holds what</caption>
+        <thead><tr><th>Thing</th><th>In whose name</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>ABN, business names</td><td>The partnership</td><td>Every trading name hangs off the one ABN &mdash; see decision nine</td></tr>
+          <tr><td>Bank account</td><td>The business</td><td>Both can see it, whoever moves the money</td></tr>
+          <tr><td>Domain names</td><td>The business</td><td>Registrar account with both as contacts. Not a personal login.</td></tr>
+          <tr><td>Stripe</td><td>The business</td><td>Attached to the partnership ABN and bank account</td></tr>
+          <tr><td>GitHub</td><td>The business</td><td>An organisation, not a personal repo. Both are owners.</td></tr>
+          <tr><td>Vercel, Supabase, Resend</td><td>The business</td><td>Team accounts, both admins</td></tr>
+          <tr><td>Google Workspace, Search Console, Analytics</td><td>The business</td><td>Both admins</td></tr>
+          <tr><td>Social accounts</td><td>The business</td><td>Even though Kim is the face of them</td></tr>
+          <tr><td>The code and the brand</td><td>The business</td><td>Assigned in writing, including from any designer or photographer you use</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Use a shared password manager</b> from day one. A few dollars a month, and it is the difference between a clean handover and a fortnight of password resets.</figcaption>
+  </figure>
+
+  <div class="col">
+    <p>Two clauses worth writing at the same time, because they protect opposite sides. <strong>Alana keeps the right to reuse generic components</strong> of her own work in other projects &mdash; she should not be barred from ever again using a search box she wrote &mdash; while the ECA product itself belongs to the company. And <strong>Kim gets a handover clause</strong>: if Alana stops, the code, accounts and enough written notes stay with the business so another developer can pick it up.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Who does what?</h2></div>
+  <div class="col">
+    <p>Roughly as you would expect. The only genuinely ambiguous area is customer support, so it gets its own answer.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Day to day</caption>
+        <thead><tr><th>Area</th><th>Leads</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Recruiting coaches</td><td>Kim</td><td>Her name on the messages. Alana takes a share where she has contacts.</td></tr>
+          <tr><td>Facebook groups, press, events</td><td>Kim</td><td>Being a working instructor is the credibility, and it does not transfer.</td></tr>
+          <tr><td>Coach questions about content and community</td><td>Kim</td><td>"How should I word my bio", "which disciplines should I tick"</td></tr>
+          <tr><td>Technical faults and billing</td><td>Alana</td><td>"I can't log in", "I was charged twice", "my photo won't upload"</td></tr>
+          <tr><td>Refund decisions</td><td>Kim decides</td><td>Alana processes it in Stripe</td></tr>
+          <tr><td>Building, hosting, SEO</td><td>Alana</td><td>Including the search work in the build spec</td></tr>
+          <tr><td>Bookkeeping and the accountant</td><td>Kim</td><td>Partnership return once a year</td></tr>
+          <tr><td>Product decisions, pricing, spending over $200</td><td>Both</td><td>Neither goes ahead alone</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>This table is the agreed version, not a proposal.</b> Add one line underneath it when you write things up: either of you can take on the other's area when their own load is light, by agreement, and it does not change the split. Customer support in practice: one shared inbox at the domain, never personal email. Kim reads it and answers what she can, forwards the technical ones. Target a reply within two business days. Both can see everything, which matters when one of you is away.</figcaption>
+  </figure>
+</section>
+
+<!-- 8 -->
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Leaving, and selling</h2></div>
+  <div class="col">
+    <p>Nobody wants to write this while everyone is enthusiastic. It is also the only time you can write it fairly, because neither of you knows yet who will be the one wanting out.</p>
+    <p>Most of it is handled by the vesting in decision two. What vesting does not cover:</p>
+  </div>
+
+  <div class="fair">
+    <div>
+      <span class="chip ghost">If Alana stops</span>
+      <h3>Kim keeps running it</h3>
+      <p>The unearned part of her share returns to the business. Full handover of code, accounts and notes, so another developer can take over. What she has earned stays hers, or the business buys it back using a valuation method you agree now.</p>
+    </div>
+    <div>
+      <span class="chip ghost">If Kim stops</span>
+      <h3>Alana keeps running it</h3>
+      <p>Same in reverse. The unearned part returns, the earned part stays or is bought back. A handover of the coach relationships and the accounts, so recruitment does not simply stop.</p>
+    </div>
+  </div>
+
+  <div class="col">
+    <p>Two more clauses worth having. A <strong>deadlock rule</strong>, since every decision is unanimous and so either of you can block the other. This is still open in draft 4, at clause 9.5: name a trusted third party to break a tie, or agree that an unresolved deadlock triggers a buy-sell. And <strong>drag-along and tag-along</strong>, which sound technical but just mean neither of you can be forced into a sale you hate, and neither can be left behind in one.</p>
+    <p>On a sale you each take your percentage of the proceeds. That is the main practical advantage of owning a share over taking a revenue share, which normally just ends when the business changes hands.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section>
+  <div class="sec-head"><span class="sec-num">09</span><h2>The name, and which domains to buy</h2></div>
+  <div class="col">
+    <p>"Equestrian Coaches Australia" says exactly what it is. That is why it works brilliantly for launch, and why it becomes a ceiling the day you add farriers and bodyworkers.</p>
+    <p>Three facts make most of this cheap to solve.</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>What actually constrains you, and what does not</caption>
+        <thead><tr><th>The worry</th><th>The reality</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>The business name boxes us in</strong></td>
+            <td>Only if you name the business after coaches. <strong>Business names are just labels on an ABN, and you can hold as many as you like.</strong> Register "Equestrian Coaches Australia" now; add a broad parent name against the same ABN whenever you settle on one, and "Equine Farriers Australia" after that. $47 each, no restructure, no order dependency.</td>
+          </tr>
+          <tr>
+            <td><strong>We need "coaches" in the domain to rank</strong></td>
+            <td>No. Having the search words in your domain stopped being a real ranking factor more than a decade ago. A page ranks on its title, its content and its links. <em>Dressage Coaches in Geelong VIC</em> ranks the same whichever domain it sits on. The domain matters for memorability and for trust when a coach reads it in an email, not for position.</td>
+          </tr>
+          <tr>
+            <td><strong>Can we use subdomains to split it up?</strong></td>
+            <td>You can, and you should not. Google treats <code>farriers.oursite.com.au</code> close to a separate website, so it starts from nothing and has to earn its own trust. <code>oursite.com.au/farriers/</code> inherits everything the site has already built. For a small new site this is not a close call.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>So the answer to "how do we split the brand without hurting SEO" is: don't split the site.</b> One website, one domain, sections underneath it. Split the <em>names</em> instead, which costs $47 each and no SEO at all.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Four ways to handle the domain</caption>
+        <thead><tr><th>Option</th><th>How it works</th><th class="num">Cost</th><th>Trade-off</th></tr></thead>
+        <tbody>
+          <tr class="pick">
+            <td><strong>Launch on Equestrian Coaches Australia, move later if you expand</strong><span class="sub">Suggested</span></td>
+            <td>Everything on equestriancoachesaustralia.com.au. The domain matches the brand, and a coach reading a cold message from Kim understands the address instantly.</td>
+            <td class="num">~$30 now<span class="sub" style="font-weight:400">plus a move later</span></td>
+            <td>One domain migration, probably month 13&ndash;24. Rankings wobble for one to three months, and it lands while you are trying to launch a new profession. Cheap to survive if the site is built for it &mdash; see below.</td>
+          </tr>
+          <tr>
+            <td><strong>Parent domain primary, coaches domain redirects to it</strong><span class="sub">Previously suggested</span></td>
+            <td>The site lives on a parent domain from day one. Nothing ever has to move.</td>
+            <td class="num">~$60</td>
+            <td>You have to agree a parent name before launch, and Kim's outreach loses an address that explains itself. See the correction below.</td>
+          </tr>
+          <tr>
+            <td><strong>Rename to Equine Professionals</strong></td>
+            <td>One descriptive name that covers everyone.</td>
+            <td class="num">~$60</td>
+            <td>Generic and forgettable, and any competitor could use the same words tomorrow. Your instinct on this is right.</td>
+          </tr>
+          <tr>
+            <td><strong>A separate site per profession</strong></td>
+            <td>equestriancoachesaustralia.com.au and equinefarriersaustralia.com.au as two different websites.</td>
+            <td class="num">2&ndash;3&times; everything</td>
+            <td>Splits your search authority, multiplies the upkeep, and gives Google several thin directories to be suspicious of instead of one good one. Don't.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>Keep 301 redirects running for at least a year</b> if you ever do move, map every old page to its exact new equivalent rather than dumping them all on the homepage, and use Google's Change of Address tool. Migrations that go wrong nearly always go wrong on one of those three, not on the move itself.</figcaption>
+  </figure>
+
+  <div class="note">
+    <span class="chip">Changed</span>
+    <p>This page previously argued that the parent domain should lead, and called the rider-retention point decisive. <strong>That was overweighted, and Kim and Alana have since agreed they want the Equestrian Coaches Australia name.</strong></p>
+    <p>Two reasons the earlier argument was weaker than it read. A rider looking for a farrier in two years will search for one the same way they searched for a coach &mdash; nobody types a directory's domain from memory for a need that comes round every few years. And the retention channel in the marketing plan is the mailing list, which moves with you whatever the domain says.</p>
+    <p>Against that, Kim's cold outreach is measurably better with an address that explains itself, and coach recruitment is the binding constraint on the entire first year.</p>
+  </div>
+
+  <div class="rec">
+    <span class="chip">Suggested</span>
+    <p><strong>Register "Equestrian Coaches Australia" with ASIC, buy the matching domain, and launch there.</strong> Do not pick the parent name yet. It is not blocking anything, and there may never be a second profession to hang it on &mdash; checkpoint three at month eight could say stop.</p>
+    <p>The whole cost of this choice is one domain migration, somewhere around month 13 to 24, and only if the business is working well enough to expand. That is a good problem to have.</p>
+  </div>
+
+  <div class="col">
+    <h3 style="margin:30px 0 12px">Six things that make a later move cheap</h3>
+    <p>Almost all migration pain comes from decisions made at the start. These cost nothing now and turn a scary job into an afternoon.</p>
+    <ol>
+      <li><strong>No "coach" in any URL path that will eventually hold every profession.</strong> Coaches at <code>/coaches/</code>, so <code>/farriers/</code> slots in beside it.</li>
+      <li><strong>One <code>BASE_URL</code> constant.</strong> Every canonical tag, sitemap entry, structured-data URL and email link derives from it, so a domain change is one environment variable rather than a find-and-replace.</li>
+      <li><strong>Generate the redirect map from the database</strong>, not by hand. With slugs in Postgres it is one script over a few hundred pages.</li>
+      <li><strong>Buy the parent domain the day you pick it and 301 it <em>to</em> the coaches domain immediately.</strong> DNS and certificates get sorted while it is low-stakes, and on migration day you are reversing an arrow you have already tested.</li>
+      <li><strong>Verify both domains in Search Console</strong> as soon as each exists. You need both properties to run a Change of Address.</li>
+      <li><strong>Keep the brand name out of slugs entirely.</strong></li>
+    </ol>
+    <p>Keep the 301s running for at least a year, map every old page to its exact new equivalent rather than dumping them on the homepage, and use the Change of Address tool. Migrations that go wrong nearly always go wrong on one of those three.</p>
+  </div>
+
+  <div class="col">
+    <h3 style="margin:30px 0 12px">How the names actually stack up</h3>
+    <p>There is no separate "parent registration". The parent and each profession are the same kind of thing, all hanging off one ABN:</p>
+    <ul>
+      <li><strong>The partnership</strong> gets an ABN and a tax file number. Its legal name is simply your two names. Nothing else to register.</li>
+      <li><strong>The parent name</strong>, whenever you settle on one, is a business name registered with ASIC against that same ABN. $47 a year, or $108 for three. <strong>It can be added at any time</strong> &mdash; nothing about launching now forecloses it.</li>
+      <li><strong>"Equestrian Coaches Australia"</strong> is a business name against that ABN, and it is the only one you need today. "Equine Farriers Australia" later is another $47. Same tier, same price, no restructure.</li>
+    </ul>
+  </div>
+
+  <div class="flag">
+    <span class="chip claret">A business name is not ownership</span>
+    <p>Registering a name with ASIC does not stop anyone else using it. Only a trade mark does that &mdash; $250 per class through IP Australia's picklist, ten years' protection, and around seven months to come through.</p>
+    <p>Worth knowing before the naming session, because <strong>descriptive names are the hardest to trade mark.</strong> "Equine Professionals Australia" describes a category, so it would be difficult to protect and easy for a competitor to sit next to. A distinctive parent name is cheaper to defend as well as better to remember.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Sections are real, redirects are not</span>
+    <p><code>/coaches</code> and later <code>/farriers</code> are real sections with real pages &mdash; they <em>are</em> the site. Only whole domains ever redirect, and for now there is only one domain.</p>
+    <p>Do not buy a domain per profession. An unused domain has no search signals to pass on, so pointing it at the site achieves nothing and costs about $20 a year forever. One domain today, and a second only when there is a parent brand worth moving to.</p>
+  </div>
+
+  <div class="col">
+    <h3 style="margin:30px 0 12px">On the parent name</h3>
+    <p>You are right that "Equine Professionals Australia" is flat. A parent name does not have to describe what it does. <em>Horse Deals</em> is not called Australian Horse Classifieds, and it has held a whole marketplace for forty years.</p>
+    <p>Since the search words live in your page titles rather than your domain, the parent name is free to be short, warm and memorable instead of descriptive. That is a session for the two of you, and it is worth having before you buy, not after.</p>
+  </div>
+
+  <div class="col">
+    <h3 style="margin:34px 0 12px">Names to argue about</h3>
+    <p>A starting list, not a recommendation. The job of this table is to give the two of you something concrete to react to, because reacting is much easier than inventing. All of them come from the horse world, none of them lock you to coaching, and every one still works in the sentence "find a farrier on&hellip;".</p>
+  </div>
+
+  <figure>
+    <div class="tablewrap">
+      <table>
+        <caption>Candidate parent names</caption>
+        <thead><tr><th>Name</th><th>Why it might work</th></tr></thead>
+        <tbody>
+          <tr><td colspan="2" style="background:var(--surface-2); font-weight:700; font-size:.82rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3)">From the gear and the yard</td></tr>
+          <tr class="pick"><td><strong>Browband</strong><span class="sub">Top pick</span></td><td>The strap across a horse's brow, and the one piece of tack riders actually choose for looks. One word, warm, and it cannot mean anything else to anyone.</td></tr>
+          <tr class="pick"><td><strong>Home Paddock</strong><span class="sub">Top pick</span></td><td>Warm and properly idiomatic. Continues the chosen design direction almost literally. Two words is the only knock against it.</td></tr>
+          <tr><td><strong>Headstall</strong></td><td>The part of the bridle that holds everything together. Plain, solid, unmistakably horse.</td></tr>
+          <tr><td><strong>The Tack Room</strong></td><td>Where riders actually swap recommendations. The most accurate metaphor for what the site does, though it is a lot to say.</td></tr>
+          <tr><td><strong>Stable Door</strong></td><td>Where half the conversations in the horse world happen.</td></tr>
+          <tr><td><strong>Round Yard</strong></td><td>Where horses get started. Suggests beginnings.</td></tr>
+          <tr><td><strong>Loose Box</strong></td><td>A stable a horse can move around in. Quiet and specific.</td></tr>
+          <tr><td><strong>The Float</strong></td><td>The horse float is how anyone gets anywhere. Very Australian, but "float" has a lot of other meanings in business.</td></tr>
+          <tr><td><strong>Hitching Post</strong></td><td>Where you tie up and where people meet.</td></tr>
+
+          <tr><td colspan="2" style="background:var(--surface-2); font-weight:700; font-size:.82rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3)">From how horses move</td></tr>
+          <tr class="pick"><td><strong>Nearside</strong><span class="sub">Top pick</span></td><td>The side you mount from. An insider term that quietly signals you know horses, and "near" does useful double duty for something built on finding people close to you.</td></tr>
+          <tr><td><strong>Half Halt</strong></td><td>The moment of rebalancing before you ask for anything. Elegant and unmistakably horsey, though it leans dressage.</td></tr>
+          <tr><td><strong>Trot Up</strong></td><td>Presenting a horse for inspection. Doubles neatly as showing yourself at your best, which is what a profile is.</td></tr>
+          <tr><td><strong>Collected</strong></td><td>Balanced and gathered up. Also means a collection, which is what a directory is.</td></tr>
+          <tr><td><strong>Turnout</strong></td><td>Two horse meanings at once: how well presented you are, and putting a horse out to grass. Both work.</td></tr>
+          <tr><td><strong>Long Rein</strong></td><td>Quiet and technical. Elegant rather than warm.</td></tr>
+          <tr><td><strong>Crossrail</strong></td><td>The first jump every rider ever takes. Friendly and faintly nostalgic.</td></tr>
+
+          <tr><td colspan="2" style="background:var(--surface-2); font-weight:700; font-size:.82rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3)">Australian and heritage</td></tr>
+          <tr class="pick"><td><strong>Waler</strong><span class="sub">Top pick</span></td><td>The Australian stock horse of the Light Horse. Short, unmistakably Australian, real heritage, and the most distinctive here, which makes it the easiest to trade mark.</td></tr>
+          <tr><td><strong>The Strapper</strong></td><td>The person who looks after the horse. A real Australian job title, and it says "the people who care for horses" rather than any one profession.</td></tr>
+          <tr><td><strong>Muster</strong></td><td>Gathering stock together. A directory <em>is</em> a muster, and it works as a verb.</td></tr>
+          <tr><td><strong>Dapples</strong></td><td>The coat pattern on a horse in good condition. A sign of health, which is a nice thing for the brand to mean.</td></tr>
+          <tr><td><strong>Hoofbeat</strong></td><td>One word, evocative, horse only. Slightly soft.</td></tr>
+          <tr><td><strong>Nicker</strong></td><td>The soft greeting a horse makes when it sees you. Lovely, and nobody has used it. <strong>Say it out loud first</strong> &mdash; in Australia it is one letter from knickers.</td></tr>
+          <tr><td><strong>Brumby</strong></td><td>Strong and Australian, but muddied by a bakery chain and a football team.</td></tr>
+          <tr><td><strong>Stockman</strong></td><td>Heritage and capability. Skews Western and male, which cuts against a mostly female audience.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>None of these have been checked for availability</b> &mdash; see the three checks below before anyone gets attached.</figcaption>
+  </figure>
+
+  <div class="flag">
+    <span class="chip claret">On "Equitopia" and the whole Equi&ndash; family</span>
+    <p>It's the first place everyone goes, which is exactly why it's the most crowded corner of the market. <strong>Equitopia is already a US equine education business</strong>, Equiline is a major Italian apparel brand, Equinest is a running site, and Equitana is a huge expo that also runs in Australia.</p>
+    <p>Coined Equi&ndash; names also tend to land somewhere between a supplement brand and a software startup, which is a long way from a well-made magazine about riding. Not a rule &mdash; if one of you loves one, chase it. Just expect the clash search to come back messy.</p>
+  </div>
+
+  <div class="col">
+    <h3 style="margin:34px 0 12px">What to avoid</h3>
+    <ul>
+      <li><strong>Anything with "coach", "instructor" or "lessons".</strong> That is the ceiling you are trying to get out from under.</li>
+      <li><strong>Descriptions of the category.</strong> "Equine Professionals Australia" is both forgettable and close to impossible to trade mark.</li>
+      <li><strong>Anything that only works for one profession.</strong> Say it out loud followed by "&hellip;find a farrier". If that sentence is strange, the name is too narrow.</li>
+    </ul>
+
+    <h3 style="margin:34px 0 12px">Three checks before anyone falls in love</h3>
+    <ol>
+      <li><strong>ASIC business name search</strong> &mdash; is the name available to register at all.</li>
+      <li><strong>IP Australia trade mark search</strong> &mdash; the one that can actually stop you. Someone else's registered mark beats your business name, no matter who registered first.</li>
+      <li><strong>Domain availability</strong>, and then <strong>register the business name <em>before</em> the .com.au</strong>. auDA allows a .com.au that matches your registered business name or trade mark, or that is a synonym for a service you provide. "Equestrian Coaches Australia" is descriptive enough that the synonym route would probably carry it on its own, but registrars apply that test inconsistently &mdash; and a coined parent name like Waler is a synonym for nothing, so it definitely needs the business name first. Cheap and easy to get the wrong way round.</li>
+    </ol>
+    <p>Two informal ones worth doing too: search the name on Facebook, because the equestrian world lives there and a clash will be visible; and say it out loud to someone in a noisy place. If you have to spell it, it fails.</p>
+  </div>
+
+  <div class="note">
+    <span class="chip">Already handled in the build</span>
+    <p>The site structure is being built to take this. Coaches sit at <code>/coaches/</code>, so farriers and bodyworkers become <code>/farriers/</code> and <code>/bodyworkers/</code> alongside them rather than needing anything rebuilt. The one rule for Alana: nothing that will eventually hold every profession gets the word "coach" in its address.</p>
+  </div>
+</section>
+
+<!-- checklist -->
+<section>
+  <div class="sec-head"><span class="sec-num">The list</span><h2>What to actually do, in order</h2></div>
+  <div class="col">
+    <p>Steps one to three are the conversation. Everything after is admin, and most of it takes an afternoon.</p>
+  </div>
+
+  <ul class="check">
+    <li><span class="box"></span><span class="n">1</span><div><b>Put a number on the hours, and on the split</b><span class="hint">The roles are agreed; the size of them is not. Kim's hours a week, honestly. The split is agreed at 70/30 and written into draft 4, so what is left here is the three blanks and the tie-breaker.</span></div><span class="cost">Free</span></li>
+    <li><span class="box"></span><span class="n">2</span><div><b>Settle who pays for what</b><span class="hint">The one substantial thing still open. Decision four has the suggested answer: costs off the top, whoever fronts money is repaid first, one shared spreadsheet.</span></div><span class="cost">Free</span></li>
+    <li><span class="box"></span><span class="n">3</span><div><b>Go through the four remaining decisions</b><span class="hint">Two, four, six and eight. Fill in the table at the top. An hour.</span></div><span class="cost">Free</span></li>
+    <li><span class="box"></span><span class="n">4</span><div><b>Write it up in plain English and both sign it</b><span class="hint">A page or two, dated. Not a legal document yet, just what you agreed in your own words. Do this before another build phase ships.</span></div><span class="cost">Free</span></li>
+    <li><span class="box"></span><span class="n">5</span><div><b>Have a solicitor draft the partnership agreement</b><span class="hint">The split, earning it over time, a binding limit, deadlock, exits, continuity and IP assignment. Templates handle this worst. Going in with step 4 written is what keeps it affordable.</span></div><span class="cost">$1,500–3,000</span></li>
+    <li><span class="box"></span><span class="n">6</span><div><b>Register the partnership ABN, its TFN and "Equestrian Coaches Australia"</b><span class="hint">ABN and TFN are free through the Australian Business Register. Business name to ASIC &mdash; and do this <em>before</em> buying the domain. Run an ASIC name search and an IP Australia trade mark search on the exact string first.</span></div><span class="cost">$108</span></li>
+    <li><span class="box"></span><span class="n">7</span><div><b>Open a business bank account in the partnership's name</b><span class="hint">Everything runs through it. Never mixed with personal money.</span></div><span class="cost">Usually free</span></li>
+    <li><span class="box"></span><span class="n">8</span><div><b>Buy equestriancoachesaustralia.com.au and set up a shared password manager</b><span class="hint">See decision nine. The parent domain waits until you pick a parent name.</span></div><span class="cost">~$60</span></li>
+    <li><span class="box"></span><span class="n">9</span><div><b>Move every account into the business's name</b><span class="hint">GitHub organisation, Vercel, Supabase, Google Workspace, Resend. Both admins on all of them.</span></div><span class="cost">~$12/mo</span></li>
+    <li><span class="box"></span><span class="n">10</span><div><b>Write the terms of service and get insurance quotes</b><span class="hint">Terms are free and do most of the protecting. Quotes now so you know the number; buy the policy before the first coach pays.</span></div><span class="cost">Free now</span></li>
+    <li><span class="box"></span><span class="n">11</span><div><b>Set up Stripe against the partnership ABN and bank account</b><span class="hint">Blocks the whole payments phase of the build until it exists.</span></div><span class="cost">Free</span></li>
+    <li><span class="box"></span><span class="n">12</span><div><b>Then start the marketing plan</b><span class="hint">Week one of <em>The First 100 Coaches</em> begins here.</span></div><span class="cost">&mdash;</span></li>
+  </ul>
+
+  <figure style="margin-top:34px">
+    <div class="tablewrap">
+      <table>
+        <caption>What it costs to get to the starting line</caption>
+        <thead><tr><th>Item</th><th>When</th><th class="num">Cost</th></tr></thead>
+        <tbody>
+          <tr><td>ABN and partnership TFN</td><td>Now</td><td class="num">Free</td></tr>
+          <tr><td>Trading name, 3 years</td><td>Now</td><td class="num">$108</td></tr>
+          <tr><td>Partnership agreement, solicitor-drafted</td><td>Now</td><td class="num">$1,500–3,000</td></tr>
+          <tr><td>Domains</td><td>Now</td><td class="num">$60</td></tr>
+          <tr><td>Terms of service</td><td>Now</td><td class="num">Free–$500</td></tr>
+          <tr class="total"><td>Setup</td><td></td><td class="num">$1,668–3,668</td></tr>
+          <tr><td>Marketing, first six months</td><td>Months 1–6</td><td class="num">$1,448</td></tr>
+          <tr class="total"><td>All in, to the end of month six</td><td></td><td class="num">$3,116–5,116</td></tr>
+          <tr><td>Insurance, first year</td><td>Month 7, before the first payment</td><td class="num">$600–1,200</td></tr>
+          <tr><td>Partnership tax return</td><td>Each year</td><td class="num">$400–900/yr</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>The agreement is almost the whole cost, and it would be whichever structure you picked.</b> Incorporating instead would add about $636 now and $900 to $1,600 a year after that. Professional fees here are indicative &mdash; get quotes. Revisit the structure at month 8, when there is revenue to protect.</figcaption>
+  </figure>
+</section>
+
+<!-- pro -->
+<section>
+  <div class="sec-head"><span class="sec-num">Last thing</span><h2>Two questions for a professional</h2></div>
+
+  <div class="rec">
+    <span class="chip">Kim is doing the first one</span>
+    <p>Kim is taking the structure and tax questions to her accountant. Worth sending her the list below beforehand — an accountant asked "what should we do?" gives a general answer, and one asked five specific questions gives five usable ones. The whole thing is a twenty-minute conversation if she walks in with them.</p>
+    <p>One thing to make sure she asks, because it is the one that costs money if it is missed: <strong>how the work each of you has already contributed gets treated</strong>. Alana has three quarters of a product built and Kim has an idea and a contact list, and neither has been recorded anywhere. There are sensible ways to account for that and unsensible ones, and the difference is easier to fix now than after there is revenue.</p>
+  </div>
+
+  <div class="col">
+    <p>Take the filled-in table at the top into both conversations and they get short.</p>
+    <ul>
+      <li><strong>An accountant, on structure and tax.</strong> Whether a partnership is the right start at this size, <strong>what it would cost to move into a company later</strong> including stamp duty and their own fees, how to treat the work each of you has already contributed, and whether early losses can be offset against your other income (there are tests that often block this for small side businesses). Ask about superannuation too if any arrangement ends up looking like paid work rather than ownership. And ask how to handle it if one partner ends up fronting most of the costs — whether that is a loan to the partnership, a capital contribution, or something that should shift the split.</li>
+      <li><strong>A solicitor, on the partnership agreement.</strong> The split, earning it over time, a binding limit so neither of you can commit the other, deadlock, exits, continuity when someone leaves, and assignment of the code and brand to the business. Ideally someone who has done founder agreements before. A template you have already filled in is a much cheaper starting point than an empty page.</li>
+    </ul>
+    <p>Neither of you needs to register for GST until the business turns over $75,000 a year, which is around 580 paying coaches. Ask the accountant anyway, because registering earlier is sometimes worth it.</p>
+  </div>
+
+  <div class="rec">
+    <span class="chip">The one-sentence version</span>
+    <p>Keep the structure simple and spend the money on the agreement instead &mdash; that is where the protection actually lives, and it costs the same whichever structure sits underneath it.</p>
+  </div>
+</section>
+
+</main>
+
+
+<div class="band">
+  <div class="wrap">
+    <div class="foot">
+      <div class="fh">Sources and caveats</div>
+      <p>ASIC fee schedule for 2026&#8209;27 (company registration $636, annual review $342, business name $47 for one year or $108 for three). business.gov.au on business structures and partnership liability. ATO GST registration threshold of $75,000. Solicitor, accountant and insurance figures are indicative ranges only and should be quoted properly.</p>
+      <p>Not legal or financial advice. This document exists to make the professional conversations shorter, not to replace them.</p>
+    </div>
+  </div>
+</div>

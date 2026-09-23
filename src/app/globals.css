@@ -857,7 +857,7 @@ html[data-overlay-route="true"] {
     padding: 100px 48px 56px;
   }
   .hero__col {
-    width: 640px;
+    width: 690px; /* canvas says 640, but "Suburb or postcode" clips at that width once the CTA and discipline fields take their minimums */
     max-width: 100%;
     gap: 26px;
     /* .hero__body is `justify-content: center` from here — half the card's

@@ -221,7 +221,7 @@
    "tag": "a",
    "text": "Find a coach",
    "box": {
-    "x": 634,
+    "x": 565,
     "y": 25,
     "w": 86,
     "h": 23
@@ -275,7 +275,7 @@
    "tag": "a",
    "text": "Disciplines",
    "box": {
-    "x": 747,
+    "x": 679,
     "y": 25,
     "w": 72,
     "h": 23
@@ -329,7 +329,7 @@
    "tag": "a",
    "text": "For coaches",
    "box": {
-    "x": 847,
+    "x": 778,
     "y": 23,
     "w": 83,
     "h": 26
@@ -374,6 +374,60 @@
     "bottom": "auto",
     "width": "82.5156px",
     "height": "25.5px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "About",
+   "box": {
+    "x": 889,
+    "y": 25,
+    "w": 41,
+    "h": 23
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "22.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(246, 241, 231)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(246, 241, 231)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "color 0.3s",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "40.7031px",
+    "height": "22.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -493,8 +547,8 @@
    "box": {
     "x": -17,
     "y": -97,
-    "w": 1313,
-    "h": 827
+    "w": 1314,
+    "h": 828
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -1192,7 +1246,7 @@
    "tag": "span",
    "text": "No commission",
    "box": {
-    "x": -112,
+    "x": -111,
     "y": 744,
     "w": 130,
     "h": 20
@@ -1246,7 +1300,7 @@
    "tag": "span",
    "text": "Cancel any time",
    "box": {
-    "x": 104,
+    "x": 105,
     "y": 744,
     "w": 142,
     "h": 20
@@ -1300,7 +1354,7 @@
    "tag": "span",
    "text": "Real numbers every month",
    "box": {
-    "x": 332,
+    "x": 333,
     "y": 744,
     "w": 234,
     "h": 20
@@ -1354,7 +1408,7 @@
    "tag": "span",
    "text": "No accreditation gatekeeping",
    "box": {
-    "x": 652,
+    "x": 653,
     "y": 744,
     "w": 265,
     "h": 20
@@ -1408,7 +1462,7 @@
    "tag": "span",
    "text": "Riders contact you direct",
    "box": {
-    "x": 1003,
+    "x": 1004,
     "y": 744,
     "w": 233,
     "h": 20
@@ -1462,7 +1516,7 @@
    "tag": "span",
    "text": "Testimonials are yours",
    "box": {
-    "x": 1322,
+    "x": 1323,
     "y": 744,
     "w": 205,
     "h": 20
@@ -1516,7 +1570,7 @@
    "tag": "span",
    "text": "No commission",
    "box": {
-    "x": 1613,
+    "x": 1615,
     "y": 744,
     "w": 130,
     "h": 20
@@ -1570,7 +1624,7 @@
    "tag": "span",
    "text": "Cancel any time",
    "box": {
-    "x": 1829,
+    "x": 1830,
     "y": 744,
     "w": 142,
     "h": 20
@@ -1624,7 +1678,7 @@
    "tag": "span",
    "text": "Real numbers every month",
    "box": {
-    "x": 2057,
+    "x": 2059,
     "y": 744,
     "w": 234,
     "h": 20
@@ -1678,7 +1732,7 @@
    "tag": "span",
    "text": "No accreditation gatekeeping",
    "box": {
-    "x": 2377,
+    "x": 2379,
     "y": 744,
     "w": 265,
     "h": 20
@@ -1732,7 +1786,7 @@
    "tag": "span",
    "text": "Riders contact you direct",
    "box": {
-    "x": 2728,
+    "x": 2730,
     "y": 744,
     "w": 233,
     "h": 20
@@ -1786,7 +1840,7 @@
    "tag": "span",
    "text": "Testimonials are yours",
    "box": {
-    "x": 3047,
+    "x": 3049,
     "y": 744,
     "w": 205,
     "h": 20
@@ -1840,10 +1894,10 @@
    "tag": "img",
    "src": "/hero/founding-1024.jpg",
    "box": {
-    "x": 96,
-    "y": 873,
-    "w": 516,
-    "h": 560
+    "x": 65,
+    "y": 771,
+    "w": 578,
+    "h": 627
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -1895,7 +1949,7 @@
    "text": "Founding coaches",
    "box": {
     "x": 140,
-    "y": 1015,
+    "y": 1085,
     "w": 428,
     "h": 18
    },
@@ -1946,12 +2000,12 @@
   },
   {
    "tag": "h2",
-   "text": "Every coach who signs up in our first",
+   "text": "Free until",
    "box": {
     "x": 140,
-    "y": 1047,
+    "y": 1117,
     "w": 428,
-    "h": 92
+    "h": 46
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
@@ -1992,7 +2046,7 @@
     "top": "auto",
     "bottom": "auto",
     "width": "428px",
-    "height": "92px",
+    "height": "46px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -2000,11 +2054,11 @@
   },
   {
    "tag": "em",
-   "text": "six months",
+   "text": "15 June 2027",
    "box": {
-    "x": 264,
-    "y": 1086,
-    "w": 172,
+    "x": 285,
+    "y": 1110,
+    "w": 183,
     "h": 60
    },
    "style": {
@@ -2054,12 +2108,12 @@
   },
   {
    "tag": "p",
-   "text": "gets Spotlight free for six months, and $9.99 locked in for as long as they stay",
+   "text": "Sign up before then and you pay nothing until that date. After it, $9.99 a month",
    "box": {
     "x": 140,
-    "y": 1157,
+    "y": 1181,
     "w": 428,
-    "h": 149
+    "h": 124
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -2100,7 +2154,7 @@
     "top": "auto",
     "bottom": "auto",
     "width": "428px",
-    "height": "148.781px",
+    "height": "123.984px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -14942,7 +14996,7 @@
   },
   {
    "tag": "a",
-   "text": "Log in",
+   "text": "About us",
    "box": {
     "x": 990,
     "y": 6451,
@@ -14996,10 +15050,64 @@
   },
   {
    "tag": "a",
-   "text": "Contact",
+   "text": "Log in",
    "box": {
     "x": 990,
     "y": 6481,
+    "w": 194,
+    "h": 30
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "30px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "193.609px",
+    "height": "30px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Contact",
+   "box": {
+    "x": 990,
+    "y": 6511,
     "w": 194,
     "h": 30
    },
