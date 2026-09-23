@@ -11,4 +11,4 @@ export function getResend(): Resend | null {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
-export const NOTIFICATIONS_FROM = "Equestrian Coaches Australia <notifications@equestriancoaches.com.au>";
+export const NOTIFICATIONS_FROM = "Equine Professionals Australia <notifications@equineprofessionals.com.au>";

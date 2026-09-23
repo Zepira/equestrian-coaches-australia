@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { CoachesHome } from "@/components/coaches-home";
 
-// Overrides the root layout's cream themeColor (src/app/layout.tsx) — the
-// hero, not the cream header, is this route's own top edge.
+// Same dark top edge as "/" — both render the coaches hero.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -11,10 +10,11 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  title: "Riding coaches",
   description:
-    "Find your perfect riding coach, nearby. Search coaches across Australia by discipline and location.",
+    "Riding coaches across Australia, searchable by discipline and location. Free for riders, always.",
 };
 
-export default function Home() {
+export default function CoachesIndex() {
   return <CoachesHome />;
 }

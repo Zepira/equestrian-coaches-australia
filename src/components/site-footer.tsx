@@ -22,14 +22,14 @@ const columns = [
     heading: "About",
     links: [
       { href: "/login", label: "Log in" },
-      { href: "mailto:hello@equestriancoaches.au", label: "Contact" },
+      { href: "mailto:hello@equineprofessionals.au", label: "Contact" },
     ],
     desktopOnly: true,
   },
 ];
 
 /**
- * Footer from the 1a canvases: deep-ink ground, ECA wordmark (40px phone /
+ * Footer from the 1a canvases: deep-ink ground, EPA wordmark (40px phone /
  * 48px desktop), the tagline, link columns (two on phones, brand + three on
  * desktop) and the copyright line.
  */
@@ -40,12 +40,12 @@ export function SiteFooter() {
       <div className="mx-auto max-w-[1184px] px-[18px] pt-11 md:px-12 md:pt-16">
         <div className="grid grid-cols-1 gap-7 md:grid-cols-[2fr_1fr_1fr_1fr] md:gap-10">
           <div>
-            <Link href="/" aria-label="Equestrian Coaches Australia — home" className="inline-block">
+            <Link href="/" aria-label="Equine Professionals Australia — home" className="inline-block">
               <Wordmark size={40} className="md:hidden" />
               <Wordmark size={48} className="hidden md:inline" />
             </Link>
             <p className="mt-2.5 max-w-[280px] text-[14px] leading-[1.5] text-ink-fg/70 md:mt-3 md:max-w-[320px] md:text-[15px]">
-              Equestrian Coaches Australia. The coach who teaches what you ride, wherever you are.
+              Equine Professionals Australia. The coach who teaches what you ride, wherever you are.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-5 md:contents">
@@ -67,7 +67,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-8 border-t border-ink-fg/18 pb-7 pt-4 text-[12px] text-ink-fg/50 md:mt-10 md:border-0 md:pt-0 md:text-[13px]">
-          © {year} Equestrian Coaches Australia
+          © {year} Equine Professionals Australia
         </div>
       </div>
     </footer>

@@ -105,8 +105,8 @@ export async function sendCoachEnquiry(
         from: NOTIFICATIONS_FROM,
         to: coach.contact_email,
         replyTo: looksLikeEmail(riderContact) ? riderContact : undefined,
-        subject: `New enquiry from ${riderName} via Equestrian Coaches Australia`,
-        text: `Hi ${coachName},\n\n${riderName} sent you an enquiry through your Equestrian Coaches Australia profile.\n\nLooking for: ${WANT_LABEL[want]}\nContact: ${riderContact}\n\n"${message}"\n\nMark it replied / booked in your dashboard: ${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/dashboard/enquiries`,
+        subject: `New enquiry from ${riderName} via Equine Professionals Australia`,
+        text: `Hi ${coachName},\n\n${riderName} sent you an enquiry through your Equine Professionals Australia profile.\n\nLooking for: ${WANT_LABEL[want]}\nContact: ${riderContact}\n\n"${message}"\n\nMark it replied / booked in your dashboard: ${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/dashboard/enquiries`,
       });
     } catch (err) {
       console.error("sendCoachEnquiry: send failed", err);

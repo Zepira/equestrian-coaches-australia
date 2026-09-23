@@ -24,7 +24,7 @@ const hanken = Hanken_Grotesk({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-const title = "Equestrian Coaches Australia";
+const title = "Equine Professionals Australia";
 const description =
   "Find your perfect riding coach, nearby. Search verified coaches across Australia by discipline and location.";
 
@@ -103,7 +103,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Script
           id="overlay-route"
           strategy="beforeInteractive"
-        >{`document.documentElement.dataset.overlayRoute = String(["/", "/for-coaches"].includes(location.pathname));`}</Script>
+        >{`document.documentElement.dataset.overlayRoute = String(["/", "/coaches", "/for-coaches"].includes(location.pathname));`}</Script>
         {/* .reveal (src/app/globals.css) fades real content in as it scrolls
             into view — a scroll-reveal component has to start that content
             at opacity: 0 in the server-rendered HTML for the fade-in to

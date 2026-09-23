@@ -1,4 +1,16 @@
-# Equestrian Coaches Australia
+# Equine Professionals Australia
+
+## The rename and the widening (23 Sep 2026)
+
+**The business is now "Equine Professionals Australia" (EPA), not "Equestrian Coaches Australia".** The parent name is decided — that unblocks the domain and the ASIC business names (decision 9 below). Riding coaches stay the first and only profession built, but the site now wears the parent brand, because the rider email list and the return visits accrue to whatever name is on the header, and a coaches-only name would strand them when farriers and bodyworkers arrive.
+
+Done so far, the rename only:
+
+- Every user-facing "Equestrian Coaches Australia" and every "ECA" initialism in `src/` is now the new name; the wordmark, favicon and apple icon read EPA (`scripts/build-icons.mjs`, re-run with `PLAYWRIGHT_CHROMIUM_EXECUTABLE` if the machine's Chromium doesn't match the pinned Playwright).
+- The coaches home page lives at **`/coaches`** as well as `/`. Both routes render one shared component, `src/components/coaches-home.tsx`, so they cannot drift; when `/` becomes a real parent home page covering every profession, only `src/app/page.tsx` changes. `/coaches` is an overlay-header route (`OVERLAY_ROUTES` in `site-header.tsx`, the pre-hydration script in `layout.tsx`) and is in the sitemap.
+- **Email addresses are placeholders**: `hello@equineprofessionals.au` and `notifications@equineprofessionals.com.au` mirror the shape of the old placeholders. Nobody has bought a domain — confirm the real one before launch.
+
+Not done, and deliberately left for its own pass: the two canvas-name comments that reference the design file "ECA Redesign › 1a" (that is the file's real name); `docs/` and the captured design-reference JSON, which are historical records; the URL taxonomy question of whether discipline pages should move under `/coaches/` (see "One site, subfolders, never subdomains" below — nothing that will eventually hold every profession should carry "coach" in its path, and `/disciplines/[slug]` currently does not say which profession it belongs to); and the site copy itself, which still talks only about coaches.
 
 ## What this is
 
@@ -360,7 +372,7 @@ Earlier advice went sole trader → company. **Both were over-engineered.** Alan
    - **A business name is not ownership** — ASIC registration does not stop anyone else using it. Only a trade mark does: **$250/class via IP Australia's picklist, 10 years, ~7 months to register.** Descriptive names are the hardest to trade mark, so "Equestrian Professionals Australia" would be both forgettable and hard to protect — another reason the parent name should be distinctive.
    - **Only domains redirect.** The coaches domain 301s to the parent domain; `/coaches` and `/farriers` are real sections, not redirects. **Do not buy a domain per profession** — an unused domain has no search signals to pass on, so redirecting it achieves nothing and costs ~$20/yr forever. Parent domain + coaches domain is enough.
    - **Rider retention settles which domain leads: the parent one, from day one.** A rider who learns "Equestrian Coaches Australia" won't think of us when their farrier retires. The site wears the parent brand with coaches as its first section; the coaches domain is used only in Kim's outreach emails, where instant legibility matters and the coach never needs to remember the parent.
-   - **Naming the parent is now a blocking step** — the domain, the business names and the site header all wait on it.
+   - **Naming the parent is now a blocking step** — the domain, the business names and the site header all wait on it. **Resolved 23 Sep 2026: the parent is "Equine Professionals Australia".** The domains are still unbought.
 
 ### Insurance — not needed at launch, but load-bearing under a partnership
 
@@ -458,7 +470,8 @@ Full spec: **["How Riders Find Us"](https://claude.ai/code/artifact/e11731ff-7c5
 
 - [x] **Golden Hour redesign (10 Sep 2026)** — built R0–R9 per [`docs/redesign-plan.md`](docs/redesign-plan.md), see Phase 21. Still open from it (§6 of the plan): tier prices belong in the `settings` table; a rider "Email & password" page if in-place changes are wanted; real coach photos for the seeded parity accounts are the only reason the dashboard/account captures show empty arches.
 - [ ] **Kim and Alana work through the nine decisions in ["Before We Start"](https://claude.ai/code/artifact/5173be3a-497d-4de5-bbf4-8738f0f0d55d)** — blocks ABN, domain, Stripe and therefore all marketing
-- [ ] **Decide the parent name and buy both domains** (decision 9) — blocks launch, and the choice hardens once the site is indexed
+- [x] **Decide the parent name** (decision 9) — **"Equine Professionals Australia"**, chosen 23 Sep 2026; the site is renamed end to end (see the top of this file)
+- [ ] **Buy both domains** — blocks launch, and the choice hardens once the site is indexed. Every email address in the code is a placeholder until this happens
 - [ ] **Ask Kim what she can commit, in hours a week** — blocks the equity split and the whole marketing pace — it sets the pace of the entire marketing plan
 - [x] Review 5 Claude Design directions and choose one — **"Paddock Edit"** chosen (29 Aug 2026), see Phase 10 below
 - [x] Lock in brand assets (logo, palette, type) from the chosen direction — apply to the app's design tokens once decided — done in Phase 10 (palette/type); logo mark + favicon done in Phase 15

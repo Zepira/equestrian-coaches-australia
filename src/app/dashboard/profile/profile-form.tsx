@@ -247,7 +247,7 @@ export function ProfileForm({ configured, coach, disciplines, skills, attributes
               <div className="flex items-center justify-between gap-3 border-b border-shade py-3">
                 <div>
                   <div className="text-[14.5px] font-medium text-fg wide:text-[15px]">Enquiry form</div>
-                  <div className="text-[13px] text-subtle wide:text-[13.5px]">Riders message you through ECA</div>
+                  <div className="text-[13px] text-subtle wide:text-[13.5px]">Riders message you through EPA</div>
                 </div>
                 <Switch name="show_contact_form" defaultChecked={coach?.show_contact_form ?? true} disabled={!configured} label="Show the enquiry form on my profile" />
               </div>

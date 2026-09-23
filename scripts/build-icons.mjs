@@ -1,4 +1,4 @@
-// Renders the ECA wordmark favicon / apple-touch icon with the real
+// Renders the EPA wordmark favicon / apple-touch icon with the real
 // Instrument Serif (loaded from Google Fonts at build time) rather than a
 // system serif — a favicon can't rely on the app's webfont at runtime, so
 // the letterforms are baked into PNGs here. Re-run only if the mark changes.
@@ -18,9 +18,13 @@ const html = (size, font) => `<!doctype html><html><head>
   .tile{width:${size}px;height:${size}px;background:#14281f;border-radius:${Math.round(size * 0.18)}px;
     display:flex;align-items:center;justify-content:center;color:#f6f1e7;
     font:400 ${font}px/1 'Instrument Serif',serif;letter-spacing:-0.02em}
-</style></head><body><div class="tile">ECA</div></body></html>`;
+</style></head><body><div class="tile">EPA</div></body></html>`;
 
-const browser = await chromium.launch();
+// PLAYWRIGHT_CHROMIUM_EXECUTABLE lets a machine whose installed Chromium
+// build doesn't match the pinned Playwright version point at the one it has
+// (e.g. /opt/pw-browsers/chromium) instead of downloading a second copy.
+const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined;
+const browser = await chromium.launch({ executablePath });
 for (const [file, size, font] of [
   ["src/app/icon.png", 512, 250],
   ["src/app/apple-icon.png", 180, 88],

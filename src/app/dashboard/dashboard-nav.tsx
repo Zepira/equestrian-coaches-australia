@@ -70,7 +70,7 @@ export function DashboardNav({
         </div>
         <p className="mt-5 px-3.5 text-[13px] leading-[1.5] text-subtle">
           Something not working? Tell Kim or Alana directly —{" "}
-          <a href="mailto:hello@equestriancoaches.au" className="text-accent">
+          <a href="mailto:hello@equineprofessionals.au" className="text-accent">
             message us
           </a>
           .

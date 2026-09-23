@@ -57,7 +57,7 @@ export type CoachSchemaInput = {
   skillNames?: string[];
 };
 
-// Person, not LocalBusiness/Organization — coaches on ECA are individuals,
+// Person, not LocalBusiness/Organization — coaches on EPA are individuals,
 // not registered businesses (that's EquiDirectory's model, not this one).
 // knowsAbout carries the disciplines plus skills (schema.org allows either
 // — "what a coach knows about" fairly includes "float loading" alongside
@@ -101,7 +101,7 @@ export type ClinicSchemaInput = {
 
 // Clinics are dated, located, hosted — a clean fit for Event even without
 // ticketing data. No `offers`/`performer` (there's no price or ticketing
-// on ECA, and fabricating one just to chase the Events rich-result
+// on EPA, and fabricating one just to chase the Events rich-result
 // carousel isn't worth it) — Google still indexes the schema, it just
 // won't be carousel-eligible without offers. `location` is a bare Place
 // with the coach's own location_text as both name and address since

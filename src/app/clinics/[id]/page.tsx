@@ -165,7 +165,7 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
             </>
           ) : (
             <p className="mt-2 text-[14px] leading-[1.5] text-muted">
-              {coach ? `${coachName.split(" ")[0]} isn't taking enquiries through ECA right now — their profile has the other ways to reach them.` : "This coach's profile is no longer listed."}
+              {coach ? `${coachName.split(" ")[0]} isn't taking enquiries through EPA right now — their profile has the other ways to reach them.` : "This coach's profile is no longer listed."}
               {coach && (
                 <>
                   {" "}

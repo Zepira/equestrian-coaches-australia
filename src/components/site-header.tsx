@@ -26,7 +26,7 @@ import { createClient } from "@/lib/supabase/client";
  */
 type Variant = "overlay" | "ink" | "light";
 
-const OVERLAY_ROUTES = ["/", "/for-coaches"];
+const OVERLAY_ROUTES = ["/", "/coaches", "/for-coaches"];
 
 /**
  * Coach profiles: on phones the page paints its own "← Results / ♡" bar
@@ -196,14 +196,14 @@ export function SiteHeader() {
         <Link
           href="/"
           className="flex items-baseline gap-3.5"
-          aria-label="Equestrian Coaches Australia — home"
+          aria-label="Equine Professionals Australia — home"
           onClick={close}
         >
           <Wordmark size={26} className="md:hidden" />
           <Wordmark size={30} className="hidden md:inline" />
           {!isSearch && !coachProfile && (
             <span className="site-header__muted hidden text-[12px] font-medium uppercase tracking-[0.16em] lg:inline">
-              {isDashboard ? "Coach dashboard" : "Equestrian Coaches Australia"}
+              {isDashboard ? "Coach dashboard" : "Equine Professionals Australia"}
             </span>
           )}
         </Link>

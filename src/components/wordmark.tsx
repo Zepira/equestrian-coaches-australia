@@ -1,5 +1,5 @@
 /**
- * The brand mark: "ECA" set in Instrument Serif, weight 400, tight
+ * The brand mark: "EPA" set in Instrument Serif, weight 400, tight
  * letter-spacing. 26px in the phone header, 30px on desktop, 40–48px in the
  * footer. Inherits `currentColor` so it takes its lockup's tone — cream over
  * a photograph or on ink, hunter green on cream. Always rendered with an
@@ -19,7 +19,7 @@ export function Wordmark({
       className={`font-display font-normal leading-none ${className}`}
       style={{ fontSize: size, letterSpacing: size >= 40 ? "-0.02em" : "-0.01em" }}
     >
-      ECA
+      EPA
     </span>
   );
 }

@@ -477,7 +477,7 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
             <section className="wide:hidden">
               <h2 className="mt-9 text-[30px] leading-none text-ink">Get in touch</h2>
               <p className="mt-2 text-[15px] leading-[1.5] text-muted">
-                {firstName} usually replies within a day. You deal with {firstName} direct — ECA never takes a cut.
+                {firstName} usually replies within a day. You deal with {firstName} direct — EPA never takes a cut.
               </p>
               {coach.contactId && (
                 <PhoneReveal contactId={coach.contactId} hasPhone={coach.contact.hasPhone} className="mt-3.5 w-full py-3.5" />

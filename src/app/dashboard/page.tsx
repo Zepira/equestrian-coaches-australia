@@ -61,8 +61,8 @@ export default async function DashboardPage({
   const greeting = quiet ? `A quiet month, ${firstName}.` : `Good month, ${firstName}.`;
   const prevReveals = stats.reveals - stats.delta.reveals;
   const summary = quiet
-    ? "Nothing happened this month yet, and that's the honest number. The two things most likely to change it: add a photo and three testimonials, and share your ECA graphic in your local riders' group."
-    : `${stats.reveals} rider${stats.reveals === 1 ? "" : "s"} tapped to see your number, ${stats.delta.reveals >= 0 ? "up" : "down"} from ${prevReveals} in ${prevMonth}. ${stats.impressions} search${stats.impressions === 1 ? "" : "es"} on ECA listed you this month.`;
+    ? "Nothing happened this month yet, and that's the honest number. The two things most likely to change it: add a photo and three testimonials, and share your EPA graphic in your local riders' group."
+    : `${stats.reveals} rider${stats.reveals === 1 ? "" : "s"} tapped to see your number, ${stats.delta.reveals >= 0 ? "up" : "down"} from ${prevReveals} in ${prevMonth}. ${stats.impressions} search${stats.impressions === 1 ? "" : "es"} on EPA listed you this month.`;
   const max = Math.max(1, ...trend.map((t) => t.views));
   const first = trend[0].views;
   const last = trend[trend.length - 1].views;
@@ -73,7 +73,7 @@ export default async function DashboardPage({
         ? `Views have ${first === 0 ? "started arriving" : `risen from ${first} to ${last}`} over the year. Search impressions are the leading number — views and enquiries follow them by a month or two.`
         : "Views dipped this month. Spring usually picks up — riders start searching for coaches when the ground firms up.";
   const tiles = [
-    { value: stats.impressions, label: "Appeared in search (on ECA)", d: delta(stats.delta.impressions) },
+    { value: stats.impressions, label: "Appeared in search (on EPA)", d: delta(stats.delta.impressions) },
     { value: stats.views, label: "Profile views", d: delta(stats.delta.views) },
     { value: stats.reveals, label: "Tapped to call", d: delta(stats.delta.reveals) },
     { value: stats.enquiries, label: "Enquiries", d: delta(stats.delta.enquiries) },

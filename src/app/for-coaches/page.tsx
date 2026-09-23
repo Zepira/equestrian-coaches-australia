@@ -52,7 +52,7 @@ const WHAT_WE_DO: { title: string; body: string }[] = [
   },
   {
     title: "We give you something to share",
-    body: 'A "find me on ECA" graphic and a post you can paste. Free on every plan.',
+    body: 'A "find me on EPA" graphic and a post you can paste. Free on every plan.',
   },
   {
     title: "We help you set up your own Google Business Profile",
