@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { deletePhoto, deleteVideo } from "./actions";
 import { PhotoUploadForm } from "./photo-upload-form";
@@ -65,9 +66,9 @@ export function MediaUploadForm({
         {!videoActive ? (
           <p className="text-sm text-muted">
             Video is available on paid plans — subscribe in{" "}
-            <a href="/dashboard/billing" className="font-medium text-accent">
+            <Link href="/dashboard/billing" className="font-medium text-accent">
               Billing
-            </a>{" "}
+            </Link>{" "}
             to add one.
           </p>
         ) : videoUrl ? (

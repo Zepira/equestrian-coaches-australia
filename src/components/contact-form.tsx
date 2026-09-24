@@ -3,11 +3,18 @@
 import { useActionState, useState } from "react";
 import { sendCoachEnquiry, type EnquiryResult, type EnquiryWant } from "@/app/coaches/[slug]/actions";
 
-const WANTS: { value: EnquiryWant; label: string }[] = [
-  { value: "regular", label: "Regular lessons" },
-  { value: "one_off", label: "One-off" },
-  { value: "clinic", label: "Clinic" },
-];
+const WANTS: Record<"coach" | "professional", { value: EnquiryWant; label: string }[]> = {
+  coach: [
+    { value: "regular", label: "Regular lessons" },
+    { value: "one_off", label: "One-off" },
+    { value: "clinic", label: "Clinic" },
+  ],
+  // Horse care professionals: the same stored values, worded for visits.
+  professional: [
+    { value: "regular", label: "Regular visits" },
+    { value: "one_off", label: "One-off visit" },
+  ],
+};
 
 /**
  * The enquiry form (canvas: "Message Isabella") — name, email or mobile,
@@ -21,12 +28,15 @@ export function ContactForm({
   firstName,
   onSent,
   defaultWant = "regular",
+  kind = "coach",
 }: {
   coachId: string;
   coachName?: string;
   firstName: string;
   onSent?: () => void;
   defaultWant?: EnquiryWant;
+  /** Which chip set to offer: lessons for a coach, visits for a horse care professional. */
+  kind?: "coach" | "professional";
 }) {
   const [state, formAction, pending] = useActionState<EnquiryResult | null, FormData>(sendCoachEnquiry, null);
   const [want, setWant] = useState<EnquiryWant>(defaultWant);
@@ -57,7 +67,7 @@ export function ContactForm({
         <input name="rider_contact" type="text" required placeholder="Email or mobile" autoComplete="email" className={input} />
       </label>
       <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="What are you after?">
-        {WANTS.map((w) => {
+        {WANTS[kind].map((w) => {
           const on = w.value === want;
           return (
             <button

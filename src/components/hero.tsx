@@ -20,8 +20,10 @@ import type { ReactNode } from "react";
  * LCP element (fetchpriority high, eager).
  */
 
-const WIDTHS = [768, 1024, 1280, 1536];
-const srcset = (ext: string) => WIDTHS.map((w) => `/hero/wide-${w}.${ext} ${w}w`).join(", ");
+/** A hero photo: `public/hero/<name>-<width>.<ext>`, built by scripts/build-hero-images.mjs. */
+export type HeroImage = { name: string; widths: number[]; fallback: number; width: number; height: number };
+const DEFAULT_IMAGE: HeroImage = { name: "wide", widths: [768, 1024, 1280, 1536], fallback: 1280, width: 1280, height: 853 };
+const srcset = (img: HeroImage, ext: string) => img.widths.map((w) => `/hero/${img.name}-${w}.${ext} ${w}w`).join(", ");
 
 const RISE_DELAYS = [0.15, 0.22, 0.29, 0.36, 0.43, 0.5, 0.57, 0.64];
 
@@ -48,34 +50,43 @@ export function RiseWords({ words, emphasis = [] }: { words: string[]; emphasis?
 export function Hero({
   eyebrow,
   words,
-  cycle,
+  emphasis,
+  cycle = [],
   lead,
   leadShort,
   children,
   stats,
+  image = DEFAULT_IMAGE,
+  className = "",
 }: {
   eyebrow: string;
   /** The rising words, e.g. ["Find", "a", "coach", "for"]. */
   words: string[];
-  /** The italic peach words that cycle on the second line. */
-  cycle: string[];
+  /** Indexes of `words` set in italic peach, for a headline with no cycle. */
+  emphasis?: number[];
+  /** The italic peach words that cycle on the second line. Optional. */
+  cycle?: string[];
   lead: string;
   /** Shorter lead for phones; falls back to `lead`. */
   leadShort?: string;
   children?: ReactNode;
   stats?: { value: string; label: string }[];
+  /** Another photo from public/hero/; the home page's horse by default. */
+  image?: HeroImage;
+  /** A modifier class (e.g. `hero--horse-care`) for per-photo focal points in globals.css. */
+  className?: string;
 }) {
   return (
-    <section className="hero">
+    <section className={`hero ${className}`}>
       <div className="hero__media" data-parallax>
         <picture>
-          <source type="image/avif" srcSet={srcset("avif")} sizes="100vw" />
-          <source type="image/webp" srcSet={srcset("webp")} sizes="100vw" />
+          <source type="image/avif" srcSet={srcset(image, "avif")} sizes="100vw" />
+          <source type="image/webp" srcSet={srcset(image, "webp")} sizes="100vw" />
           <img
-            src="/hero/wide-1280.jpg"
+            src={`/hero/${image.name}-${image.fallback}.jpg`}
             alt=""
-            width={1280}
-            height={853}
+            width={image.width}
+            height={image.height}
             fetchPriority="high"
             loading="eager"
             decoding="async"
@@ -91,14 +102,16 @@ export function Hero({
             {eyebrow}
           </p>
           <h1 className="hero__h1">
-            <RiseWords words={words} />
-            <span className="hero__cycle" aria-label={cycle.join(", ")}>
-              {cycle.map((w, i) => (
-                <span key={w} style={{ animationDelay: `${(0.7 + i * 2).toFixed(1)}s` }} aria-hidden>
-                  {w}.
-                </span>
-              ))}
-            </span>
+            <RiseWords words={words} emphasis={emphasis} />
+            {cycle.length > 0 && (
+              <span className="hero__cycle" aria-label={cycle.join(", ")}>
+                {cycle.map((w, i) => (
+                  <span key={w} style={{ animationDelay: `${(0.7 + i * 2).toFixed(1)}s` }} aria-hidden>
+                    {w}.
+                  </span>
+                ))}
+              </span>
+            )}
           </h1>
           <p className="hero__lead fade-in" style={{ animationDelay: "0.7s" }}>
             <span className="wide:hidden">{leadShort ?? lead}</span>

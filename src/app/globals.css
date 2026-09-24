@@ -98,6 +98,22 @@
   }
 }
 
+/* The Horse care door (Claude Design, "Two Front Doors", 23 Sep 2026).
+   Every page under /horse-care, and every profession section once one
+   opens, swaps the terracotta accent pair for steel and sky. Set as
+   data-door on <html> by the inline script in layout.tsx (first paint) and
+   SiteHeader (client navigation). Everything else, the front page
+   included, keeps the original palette. Steel on cream measures 5.6:1 and
+   sky on deep ink 8.6:1, the same jobs terracotta and peach do. */
+/* Also usable on any element, to put one block in the door's colours
+   (e.g. the horse care card on /list-your-business). */
+html[data-door="horse-care"],
+[data-door="horse-care"] {
+  --color-accent: #3f6480; /* steel */
+  --color-accent-hover: #345468;
+  --color-peach: #a9c4da; /* sky: the accent on ink */
+}
+
 @theme {
   /* The canvases' mobile/desktop switch — `wide:` in Tailwind. */
   --breakpoint-wide: 1100px;
@@ -513,7 +529,7 @@ html[data-overlay-route="true"] {
   height: 14px;
   border-radius: 999px;
   background: var(--color-accent);
-  box-shadow: 0 0 0 4px rgb(180 85 58 / 0.25);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 25%, transparent);
 }
 .map-origin::after {
   content: "";
@@ -783,6 +799,19 @@ html[data-overlay-route="true"] {
   top: 0;
   animation: wordcycle 16s infinite both;
 }
+/* Reduced motion forces every animation to 0.01ms, and `wordcycle` then
+   holds its last keyframe (hidden) on every word, which beats any plain
+   opacity rule: the headline used to end mid-sentence ("Find a coach
+   for"). Take the animation off entirely and show the first word, still. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__cycle > span {
+    animation-name: none !important;
+    opacity: 0;
+  }
+  .hero__cycle > span:first-child {
+    opacity: 1;
+  }
+}
 
 .hero__lead {
   font-size: 17px;
@@ -916,6 +945,21 @@ html[data-overlay-route="true"] {
 .hero--coaches {
   height: min(700px, 100svh);
 }
+/* /horse-care: the farrier photo. Hoof and hands sit centre-right (the
+   design's 62% 50%); the doubled class outranks the per-aspect focal-point
+   steps written for the home page's horse. */
+.hero.hero--horse-care .hero__img {
+  object-position: 62% 50%;
+}
+/* "physiotherapist." is the longest word the headline cycles through and
+   runs 12px past the column at 320px; a touch smaller on the narrowest
+   phones keeps it inside. */
+@media (max-width: 359px) {
+  .hero--horse-care .hero__h1 {
+    font-size: 50px;
+  }
+}
+
 .hero--coaches .hero__img {
   object-position: 50% 30%;
 }
@@ -1144,20 +1188,66 @@ html[data-overlay-route="true"] {
 /* A desktop navigation menu's panel (NavDropdown). Always a cream surface
    with ink text, whatever tone the bar is wearing — over the hero the bar
    is transparent, and an inherited tone would drop links onto the photo. */
-.site-header__panel {
+/* The sub-menu bar under the header (nav-dropdown.tsx): full width, one
+   row of subcategories, hung from the header itself. */
+.site-header__subbar {
   position: absolute;
-  top: calc(100% + 10px);
-  left: -12px;
-  min-width: 250px;
-  padding: 8px;
-  border: 1px solid rgb(34 32 28 / 0.08);
-  border-radius: 14px;
-  background: rgb(255 253 248 / 0.98);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 20px 50px rgb(20 40 31 / 0.16);
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-shade);
+  border-top: 1px solid rgb(34 32 28 / 0.08);
+  border-bottom: 1px solid rgb(34 32 28 / 0.08);
+  box-shadow: 0 14px 30px rgb(20 40 31 / 0.08);
+  color: var(--color-ink);
   animation: fade 0.2s both;
   z-index: 20;
+}
+.site-header__subbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--content-gutter);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+@media (min-width: 1100px) {
+  .site-header__subbar-inner {
+    padding-inline: 48px;
+  }
+}
+.site-header__subbar-link {
+  display: block;
+  padding-block: 15px;
+  font-size: 15px;
+  font-weight: 400;
+  white-space: nowrap;
+  color: var(--color-ink);
+  border-bottom: 2px solid transparent;
+  transition: color 200ms ease, border-color 200ms ease;
+}
+.site-header__subbar-link:hover {
+  color: var(--color-accent);
+}
+.site-header__subbar-link[aria-current="page"] {
+  border-bottom-color: var(--color-accent);
+}
+/* An overlay header goes solid while its sub-menu bar is open, so the bar
+   doesn't hang off a transparent strip over the photograph. */
+.site-header[data-variant="overlay"][data-solid="false"]:has(.site-header__subbar) {
+  --hdr-fg: var(--color-ink);
+  --hdr-muted: var(--color-subtle);
+  --hdr-bg: rgb(246 241 231 / 0.97);
+  --hdr-line: rgb(34 32 28 / 0.08);
+  --hdr-outline: var(--color-ink);
+  background-image: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.site-header[data-variant="overlay"][data-solid="false"]:has(.site-header__subbar) .site-header__link:hover {
+  color: var(--color-accent);
 }
 
 .site-header__menu {

@@ -9,9 +9,9 @@ import { getDisciplineBySlug } from "@/lib/disciplines";
 
 export const MOCK_COACHES_ENABLED = true;
 
-type Town = { suburb: string; state: string; lat: number; long: number };
+export type Town = { suburb: string; state: string; lat: number; long: number };
 
-const TOWNS: Town[] = [
+export const TOWNS: Town[] = [
   { suburb: "Bendigo", state: "VIC", lat: -36.7642, long: 144.2786 },
   { suburb: "Ballarat", state: "VIC", lat: -37.5622, long: 143.8503 },
   { suburb: "Geelong", state: "VIC", lat: -38.1499, long: 144.3617 },
@@ -38,12 +38,12 @@ const TOWNS: Town[] = [
   { suburb: "Canberra", state: "ACT", lat: -35.2809, long: 149.13 },
 ];
 
-const FIRST_NAMES = [
+export const FIRST_NAMES = [
   "Emma", "Olivia", "Charlotte", "Sophie", "Isabella", "Amelia", "Grace", "Chloe",
   "Ella", "Mia", "Ava", "Zoe", "Ruby", "Lily", "Hannah", "Jack", "Oliver", "William",
   "Thomas", "Lucas", "Henry", "Ethan", "Noah", "Cooper", "James",
 ];
-const LAST_NAMES = [
+export const LAST_NAMES = [
   "Anderson", "Baker", "Campbell", "Dawson", "Edwards", "Fletcher", "Gordon", "Harris",
   "Ingram", "Jenkins", "Kelly", "Lawson", "Mitchell", "Nolan", "O'Brien", "Parker",
   "Quinn", "Reynolds", "Stewart", "Turner", "Underwood", "Vance", "Walsh", "Young", "Zimmerman",
@@ -198,11 +198,11 @@ const HEADLINE_TEMPLATES = [
   (discipline: string) => `From first lesson to competition-ready — ${discipline.toLowerCase()} coaching.`,
 ];
 
-function slugify(input: string) {
+export function slugify(input: string) {
   return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+export function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
@@ -242,7 +242,7 @@ export type MockCoach = {
 
 // Deterministic Australian-looking mobile number from the coach's index —
 // not random, so the same coach always gets the same number across builds.
-function mockPhone(i: number) {
+export function mockPhone(i: number) {
   const n = 400000000 + ((i * 9973) % 100000000);
   const digits = String(n).padStart(9, "0");
   return `04${digits.slice(1, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 9)}`;

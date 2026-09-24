@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Hanken_Grotesk, Instrument_Serif } from "next/font/google";
 import Script from "next/script";
+import { HORSE_CARE_PREFIXES } from "@/lib/professions";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -76,7 +77,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`h-full antialiased ${instrument.variable} ${hanken.variable}`}
-      // The inline script below sets data-overlay-route on this element
+      // The inline script below sets data-overlay-route (and, on horse care
+      // routes, data-door, which swaps the accent colours) on this element
       // before React hydrates, same "runs before paint, outside React's
       // model" pattern as a dark-mode FOUC-prevention script — React has
       // no way to know the attribute is expected, so without this it logs
@@ -103,7 +105,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Script
           id="overlay-route"
           strategy="beforeInteractive"
-        >{`document.documentElement.dataset.overlayRoute = String(["/", "/coaches", "/for-coaches"].includes(location.pathname));`}</Script>
+        >{`document.documentElement.dataset.overlayRoute = String(["/", "/coaches", "/horse-care", "/for-coaches"].includes(location.pathname));
+if (${JSON.stringify(HORSE_CARE_PREFIXES)}.some(function (p) { return location.pathname === p || location.pathname.indexOf(p + "/") === 0; })) document.documentElement.dataset.door = "horse-care";`}</Script>
         {/* .reveal (src/app/globals.css) fades real content in as it scrolls
             into view — a scroll-reveal component has to start that content
             at opacity: 0 in the server-rendered HTML for the fade-in to

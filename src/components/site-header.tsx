@@ -10,7 +10,7 @@ import { SearchChips } from "@/components/search-chips";
 import { SearchFacets } from "@/components/search-facets";
 import { BackToResults } from "@/components/back-to-results";
 import { NavDropdown, type NavDropdownItem } from "@/components/nav-dropdown";
-import { horseCare } from "@/lib/professions";
+import { HORSE_CARE_RESULTS, horseCare, isHorseCarePath, sectionHref } from "@/lib/professions";
 import { topDisciplines } from "@/lib/disciplines";
 import { createClient } from "@/lib/supabase/client";
 
@@ -32,7 +32,7 @@ import { createClient } from "@/lib/supabase/client";
  */
 type Variant = "overlay" | "ink" | "light";
 
-const OVERLAY_ROUTES = ["/", "/coaches", "/for-coaches"];
+const OVERLAY_ROUTES = ["/", "/coaches", "/horse-care", "/for-coaches"];
 
 /**
  * Coach profiles: on phones the page paints its own "← Results / ♡" bar
@@ -42,7 +42,7 @@ const OVERLAY_ROUTES = ["/", "/coaches", "/for-coaches"];
  */
 function variantFor(pathname: string): { variant: Variant; coachProfile?: boolean } {
   if (OVERLAY_ROUTES.includes(pathname)) return { variant: "overlay" };
-  if (pathname.startsWith("/coaches/")) return { variant: "light", coachProfile: true };
+  if (pathname.startsWith("/coaches/") || pathname.startsWith("/profile/")) return { variant: "light", coachProfile: true };
   if (pathname === "/search") return { variant: "ink" };
   return { variant: "light" };
 }
@@ -170,22 +170,21 @@ const NAV = [
 /**
  * The parent brand's navigation, shown on the routes that belong to the
  * business as a whole rather than to the coaches section: the home page,
- * About, and the horse-care section. It offers the two halves of what EPA
- * will cover — horse care and coaches — and deliberately drops the coach
- * CTA, which belongs to the coaches section, not the front door.
+ * About, and every horse care page. It offers the two halves of the site,
+ * horse care and coaches, and carries "List your business" instead of the
+ * coaches section's "List your profile".
  */
-const PARENT_ROUTES = ["/", "/about"];
-const isParentRoute = (pathname: string) =>
-  PARENT_ROUTES.includes(pathname) || pathname.startsWith("/horse-care");
+const PARENT_ROUTES = ["/", "/about", "/list-your-business"];
+const isParentRoute = (pathname: string) => PARENT_ROUTES.includes(pathname) || isHorseCarePath(pathname);
 
 const HORSE_CARE_MENU: NavDropdownItem[] = [
-  ...horseCare.map((p) => ({ href: `/horse-care/${p.slug}`, label: p.name })),
+  ...horseCare.map((p) => ({ href: sectionHref(p), label: p.name })),
   { href: "/horse-care", label: "All horse care" },
 ];
 
 const COACHES_MENU: NavDropdownItem[] = [
   ...topDisciplines.map((d) => ({ href: `/disciplines/${d.slug}`, label: d.name })),
-  { href: "/coaches", label: "All disciplines" },
+  { href: "/disciplines", label: "All disciplines" },
 ];
 
 export function SiteHeader() {
@@ -204,6 +203,16 @@ export function SiteHeader() {
     // strip is dark there too.
     document.documentElement.dataset.overlayRoute = String(variant === "overlay" || Boolean(coachProfile));
   }, [variant, coachProfile]);
+
+  // <html data-door> — the Horse care door's steel accent (globals.css).
+  // The inline script in layout.tsx covers the first paint; this keeps it
+  // right across client-side navigation. Add each profession's own section
+  // path here (and there) the day it opens.
+  const door = isHorseCarePath(pathname) ? "horse-care" : null;
+  useEffect(() => {
+    if (door) document.documentElement.dataset.door = door;
+    else delete document.documentElement.dataset.door;
+  }, [door]);
 
   const firstName = auth.name?.split(" ")[0] ?? null;
   const accountHref = auth.role === "coach" ? "/dashboard" : "/account";
@@ -231,22 +240,26 @@ export function SiteHeader() {
       <div className="site-header__inner">
         <Link
           href="/"
-          className="flex items-baseline gap-3.5"
+          className="flex items-center gap-3.5"
           aria-label="Equine Professionals Australia, home"
           onClick={close}
         >
           {/* Below 360px the words and "Log in" can't share the bar, so the horse stands alone. */}
-          <BrandMark height={24} className="hidden max-[359px]:block" />
+          <BrandMark height={32} className="hidden max-[359px]:block" />
           <Wordmark size={21} className="max-[359px]:hidden md:hidden" />
           <Wordmark size={26} className="hidden md:block" />
-          {!isSearch && !coachProfile && (
+          {isDashboard && (
             <span className="site-header__muted hidden text-[12px] font-medium uppercase tracking-[0.16em] lg:inline">
-              {isDashboard ? "Coach dashboard" : "Australia"}
+              Coach dashboard
             </span>
           )}
         </Link>
         {coachProfile && (
-          <BackToResults label="Back to results" className="site-header__muted -ml-2 mr-auto hidden text-[14px] font-medium md:inline" />
+          <BackToResults
+            label="Back to results"
+            {...(pathname.startsWith("/profile/") ? { fallback: "/horse-care/search", from: HORSE_CARE_RESULTS } : {})}
+            className="site-header__muted -ml-2 mr-auto hidden text-[14px] font-medium md:inline"
+          />
         )}
 
         {isSearch && (
@@ -277,8 +290,8 @@ export function SiteHeader() {
         <nav className={`hidden items-center gap-7 text-[15px] font-medium md:flex ${isDashboard ? "md:hidden" : ""}`} aria-label="Primary">
           {parentNav && (
             <>
-              <NavDropdown label="Horse care" items={HORSE_CARE_MENU} current={pathname.startsWith("/horse-care")} />
-              <NavDropdown label="Coaches" items={COACHES_MENU} />
+              <NavDropdown label="Horse care" href="/horse-care" items={HORSE_CARE_MENU} current={pathname.startsWith("/horse-care")} />
+              <NavDropdown label="Coaches" href="/coaches" items={COACHES_MENU} />
               <Link href="/about" className="site-header__link" aria-current={pathname === "/about" ? "page" : undefined}>
                 About
               </Link>
@@ -328,12 +341,12 @@ export function SiteHeader() {
               <Link href="/login" className="site-header__link">
                 Log in
               </Link>
-              {!isSearch && !parentNav && (
+              {!isSearch && (
                 <Link
-                  href="/signup?role=coach"
+                  href={parentNav ? "/list-your-business" : "/signup?role=coach"}
                   className="site-header__outline rounded-[var(--radius-pill)] px-[18px] py-2.5 hover:bg-ink hover:text-ink-fg"
                 >
-                  List your profile
+                  {parentNav ? "List your business" : "List your profile"}
                 </Link>
               )}
             </>
@@ -476,14 +489,14 @@ export function SiteHeader() {
                   </form>
                 </li>
               </>
-            ) : parentNav ? null : (
+            ) : (
               <li className="pt-4">
                 <Link
-                  href="/signup?role=coach"
+                  href={parentNav ? "/list-your-business" : "/signup?role=coach"}
                   onClick={close}
                   className="block rounded-[var(--radius-soft)] bg-ink py-[15px] text-center text-[16px] font-semibold text-ink-fg"
                 >
-                  List your profile
+                  {parentNav ? "List your business" : "List your profile"}
                 </Link>
               </li>
             )}

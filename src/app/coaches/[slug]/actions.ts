@@ -4,6 +4,7 @@ import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
 import { logReveal } from "@/lib/coach-events";
+import { getMockProfessionalBySlug } from "@/lib/mock-professionals";
 import { getMockCoachBySlug } from "@/lib/mock-coaches";
 
 export type EnquiryResult = { ok: boolean; message: string };
@@ -133,8 +134,11 @@ export async function sendCoachEnquiry(
  */
 export async function revealPhone(coachId: string): Promise<{ phone: string | null }> {
   if (coachId.startsWith("mock:")) {
-    const mock = getMockCoachBySlug(coachId.slice(5));
-    return { phone: mock?.contact.phone ?? null };
+    const slug = coachId.slice(5);
+    const mock = getMockCoachBySlug(slug);
+    if (mock) return { phone: mock.contact.phone ?? null };
+    // Mock horse care professionals share the sentinel (src/lib/mock-professionals.ts).
+    return { phone: getMockProfessionalBySlug(slug)?.contact.phone ?? null };
   }
   const supabase = await createClient();
   if (!supabase) return { phone: null };

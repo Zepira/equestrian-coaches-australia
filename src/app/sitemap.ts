@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplineContent } from "@/lib/supabase/queries";
+import { horseCare, sectionHref } from "@/lib/professions";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -12,9 +13,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/for-coaches`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${siteUrl}/disciplines`, changeFrequency: "weekly", priority: 0.7 },
-    // /horse-care and its profession pages are deliberately absent: they
-    // are holding pages with no real providers on them yet, and both are
-    // noindex until a profession actually opens.
+    { url: `${siteUrl}/horse-care`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${siteUrl}/list-your-business`, changeFrequency: "monthly", priority: 0.5 },
+    // Each open horse care profession's section (/farriers…). Professional
+    // profiles are mock data for now, so like mock coaches they stay out.
+    ...horseCare
+      .filter((p) => p.open)
+      .map((p) => ({ url: `${siteUrl}${sectionHref(p)}`, changeFrequency: "daily" as const, priority: 0.8 })),
   ];
 
   const supabase = await createClient();

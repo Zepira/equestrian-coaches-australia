@@ -1,0 +1,734 @@
+<title>The Site as a CMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --navy:#E7DAC6; --navy-2:#DDCFB6;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8; --claret-hi:#DE8B6C;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7; --band-accent:#1F3A2E;
+  --bar-good:#00794F; --bar-bad:#C0492A;
+  --pick:#9C4229; --pick-bg:#F7F0E1;
+  --code-bg:#FBF7EC; --code-ink:#33312B; --code-key:#1F3A2E; --code-com:#87816F;
+  --on-navy:#22201C; --on-navy-2:#4A4842; --on-navy-3:#5E5A50;
+  --navy-rule:#D3C1A4;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --wrap:1060px; --measure:70ch;
+  --ribbon:polygon(0 0,100% 0,100% 100%,0 100%);
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.7rem,8vw,5.2rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.8rem,4.3vw,2.8rem); line-height:1.03}
+h3{font-size:1.24rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+h4{font-family:var(--body); font-size:.72rem; font-weight:800; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 10px}
+
+code{font-family:var(--mono); font-size:.86em; background:var(--code-bg); color:var(--code-ink);
+  padding:1px 5px; border-radius:2px}
+pre{font-family:var(--mono); font-size:.8rem; line-height:1.6; background:var(--code-bg); color:var(--code-ink);
+  padding:18px 20px; margin:20px 0; overflow-x:auto; border:1px solid var(--line-strong)}
+pre code{background:none; padding:0; font-size:1em}
+pre .k{color:var(--code-key); font-weight:600}
+pre .c{color:var(--code-com); font-style:italic}
+
+.chip{display:inline-block; font-size:.66rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+.band{background:var(--navy); color:var(--on-navy); border-bottom:1px solid var(--line-strong)}
+.masthead{padding:64px 0 68px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:42px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--on-navy-2)}
+.masthead h1{margin-bottom:28px}
+.masthead .lede{font-size:1.14rem; line-height:1.5; color:var(--on-navy-2); max-width:58ch; margin:0}
+.mast-meta{margin-top:38px; padding-top:18px; border-top:1px solid var(--navy-rule);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.75rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--on-navy-3)}
+
+main.wrap{padding-top:70px}
+section{margin-bottom:80px}
+.sec-head{margin-bottom:28px}
+.sec-num{display:block; font-family:var(--display); font-size:.96rem; font-weight:600;
+  letter-spacing:.06em; color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+
+/* kind cards */
+.kinds{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:30px 0}
+.kind{border:1px solid var(--line-strong); background:var(--surface); padding:20px 20px 22px}
+.kind h3{margin:12px 0 8px}
+.kind p{margin:0 0 .7em; font-size:.9rem; line-height:1.5; color:var(--ink-2)}
+.kind p:last-child{margin-bottom:0}
+.kind .ex{font-family:var(--mono); font-size:.76rem; color:var(--ink-3); line-height:1.7}
+@media(max-width:800px){.kinds{grid-template-columns:1fr}}
+
+/* loop */
+.loop{border:1px solid var(--line-strong); background:var(--surface); margin:30px 0}
+.loop-head{padding:20px 22px 4px}
+.loop-head h3{margin-bottom:6px}
+.loop-head p{margin:0; font-size:.88rem; color:var(--ink-3)}
+.loop-steps{display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line);
+  border-top:1px solid var(--line-strong); margin-top:18px}
+.lstep{background:var(--surface); padding:18px 16px 20px}
+.lstep .n{font-family:var(--display); font-size:1.7rem; font-weight:500; color:var(--brass); line-height:1; display:block; margin-bottom:8px}
+.lstep b{display:block; font-size:.9rem; margin-bottom:5px}
+.lstep span{font-size:.82rem; line-height:1.45; color:var(--ink-2)}
+.loop-foot{padding:14px 22px; border-top:1px solid var(--line-strong); background:var(--surface-2);
+  font-size:.84rem; color:var(--ink-2)}
+.loop-foot b{color:var(--ink)}
+@media(max-width:860px){.loop-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.loop-steps{grid-template-columns:1fr}}
+
+/* tables */
+figure{margin:30px 0; border:1px solid var(--line-strong); background:var(--surface); overflow:hidden}
+figcaption{padding:14px 22px; border-top:1px solid var(--line-strong); font-size:.85rem;
+  line-height:1.5; color:var(--ink-2); background:var(--surface-2)}
+figcaption b{font-weight:700; color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:620px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.32rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:12px 22px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.5}
+thead th{font-size:.66rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px; white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code{font-size:.8rem; white-space:nowrap}
+td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
+
+/* steps */
+.steps{margin:28px 0 0}
+.step{display:grid; grid-template-columns:58px 1fr; gap:0 22px; padding:26px 0; border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.smark{font-family:var(--display); font-size:2rem; font-weight:500; letter-spacing:-.025em; color:var(--brass); line-height:1}
+.sbody h3{margin-bottom:9px}
+.sbody p,.sbody ul{max-width:64ch}
+.sbody > :last-child{margin-bottom:0}
+@media(max-width:620px){.step{grid-template-columns:1fr; gap:10px}}
+
+/* callouts */
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:18px 22px; margin:24px 0}
+.note{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:18px 22px; margin:24px 0}
+.flag p,.note p{margin:0; max-width:64ch; font-size:.94rem}
+.flag p + p,.note p + p{margin-top:.65em}
+.flag .chip,.note .chip{margin-bottom:11px}
+.flag ul,.note ul{margin:.6em 0 0; font-size:.94rem; max-width:64ch}
+
+/* vocabulary */
+.vocab{border:1px solid var(--line-strong); background:var(--surface); margin:24px 0}
+.vrow{display:grid; grid-template-columns:190px 1fr; gap:0 22px; padding:15px 22px; border-top:1px solid var(--line)}
+.vrow:first-of-type{border-top:0}
+.vname{font-weight:700; font-size:.95rem}
+.vname small{display:block; font-family:var(--mono); font-size:.72rem; font-weight:400; color:var(--ink-3); margin-top:3px}
+.vals{font-family:var(--mono); font-size:.79rem; line-height:1.85; color:var(--ink-2)}
+.vhead{padding:20px 22px 16px; background:var(--surface-2); border-bottom:1px solid var(--line-strong)}
+.vhead h3{margin-bottom:6px}
+.vhead p{margin:0; font-size:.88rem; color:var(--ink-2); max-width:66ch}
+@media(max-width:700px){.vrow{grid-template-columns:1fr; gap:6px}}
+
+.foot{border-top:1px solid var(--line-strong); padding:44px 0 52px; font-size:.8rem; line-height:1.75; color:var(--on-navy-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--on-navy-3); margin-bottom:10px}
+.foot p{max-width:80ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){
+  th,td,caption,figcaption,.vrow,.vhead,.loop-head,.loop-foot{padding-left:16px;padding-right:16px}
+  pre{padding:14px 16px}
+}
+</style>
+
+<div class="band">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="mast-top">
+        <span class="mast-mark">Handbook</span>
+        <span class="mast-org">Equine Professionals Australia</span>
+      </div>
+      <h1>The site as a CMS</h1>
+      <p class="lede">Every profession launches together, coaches and all eight horse care professions, so the list of professions, everything written about each one, and the way a farrier signs up can no longer live in the code. This is the plan for how the site runs from the admin instead: what is a row and what stays code, the database built clean from the start, how a professional signs up and gets reviewed, how riders are kept coming back across every profession, how value is proved to every provider, the admin screens, and the order to build it in.</p>
+      <div class="mast-meta">
+        <span>Build plan, revision 2</span>
+        <span>24 September 2026</span>
+        <span>Decisions settled, section 13</span>
+        <span>Builds on One Site, Two Front Doors</span>
+      </div>
+    </header>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>The rule, in one line</h2></div>
+  <div class="col">
+    <p><strong>The code owns the shape of the site. The database owns everything a visitor reads.</strong> Colours, layouts, the search algorithm, security and the page templates stay in code, because a wrong value there breaks the site. The professions, their names and words, the specialities, the page copy, the prices, the menus and the emails move into rows that Alana and Kim edit in <code>/admin</code>, because they will change without the code changing.</p>
+    <p>It is the settings rule from 7 September grown up. That rule already covers numbers and toggles. This extends it to words and to the taxonomy, with the same five protections (code defaults, typed readers, validation on save, a history row on every change, a short cache), which is what stops a CMS from becoming a way to break the site from a web form.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Four layers, and who edits each one</caption>
+      <thead><tr><th>Layer</th><th>What lives there</th><th>Stored in</th><th>Edited by</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Structure</strong></td>
+          <td>Schema, security rules, search and ranking, page templates, the two doors and their colours, the glyph library, the gate logic, the reserved URL list</td>
+          <td>Code</td>
+          <td>A deploy</td>
+        </tr>
+        <tr>
+          <td><strong>Taxonomy</strong></td>
+          <td>Professions, disciplines and specialities, skills and setup, aliases, areas</td>
+          <td><code>terms</code> and friends</td>
+          <td>Admin</td>
+        </tr>
+        <tr>
+          <td><strong>Content</strong></td>
+          <td>Every profession's words, page copy for the home page and both doors, the pitch pages, FAQs, email wording, menu picks, completeness weights</td>
+          <td><code>profession_details</code>, <code>content_blocks</code></td>
+          <td>Admin</td>
+        </tr>
+        <tr>
+          <td><strong>Settings</strong></td>
+          <td>Prices paired with their Stripe IDs, thresholds, limits, dates, what each tier unlocks, the review switch, who gets admin alerts, event reach</td>
+          <td><code>settings</code></td>
+          <td>Admin</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="chip">Not a page builder</span>
+    <p>Admin edits fields, never layout. A hero has a headline, a lead, a short lead and a photo, and those four fields are what the form shows. Nobody can drag a block onto the home page. That keeps the design intact whoever is typing, and it is also far less to build.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Where things stand</h2></div>
+  <div class="col">
+    <p>The horse care pages built on 23 September run on a list in the code and on made-up professionals. Coaching is further along: disciplines, aliases, skills and one setting are already editable. This is what still needs a deploy to change, or still assumes everyone is a coach.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>Hard-coded or coach-shaped today</caption>
+      <thead><tr><th>What</th><th>Where it lives now</th><th>Moves to</th></tr></thead>
+      <tbody>
+        <tr><td>The eight professions, their names, singulars and one-liners</td><td><code>src/lib/professions.ts</code></td><td>Profession rows</td></tr>
+        <tr><td>Farrier, vet and dentist specialities</td><td><code>mock-professionals.ts</code>, as mock data</td><td>Speciality rows under each profession</td></tr>
+        <tr><td>Hero words, steps and pitch copy on the home page, both doors and <code>/list-your-business</code></td><td>The page files</td><td>Content blocks and profession fields</td></tr>
+        <tr><td>Tier names, prices and taglines</td><td><code>src/lib/tiers.ts</code>, repeated on <code>/for-coaches</code> and the billing page</td><td>Settings, with the Stripe price ID pair</td></tr>
+        <tr><td>What each tier can do</td><td><code>tiers.ts</code> functions</td><td>A capability map in settings</td></tr>
+        <tr><td>The eight disciplines in the Coaches menu</td><td><code>topDisciplineSlugs</code></td><td>A "featured" flag and order on <code>terms</code></td></tr>
+        <tr><td>Enquiry options ("Regular lessons / One-off / Clinic")</td><td>A database enum plus the form</td><td>Per profession options</td></tr>
+        <tr><td>Email subjects and bodies, and the mention prompt</td><td><code>notifications.ts</code>, the enquiry action</td><td>Content blocks with variables</td></tr>
+        <tr><td>Which pages are horse care and which have the see-through header</td><td>Path lists in the inline script in <code>layout.tsx</code>, the <code>SiteHeader</code> effect and <code>OVERLAY_ROUTES</code></td><td>Worked out on the server from the route and the profession rows</td></tr>
+        <tr><td>Rider alerts</td><td><code>rider_preferences</code>: one area, disciplines only, events only</td><td><code>rider_alerts</code>, any profession, events and new providers</td></tr>
+        <tr><td>Structured data</td><td><code>coachPersonSchema</code> says "Riding Coach"</td><td>The profession's singular, plus <code>LocalBusiness</code> when there is a business name</td></tr>
+        <tr><td>The weekly SEO digest's URL groups</td><td>Coach routes, in <code>seo-digest.ts</code></td><td>Built from the profession rows</td></tr>
+        <tr><td>The profile completeness score</td><td>"A photo of them coaching", "disciplines tagged"</td><td>Weights and wording per profession</td></tr>
+        <tr><td>The coach dashboard</td><td>Tabs, labels and stats written for coaches</td><td>Labels from the profession row</td></tr>
+        <tr><td>Profession glyphs</td><td><code>profession-glyph.tsx</code></td><td>Stay in code as a library; the profession row picks one</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>Two things are coach-shaped all the way down and are the real work: the sign-up (every "list your business" link makes a coach account, and the dashboard only asks for disciplines) and the search function <code>nearby_coaches</code>, which has no idea professions exist.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>A clean slate</h2></div>
+  <div class="col">
+    <p>The only accounts are Alana's and Kim's, and nothing is indexed. So the database is rebuilt rather than migrated: the 23 migrations so far are replaced by a new baseline written for providers of every profession, with the names it should have had from the start. After launch every one of these renames would be a migration with real users on it. Today each one is a search-and-replace.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>Renames, done once, now</caption>
+      <thead><tr><th>Today</th><th>Becomes</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><code>coach_profiles</code></td><td><code>providers</code></td><td>It holds farriers and vets. The earlier "keep the misnomer" call was made to avoid a migration with users on it; there are none</td></tr>
+        <tr><td><code>coach_terms</code>, <code>coach_photos</code>, <code>coach_events</code></td><td><code>provider_terms</code>, <code>provider_photos</code>, <code>provider_events</code></td><td>Same</td></tr>
+        <tr><td><code>clinics</code></td><td><code>events</code></td><td>Farrier workshops and dental days are events, not clinics. The analytics table is <code>provider_events</code>, so the two cannot be confused</td></tr>
+        <tr><td><code>nearby_coaches()</code></td><td><code>nearby_providers()</code></td><td>Takes professions; no wrapper needed since nothing old calls it</td></tr>
+        <tr><td><code>matching_riders_for_clinic()</code>, <code>clinics_for_rider()</code></td><td><code>riders_for_event()</code>, <code>events_for_rider()</code></td><td>Same</td></tr>
+        <tr><td>Role <code>coach</code></td><td>Role <code>provider</code></td><td>The word "coach" stops deciding who sees the dashboard</td></tr>
+        <tr><td><code>enquiries.want</code> enum</td><td>Text, checked against the profession's options</td><td>Options come from the profession row</td></tr>
+        <tr><td><code>rider_preferences</code></td><td><code>rider_alerts</code></td><td>Several alerts per rider, any profession (section 07)</td></tr>
+        <tr><td>Everything in <code>src/</code> that says coach where it means provider</td><td>Provider</td><td>Coach stays wherever it really means a riding coach</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>What survives the wipe: the postcode and area data (reloaded by the existing script), the discipline, skill and setup vocabulary and its aliases (reseeded), the settings, and the two admin accounts (re-granted). Because everything is created in one baseline, the enum values that normally have to be added outside a transaction are simply part of the <code>create type</code>.</p>
+  </div>
+  <div class="note">
+    <span class="chip">Keep the mock providers</span>
+    <p>The made-up coaches and professionals stay out of the database, as now, so the demo pages keep working through the rebuild and switch off with one flag. They read the taxonomy from the database, so the demo shows whatever admin has set up.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>The data model</h2></div>
+  <div class="col">
+    <p>A profession is a <code>terms</code> row, its words live in a companion table, specialities hang off it, and a provider's professions are rows in <code>provider_terms</code> like their disciplines already are. The one new idea is that a profile is not an account: that is what keeps practices with several people a later addition rather than a rebuild.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">A</div>
+      <div class="sbody">
+        <h3>Professions are terms</h3>
+        <p><code>term_kind</code> includes <code>profession</code>, and <code>terms</code> has a nullable <code>parent_id</code>. Nine profession rows: Riding coaches, plus the eight horse care professions. A profession inherits everything terms already do: aliases (shoer, blacksmith, hoof trimmer), slug history and 301s, a photo, SEO title and description, active and inactive. <code>terms</code> also gains <code>featured</code> and <code>featured_order</code>, so the menus are picked in admin.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">B</div>
+      <div class="sbody">
+        <h3>Its words and behaviour live in <code>profession_details</code></h3>
+        <p>One row per profession, keyed on the term.</p>
+        <ul>
+          <li><strong>Identity:</strong> door (coaches or horse-care), glyph key, sort order, launch state.</li>
+          <li><strong>Nouns:</strong> singular ("farrier"), plural, short label ("Physios"), what their specialities are called ("discipline", "speciality", "service"), who they serve ("rider", "horse owner"), what the years field means ("years shoeing"), the job title used in structured data.</li>
+          <li><strong>Page words:</strong> hero headline, lead, short lead, the one-liner, steps, FAQ, the pitch to professionals.</li>
+          <li><strong>Behaviour:</strong> enquiry options ("Regular visits", "One-off visit"), <code>events_enabled</code> (on for every profession at launch), <code>remote_allowed</code> (on for coaches and nutritionists, off for farriers and dentists), tier labels (so "Clinic" can read differently for a farrier), and the completeness weights and wording (section 08).</li>
+        </ul>
+        <p>Repeating blocks (steps, FAQ, enquiry options, completeness items) are JSON validated against a fixed shape on save, so a form can grow a fourth step without a migration but can never save something the page cannot draw.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">C</div>
+      <div class="sbody">
+        <h3>Specialities stay the "discipline" kind</h3>
+        <p>Barefoot trimming, remedial shoeing, lameness work-ups: each is a term of kind <code>discipline</code> with <code>parent_id</code> pointing at its profession. The word a visitor sees comes from the profession's noun, so a farrier's page says "specialities" and a coach's says "disciplines", from the same table and the same queries. Skills and setup terms get the same optional <code>parent_id</code>: blank means shared by everyone ("mobile service", "after hours"), set means one profession only ("float loading" for coaches).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">D</div>
+      <div class="sbody">
+        <h3>A profile is not an account</h3>
+        <p>Today a coach profile's id <em>is</em> the user's id, so one login can only ever be one profile. That is the single thing that would make practices a rebuild later. The new model separates three things:</p>
+        <ul>
+          <li><strong><code>providers</code></strong>: the public profile, with its own id. Name, slug, headline, bio, base location and travel radius, remote flag, business name (optional), <code>status</code>, <code>cohort</code>, <code>acquisition_source</code>, <code>invite_id</code>, <code>organisation_id</code> (nullable, unused at launch).</li>
+          <li><strong><code>provider_members</code></strong>: which users can edit which profile, with a role. At launch every profile has one row, its owner. Security rules check membership, never "is this my id".</li>
+          <li><strong><code>subscriptions</code></strong>: the Stripe customer, price, tier, status and founding terms, with a <code>billing_owner</code> that points at a provider today and can point at an organisation later.</li>
+        </ul>
+        <p>One plan covers every profession a provider has: someone who coaches and does bodywork is one profile, one subscription, shown in both sections.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">E</div>
+      <div class="sbody">
+        <h3>Room for practices, not built yet</h3>
+        <p>Launch is people only, with an optional business name. When practices come (a vet clinic, a saddlery, a riding school), the additions are: an <code>organisations</code> table (name, slug, logo, address), <code>organisation_members</code>, <code>organisation_id</code> filled in on each person's profile, a practice page listing its people, and a subscription whose billing owner is the organisation, covering several profiles. Nothing written at launch has to change for that, because nothing assumes one user is one profile or that a profile pays for itself. The same shape covers riding schools, the call deferred on 7 September.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">F</div>
+      <div class="sbody">
+        <h3>Status and review</h3>
+        <p><code>providers.status</code> is one of <code>draft</code>, <code>in_review</code>, <code>published</code>, <code>hidden</code> or <code>changes_requested</code>, with <code>reviewed_by</code>, <code>reviewed_at</code> and a note. Every public query, security rule, search function and page gate reads <code>status = 'published'</code>; there is no separate published switch to drift out of step.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">G</div>
+      <div class="sbody">
+        <h3>Page copy lives in <code>content_blocks</code></h3>
+        <p>A key, an optional profession or door it belongs to, a JSON value with a known shape, and who changed it when. Keys like <code>home.hero</code>, <code>door.horse-care.hero</code>, <code>pitch.professionals</code>, <code>email.enquiry</code>, <code>email.monthly.zero</code>, <code>prompt.mention</code>. It gets the settings table's five rules exactly: the default lives in code (so the page never shows blank), one typed reader per block, validation on save, a history row on every change, and a short cache that is cleared the moment an admin saves.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>The baseline, in the order it is created</caption>
+      <thead><tr><th>Part</th><th>What</th><th>Watch for</th></tr></thead>
+      <tbody>
+        <tr><td>Types</td><td><code>term_kind</code> with <code>profession</code>; <code>user_role</code> of rider, provider; <code>provider_status</code>; tier; event kinds</td><td>All in the baseline, so none need adding out of band</td></tr>
+        <tr><td>Accounts</td><td><code>profiles</code>, <code>admin_users</code> and <code>is_admin()</code></td><td>Admin stays its own table, not a role</td></tr>
+        <tr><td>Places</td><td><code>postcodes</code>, <code>areas</code> with lat/long</td><td>Reload with the existing script</td></tr>
+        <tr><td>Taxonomy</td><td><code>terms</code> with <code>parent_id</code> and <code>featured</code>, <code>term_aliases</code>, <code>term_suggestions</code>, <code>term_slug_history</code>, <code>profession_details</code></td><td>Seed nine professions from today's code so nothing on screen changes; backfill every discipline to Riding coaches</td></tr>
+        <tr><td>Providers</td><td><code>providers</code>, <code>provider_members</code>, <code>provider_terms</code>, <code>provider_photos</code>, <code>testimonials</code>, <code>subscriptions</code>, <code>invites</code></td><td>Security by membership; invite tokens single use and expiring</td></tr>
+        <tr><td>Activity</td><td><code>events</code>, <code>enquiries</code>, <code>favourites</code>, <code>rider_alerts</code>, <code>notifications_log</code></td><td><code>enquiries.want</code> as text; enquiry contact details deleted after 24 months</td></tr>
+        <tr><td>Measurement</td><td><code>provider_events</code>, <code>search_events</code>, <code>provider_month_stats</code>, <code>gsc_daily</code></td><td><code>profession_id</code> on each; month rows frozen at month end</td></tr>
+        <tr><td>Pages</td><td><code>indexable_pages</code> with <code>profession_id</code>; <code>recompute_indexable_pages()</code></td><td>Gate counted per profession</td></tr>
+        <tr><td>Content</td><td><code>settings</code>, <code>settings_history</code>, <code>content_blocks</code>, <code>content_history</code></td><td>Seed with today's copy; code defaults stay as the fallback</td></tr>
+        <tr><td>Functions</td><td><code>nearby_providers()</code>, <code>riders_for_event()</code>, <code>events_for_rider()</code>, <code>nearest_postcode()</code></td><td>One set, written once for providers</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Search, pages and addresses</h2></div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>Search knows professions</h3>
+        <p><code>nearby_providers()</code> takes profession ids alongside the discipline, skill and setup arrays: OR within a kind, AND across kinds, as now. Ranking stays distance first with "based in the area" above "travels to it". Remote providers only appear where the profession allows remote, and never on suburb pages. Search never mixes the two doors in one list.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>The gates count per profession</h3>
+        <p><code>indexable_pages</code> gains a profession, and its page types become profession plus area, and profession plus speciality plus area. The three-provider gate counts providers of that profession, so ten coaches in Geelong do not switch on an empty Geelong farriers page. The featured rules count the same way: no featured block in an area with fewer than eight providers <em>of that profession</em>, and at most three featured per profession per area.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>The addresses, all moved before launch</h3>
+        <p>Since nothing is indexed, the route move happens with the rebuild instead of as a separate stage. Every open profession is a top-level section from one template:</p>
+        <ul>
+          <li><code>/coaches</code>, <code>/coaches/[discipline]</code>, <code>/coaches/in/[area]</code>, <code>/coaches/[discipline]/in/[area]</code></li>
+          <li><code>/farriers</code>, <code>/farriers/[speciality]</code>, <code>/farriers/in/[area]</code>, <code>/farriers/[speciality]/in/[area]</code>, and the same for every profession</li>
+          <li><code>/profile/[slug]</code> for every provider, whatever they do</li>
+          <li><code>/horse-care</code> stays as the door's index of professions; <code>/horse-care/[slug]</code> 301s to the profession's own section</li>
+        </ul>
+        <p>Old coach addresses get a generated redirect map, provider slugs checked before discipline slugs, as already planned.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>Reserved words</h3>
+        <p>A profession slug sits at the top level, so one called <code>search</code> or <code>about</code> would take over an existing page. A reserved list lives in code (every top-level route: <code>search</code>, <code>about</code>, <code>admin</code>, <code>account</code>, <code>dashboard</code>, <code>profile</code>, <code>events</code>, <code>login</code>, <code>signup</code>, <code>join</code>, <code>horse-care</code>, <code>for-coaches</code>, <code>for-professionals</code>, <code>api</code> and the rest), the admin form refuses a profession slug on it, and a database check refuses it too.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">5</div>
+      <div class="sbody">
+        <h3>The door comes from the data</h3>
+        <p>Today the horse care colours and the see-through header are switched by lists of paths in an inline script, the header effect and <code>OVERLAY_ROUTES</code>, and adding a profession means adding its path to each. That breaks the no-deploy test. Instead the page's door is worked out on the server from the route and the profession rows, and <code>data-door</code> and <code>data-overlay-route</code> are rendered on <code>&lt;html&gt;</code> with the first byte. The inline script goes, and with it the regex gotcha recorded in CLAUDE.md.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">6</div>
+      <div class="sbody">
+        <h3>Structured data and the SEO digest</h3>
+        <p>A profile's <code>Person</code> markup takes its job title from the profession row and <code>knowsAbout</code> from its specialities; a provider with a business name also gets <code>LocalBusiness</code>. Every profession's events get <code>Event</code> markup. The weekly digest groups Search Console pages by the URL patterns of every open profession, reads them from the rows, and splits zero-result searches by profession, so a supply gap says "farriers near Ballarat" rather than just "Ballarat".</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>How a professional signs up</h2></div>
+  <div class="col">
+    <p>One route for every profession, with the profession decided at the start and everything after it reading that profession's row.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>Arrive with a profession already known</h3>
+        <p>Every way in carries it: <code>/for-coaches</code>, a new <code>/for-professionals</code> with a profession picker and that profession's pitch, <code>/list-your-business</code>, and Kim's messages, which link to <code>/join/farriers</code>. Each lands on <code>/signup?profession=farriers&amp;plan=listed</code>. The link also carries where they came from (<code>ref</code> and the usual <code>utm</code> tags), which becomes <code>acquisition_source</code>. The current bug where plan links send <code>?plan=</code> and the form reads <code>?tier=</code> is fixed here.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>Make the account</h3>
+        <p>Name, email, password, and the profession shown with a "change" link rather than a question. The account is a <code>provider</code>, and a <code>providers</code> row plus its owner membership are created together. Confirming the email lands them in onboarding, not the dashboard.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>Five short screens of onboarding</h3>
+        <ul>
+          <li><strong>What you do:</strong> the profession (with "I also do…" for a second one, covered by the same plan), then that profession's specialities, with the suggested ones ticked first.</li>
+          <li><strong>Where you work:</strong> base suburb, how far you travel, whether owners come to you, remote or online work where the profession allows it, and a business name if you trade under one.</li>
+          <li><strong>You:</strong> photo, a one-line headline, a few sentences in your own words, qualifications, registration and insurance, all shown as "supplied by".</li>
+          <li><strong>How owners reach you:</strong> the enquiry form, phone and email, each behind click-to-reveal, as coaches have now.</li>
+          <li><strong>Your plan:</strong> the founding offer while it is open (section 09), otherwise the three plans with that profession's labels.</li>
+        </ul>
+        <p>Every screen saves as it goes, so leaving halfway leaves a draft, not a lost form. The labels and help text on every screen come from the profession row: a vet is asked about "services", a coach about "disciplines", from the same form.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>Preview, then submit for review</h3>
+        <p>The last screen shows the profile as an owner will see it. Submitting needs the finished-profile minimum: a photo, a bio, one speciality and a location. It goes to <code>in_review</code>, and the provider sees "we'll have a look and let you know, usually within a day or two".</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">5</div>
+      <div class="sbody">
+        <h3>Review, with an alert</h3>
+        <p>Every new profile is looked at before it goes live. The moment one is submitted, an email goes to every address in the <code>review_alert_emails</code> setting (Alana and Kim to start) with the name, profession, area and a one-click link to it in the review queue. From there it is <strong>publish</strong>, or <strong>ask for changes</strong> with a note the provider sees. Publishing sends the provider an email saying where they now appear, which keeps the fallback-ladder promise: every published provider is on at least one live page.</p>
+        <p>Review is a setting, <code>review_required</code>, on at launch. Turned off, a finished profile publishes itself and the alert becomes a "new provider" notice instead, so you still know who joined. Later edits to a published profile go live straight away and are not re-reviewed; a changed photo or name appears in a "recent changes" list in admin.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">6</div>
+      <div class="sbody">
+        <h3>Kim's invites</h3>
+        <p>The rule stands: never publish a profile somebody has not agreed to. In admin Kim enters a name, email and profession, optionally starts the profile from what she already knows, and sends a link from her own message. The link opens the sign-up with everything filled in; nothing is public until the professional finishes onboarding, submits, and passes review. Each invite records Kim as the source, which answers the "which outreach converted" question at month eight.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="chip">No custom fields</span>
+    <p>Professions differ, and the temptation is a form builder where each profession defines its own fields. Every real difference so far fits the existing shapes instead: what they do is specialities, how they work is setup terms with an optional one-line detail, the rest is nouns and labels on the profession row. A form builder would be the single most expensive part of this plan and would make search and area pages much harder. Revisit only if a profession genuinely needs data that fits none of those.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Riders, across every profession</h2></div>
+  <div class="col">
+    <p>The stated goal is riders and owners coming back, whether for a coach or a farrier. One site only pays off if a rider who signs up once hears about everything relevant to them. Today the rider side only knows about coaching events.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>Alerts for any profession</h3>
+        <p><code>rider_alerts</code> replaces the single preferences row. A rider can hold several alerts, each with a place and radius, a door or specific professions, optional disciplines or specialities, and what to hear about: new events, a new provider near them, or both. "Tell me when a barefoot trimmer starts working near Kyneton" is one row.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>Event reach is a distance</h3>
+        <p>An event is promoted to riders whose alerts match it and who are within reach. Listed and Spotlight events reach riders within their own alert radius; Clinic tier events are pushed further, to <code>event_reach_km</code> (a setting, 250 km to start), so a Toowoomba workshop reaches the Darling Downs rather than Cairns.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>One account page, one monthly email</h3>
+        <p>Saved providers work for any profession. "Coming up near you" on the account page draws from every profession the rider follows. The monthly rider email is one email from the brand, with sections for each door the rider cares about: new events, new providers near them, and the occasional note that a profession has opened in their area.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>Consent, stored properly</h3>
+        <p>Each alert records when and how the rider opted in, every email carries a working one-click unsubscribe, and unsubscribing is honoured at once. That is the Spam Act, and it also keeps the list, the business's most valuable asset, clean enough to be worth something.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Proving value to every provider</h2></div>
+  <div class="col">
+    <p>The month-eight conversion rests on showing a provider what the listing did for them. All of that was written for coaches, and a farrier who gets a coach-shaped report will not trust it.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>Every measurement carries the profession</h3>
+        <p><code>provider_events</code> (impressions, views, reveals, enquiries), <code>search_events</code> and <code>provider_month_stats</code> all record the profession, so a provider in two sections sees what each one did for them, and a benchmark compares a farrier with farriers, never with coaches.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>The monthly numbers email in their words</h3>
+        <p>The good-month and zero-month versions are content blocks with the profession's nouns as variables: "owners" rather than "riders" for horse care, "visits" rather than "lessons". The outcome question, the local search terms and the one profile gap work the same for everyone.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>Completeness per profession</h3>
+        <p>The score out of 100 keeps its shape, but the items and weights live on the profession row: a coach is asked for a photo of them coaching, a farrier for a photo at work, a vet for their registration. The dashboard's "one thing to do this month" reads from it.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>The mention prompt</h3>
+        <p>"When you get in touch, let Jane know you found her on Equine Professionals Australia." It is a content block, uses the provider's first name, and says the brand, never a section.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">5</div>
+      <div class="sbody">
+        <h3>The dashboard</h3>
+        <p>The same tabs for everyone (overview, enquiries, profile, events, billing), with labels from the profession row. A provider in two professions sees both on one dashboard, with the stats split by section.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">09</span><h2>Plans, prices and the founding offer</h2></div>
+  <div class="tablewrap">
+    <table>
+      <caption>Decided</caption>
+      <thead><tr><th>Question</th><th>Answer</th><th>How it is built</th></tr></thead>
+      <tbody>
+        <tr><td>Prices</td><td>The same three tiers and prices for every profession</td><td>One set of Stripe prices in settings; each profession can relabel a tier</td></tr>
+        <tr><td>Two professions</td><td>One plan covers every profession a provider has</td><td>One subscription per provider, not per profession</td></tr>
+        <tr><td>Events</td><td>On for every profession at launch</td><td><code>events_enabled</code> per profession, all on; the tier limits apply to everyone</td></tr>
+        <tr><td>Remote work</td><td>A switch per profession</td><td><code>remote_allowed</code> on the profession row</td></tr>
+        <tr><td>Who the founding offer covers</td><td>Every profession, with no cap on numbers</td><td>Eligibility is the sign-up date only</td></tr>
+        <tr><td>What a founding member gets</td><td>Spotlight free until the offer ends, then Listed at $9.99, locked for as long as they stay</td><td>A founding Stripe price at $9.99, separate from the open one; they can upgrade any time</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>The founding offer is two dates in settings, both editable in admin and both set to 30 April 2027 to start: <code>founding_join_by</code> (sign up before this to qualify) and <code>founding_free_until</code> (when billing starts). They are separate so the offer can close to new sign-ups without shortening it for the people already on it. A provider's cohort is recorded as <code>founding</code> or <code>open</code> at sign-up and never changes, so the month-eight question "did the founding offer convert?" can be answered per profession.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">10</span><h2>The admin</h2></div>
+  <div class="col">
+    <p>The same <code>/admin</code>, with the tabs grouped the way the site is: what the site lists, what it says, what it charges, and who is on it.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>Screens</caption>
+      <thead><tr><th>Screen</th><th>What it edits</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Professions</td><td>Add a profession, its nouns, glyph, door, page words, steps, FAQ, pitch, enquiry options, tier labels, events and remote switches, completeness items, photo, launch state, menu order</td><td>New</td></tr>
+        <tr><td>Specialities and disciplines</td><td>Today's discipline editor, with a profession filter. Description, photo, SEO, featured in menu</td><td>Extend</td></tr>
+        <tr><td>Skills and setup, aliases</td><td>As now, plus which profession a term belongs to</td><td>Extend</td></tr>
+        <tr><td>Pages</td><td>Home, each door, <code>/list-your-business</code>, the professionals pitch, About, FAQ: one form per page with the fields that page has</td><td>New</td></tr>
+        <tr><td>Emails</td><td>Subject and body of each email (enquiry, review outcome, where-you-appear, monthly numbers, rider monthly, alerts), with the variables listed beside the box and a "send me a test" button</td><td>New</td></tr>
+        <tr><td>Plans and prices</td><td>Tier names and taglines, prices paired with Stripe IDs (checked against Stripe on save), the founding price, what each tier unlocks, net after fees beside each price</td><td>New</td></tr>
+        <tr><td>Settings</td><td>Founding dates, review switch, alert emails, event reach, gate numbers, limits</td><td>Exists, grows</td></tr>
+        <tr><td>Review queue</td><td>Profiles waiting, oldest first, with a count on the tab. Publish or ask for changes, with a note</td><td>New</td></tr>
+        <tr><td>Providers</td><td>Everyone listed: search, filter by profession, status and cohort, hide or unhide, see source and recent changes</td><td>New</td></tr>
+        <tr><td>Invites</td><td>Create, resend, see who finished</td><td>New</td></tr>
+        <tr><td>Riders</td><td>Count by area and profession followed, unsubscribes, and a way to remove a rider on request</td><td>New</td></tr>
+        <tr><td>Areas</td><td>The hand-written intros for the top area pages, per profession</td><td>New</td></tr>
+        <tr><td>Handbook</td><td>Read only, stays in git on purpose</td><td>As now</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>Every save clears the cache for the pages that show what changed, so an edit is live within a second rather than at the next deploy. Every change is in a history list on the same screen with who made it, because two people run this and a sentence that changed with nobody remembering is the argument the audit trail is there to prevent.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">11</span><h2>A profession's life, and what stays in code</h2></div>
+  <div class="tablewrap">
+    <table>
+      <caption>Launch states</caption>
+      <thead><tr><th>State</th><th>Who sees it</th><th>What exists</th></tr></thead>
+      <tbody>
+        <tr><td>Draft</td><td>Admins only</td><td>The row, its words and specialities. Professionals can be invited and can build profiles, but nothing is public.</td></tr>
+        <tr><td>Taking sign-ups</td><td>Professionals via the pitch page</td><td>Sign-up and onboarding work. The public section, menu entry and search option stay hidden.</td></tr>
+        <tr><td>Live</td><td>Everyone</td><td>The section page, menu, search option, sitemap entry and area pages as they clear the gate.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>All nine professions are live at launch. The states still exist for the tenth.</p>
+  </div>
+  <div class="note">
+    <span class="chip">The test</span>
+    <p>Add a profession in admin, say equine chiropractors, fill in its words, set it live, and nothing else. <code>/chiropractors</code>, its area pages, the Horse care menu and door colours, the footer, the sitemap, the search select, rider alerts, the monthly emails and the SEO digest all include it, with no deploy. If any of them needs a code change, this plan is not finished.</p>
+  </div>
+  <div class="col">
+    <p>Deliberately left in code:</p>
+    <ul>
+      <li><strong>The doors and their colours.</strong> Two doors, each with a checked-contrast colour pair. A third door is a real design decision and should cost a deploy.</li>
+      <li><strong>The glyph library.</strong> Drawn to one grid and weight. Admin picks one per profession; a new drawing is a small code change, which keeps them consistent.</li>
+      <li><strong>Layouts and templates.</strong> Fields, not page building.</li>
+      <li><strong>Gate logic and ranking.</strong> The numbers are settings; the rules that use them are not.</li>
+      <li><strong>The reserved URL list.</strong> It is a list of the site's own routes, so it changes when the routes do.</li>
+      <li><strong>The handbook.</strong> Planning documents stay in git, dated, as a record.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">12</span><h2>Build order</h2></div>
+  <div class="col">
+    <p>Each stage leaves the site working. Nothing here waits on the domain or Stripe.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>Stages</caption>
+      <thead><tr><th>Stage</th><th>What ships</th><th>Visible change</th></tr></thead>
+      <tbody>
+        <tr><td>1. Clean baseline</td><td>Wipe the database. The new baseline with every table, name and type above. Reload postcodes and areas, seed the vocabulary, the nine professions, settings and today's copy. Re-grant the two admins. The code renamed to match.</td><td>None, apart from needing to sign up again</td></tr>
+        <tr><td>2. Read from rows</td><td>Every page, menu, footer, sitemap and search select reads professions and copy from the database, with the code values as fallback. The door and header decided on the server. <code>professions.ts</code> shrinks to types and the reader.</td><td>None, which is the check</td></tr>
+        <tr><td>3. Routes</td><td>Top-level profession sections from one template, <code>/profile/[slug]</code>, the <code>/in/</code> segment, reserved words, the redirect map, <code>/horse-care/[slug]</code> 301s.</td><td>New addresses, old ones redirect</td></tr>
+        <tr><td>4. Providers and search</td><td><code>nearby_providers()</code>, per-profession gates and featured rules, remote per profession, structured data from the rows.</td><td>Horse care pages search for real</td></tr>
+        <tr><td>5. Sign-up and review</td><td>Profession-aware sign-up, the five onboarding screens, preview and submit, the review queue and alert email, the where-you-appear email, invites, <code>/for-professionals</code>.</td><td>Every profession can join</td></tr>
+        <tr><td>6. Riders</td><td><code>rider_alerts</code>, events and new-provider matching across professions, event reach, the account page, the rider monthly email, consent and unsubscribe.</td><td>Riders follow any profession</td></tr>
+        <tr><td>7. Proof</td><td>Measurement by profession, the monthly numbers email in each profession's words, completeness per profession, the dashboard labels, the SEO digest by profession.</td><td>Providers see their numbers</td></tr>
+        <tr><td>8. Admin</td><td>Professions, pages, emails, plans and prices with the Stripe check, providers, riders and areas screens.</td><td>Alana and Kim edit the site</td></tr>
+        <tr><td>9. Before launch</td><td>Terms of service and privacy policy covering every profession (below). Mock providers switched off where real ones exist.</td><td>Ready to open</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <span class="chip">Terms of service</span>
+    <p>The existing plan for the terms says we do not vet or accredit coaches. It now has to cover vets, dentists and physiotherapists, some of whom are registered with a state board. Registration numbers and insurance are shown as supplied by the provider, never as checked by us, and the terms say so in plain words. This is a job for the solicitor, alongside the partnership agreement.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">13</span><h2>Decisions, 24 September</h2></div>
+  <div class="tablewrap">
+    <table>
+      <caption>Settled by Alana</caption>
+      <thead><tr><th>Question</th><th>Decision</th></tr></thead>
+      <tbody>
+        <tr><td>Publish straight away, or look first?</td><td>Look first at every new profile, with an email alert to both founders. A setting turns review off later.</td></tr>
+        <tr><td>Which professions at launch?</td><td>All of them, coaches and all eight horse care professions.</td></tr>
+        <tr><td>Prices</td><td>The same for every profession.</td></tr>
+        <tr><td>Founding offer</td><td>Covers every profession. No cap on numbers; limited by sign-up date, set in the database.</td></tr>
+        <tr><td>Founding terms</td><td>Spotlight free until the offer ends, then Listed at $9.99, locked.</td></tr>
+        <tr><td>People or practices</td><td>People only at launch, with the architecture ready for practices with employee profiles later (section 04 D and E).</td></tr>
+        <tr><td>Renames</td><td>Rename and reorganise everything now. The database can be wiped.</td></tr>
+        <tr><td>Two professions</td><td>One plan covers all.</td></tr>
+        <tr><td>Events</td><td>Every profession, from launch.</td></tr>
+        <tr><td>Event reach</td><td>A distance set in admin.</td></tr>
+        <tr><td>Remote work</td><td>A switch per profession.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>Still open and not changed by this plan: the $24.95 and $49.95 prices (with Kim), whether a card is taken at founding sign-up or only when the free period ends, and each profession's pitch, which stays generic until it can be written from the first ten conversations with that profession.</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="col">
+    <p>Written 24 September 2026, revised the same day after review against the Cowork planning documents (the rider retention goal, the proof-of-value spec, the coach tiers, the taxonomy spec and One Site, Two Front Doors) and Alana's decisions. Builds on <em>One Site, Two Front Doors</em> sections seven and eight; where the two differ, this one is newer. The "keep <code>coach_profiles</code> as a misnomer" call in that document is reversed here, because the database is being rebuilt and has no users on it.</p>
+  </div>
+</footer>
+
+</main>

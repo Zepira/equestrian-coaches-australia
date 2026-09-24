@@ -15,11 +15,13 @@ export function EnquirySheet({
   coachName,
   firstName,
   takingStudents,
+  kind = "coach",
 }: {
   coachId: string | null;
   coachName: string;
   firstName: string;
   takingStudents: "yes" | "waitlist" | "no";
+  kind?: "coach" | "professional";
 }) {
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -64,9 +66,9 @@ export function EnquirySheet({
           type="button"
           disabled={closed}
           onClick={() => setOpen(true)}
-          className="flex h-14 w-full items-center justify-between rounded-[var(--radius-pill)] bg-accent px-[22px] text-[16px] font-semibold text-accent-fg shadow-[0_16px_40px_rgba(180,85,58,.35)] transition-colors duration-[250ms] hover:bg-accent-hover disabled:bg-shade disabled:text-subtle disabled:shadow-none"
+          className="flex h-14 w-full items-center justify-between rounded-[var(--radius-pill)] bg-accent px-[22px] text-[16px] font-semibold text-accent-fg shadow-[0_16px_40px_color-mix(in_srgb,var(--color-accent)_35%,transparent)] transition-colors duration-[250ms] hover:bg-accent-hover disabled:bg-shade disabled:text-subtle disabled:shadow-none"
         >
-          <span>{closed ? "Not taking students right now" : `Enquire with ${firstName}`}</span>
+          <span>{closed ? (kind === "coach" ? "Not taking students right now" : "Not taking new clients right now") : `Enquire with ${firstName}`}</span>
           {!closed && <span className="text-[14px] font-normal opacity-85">Free · no account needed</span>}
         </button>
       </div>
@@ -91,7 +93,7 @@ export function EnquirySheet({
               </button>
             </div>
             <div className="mt-4">
-              <ContactForm coachId={coachId} coachName={coachName} firstName={firstName} />
+              <ContactForm coachId={coachId} coachName={coachName} firstName={firstName} kind={kind} />
             </div>
           </div>
         </div>

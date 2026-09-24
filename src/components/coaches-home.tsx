@@ -1,9 +1,6 @@
 /**
- * The coaches section's home page, rendered by two routes: `/coaches`
- * (the coaches landing page) and `/` (the site home, until the parent
- * brand gets a home page of its own covering every profession). One
- * implementation so the two can never drift while they are the same
- * page; when `/` becomes the parent home, only `src/app/page.tsx` changes.
+ * The coaches section's front door, rendered at `/coaches`. The site home
+ * at `/` is the parent page covering every profession (src/app/page.tsx).
  */
 import Link from "next/link";
 import { Hero } from "@/components/hero";

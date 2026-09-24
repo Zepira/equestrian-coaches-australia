@@ -46,6 +46,16 @@ export type HandbookDoc = {
 
 export const HANDBOOK_DOCS: HandbookDoc[] = [
   {
+    slug: "cms-model",
+    file: "cms-model.html",
+    title: "The Site as a CMS",
+    kicker: "Build plan",
+    summary:
+      "How the site runs from admin: professions and their words, page copy, prices and emails as rows. A clean database rebuilt for providers of every profession, sign-up with review, riders across professions, proving value to every provider, the admin screens and the build order. Revision 2, decisions settled.",
+    audience: "Both",
+    updated: "2026-09-24",
+  },
+  {
     slug: "catch-up-agenda",
     file: "catch-up-agenda.html",
     title: "Nutting It Out",

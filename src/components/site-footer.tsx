@@ -3,17 +3,18 @@ import { Wordmark } from "@/components/wordmark";
 
 const columns = [
   {
-    heading: "Riders",
+    heading: "Find",
     links: [
-      { href: "/search", label: "Find a coach" },
+      { href: "/search", label: "Riding coaches" },
+      { href: "/horse-care", label: "Horse care" },
       { href: "/disciplines", label: "Disciplines" },
       { href: "/account", label: "My account" },
     ],
   },
   {
-    heading: "Coaches",
+    heading: "Professionals",
     links: [
-      { href: "/signup?role=coach", label: "List your profile" },
+      { href: "/list-your-business", label: "List your business" },
       { href: "/for-coaches", label: "Pricing" },
       { href: "/dashboard", label: "Dashboard" },
     ],
@@ -46,7 +47,7 @@ export function SiteFooter() {
               <Wordmark size={36} className="hidden md:block" />
             </Link>
             <p className="mt-2.5 max-w-[280px] text-[14px] leading-[1.5] text-ink-fg/70 md:mt-3 md:max-w-[320px] md:text-[15px]">
-              Equine Professionals Australia. The coach who teaches what you ride, wherever you are.
+              Riding coaches, farriers, vets and the rest of your horse&apos;s team, across Australia.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-5 md:contents">

@@ -15,7 +15,10 @@ const BASE = process.argv.includes("--base")
   ? process.argv[process.argv.indexOf("--base") + 1]
   : "http://localhost:3000";
 const results = [];
-const ok = (name, pass, detail = "") => results.push({ name, pass, detail });
+const ok = (name, pass, detail = "") => {
+  results.push({ name, pass, detail });
+  console.log(`${pass ? "PASS" : "FAIL"}  ${name}${detail ? `  — ${detail}` : ""}`);
+};
 
 const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE });
 
@@ -39,10 +42,38 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
   const co = header.getByRole("button", { name: /^Coaches/ });
 
   ok("both menu buttons present", (await hc.count()) === 1 && (await co.count()) === 1);
-  ok("panel closed initially", (await header.locator(".site-header__panel").count()) === 0);
+  ok("panel closed initially", (await header.locator(".site-header__subbar").count()) === 0);
+
+  // the labels are real links to each section's own page
+  ok("Horse care label links to /horse-care", (await header.getByRole("link", { name: "Horse care", exact: true }).getAttribute("href")) === "/horse-care");
+  ok("Coaches label links to /coaches", (await header.getByRole("link", { name: "Coaches", exact: true }).getAttribute("href")) === "/coaches");
+
+  // hover opens, moving into the panel keeps it open, leaving closes it
+  await header.getByRole("link", { name: "Horse care", exact: true }).hover();
+  await page.waitForTimeout(150);
+  ok("hover opens the sub-menu bar", (await header.locator(".site-header__subbar").count()) === 1);
+  const geo = await page.evaluate(() => {
+    const h = document.querySelector("header.site-header").getBoundingClientRect();
+    const b = document.querySelector(".site-header__subbar").getBoundingClientRect();
+    return { left: b.left, width: b.width, vw: document.documentElement.clientWidth, gap: b.top - h.bottom };
+  });
+  ok("bar spans the full width", geo.left === 0 && Math.abs(geo.width - geo.vw) < 1, JSON.stringify(geo));
+  ok("bar sits flush under the header", Math.abs(geo.gap) <= 1, JSON.stringify(geo));
+  const items = await header.locator(".site-header__subbar a").evaluateAll((els) => new Set(els.map((e) => Math.round(e.getBoundingClientRect().top))).size);
+  ok("subcategories sit in one row", items === 1, `rows=${items}`);
+  await header.locator(".site-header__subbar a").first().hover();
+  await page.waitForTimeout(300);
+  ok("pointer can travel into the bar", (await header.locator(".site-header__subbar").count()) === 1);
+  await header.getByRole("link", { name: "Coaches", exact: true }).hover();
+  await page.waitForTimeout(80);
+  ok("hovering the other menu swaps at once", (await header.locator(".site-header__subbar").count()) === 1 &&
+    (await header.locator(".site-header__subbar a").allTextContents()).includes("Dressage"));
+  await page.mouse.move(640, 700);
+  await page.waitForTimeout(400);
+  ok("leaving closes the bar", (await header.locator(".site-header__subbar").count()) === 0);
 
   await hc.click();
-  const hcPanel = header.locator(".site-header__panel");
+  const hcPanel = header.locator(".site-header__subbar");
   await hcPanel.waitFor({ state: "visible", timeout: 3000 });
   const hcLinks = await hcPanel.locator("a").allTextContents();
   ok("horse care opens with 9 links", hcLinks.length === 9, hcLinks.join(", "));
@@ -57,8 +88,8 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
 
   // clicking the other menu swaps, does not stack
   await co.click();
-  const panels = await header.locator(".site-header__panel").count();
-  const coLinks = await header.locator(".site-header__panel a").allTextContents();
+  const panels = await header.locator(".site-header__subbar").count();
+  const coLinks = await header.locator(".site-header__subbar a").allTextContents();
   ok("only one panel open at a time", panels === 1, `panels=${panels}`);
   ok("coaches opens with 9 links", coLinks.length === 9, coLinks.join(", "));
   ok("coaches lists disciplines + All disciplines", coLinks.includes("Dressage") && coLinks.includes("All disciplines"));
@@ -66,7 +97,7 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
   // Escape closes and returns focus to the button
   await page.keyboard.press("Escape");
   await page.waitForTimeout(150);
-  ok("Escape closes", (await header.locator(".site-header__panel").count()) === 0);
+  ok("Escape closes", (await header.locator(".site-header__subbar").count()) === 0);
   ok("Escape restores focus to the button", await co.evaluate((el) => el === document.activeElement));
 
   // outside click closes
@@ -74,7 +105,7 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
   await page.waitForTimeout(100);
   await page.mouse.click(640, 700);
   await page.waitForTimeout(150);
-  ok("outside click closes", (await header.locator(".site-header__panel").count()) === 0);
+  ok("outside click closes", (await header.locator(".site-header__subbar").count()) === 0);
 
   // keyboard: open with Enter, Tab reaches the first link
   await co.focus();
@@ -132,6 +163,6 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
 await browser.close();
 
 const failed = results.filter((r) => !r.pass);
-for (const r of results) console.log(`${r.pass ? "PASS" : "FAIL"}  ${r.name}${r.detail ? `  — ${r.detail}` : ""}`);
+// (each result is printed as it is recorded)
 console.log(`\n${results.length - failed.length}/${results.length} passed`);
 process.exit(failed.length ? 1 : 0);

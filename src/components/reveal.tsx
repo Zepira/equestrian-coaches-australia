@@ -17,9 +17,12 @@ export function Reveal({
   children,
   className = "",
   as: Tag = "div",
+  id,
 }: {
   children: ReactNode;
   className?: string;
+  /** For in-page anchors (e.g. /horse-care#professions). */
+  id?: string;
   as?: "div" | "section";
 }) {
   const ref = useRef<HTMLElement>(null);
@@ -41,5 +44,5 @@ export function Reveal({
   }, []);
 
   // @ts-expect-error — ref typed for the union; both tags accept HTMLElement refs
-  return <Tag ref={ref} data-reveal className={className}>{children}</Tag>;
+  return <Tag ref={ref} id={id} data-reveal className={className}>{children}</Tag>;
 }
