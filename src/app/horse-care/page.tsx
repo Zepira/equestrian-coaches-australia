@@ -17,9 +17,11 @@ import { DisciplineMarquee } from "@/components/discipline-marquee";
 import { CoachCard } from "@/components/coach-card";
 import { Reveal } from "@/components/reveal";
 import { ProfessionGlyph, hasGlyph } from "@/components/profession-glyph";
-import { horseCare, sectionHref } from "@/lib/professions";
+import { RichText } from "@/components/rich-text";
+import { horseCareOf, sectionHref } from "@/lib/professions";
+import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
+import { getPlans } from "@/lib/settings";
 import { featuredMockProfessionals, mockProfessionalCount, professionPhoto } from "@/lib/mock-professionals";
-import { TIER_META } from "@/lib/tiers";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -36,25 +38,16 @@ export const metadata: Metadata = {
 
 const FARRIER: HeroImage = { name: "horse-care-farrier", widths: [768, 1024, 1280, 1536], fallback: 1280, width: 1280, height: 853 };
 
-const STEPS = [
-  {
-    n: "01",
-    title: "Tell us what your horse needs, and where",
-    body: "Pick the kind of help and the suburb your horse lives in. Every listing is a real person, not a booking agency.",
-  },
-  {
-    n: "02",
-    title: "See who covers your paddock",
-    body: "Each professional sets their own travel radius and lists the work they actually do.",
-  },
-  {
-    n: "03",
-    title: "Get in touch, direct",
-    body: "No commission and no booking fee. You sort out the visit with them yourself.",
-  },
-];
-
-export default function HorseCareHome() {
+export default async function HorseCareHome() {
+  const [all, plans, hero, steps, pitch] = await Promise.all([
+    getProfessions(),
+    getPlans(),
+    getContent("door.horse_care.hero"),
+    getContent("door.horse_care.steps"),
+    getContent("door.horse_care.pitch"),
+  ]);
+  const horseCare = horseCareOf(all);
+  const [titleFirst, ...titleRest] = pitch.title.split("\n");
   const total = mockProfessionalCount();
   const featured = featuredMockProfessionals(4);
   const professions = horseCare.map((p) => ({ ...p, count: mockProfessionalCount(p.slug), photo: professionPhoto(p.slug, 600) }));
@@ -64,13 +57,13 @@ export default function HorseCareHome() {
       <Hero
         className="hero--horse-care"
         image={FARRIER}
-        eyebrow="Horse care, Australia-wide"
-        words={["Find", "a"]}
+        eyebrow={hero.eyebrow}
+        words={hero.words}
         cycle={horseCare.map((x) => x.singular)}
-        lead="Farriers, dentists, bodyworkers and the rest, found by what your horse needs and where it lives. Free for horse owners."
-        leadShort="Farriers, dentists, bodyworkers and more, near where your horse lives."
+        lead={hero.lead}
+        leadShort={hero.leadShort}
       >
-        <HorseCareSearch />
+        <HorseCareSearch professions={horseCare.map(({ slug, name, open }) => ({ slug, name, open }))} />
 
         {/* The design's profession tiles (frame A3), under the card. Phones
             skip them: eight tiles would push the search below the fold, and
@@ -82,7 +75,7 @@ export default function HorseCareHome() {
                 href={sectionHref(x)}
                 className="flex h-full items-center gap-2.5 rounded-[12px] border border-ink-fg/18 bg-ink-deep/35 px-3 py-3 backdrop-blur-[10px] transition-colors duration-200 hover:border-peach hover:bg-ink-deep/55"
               >
-                {hasGlyph(x.slug) && <ProfessionGlyph slug={x.slug} size={20} className="text-peach" />}
+                {hasGlyph(x.glyphKey) && <ProfessionGlyph slug={x.glyphKey} size={20} className="text-peach" />}
                 <span className="min-w-0">
                   <span className="block truncate text-[15px] font-semibold leading-tight text-ink-fg" title={x.short ? x.name : undefined}>
                     {x.short ?? x.name}
@@ -166,7 +159,7 @@ export default function HorseCareHome() {
                   <img src={p.photo} alt="" className="h-[52px] w-[52px] shrink-0 rounded-t-[26px] rounded-b-[6px] object-cover" loading="lazy" />
                   <span>
                     <span className="flex items-center gap-2 font-display text-[22px]">
-                      {hasGlyph(p.slug) && <ProfessionGlyph slug={p.slug} size={18} className="text-peach" />}
+                      {hasGlyph(p.glyphKey) && <ProfessionGlyph slug={p.glyphKey} size={18} className="text-peach" />}
                       {p.name}
                     </span>
                     <span className="mt-0.5 block text-[13px] text-ink-fg/62">{p.count} listed</span>
@@ -198,9 +191,9 @@ export default function HorseCareHome() {
                   />
                 </span>
                 <span aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(20,40,31,0)_40%,rgba(20,40,31,.85)_100%)]" />
-                {hasGlyph(p.slug) && (
+                {hasGlyph(p.glyphKey) && (
                   <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-ink-deep/60 text-peach backdrop-blur-[6px]">
-                    <ProfessionGlyph slug={p.slug} size={18} />
+                    <ProfessionGlyph slug={p.glyphKey} size={18} />
                   </span>
                 )}
                 <span className="absolute inset-x-[18px] bottom-4 flex items-baseline justify-between">
@@ -223,12 +216,12 @@ export default function HorseCareHome() {
             How it works
           </h2>
           <div className="mt-6 flex flex-col wide:mt-7">
-            {STEPS.map((s) => (
+            {steps.items.map((s, i) => (
               <div
-                key={s.n}
+                key={s.title}
                 className="grid grid-cols-[44px_1fr] gap-3 border-t border-border py-5 wide:grid-cols-[56px_1fr] wide:gap-4 wide:py-[22px]"
               >
-                <span className="font-display text-[30px] italic leading-none text-accent wide:text-[34px]">{s.n}</span>
+                <span className="font-display text-[30px] italic leading-none text-accent wide:text-[34px]">{String(i + 1).padStart(2, "0")}</span>
                 <div>
                   <div className="text-[17px] font-semibold text-fg wide:text-[18px]">{s.title}</div>
                   <p className="mt-1.5 text-[15px] leading-[1.5] text-muted wide:max-w-[44ch] wide:text-[16px]">{s.body}</p>
@@ -244,20 +237,23 @@ export default function HorseCareHome() {
         >
           <div aria-hidden className="absolute -right-10 -top-10 hidden h-[220px] w-[220px] rounded-full border border-accent/25 wide:block" />
           <div aria-hidden className="absolute -right-2.5 -top-2.5 hidden h-[160px] w-[160px] rounded-full border border-accent/25 wide:block" />
-          <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-accent wide:tracking-[0.2em]">For professionals</p>
+          <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-accent wide:tracking-[0.2em]">{pitch.eyebrow}</p>
           <h2 className="mt-2.5 text-[34px] leading-[1.02] -tracking-[0.02em] text-ink wide:mt-3.5 wide:text-[46px] wide:leading-none wide:-tracking-[0.025em]">
-            Be the one<br className="hidden wide:inline" /> they call.
+            {titleFirst}
+            {titleRest.map((line) => (
+              <span key={line}>
+                <br className="hidden wide:inline" /> {line}
+              </span>
+            ))}
           </h2>
           <p className="mt-3 text-[15px] leading-[1.5] text-muted wide:mt-4 wide:max-w-[40ch] wide:text-[17px]">
-            A profile with your specialities, how far you travel and a contact form, from{" "}
-            <strong className="font-semibold text-fg">{TIER_META.listed.monthly} a month</strong>. Owners contact you directly, and we
-            take nothing from the job.
+            <RichText text={fillVariables(pitch.body, { listed_price: plans.listed.monthly })} />
           </p>
           <Link
             href="/list-your-business"
             className="mt-[18px] block rounded-[10px] bg-ink py-[15px] text-center text-[16px] font-semibold text-ink-fg transition-colors duration-[250ms] hover:bg-accent wide:mt-6 wide:inline-block wide:rounded-[var(--radius-pill)] wide:px-[26px]"
           >
-            List your business
+            {pitch.button}
           </Link>
         </div>
       </Reveal>

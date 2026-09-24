@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { SelectMenu } from "@/components/ui/select-menu";
 import { LocateButton } from "@/components/locate-button";
 import { Caret } from "@/components/ui/caret";
-import { horseCare, sectionHref } from "@/lib/professions";
+import { sectionHref, type Profession } from "@/lib/professions";
 
 /**
  * The Horse care door's search card: the coach card's shell and fields
@@ -18,12 +18,15 @@ import { horseCare, sectionHref } from "@/lib/professions";
  * the section when a profession was picked.
  *
  * `tone="glass"` sits on a hero photo; `tone="plain"` on a cream page.
+ * `professions` is the Horse care door's list, from getProfessions().
  */
 export function HorseCareSearch({
+  professions: horseCare,
   defaultProfession = "",
   defaultLocation = "",
   tone = "glass",
 }: {
+  professions: Pick<Profession, "slug" | "name" | "open">[];
   defaultProfession?: string;
   defaultLocation?: string;
   tone?: "glass" | "plain";

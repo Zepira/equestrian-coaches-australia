@@ -19,7 +19,8 @@ import { createClient } from "@/lib/supabase/server";
 import { resolveSearchLocation } from "@/lib/supabase/queries";
 import { titleCase } from "@/lib/text";
 import { breadcrumbSchema, itemListSchema } from "@/lib/structured-data";
-import { horseCare, sectionHref, type Profession } from "@/lib/professions";
+import { horseCareOf, sectionHref, type Profession } from "@/lib/professions";
+import { getProfessions } from "@/lib/cms/read";
 import { professionPhoto, searchMockProfessionals } from "@/lib/mock-professionals";
 
 const RADIUS_KM = 100;
@@ -43,6 +44,7 @@ export async function ProfessionalListing({ profession, location = "" }: { profe
   });
   const noun = profession ? profession.name.toLowerCase() : "professionals";
   const placeName = where?.kind === "point" ? `${titleCase(where.suburb)} ${where.state}` : where?.kind === "state" ? where.state.name : null;
+  const horseCare = horseCareOf(await getProfessions());
   const others = horseCare.filter((p) => p.slug !== profession?.slug);
   const photo = profession ? professionPhoto(profession.slug, 1200) : professionPhoto("farriers", 1200, 1);
   const self = profession ? sectionHref(profession) : "/horse-care/search";
@@ -71,8 +73,8 @@ export async function ProfessionalListing({ profession, location = "" }: { profe
         </nav>
         <div className="mt-5 wide:grid wide:grid-cols-[1.15fr_1fr] wide:items-center wide:gap-14">
           <div>
-            {profession && hasGlyph(profession.slug) && (
-              <ProfessionGlyph slug={profession.slug} size={40} className="fade-in mb-4 text-accent" />
+            {profession && hasGlyph(profession.glyphKey) && (
+              <ProfessionGlyph slug={profession.glyphKey} size={40} className="fade-in mb-4 text-accent" />
             )}
             <h1
               className="fade-in text-[48px] leading-[0.96] -tracking-[0.02em] text-ink wide:text-[84px] wide:leading-[0.92] wide:-tracking-[0.03em]"
@@ -123,7 +125,7 @@ export async function ProfessionalListing({ profession, location = "" }: { profe
         </div>
 
         <div className="fade-in mt-8 wide:mt-12" style={{ animationDelay: "0.6s" }}>
-          <HorseCareSearch tone="plain" defaultProfession={profession?.slug ?? ""} defaultLocation={location} />
+          <HorseCareSearch professions={horseCare.map(({ slug, name, open }) => ({ slug, name, open }))} tone="plain" defaultProfession={profession?.slug ?? ""} defaultLocation={location} />
         </div>
       </section>
 
@@ -184,7 +186,7 @@ export async function ProfessionalListing({ profession, location = "" }: { profe
                   href={sectionHref(p) + (location.trim() ? `?location=${encodeURIComponent(location.trim())}` : "")}
                   className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-border bg-surface px-3.5 py-2 text-[14px] font-medium text-fg transition-colors duration-200 hover:border-ink hover:bg-shade"
                 >
-                  {hasGlyph(p.slug) && <ProfessionGlyph slug={p.slug} size={16} className="text-accent" />}
+                  {hasGlyph(p.glyphKey) && <ProfessionGlyph slug={p.glyphKey} size={16} className="text-accent" />}
                   {p.name}
                 </Link>
               </li>

@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { CMS_TAG } from "@/lib/cms/read";
 import { createClient } from "@/lib/supabase/server";
 
 function slugify(input: string) {
@@ -37,6 +38,7 @@ export async function createTerm(formData: FormData) {
   if (error) throw error;
 
   revalidatePath("/admin/terms");
+  revalidateTag(CMS_TAG, { expire: 0 });
 }
 
 // Slug is deliberately not editable here — the slug trap: once a term is
@@ -55,6 +57,7 @@ export async function renameTerm(termId: string, formData: FormData) {
   if (error) throw error;
 
   revalidatePath("/admin/terms");
+  revalidateTag(CMS_TAG, { expire: 0 });
 }
 
 // The slug trap's actual escape hatch: renaming the URL a term lives at.
@@ -92,6 +95,7 @@ export async function changeTermSlug(termId: string, formData: FormData) {
   if (updateError) throw updateError;
 
   revalidatePath("/admin/terms");
+  revalidateTag(CMS_TAG, { expire: 0 });
 }
 
 export async function toggleTermActive(termId: string, active: boolean) {
@@ -102,6 +106,7 @@ export async function toggleTermActive(termId: string, active: boolean) {
   if (error) throw error;
 
   revalidatePath("/admin/terms");
+  revalidateTag(CMS_TAG, { expire: 0 });
 }
 
 export async function toggleGeneratesPages(termId: string, generatesPages: boolean) {
@@ -113,4 +118,5 @@ export async function toggleGeneratesPages(termId: string, generatesPages: boole
   if (error) throw error;
 
   revalidatePath("/admin/terms");
+  revalidateTag(CMS_TAG, { expire: 0 });
 }

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { loadDashboard } from "@/lib/dashboard";
 import { isMockPayments } from "@/lib/stripe";
-import { TIERS, TIER_META } from "@/lib/tiers";
+import { TIERS } from "@/lib/tiers";
 import { countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths } from "@/lib/settings";
 import { startCheckout, changePlan, openBillingPortal, mockCancelSubscription } from "./actions";
 
@@ -17,14 +17,14 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   const { changed } = await searchParams;
   const ctx = await loadDashboard();
   if (!ctx) redirect("/login?next=/dashboard/billing");
-  const { tier, status, planName } = ctx;
+  const { tier, status, planName, plans } = ctx;
   const active = status === "active";
   const [firstCharge, freeMonths] = await Promise.all([getFirstChargeDate(), getFoundingFreeMonths()]);
   const nextCharge = active ? (isMockPayments ? "— (mock)" : "See portal") : "—";
   const billingLine = active
     ? tier === "spotlight"
-      ? `Founding offer: Spotlight free ${firstCharge ? `until ${formatLongDate(firstCharge)}` : `for ${countWord(freeMonths)} months after launch`}, then ${TIER_META.listed.monthly} a month for as long as you stay, even after the price goes up for everyone else.`
-      : `${TIER_META[tier!].monthly} a month. Your founding ${TIER_META.listed.monthly} Listed rate is kept for you if you come back down.`
+      ? `Founding offer: ${plans.spotlight.name} free ${firstCharge ? `until ${formatLongDate(firstCharge)}` : `for ${countWord(freeMonths)} months after launch`}, then ${plans.listed.monthly} a month for as long as you stay, even after the price goes up for everyone else.`
+      : `${plans[tier!].monthly} a month. Your founding ${plans.listed.monthly} ${plans.listed.name} rate is kept for you if you come back down.`
     : status === "past_due"
       ? "Your last payment didn't go through. Update your card to keep your listing live."
       : "No active subscription. Pick a plan below to publish your profile and appear in search.";
@@ -85,10 +85,10 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                     className={`flex w-full items-center justify-between gap-2.5 rounded-[14px] border px-4 py-3.5 text-left wide:px-[18px] wide:py-4 ${current ? "border-ink bg-shade" : "border-border bg-surface"}`}
                   >
                     <span>
-                      <span className="block font-display text-[20px] leading-none text-ink wide:text-[22px]">{TIER_META[t].name}</span>
-                      <span className="mt-0.5 block text-[13px] text-subtle wide:text-[13.5px]">{TIER_META[t].tagline}</span>
+                      <span className="block font-display text-[20px] leading-none text-ink wide:text-[22px]">{plans[t].name}</span>
+                      <span className="mt-0.5 block text-[13px] text-subtle wide:text-[13.5px]">{plans[t].tagline}</span>
                     </span>
-                    <span className={`font-display text-[18px] wide:text-[20px] ${current ? "text-accent" : "text-ink"}`}>{current ? "Current" : `${TIER_META[t].monthly}/mo`}</span>
+                    <span className={`font-display text-[18px] wide:text-[20px] ${current ? "text-accent" : "text-ink"}`}>{current ? "Current" : `${plans[t].monthly}/mo`}</span>
                   </button>
                 </form>
               );

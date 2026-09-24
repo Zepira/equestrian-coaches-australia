@@ -5,6 +5,7 @@
 //
 //   node scripts/db/export-keepers.mjs          (first, always)
 //   node scripts/db/rebuild.mjs --yes-wipe
+//   node --experimental-strip-types scripts/db/seed-content.mjs   (then: page copy and plans)
 //
 // What survives: auth users (logins), except any in DROP_EMAIL_DOMAINS.
 // Everything in `public` is dropped. Storage: coach-photos and coach-videos

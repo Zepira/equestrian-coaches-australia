@@ -1,15 +1,32 @@
 /**
- * The three coach plans (CLAUDE.md "Two-sided marketplace, one-sided
- * pricing", revised 7 Sep 2026). Display prices live here until the
- * `settings` table exists; Stripe price IDs are in src/lib/stripe.ts.
+ * The three plans (CLAUDE.md "Two-sided marketplace, one-sided pricing").
+ * Types, code defaults and the gating rules live here; the values a page
+ * shows come from the `plans` and `plan_capabilities` settings through
+ * getPlans() / getPlanCapabilities() in src/lib/settings.ts, which fall back
+ * to the defaults below. Stripe price IDs are in src/lib/stripe.ts.
+ *
+ * No imports, so client components can use the types and gates.
  */
 export type Tier = "listed" | "spotlight" | "clinic";
 export const TIERS: Tier[] = ["listed", "spotlight", "clinic"];
 
-export const TIER_META: Record<Tier, { name: string; monthly: string; yearly: string; tagline: string }> = {
+export type PlanInfo = { name: string; monthly: string; yearly: string; tagline: string };
+export type Plans = Record<Tier, PlanInfo>;
+
+export const DEFAULT_PLANS: Plans = {
   listed: { name: "Listed", monthly: "$9.99", yearly: "$99", tagline: "For most coaches" },
   spotlight: { name: "Spotlight", monthly: "$24.95", yearly: "$249", tagline: "For coaches building a book" },
   clinic: { name: "Clinic", monthly: "$49.95", yearly: "$499", tagline: "For coaches who are already full" },
+};
+
+/** What a plan unlocks. `eventLimit` null = unlimited live events. */
+export type PlanCapability = { eventLimit: number | null; video: boolean };
+export type PlanCapabilities = Record<Tier, PlanCapability>;
+
+export const DEFAULT_CAPABILITIES: PlanCapabilities = {
+  listed: { eventLimit: 1, video: false },
+  spotlight: { eventLimit: null, video: true },
+  clinic: { eventLimit: null, video: true },
 };
 
 export function isTier(v: unknown): v is Tier {
@@ -26,14 +43,14 @@ export function isLiveStatus(status: string | null | undefined) {
   return (LIVE_PLAN_STATUSES as readonly string[]).includes(status ?? "");
 }
 
-/** Any live paid plan may list events; Listed is capped at one live event. */
+/** Any live paid plan may list events; how many is the plan's eventLimit. */
 export function canListClinics(tier: string | null | undefined, status: string | null | undefined) {
   return isLiveStatus(status) && isTier(tier);
 }
-export function clinicLimit(tier: string | null | undefined): number {
-  return tier === "listed" ? 1 : Number.POSITIVE_INFINITY;
+export function clinicLimit(tier: string | null | undefined, caps: PlanCapabilities): number {
+  return isTier(tier) ? (caps[tier].eventLimit ?? Number.POSITIVE_INFINITY) : 0;
 }
-/** Intro video is a Spotlight/Clinic perk. */
-export function hasVideo(tier: string | null | undefined, status: string | null | undefined) {
-  return isLiveStatus(status) && (tier === "spotlight" || tier === "clinic");
+/** Intro video, where the plan includes it. */
+export function hasVideo(tier: string | null | undefined, status: string | null | undefined, caps: PlanCapabilities) {
+  return isLiveStatus(status) && isTier(tier) && caps[tier].video;
 }

@@ -7,7 +7,10 @@
 // Six per profession, spread over the same real towns as the mock coaches,
 // so distance search and the per-profession counts behave like real data.
 import { FIRST_NAMES, LAST_NAMES, TOWNS, haversineKm, mockPhone, slugify } from "@/lib/mock-coaches";
-import { horseCare, getProfessionBySlug } from "@/lib/professions";
+import { FALLBACK_PROFESSIONS, findProfession, horseCareOf } from "@/lib/professions";
+
+// Mock data is code, so it builds from the code list of professions.
+const horseCare = horseCareOf(FALLBACK_PROFESSIONS);
 
 export const MOCK_PROFESSIONALS_ENABLED = true;
 
@@ -154,7 +157,7 @@ export type ProfessionalCard = {
 };
 
 function toCard(p: MockProfessional, distanceKm: number | null): ProfessionalCard {
-  const profession = getProfessionBySlug(p.professionSlug);
+  const profession = findProfession(FALLBACK_PROFESSIONS, p.professionSlug);
   return {
     slug: p.slug,
     href: `/profile/${p.slug}`,

@@ -14,40 +14,29 @@ import { getAttributes, getDisciplineContent, getSkills, searchCoaches } from "@
 import { disciplineImage } from "@/lib/discipline-content";
 import { toTermOption } from "@/lib/term-options";
 import { searchMockCoaches } from "@/lib/mock-coaches";
+import { FALLBACK_PROFESSIONS } from "@/lib/professions";
+import { getContent, getProfession } from "@/lib/cms/read";
+import { getPlans } from "@/lib/settings";
 
 
 // "Start with what you ride" lists every discipline, alphabetically (the
 // order `disciplines` is already exported in). Counts are real (published
 // + mock coaches tagged with each).
 
-const CYCLE = ["dressage", "western", "liberty", "show jumping", "eventing", "campdrafting", "bridleless", "pony club"];
-
-const STEPS = [
-  {
-    n: "01",
-    title: "Tell us what you ride, and where",
-    body: "Pick your discipline and your town. Every listing is a real coach, not an agency.",
-  },
-  {
-    n: "02",
-    title: "Read their profile",
-    body: "Qualifications, disciplines, how far they travel, and words from riders they've taught.",
-  },
-  {
-    n: "03",
-    title: "Get in touch, direct",
-    body: "No commission, no booking fee. You deal with your coach the way riders always have.",
-  },
-];
-
 export async function CoachesHome() {
   const supabase = await createClient();
   // The skill/attribute vocabulary for the card's "Skills & setup" picker.
-  const [skills, attributes, disciplines] = await Promise.all([
+  const [skills, attributes, disciplines, coaching, hero, plans] = await Promise.all([
     getSkills(supabase),
     getAttributes(supabase),
     getDisciplineContent(supabase),
+    getProfession("coaches"),
+    getContent("door.coaches.hero"),
+    getPlans(),
   ]);
+  // The profession row carries the headline, lead and steps; the door's own
+  // block the eyebrow and the cycling words.
+  const profession = coaching ?? FALLBACK_PROFESSIONS[0];
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const all = supabase
     ? [...(await searchCoaches(supabase, {})), ...searchMockCoaches({})]
@@ -66,11 +55,11 @@ export async function CoachesHome() {
   return (
     <>
       <Hero
-        eyebrow="Riding coaches, Australia-wide"
-        words={["Find", "a", "coach", "for"]}
-        cycle={CYCLE}
-        lead="Search riding coaches across Australia by what you ride and where you are. Free for riders, always."
-        leadShort="Search by what you ride and where you are. Free for riders, always."
+        eyebrow={hero.eyebrow}
+        words={profession.heroHeadline.split(" ")}
+        cycle={hero.cycle}
+        lead={profession.heroLead}
+        leadShort={profession.heroLeadShort}
         stats={[
           { value: String(disciplines.length), label: "disciplines" },
           // The same list the page and /search are built from, so the number
@@ -215,12 +204,12 @@ export async function CoachesHome() {
             How it works
           </h2>
           <div className="mt-6 flex flex-col wide:mt-7">
-            {STEPS.map((s) => (
+            {profession.steps.map((s, i) => (
               <div
-                key={s.n}
+                key={s.title}
                 className="grid grid-cols-[44px_1fr] gap-3 border-t border-border py-5 wide:grid-cols-[56px_1fr] wide:gap-4 wide:py-[22px]"
               >
-                <span className="font-display text-[30px] italic leading-none text-accent wide:text-[34px]">{s.n}</span>
+                <span className="font-display text-[30px] italic leading-none text-accent wide:text-[34px]">{String(i + 1).padStart(2, "0")}</span>
                 <div>
                   <div className="text-[17px] font-semibold text-fg wide:text-[18px]">{s.title}</div>
                   <p className="mt-1.5 text-[15px] leading-[1.5] text-muted wide:max-w-[44ch] wide:text-[16px]">{s.body}</p>
@@ -239,7 +228,7 @@ export async function CoachesHome() {
           </h2>
           <p className="mt-3 text-[15px] leading-[1.5] text-muted wide:mt-4 wide:max-w-[40ch] wide:text-[17px]">
             A full profile — bio, photo, disciplines, travel radius, testimonials — from{" "}
-            <strong className="font-semibold text-fg">$9.99 a month</strong>. Riders contact you direct. No commission, ever.
+            <strong className="font-semibold text-fg">{plans.listed.monthly} a month</strong>. Riders contact you direct. No commission, ever.
           </p>
           <Link
             href="/signup?role=coach"

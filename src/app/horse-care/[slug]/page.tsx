@@ -1,5 +1,6 @@
 import { notFound, permanentRedirect } from "next/navigation";
-import { getProfessionBySlug, sectionHref } from "@/lib/professions";
+import { sectionHref } from "@/lib/professions";
+import { getProfession } from "@/lib/cms/read";
 
 /**
  * The old per-profession pages. Every profession is open now and lives at
@@ -8,8 +9,8 @@ import { getProfessionBySlug, sectionHref } from "@/lib/professions";
  */
 export default async function ProfessionRedirect({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const profession = getProfessionBySlug(slug);
+  const profession = await getProfession(slug);
   // A closed profession's sectionHref points back here: 404 rather than loop.
-  if (!profession || !profession.open) notFound();
+  if (!profession || profession.door !== "horse_care" || !profession.open) notFound();
   permanentRedirect(sectionHref(profession));
 }

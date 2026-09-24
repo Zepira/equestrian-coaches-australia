@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { CMS_TAG } from "@/lib/cms/read";
 import { getCoachingId } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -37,6 +38,8 @@ function revalidateDiscipline(slug: string | null) {
   if (slug) revalidatePath(`/disciplines/${slug}`);
   revalidatePath("/sitemap.xml");
   revalidatePath("/admin/disciplines");
+  // The header menu and home chips read disciplines through the CMS cache.
+  revalidateTag(CMS_TAG, { expire: 0 });
 }
 
 // Browsers submit textarea line breaks as CRLF; store LF so the paragraph

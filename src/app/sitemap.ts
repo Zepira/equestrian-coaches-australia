@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplineContent } from "@/lib/supabase/queries";
-import { horseCare, sectionHref } from "@/lib/professions";
+import { horseCareOf, sectionHref } from "@/lib/professions";
+import { getProfessions } from "@/lib/cms/read";
 import { areaPagePath, providerPath } from "@/lib/page-paths";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -18,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/list-your-business`, changeFrequency: "monthly", priority: 0.5 },
     // Each open horse care profession's section (/farriers…). Professional
     // profiles are mock data for now, so like mock coaches they stay out.
-    ...horseCare
+    ...horseCareOf(await getProfessions())
       .filter((p) => p.open)
       .map((p) => ({ url: `${siteUrl}${sectionHref(p)}`, changeFrequency: "daily" as const, priority: 0.8 })),
   ];

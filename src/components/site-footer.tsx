@@ -35,7 +35,7 @@ const columns = [
  * 48px desktop), the tagline, link columns (two on phones, brand + three on
  * desktop) and the copyright line.
  */
-export function SiteFooter() {
+export function SiteFooter({ tagline }: { tagline: string }) {
   const year = new Date().getFullYear();
   return (
     <footer className="mt-auto bg-ink-deep text-ink-fg">
@@ -47,7 +47,7 @@ export function SiteFooter() {
               <Wordmark size={36} className="hidden md:block" />
             </Link>
             <p className="mt-2.5 max-w-[280px] text-[14px] leading-[1.5] text-ink-fg/70 md:mt-3 md:max-w-[320px] md:text-[15px]">
-              Riding coaches, farriers, vets and the rest of your horse&apos;s team, across Australia.
+              {tagline}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-5 md:contents">

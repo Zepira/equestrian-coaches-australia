@@ -20,7 +20,8 @@ import { JsonLd } from "@/components/json-ld";
 import { PhoneReveal } from "@/components/phone-reveal";
 import { ProfessionGlyph, hasGlyph } from "@/components/profession-glyph";
 import { breadcrumbSchema } from "@/lib/structured-data";
-import { HORSE_CARE_RESULTS, getProfessionBySlug, sectionHref } from "@/lib/professions";
+import { horseCareResultsPattern, sectionHref } from "@/lib/professions";
+import { getProfession, getProfessions } from "@/lib/cms/read";
 import { getMockProfessionalBySlug, mockProfessionals } from "@/lib/mock-professionals";
 
 export function generateStaticParams() {
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const pro = getMockProfessionalBySlug(slug);
   if (!pro) return { title: "Profile not found" };
-  const profession = getProfessionBySlug(pro.professionSlug);
+  const profession = await getProfession(pro.professionSlug);
   return {
     title: `${pro.name}, ${profession?.singular ?? "horse care"} in ${pro.suburb}`,
     description: `${pro.headline} ${pro.suburb} ${pro.state}.`,
@@ -42,7 +43,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ slug: 
   const { slug } = await params;
   const pro = getMockProfessionalBySlug(slug);
   if (!pro) notFound();
-  const profession = getProfessionBySlug(pro.professionSlug);
+  const professions = await getProfessions();
+  const profession = professions.find((x) => x.slug === pro.professionSlug);
   if (!profession) notFound();
 
   const firstName = pro.name.split(" ")[0];
@@ -64,7 +66,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ slug: 
 
       {/* phone-only top bar over the photo (the desktop header has its own back link) */}
       <div className="absolute inset-x-0 top-0 z-30 flex h-[60px] items-center justify-between bg-[linear-gradient(180deg,rgba(13,24,18,.6),rgba(13,24,18,0))] px-[18px] pt-[var(--safe-top)] text-ink-fg wide:hidden">
-        <BackToResults fallback="/horse-care/search" from={HORSE_CARE_RESULTS} className="flex items-center gap-2 text-[14px] font-medium text-ink-fg [&>span]:flex [&>span]:h-9 [&>span]:w-9 [&>span]:items-center [&>span]:justify-center [&>span]:rounded-[999px] [&>span]:bg-ink-deep/55 [&>span]:backdrop-blur-[6px]" />
+        <BackToResults fallback="/horse-care/search" from={horseCareResultsPattern(professions)} className="flex items-center gap-2 text-[14px] font-medium text-ink-fg [&>span]:flex [&>span]:h-9 [&>span]:w-9 [&>span]:items-center [&>span]:justify-center [&>span]:rounded-[999px] [&>span]:bg-ink-deep/55 [&>span]:backdrop-blur-[6px]" />
       </div>
 
       <div className="mx-auto wide:grid wide:max-w-[1184px] wide:grid-cols-[1fr_400px] wide:items-start wide:gap-14 wide:px-12 wide:pb-20 wide:pt-9">
@@ -113,7 +115,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ slug: 
                   href={sectionHref(profession)}
                   className="inline-flex items-center gap-1.5 rounded-[var(--radius-pill)] border border-accent px-3 py-1.5 text-[13px] font-medium text-accent wide:px-[13px] wide:py-[7px]"
                 >
-                  {hasGlyph(profession.slug) && <ProfessionGlyph slug={profession.slug} size={15} />}
+                  {hasGlyph(profession.glyphKey) && <ProfessionGlyph slug={profession.glyphKey} size={15} />}
                   {singular}
                 </Link>
                 {pro.specialities.map((s) => (

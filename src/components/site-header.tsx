@@ -10,8 +10,7 @@ import { SearchChips } from "@/components/search-chips";
 import { SearchFacets } from "@/components/search-facets";
 import { BackToResults } from "@/components/back-to-results";
 import { NavDropdown, type NavDropdownItem } from "@/components/nav-dropdown";
-import { HORSE_CARE_RESULTS, horseCare, isHorseCarePath, sectionHref } from "@/lib/professions";
-import { topDisciplines } from "@/lib/disciplines";
+import { pathInPrefixes } from "@/lib/professions";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -181,19 +180,22 @@ const NAV = [
  * coaches section's "List your profile".
  */
 const PARENT_ROUTES = ["/", "/about", "/list-your-business"];
-const isParentRoute = (pathname: string) => PARENT_ROUTES.includes(pathname) || isHorseCarePath(pathname);
 
-const HORSE_CARE_MENU: NavDropdownItem[] = [
-  ...horseCare.map((p) => ({ href: sectionHref(p), label: p.name })),
-  { href: "/horse-care", label: "All horse care" },
-];
+/**
+ * What the header needs from the CMS, read by the root layout (a server
+ * component) and handed down: both menus, the paths that belong to the
+ * Horse care door, and the referrer pattern for "Back to results".
+ */
+export type HeaderData = {
+  horseCareMenu: NavDropdownItem[];
+  coachesMenu: NavDropdownItem[];
+  horseCarePrefixes: string[];
+  horseCareResults: string;
+};
 
-const COACHES_MENU: NavDropdownItem[] = [
-  ...topDisciplines.map((d) => ({ href: `/disciplines/${d.slug}`, label: d.name })),
-  { href: "/disciplines", label: "All disciplines" },
-];
-
-export function SiteHeader() {
+export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHES_MENU, horseCarePrefixes, horseCareResults }: HeaderData) {
+  const isHorseCarePath = (pathname: string) => pathInPrefixes(pathname, horseCarePrefixes);
+  const isParentRoute = (pathname: string) => PARENT_ROUTES.includes(pathname) || isHorseCarePath(pathname);
   const [open, setOpen] = useState(false);
   const auth = useAuthState();
   const pathname = usePathname();
@@ -212,8 +214,8 @@ export function SiteHeader() {
 
   // <html data-door> — the Horse care door's steel accent (globals.css).
   // The inline script in layout.tsx covers the first paint; this keeps it
-  // right across client-side navigation. Add each profession's own section
-  // path here (and there) the day it opens.
+  // right across client-side navigation. Both read the same prefixes, built
+  // from the profession rows.
   const door = isHorseCarePath(pathname) ? "horse-care" : null;
   useEffect(() => {
     if (door) document.documentElement.dataset.door = door;
@@ -263,7 +265,7 @@ export function SiteHeader() {
         {coachProfile && (
           <BackToResults
             label="Back to results"
-            {...(pathname.startsWith("/profile/") ? { fallback: "/horse-care/search", from: HORSE_CARE_RESULTS } : {})}
+            {...(pathname.startsWith("/profile/") ? { fallback: "/horse-care/search", from: horseCareResults } : {})}
             className="site-header__muted -ml-2 mr-auto hidden text-[14px] font-medium md:inline"
           />
         )}

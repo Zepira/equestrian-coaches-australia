@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { loadDashboard } from "@/lib/dashboard";
 import { getDisciplines } from "@/lib/supabase/queries";
 import { canListClinics, clinicLimit } from "@/lib/tiers";
+import { countWord, getPlanCapabilities, getPlans } from "@/lib/settings";
 import { createClinic, deleteClinic } from "./actions";
 
 export const metadata = { title: "Clinics" };
@@ -21,7 +22,8 @@ export default async function ClinicsPage() {
   if (!ctx) redirect("/login?next=/dashboard/clinics");
   const { supabase, providerId, tier, status } = ctx;
   const allowed = canListClinics(tier, status);
-  const limit = clinicLimit(tier);
+  const [caps, plans] = await Promise.all([getPlanCapabilities(), getPlans()]);
+  const limit = clinicLimit(tier, caps);
   const disciplines = await getDisciplines(supabase);
   const today = new Date().toISOString().slice(0, 10);
 
@@ -35,8 +37,8 @@ export default async function ClinicsPage() {
   const atLimit = Number.isFinite(limit) && upcoming.length >= limit;
   const note = !allowed
     ? "Clinics come with every paid plan — subscribe in Billing to list one. Riders in your area who follow your disciplines get an email when you post one."
-    : tier === "listed"
-      ? "Listed includes one live clinic at a time. Riders in your area who follow your disciplines get an email when you post one."
+    : tier && Number.isFinite(limit)
+      ? `${plans[tier].name} includes ${limit === 1 ? "one live clinic" : `${countWord(limit)} live clinics`} at a time. Riders in your area who follow your disciplines get an email when you post one.`
       : "Every clinic gets its own page and an email to riders nearby who follow your disciplines.";
 
   return (
@@ -147,7 +149,10 @@ export default async function ClinicsPage() {
         </section>
       ) : allowed && atLimit ? (
         <p className="mt-6 rounded-[14px] bg-shade p-4 text-[14px] leading-[1.5] text-muted">
-          Listed includes one live clinic at a time. <Link href="/dashboard/billing" className="font-medium text-accent">Move up to Spotlight or Clinic</Link> for unlimited events — and back down after your clinic month.
+          {tier ? plans[tier].name : "Your plan"} includes {limit === 1 ? "one live clinic" : `${countWord(limit)} live clinics`} at a time.{" "}
+          <Link href="/dashboard/billing" className="font-medium text-accent">
+            Move up to {plans.spotlight.name} or {plans.clinic.name}
+          </Link> for unlimited events — and back down after your clinic month.
         </p>
       ) : (
         <p className="mt-6 rounded-[14px] bg-shade p-4 text-[14px] leading-[1.5] text-muted">

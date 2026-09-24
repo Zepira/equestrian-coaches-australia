@@ -4,10 +4,10 @@ import { Reveal } from "@/components/reveal";
 import { Accordion } from "@/components/accordion";
 import { MonthlyEmailExample } from "@/components/for-coaches/monthly-email-example";
 import { PromiseTicker } from "@/components/for-coaches/promise-ticker";
-import { Plans, type Tier } from "@/components/for-coaches/plans";
+import { Plans, type Tier as PlanCard } from "@/components/for-coaches/plans";
 import { RiseWords } from "@/components/hero";
-import { TIER_META } from "@/lib/tiers";
-import { countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getFoundingJoinBy, isFoundingOpen } from "@/lib/settings";
+import type { Plans as PlanSet } from "@/lib/tiers";
+import { countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getFoundingJoinBy, getPlans, isFoundingOpen } from "@/lib/settings";
 
 // Dark hero at the top of this route too — see the same export on "/".
 export const viewport: Viewport = {
@@ -62,39 +62,34 @@ const WHAT_WE_DO: { title: string; body: string }[] = [
   },
 ];
 
-const TIERS: Tier[] = [
-  {
-    key: "listed",
-    name: "Listed",
-    monthly: "$9.99",
-    yearly: "$99",
-    tagline: "For most coaches",
-    summary:
-      "Everything a coach needs to be found and reached: an indexed profile, area and discipline listings, enquiries, testimonials and the monthly numbers email.",
-    cta: "Join as a founding coach",
-  },
-  {
-    key: "spotlight",
-    name: "Spotlight",
-    monthly: "$24.95",
-    yearly: "$249",
-    tagline: "For coaches building a book",
-    featured: true,
-    summary:
-      "Everything in Listed, plus a featured slot on your area pages, instant enquiry alerts, search-query insights, an intro video and unlimited events.",
-    cta: "Choose Spotlight",
-  },
-  {
-    key: "clinic",
-    name: "Clinic",
-    monthly: "$49.95",
-    yearly: "$499",
-    tagline: "For coaches who are already full",
-    summary:
-      "Everything in Spotlight, plus your events pushed to riders statewide, waitlist capture, benchmarks and up to three locations.",
-    cta: "Choose Clinic",
-  },
-];
+/**
+ * The page's own words for each plan. Names, prices and taglines come from
+ * the `plans` setting (getPlans), so they're never typed twice.
+ */
+function tierCards(plans: PlanSet): PlanCard[] {
+  return [
+    {
+      key: "listed",
+      ...plans.listed,
+      summary:
+        "Everything a coach needs to be found and reached: an indexed profile, area and discipline listings, enquiries, testimonials and the monthly numbers email.",
+      cta: "Join as a founding coach",
+    },
+    {
+      key: "spotlight",
+      ...plans.spotlight,
+      featured: true,
+      summary: `Everything in ${plans.listed.name}, plus a featured slot on your area pages, instant enquiry alerts, search-query insights, an intro video and unlimited events.`,
+      cta: `Choose ${plans.spotlight.name}`,
+    },
+    {
+      key: "clinic",
+      ...plans.clinic,
+      summary: `Everything in ${plans.spotlight.name}, plus your events pushed to riders statewide, waitlist capture, benchmarks and up to three locations.`,
+      cta: `Choose ${plans.clinic.name}`,
+    },
+  ];
+}
 
 const EVERY_TIER = [
   "Profile page indexed by Google",
@@ -180,14 +175,15 @@ export default async function ForCoachesPage() {
   // Editable in /admin/settings. Before launch day there is no date to
   // print, so the copy says "six months after we launch"; from launch day
   // it names the first charge date.
-  const [firstCharge, freeMonths, joinBy, foundingOpen] = await Promise.all([
+  const [firstCharge, freeMonths, joinBy, foundingOpen, plans] = await Promise.all([
     getFirstChargeDate(),
     getFoundingFreeMonths(),
     getFoundingJoinBy(),
     isFoundingOpen(),
+    getPlans(),
   ]);
   const monthsWord = countWord(freeMonths);
-  const listedPrice = TIER_META.listed.monthly;
+  const listedPrice = plans.listed.monthly;
   return (
     <div>
       {/* ── 1. Hero ─────────────────────────────────────────────────────── */}
@@ -251,7 +247,7 @@ export default async function ForCoachesPage() {
                 {firstCharge
                   ? `We take your card when you sign up and don't charge it until ${formatLongDate(firstCharge)}, with a reminder before then.`
                   : `We take your card when you sign up, and we don't charge it until ${monthsWord} months after the site launches. On launch day you'll get an email with the exact date, and a reminder before the first payment.`}{" "}
-                Until then you&rsquo;re on Spotlight, our middle plan. After that it&rsquo;s {listedPrice} a month, and that price stays yours for as long as you keep your listing, even when it goes up for new coaches. All we ask is a finished profile: a photo, a bio in your own words, your disciplines and where you teach.
+                Until then you&rsquo;re on {plans.spotlight.name}, our middle plan. After that it&rsquo;s {listedPrice} a month, and that price stays yours for as long as you keep your listing, even when it goes up for new coaches. All we ask is a finished profile: a photo, a bio in your own words, your disciplines and where you teach.
                 {joinBy && foundingOpen && ` Founding spots close on ${formatLongDate(joinBy)}.`}
               </p>
               <Link href="/signup?role=coach&plan=founding" className="mt-[22px] inline-block rounded-[10px] bg-accent px-[22px] py-3.5 text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:mt-6 wide:px-6">
@@ -278,7 +274,7 @@ export default async function ForCoachesPage() {
             <h2 className="mt-3 text-[38px] leading-none -tracking-[0.02em] wide:mt-4 wide:text-[60px] wide:leading-[0.98] wide:-tracking-[0.025em]">
               What we actually do to bring <em className="text-peach">riders</em> to you
             </h2>
-            <p className="mt-[22px] hidden text-[16px] font-medium text-peach wide:block">All of that happens whether you&rsquo;re on Listed or Clinic.</p>
+            <p className="mt-[22px] hidden text-[16px] font-medium text-peach wide:block">All of that happens whether you&rsquo;re on {plans.listed.name} or {plans.clinic.name}.</p>
           </div>
           <div className="mt-7 flex flex-col border-t border-ink-fg/20 wide:mt-0">
             {WHAT_WE_DO.map((row, i) => (
@@ -291,13 +287,13 @@ export default async function ForCoachesPage() {
               </div>
             ))}
           </div>
-          <p className="mt-[22px] text-[15px] font-medium text-peach wide:hidden">All of that happens whether you&rsquo;re on Listed or Clinic.</p>
+          <p className="mt-[22px] text-[15px] font-medium text-peach wide:hidden">All of that happens whether you&rsquo;re on {plans.listed.name} or {plans.clinic.name}.</p>
         </div>
       </Reveal>
 
       {/* ── 4. Plans + comparison ───────────────────────────────────────── */}
       <Reveal>
-        <Plans tiers={TIERS} rows={COMPARISON_ROWS} />
+        <Plans tiers={tierCards(plans)} rows={COMPARISON_ROWS} />
       </Reveal>
 
       {/* ── 5. No commission ────────────────────────────────────────────── */}

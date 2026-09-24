@@ -25,6 +25,9 @@ export type ComparisonRow = { label: string; listed: boolean; spotlight: boolean
  */
 export function Plans({ tiers, rows }: { tiers: Tier[]; rows: ComparisonRow[] }) {
   const [yearly, setYearly] = useState(false);
+  // Plan names come from settings; the phone table abbreviates a long one.
+  const nameOf = (key: string) => tiers.find((t) => t.key === key)?.name ?? key;
+  const short = (name: string) => (name.length > 6 ? `${name.slice(0, 4)}.` : name);
   const [compareOpen, setCompareOpen] = useState(false);
   const on = "bg-ink text-ink-fg";
   const off = "bg-transparent text-ink";
@@ -98,7 +101,7 @@ export function Plans({ tiers, rows }: { tiers: Tier[]; rows: ComparisonRow[] })
         })}
       </div>
       <p className="mt-4 text-[14px] leading-[1.5] text-muted wide:mt-5 wide:text-center wide:text-[15px]">
-        Listed comes with everything a coach needs to be found and reached — it isn&rsquo;t a cut-down plan. Travel radius is the same on every tier, not a paid feature.
+        {nameOf("listed")} comes with everything a coach needs to be found and reached — it isn&rsquo;t a cut-down plan. Travel radius is the same on every tier, not a paid feature.
       </p>
 
       {/* phones: folded comparison */}
@@ -117,9 +120,9 @@ export function Plans({ tiers, rows }: { tiers: Tier[]; rows: ComparisonRow[] })
           <div id="plan-comparison" className="mt-2 overflow-hidden rounded-[12px] border border-border bg-surface">
             <div className="grid grid-cols-[1fr_46px_46px_46px] border-b border-border bg-shade py-2.5 pl-3.5 pr-1.5 font-display text-[14px] text-ink">
               <span>Feature</span>
-              <span className="text-center">Listed</span>
-              <span className="text-center text-accent">Spot.</span>
-              <span className="text-center">Clinic</span>
+              <span className="text-center">{short(nameOf("listed"))}</span>
+              <span className="text-center text-accent">{short(nameOf("spotlight"))}</span>
+              <span className="text-center">{short(nameOf("clinic"))}</span>
             </div>
             {rows.map((r) => (
               <div key={r.label} className="grid grid-cols-[1fr_46px_46px_46px] items-center border-b border-shade py-2.5 pl-3.5 pr-1.5 text-[13.5px] leading-[1.35] text-fg">
@@ -137,9 +140,9 @@ export function Plans({ tiers, rows }: { tiers: Tier[]; rows: ComparisonRow[] })
       <div className="mt-14 hidden overflow-hidden rounded-[16px] border border-border bg-surface wide:block" role="table" aria-label="Plan comparison">
         <div className="grid grid-cols-[1fr_160px_160px_160px] border-b border-border bg-shade px-7 py-[18px] font-display text-[20px] text-ink" role="row">
           <span role="columnheader">Feature</span>
-          <span role="columnheader" className="text-center">Listed</span>
-          <span role="columnheader" className="text-center text-accent">Spotlight</span>
-          <span role="columnheader" className="text-center">Clinic</span>
+          <span role="columnheader" className="text-center">{nameOf("listed")}</span>
+          <span role="columnheader" className="text-center text-accent">{nameOf("spotlight")}</span>
+          <span role="columnheader" className="text-center">{nameOf("clinic")}</span>
         </div>
         {rows.map((r) => (
           <div key={r.label} className="grid grid-cols-[1fr_160px_160px_160px] items-stretch border-b border-shade text-[15px] leading-[1.4] text-fg" role="row">

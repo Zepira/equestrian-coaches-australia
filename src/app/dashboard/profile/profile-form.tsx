@@ -1,6 +1,5 @@
 "use client";
 
-import { hasVideo } from "@/lib/tiers";
 
 import { useState } from "react";
 import { saveProfile, addTestimonial, deleteTestimonial } from "./actions";
@@ -156,11 +155,11 @@ function ContactRow({ label: text, value, name, showName, defaultShow, configure
  * skills, setup, qualifications, years and testimonials that sit further
  * down the same scroll.
  */
-export function ProfileForm({ configured, coach, disciplines, skills, attributes, selectedTermIds, photos, testimonials, coachSlug }: { configured: boolean; coach: Coach; disciplines: Term[]; skills: Term[]; attributes: Term[]; selectedTermIds: string[]; photos: Photo[]; testimonials: Testimonial[]; coachSlug?: string | null }) {
+export function ProfileForm({ configured, coach, disciplines, skills, attributes, selectedTermIds, photos, testimonials, coachSlug, videoAllowed = false }: { configured: boolean; coach: Coach; disciplines: Term[]; skills: Term[]; attributes: Term[]; selectedTermIds: string[]; photos: Photo[]; testimonials: Testimonial[]; coachSlug?: string | null; videoAllowed?: boolean }) {
   const [suburb, setSuburb] = useState(coach?.suburb ?? "");
   const [state, setState] = useState(coach?.state ?? "");
   const [postcode, setPostcode] = useState(coach?.postcode ?? "");
-  const videoActive = hasVideo(coach?.subscription_tier, coach?.subscription_status);
+  const videoActive = videoAllowed;
 
   return (
     <div className="fade-in" style={{ animationDuration: "0.5s" }}>

@@ -21,9 +21,9 @@ import { disciplineImage } from "@/lib/discipline-content";
 import { toTermOption } from "@/lib/term-options";
 import { searchMockCoaches } from "@/lib/mock-coaches";
 import { placeholderCoaches } from "@/lib/placeholder-coaches";
-import { topDisciplineSlugs } from "@/lib/disciplines";
-import { horseCare, sectionHref } from "@/lib/professions";
-import { TIER_META } from "@/lib/tiers";
+import { horseCareOf, sectionHref } from "@/lib/professions";
+import { getContent, getFeaturedDisciplines, getProfessions } from "@/lib/cms/read";
+import { getPlans } from "@/lib/settings";
 import { mockProfessionalCount } from "@/lib/mock-professionals";
 import { ProfessionGlyph, hasGlyph } from "@/components/profession-glyph";
 
@@ -41,34 +41,21 @@ export const metadata: Metadata = {
     "Find riding coaches, farriers, vets, dentists and the rest of your horse's team across Australia, by what you need and where you are. Free for riders and owners.",
 };
 
-const PRINCIPLES = [
-  {
-    title: "Free for riders",
-    body: "Searching, saving favourites and getting in touch cost you nothing.",
-  },
-  {
-    title: "Professionals pay to list",
-    body: "Coaches and horse care professionals pay a flat monthly fee for their profile. That's where our money comes from.",
-  },
-  {
-    title: "You deal with them directly",
-    body: "Phone, email or the form on their profile. We don't take a booking fee or a cut of the lesson or visit.",
-  },
-  {
-    title: "We don't vet anyone",
-    body: "Profiles are written by the people on them. We don't check qualifications or accredit anyone, so ask what you'd ask anyone new.",
-  },
-];
-
 const eyebrow = "text-[12px] font-medium uppercase tracking-[0.18em] text-accent wide:tracking-[0.2em]";
 
 export default async function Home() {
   const supabase = await createClient();
-  const [skills, attributes, disciplines] = await Promise.all([
+  const [skills, attributes, disciplines, professions, featured, plans, hero, principles] = await Promise.all([
     getSkills(supabase),
     getAttributes(supabase),
     getDisciplineContent(supabase),
+    getProfessions(),
+    getFeaturedDisciplines(),
+    getPlans(),
+    getContent("home.hero"),
+    getContent("home.principles"),
   ]);
+  const horseCare = horseCareOf(professions);
   // Mock data merge — see src/lib/mock-coaches.ts to remove. Same list the
   // coaches page counts, so the numbers agree between the two.
   const coachCount = supabase
@@ -76,7 +63,7 @@ export default async function Home() {
     : placeholderCoaches.length;
 
   const bySlug = new Map(disciplines.map((d) => [d.slug, d]));
-  const chips = topDisciplineSlugs.map((s) => bySlug.get(s)).filter((d) => d !== undefined);
+  const chips = featured.map((f) => bySlug.get(f.slug)).filter((d) => d !== undefined);
   const lead = bySlug.get("dressage") ?? disciplines[0];
   const photo = lead ? disciplineImage(lead, 1000) : null;
   const proCount = mockProfessionalCount(); // mock data, see src/lib/mock-professionals.ts
@@ -84,11 +71,11 @@ export default async function Home() {
   return (
     <>
       <Hero
-        eyebrow="For riders and horse owners, Australia-wide"
-        words={["The", "people", "your", "horse", "needs,", "near", "you."]}
-        emphasis={[3]}
-        lead="Riding coaches, farriers, vets, dentists and the rest, found by what you need and where you keep your horse. Free for riders and horse owners."
-        leadShort="Coaches, farriers, vets and the rest, near where you keep your horse."
+        eyebrow={hero.eyebrow}
+        words={hero.words}
+        emphasis={hero.emphasis}
+        lead={hero.lead}
+        leadShort={hero.leadShort}
         stats={[
           { value: String(coachCount), label: coachCount === 1 ? "coach" : "coaches" },
           { value: String(proCount), label: "horse care professionals" },
@@ -164,7 +151,7 @@ export default async function Home() {
                 <li key={p.slug}>
                   <Link href={sectionHref(p)} className="group flex items-center justify-between gap-4 py-3">
                     <span className="flex items-center gap-3 font-display text-[21px] leading-tight text-ink group-hover:text-accent wide:text-[23px]">
-                      {hasGlyph(p.slug) && <ProfessionGlyph slug={p.slug} size={20} className="text-accent" />}
+                      {hasGlyph(p.glyphKey) && <ProfessionGlyph slug={p.glyphKey} size={20} className="text-accent" />}
                       {p.name}
                     </span>
                     <span className="shrink-0 text-[12px] text-subtle">{mockProfessionalCount(p.slug)} listed</span>
@@ -189,7 +176,7 @@ export default async function Home() {
             How the site <em className="text-peach">works</em>
           </h2>
           <ol className="mt-7 flex flex-col wide:mt-0">
-            {PRINCIPLES.map((p, i) => (
+            {principles.items.map((p, i) => (
               <li
                 key={p.title}
                 className="grid grid-cols-[44px_1fr] gap-3 border-t border-ink-fg/15 py-5 wide:grid-cols-[56px_1fr] wide:gap-4 wide:py-[22px]"
@@ -218,7 +205,7 @@ export default async function Home() {
             Teach riding?
           </h2>
           <p className="mt-3 max-w-[40ch] text-[15px] leading-[1.5] text-muted wide:text-[17px]">
-            List your coaching profile from <strong className="font-semibold text-fg">{TIER_META.listed.monthly} a month</strong>.
+            List your coaching profile from <strong className="font-semibold text-fg">{plans.listed.monthly} a month</strong>.
             Riders find you by discipline and town, and contact you directly.
           </p>
           <div className="mt-6">
@@ -231,7 +218,7 @@ export default async function Home() {
             Farrier, vet or saddle fitter?
           </h2>
           <p className="mt-3 max-w-[40ch] text-[15px] leading-[1.5] text-muted wide:text-[17px]">
-            List your business from <strong className="font-semibold text-fg">{TIER_META.listed.monthly} a month</strong>. Owners find you
+            List your business from <strong className="font-semibold text-fg">{plans.listed.monthly} a month</strong>. Owners find you
             by what you do and the area you cover, and contact you directly.
           </p>
           <div className="mt-6">

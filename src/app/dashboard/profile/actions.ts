@@ -4,14 +4,19 @@ import { revalidatePath } from "next/cache";
 import { requireProvider } from "@/lib/provider-session";
 import { PROVIDER_PHOTOS, PROVIDER_VIDEOS, resolveLocation } from "@/lib/supabase/queries";
 import { hasVideo } from "@/lib/tiers";
+import { getPlanCapabilities, getPlans } from "@/lib/settings";
+import { TIERS } from "@/lib/tiers";
 
-// Video is a Spotlight / Clinic perk (0019_tiers.sql; src/lib/tiers.ts).
+// Video is a plan perk: which plans is the plan_capabilities setting.
 async function requireVideoTierCoach() {
   const { supabase, providerId, provider } = await requireProvider();
   const { data: sub } = await supabase.from("subscriptions").select("tier, status").eq("provider_id", providerId).maybeSingle();
 
-  if (!hasVideo(sub?.tier, sub?.status)) {
-    throw new Error("Intro video is included on Spotlight and Clinic. Change plan in Billing to add one.");
+  const caps = await getPlanCapabilities();
+  if (!hasVideo(sub?.tier, sub?.status, caps)) {
+    const plans = await getPlans();
+    const names = TIERS.filter((t) => caps[t].video).map((t) => plans[t].name);
+    throw new Error(`Intro video is included on ${names.join(" and ")}. Change plan in Billing to add one.`);
   }
 
   return { supabase, providerId, existingVideoPath: (provider.video_storage_path as string | null) ?? null };

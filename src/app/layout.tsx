@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Hanken_Grotesk, Instrument_Serif } from "next/font/google";
 import Script from "next/script";
-import { HORSE_CARE_PREFIXES } from "@/lib/professions";
+import { horseCareOf, horseCarePrefixes, horseCareResultsPattern, sectionHref } from "@/lib/professions";
+import { getContent, getFeaturedDisciplines, getProfessions } from "@/lib/cms/read";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -72,7 +73,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // The CMS reads are cached and cookie-free, so the layout stays static.
+  const [professions, featured, footer] = await Promise.all([
+    getProfessions(),
+    getFeaturedDisciplines(),
+    getContent("footer"),
+  ]);
+  const prefixes = horseCarePrefixes(professions);
+  const header = {
+    horseCareMenu: [
+      ...horseCareOf(professions).map((p) => ({ href: sectionHref(p), label: p.name })),
+      { href: "/horse-care", label: "All horse care" },
+    ],
+    coachesMenu: [
+      ...featured.map((d) => ({ href: `/disciplines/${d.slug}`, label: d.name })),
+      { href: "/disciplines", label: "All disciplines" },
+    ],
+    horseCarePrefixes: prefixes,
+    horseCareResults: horseCareResultsPattern(professions),
+  };
   return (
     <html
       lang="en"
@@ -106,7 +126,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           id="overlay-route"
           strategy="beforeInteractive"
         >{`document.documentElement.dataset.overlayRoute = String(["/", "/coaches", "/horse-care", "/for-coaches"].includes(location.pathname));
-if (${JSON.stringify(HORSE_CARE_PREFIXES)}.some(function (p) { return location.pathname === p || location.pathname.indexOf(p + "/") === 0; })) document.documentElement.dataset.door = "horse-care";`}</Script>
+if (${JSON.stringify(prefixes)}.some(function (p) { return location.pathname === p || location.pathname.indexOf(p + "/") === 0; })) document.documentElement.dataset.door = "horse-care";`}</Script>
         {/* .reveal (src/app/globals.css) fades real content in as it scrolls
             into view — a scroll-reveal component has to start that content
             at opacity: 0 in the server-rendered HTML for the fade-in to
@@ -132,12 +152,12 @@ if (${JSON.stringify(HORSE_CARE_PREFIXES)}.some(function (p) { return location.p
         >
           Skip to content
         </a>
-        <SiteHeader />
+        <SiteHeader {...header} />
         <Parallax />
         <main id="main-content" className="flex-1">
           {children}
         </main>
-        <SiteFooter />
+        <SiteFooter tagline={footer.tagline} />
       </body>
     </html>
   );

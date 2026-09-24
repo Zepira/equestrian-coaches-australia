@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines, getSkills, getAttributes, ensureProvider, PROVIDER_PHOTOS } from "@/lib/supabase/queries";
+import { getPlanCapabilities } from "@/lib/settings";
+import { hasVideo } from "@/lib/tiers";
 import { ProfileForm } from "./profile-form";
 
 export const metadata = { title: "Edit profile" };
@@ -72,6 +74,7 @@ export default async function ProfileEditPage() {
       photos={photosWithUrls}
       testimonials={testimonials ?? []}
       coachSlug={provider.slug}
+      videoAllowed={hasVideo(sub?.tier, sub?.status, await getPlanCapabilities())}
     />
   );
 }

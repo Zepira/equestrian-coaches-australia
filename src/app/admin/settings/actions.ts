@@ -1,9 +1,18 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { LOCKED_ONCE_SET, clearSettingsCache, type SettingKey } from "@/lib/settings";
+import { isStripeConfigured } from "@/lib/stripe";
+import { TIERS } from "@/lib/tiers";
+import {
+  LOCKED_ONCE_SET,
+  SETTINGS_TAG,
+  getPlans,
+  readPlanCapability,
+  readPlanInfo,
+  type SettingKey,
+} from "@/lib/settings";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -58,19 +67,88 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     if (parsed.date > limit) return { error: "More than three years away. Check the year." };
     return { value: parsed.value };
   },
+  plans(raw) {
+    const parsed = parseObject(raw);
+    if (!parsed) return { error: "That isn't a valid set of plans." };
+    for (const t of TIERS) {
+      if (!readPlanInfo(parsed[t])) {
+        return { error: `Check ${t}: a name (up to 30 characters), a tagline (up to 80) and prices written like $9.99 or $99.` };
+      }
+    }
+    return { value: JSON.stringify(Object.fromEntries(TIERS.map((t) => [t, readPlanInfo(parsed[t])]))) };
+  },
+  plan_capabilities(raw) {
+    const parsed = parseObject(raw);
+    if (!parsed) return { error: "That isn't a valid set of plan features." };
+    for (const t of TIERS) {
+      if (!readPlanCapability(parsed[t])) return { error: `Check ${t}: events is a whole number from 0 to 100, or blank for unlimited.` };
+    }
+    return {
+      value: JSON.stringify(
+        Object.fromEntries(TIERS.map((t) => {
+          const c = readPlanCapability(parsed[t])!;
+          return [t, { event_limit: c.eventLimit, video: c.video }];
+        }))
+      ),
+    };
+  },
 };
+
+function parseObject(raw: string): Record<string, unknown> | null {
+  try {
+    const v = JSON.parse(raw);
+    return v && typeof v === "object" && !Array.isArray(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
 
 /** Pages that print each setting, revalidated on save. */
 const SHOWN_ON: Record<SettingKey, string[]> = {
   launch_date: ["/for-coaches"],
   founding_free_months: ["/for-coaches"],
   founding_join_by: ["/for-coaches"],
+  plans: ["/", "/coaches", "/horse-care", "/for-coaches", "/list-your-business", "/dashboard", "/dashboard/billing"],
+  plan_capabilities: ["/dashboard", "/dashboard/clinics", "/dashboard/profile"],
 };
 
 export async function saveSetting(formData: FormData) {
-  const supabase = await requireAdmin();
-
   const key = String(formData.get("key") ?? "") as SettingKey;
+  await writeSetting(key, String(formData.get("value") ?? ""));
+}
+
+/** The plans form: name, tagline and both prices for each tier, saved as one `plans` value. */
+export async function savePlans(formData: FormData) {
+  const field = (t: string, f: string) => String(formData.get(`${t}.${f}`) ?? "").trim();
+  const next = Object.fromEntries(
+    TIERS.map((t) => [t, { name: field(t, "name"), tagline: field(t, "tagline"), monthly: field(t, "monthly"), yearly: field(t, "yearly") }])
+  );
+  // Prices shown must match what Stripe charges (CLAUDE.md, "Prices are the
+  // exception"). Until the plans screen can check a price against its Stripe
+  // Price, a live Stripe account means prices can't change from here.
+  if (isStripeConfigured) {
+    const current = await getPlans();
+    const moved = TIERS.some((t) => next[t].monthly !== current[t].monthly || next[t].yearly !== current[t].yearly);
+    if (moved) {
+      redirect(`/admin/settings?error=${encodeURIComponent("Prices are paired with Stripe and can't be changed here yet. Names and taglines can.")}&key=plans`);
+    }
+  }
+  await writeSetting("plans", JSON.stringify(next));
+}
+
+/** The plan features form: event limit (blank = unlimited) and video, per tier. */
+export async function savePlanCapabilities(formData: FormData) {
+  const next = Object.fromEntries(
+    TIERS.map((t) => {
+      const raw = String(formData.get(`${t}.event_limit`) ?? "").trim();
+      return [t, { event_limit: raw === "" ? null : Number(raw), video: formData.get(`${t}.video`) === "on" }];
+    })
+  );
+  await writeSetting("plan_capabilities", JSON.stringify(next));
+}
+
+async function writeSetting(key: SettingKey, raw: string) {
+  const supabase = await requireAdmin();
   if (!(key in VALIDATORS)) throw new Error("Unknown setting.");
 
   // Some keys lock once set (the launch date). Enforced here, not only by
@@ -82,7 +160,7 @@ export async function saveSetting(formData: FormData) {
     }
   }
 
-  const result = VALIDATORS[key](String(formData.get("value") ?? ""));
+  const result = VALIDATORS[key](raw);
   if ("error" in result) {
     redirect(`/admin/settings?error=${encodeURIComponent(result.error)}&key=${key}`);
   }
@@ -101,7 +179,7 @@ export async function saveSetting(formData: FormData) {
     if (insertError) throw insertError;
   }
 
-  clearSettingsCache();
+  revalidateTag(SETTINGS_TAG, { expire: 0 });
   revalidatePath("/admin/settings");
   for (const path of SHOWN_ON[key]) revalidatePath(path);
   redirect(`/admin/settings?saved=${key}`);

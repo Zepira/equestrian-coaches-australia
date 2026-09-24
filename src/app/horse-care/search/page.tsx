@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ProfessionalListing } from "@/components/professional-listing";
-import { getProfessionBySlug, sectionHref } from "@/lib/professions";
+import { sectionHref } from "@/lib/professions";
+import { getProfession } from "@/lib/cms/read";
 
 export const metadata: Metadata = {
   title: "Search horse care",
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
  */
 export default async function HorseCareSearchPage({ searchParams }: { searchParams: Promise<{ p?: string; location?: string }> }) {
   const { p, location = "" } = await searchParams;
-  const picked = p ? getProfessionBySlug(p) : undefined;
+  const picked = p ? await getProfession(p) : undefined;
   if (picked) redirect(sectionHref(picked) + (location.trim() ? `?location=${encodeURIComponent(location.trim())}` : ""));
   return <ProfessionalListing location={location} />;
 }

@@ -1,12 +1,22 @@
-import { createClient } from "@/lib/supabase/server";
+import { unstable_cache } from "next/cache";
+import { createPublicSupabase } from "@/lib/supabase/public";
+import {
+  DEFAULT_CAPABILITIES,
+  DEFAULT_PLANS,
+  TIERS,
+  type PlanCapabilities,
+  type PlanCapability,
+  type PlanInfo,
+  type Plans,
+} from "@/lib/tiers";
 
 /**
  * Business settings (CLAUDE.md "Configuration over hardcoding").
  *
  * Every key has a code default here, a typed accessor, and validation in the
- * admin action that writes it. Reads go through a short in-memory cache so a
- * page render never costs a database round trip per setting; the admin save
- * clears the cache and revalidates the pages that show the value.
+ * admin action that writes it. Reads use the cookie-free public client (so
+ * the pages that show a setting can stay static) and are cached for 60s
+ * under the SETTINGS_TAG tag, which the admin save clears.
  *
  * To add a setting: add a key + default to DEFAULTS, a typed accessor below,
  * a validator in src/app/admin/settings/actions.ts, and a field on the admin
@@ -24,7 +34,13 @@ export const DEFAULTS = {
   founding_free_months: "6",
   /** Last day to sign up as a founding member, ISO date. Empty means still open. */
   founding_join_by: "",
-} as const;
+  /** Plan names, display prices and taglines, JSON (PlanInfo per tier). */
+  plans: JSON.stringify(DEFAULT_PLANS),
+  /** What each plan unlocks, JSON: { tier: { event_limit: number | null, video: boolean } }. */
+  plan_capabilities: JSON.stringify(
+    Object.fromEntries(TIERS.map((t) => [t, { event_limit: DEFAULT_CAPABILITIES[t].eventLimit, video: DEFAULT_CAPABILITIES[t].video }]))
+  ),
+} as const satisfies Record<string, string>;
 
 /** Keys that can be set once from admin and are then read-only there. */
 export const LOCKED_ONCE_SET: ReadonlySet<SettingKey> = new Set<SettingKey>(["launch_date"]);
@@ -32,29 +48,26 @@ export const LOCKED_ONCE_SET: ReadonlySet<SettingKey> = new Set<SettingKey>(["la
 export type SettingKey = keyof typeof DEFAULTS;
 export const SETTING_KEYS = Object.keys(DEFAULTS) as SettingKey[];
 
-const TTL_MS = 60_000;
-let cache: { at: number; values: Partial<Record<SettingKey, string>> } | null = null;
+export const SETTINGS_TAG = "settings";
 
-async function loadAll(): Promise<Partial<Record<SettingKey, string>>> {
-  if (cache && Date.now() - cache.at < TTL_MS) return cache.values;
-  const values: Partial<Record<SettingKey, string>> = {};
-  const supabase = await createClient();
-  if (supabase) {
-    const { data } = await supabase.from("settings").select("key, value").in("key", SETTING_KEYS);
-    for (const row of data ?? []) values[row.key as SettingKey] = row.value;
-  }
-  cache = { at: Date.now(), values };
-  return values;
-}
+const loadAll = unstable_cache(
+  async (): Promise<Partial<Record<SettingKey, string>>> => {
+    const values: Partial<Record<SettingKey, string>> = {};
+    const supabase = createPublicSupabase();
+    if (supabase) {
+      const { data } = await supabase.from("settings").select("key, value").in("key", SETTING_KEYS);
+      for (const row of data ?? []) values[row.key as SettingKey] = row.value;
+    }
+    return values;
+  },
+  ["settings"],
+  { tags: [SETTINGS_TAG], revalidate: 60 }
+);
 
 /** Raw string value, falling back to the code default when the row is missing. */
 export async function getSetting(key: SettingKey): Promise<string> {
   const values = await loadAll();
   return values[key] ?? DEFAULTS[key];
-}
-
-export function clearSettingsCache() {
-  cache = null;
 }
 
 // ── Typed accessors ─────────────────────────────────────────────────────────
@@ -97,6 +110,50 @@ export async function isFoundingOpen(now = new Date()): Promise<boolean> {
   const today = new Date(now);
   today.setUTCHours(0, 0, 0, 0);
   return today <= joinBy;
+}
+
+// ── Plans ──────────────────────────────────────────────────────────────────
+
+function parseJson(raw: string): unknown {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+const isText = (v: unknown, max: number) => typeof v === "string" && v.trim().length > 0 && v.length <= max;
+export const PRICE = /^\$\d{1,4}(\.\d{2})?$/;
+
+/** A stored plan if every field is valid, else null. Shared with the admin validator. */
+export function readPlanInfo(v: unknown): PlanInfo | null {
+  if (!v || typeof v !== "object") return null;
+  const o = v as Record<string, unknown>;
+  if (!isText(o.name, 30) || !isText(o.tagline, 80)) return null;
+  if (typeof o.monthly !== "string" || !PRICE.test(o.monthly)) return null;
+  if (typeof o.yearly !== "string" || !PRICE.test(o.yearly)) return null;
+  return { name: o.name as string, monthly: o.monthly, yearly: o.yearly, tagline: o.tagline as string };
+}
+
+export function readPlanCapability(v: unknown): PlanCapability | null {
+  if (!v || typeof v !== "object") return null;
+  const o = v as Record<string, unknown>;
+  const limit = o.event_limit;
+  const limitOk = limit === null || (Number.isInteger(limit) && (limit as number) >= 0 && (limit as number) <= 100);
+  if (!limitOk || typeof o.video !== "boolean") return null;
+  return { eventLimit: limit as number | null, video: o.video };
+}
+
+/** Names, prices and taglines per plan; a malformed tier falls back to its default. */
+export async function getPlans(): Promise<Plans> {
+  const stored = parseJson(await getSetting("plans")) as Record<string, unknown> | null;
+  return Object.fromEntries(TIERS.map((t) => [t, readPlanInfo(stored?.[t]) ?? DEFAULT_PLANS[t]])) as Plans;
+}
+
+/** What each plan unlocks; a malformed tier falls back to its default. */
+export async function getPlanCapabilities(): Promise<PlanCapabilities> {
+  const stored = parseJson(await getSetting("plan_capabilities")) as Record<string, unknown> | null;
+  return Object.fromEntries(TIERS.map((t) => [t, readPlanCapability(stored?.[t]) ?? DEFAULT_CAPABILITIES[t]])) as PlanCapabilities;
 }
 
 /** Calendar months later, clamped to the month's last day (31 Aug + 6 = 28/29 Feb). */

@@ -1,7 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProvider, type ProviderRow } from "@/lib/supabase/queries";
-import { isLiveStatus, isTier, TIER_META, type Tier } from "@/lib/tiers";
+import { isLiveStatus, isTier, type Plans, type Tier } from "@/lib/tiers";
+import { getPlans } from "@/lib/settings";
 
 /**
  * Everything the dashboard shell needs on every /dashboard/* render: the
@@ -23,6 +24,8 @@ export type DashboardContext = {
   status: string;
   planName: string;
   planLine: string;
+  /** Every plan's name, prices and tagline, from settings. */
+  plans: Plans;
   newEnquiries: number;
   provider: ProviderRow;
 };
@@ -38,18 +41,19 @@ export async function loadDashboard(): Promise<DashboardContext | null> {
   const { data: profile } = await supabase.from("profiles").select("name").eq("id", user.id).single();
   const name = profile?.name ?? "Coach";
   const provider = await ensureProvider(supabase, user.id, name);
-  const [{ count }, { data: sub }] = await Promise.all([
+  const [{ count }, { data: sub }, plans] = await Promise.all([
     supabase.from("enquiries").select("id", { count: "exact", head: true }).eq("provider_id", provider.id).eq("status", "new"),
     supabase.from("subscriptions").select("tier, status").eq("provider_id", provider.id).maybeSingle(),
+    getPlans(),
   ]);
 
   const tierRaw: unknown = sub?.tier;
   const tier: Tier | null = isTier(tierRaw) ? tierRaw : null;
   const status = String(sub?.status ?? "inactive");
-  const planName = tier ? TIER_META[tier].name : "No plan yet";
+  const planName = tier ? plans[tier].name : "No plan yet";
   const planLine = tier
     ? isLiveStatus(status)
-      ? `${TIER_META[tier].monthly} a month · founding price locked in.`
+      ? `${plans[tier].monthly} a month · founding price locked in.`
       : status === "past_due"
         ? "Payment past due. Update your card in Billing."
         : "Subscription cancelled. Your listing is unpublished."
@@ -66,6 +70,7 @@ export async function loadDashboard(): Promise<DashboardContext | null> {
     status,
     planName,
     planLine,
+    plans,
     newEnquiries: count ?? 0,
     provider,
   };
