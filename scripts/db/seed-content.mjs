@@ -17,7 +17,7 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { CONTENT_DEFAULTS } from "../../src/lib/cms/content-defaults.ts";
-import { DEFAULT_CAPABILITIES, DEFAULT_PLANS, TIERS } from "../../src/lib/tiers.ts";
+import { DEFAULT_CAPABILITIES, DEFAULT_PLANS, TIERS, capabilityJson } from "../../src/lib/tiers.ts";
 
 const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 const env = Object.fromEntries(
@@ -35,7 +35,7 @@ const client = new pg.Client({
 const settings = {
   plans: JSON.stringify(DEFAULT_PLANS),
   plan_capabilities: JSON.stringify(
-    Object.fromEntries(TIERS.map((t) => [t, { event_limit: DEFAULT_CAPABILITIES[t].eventLimit, video: DEFAULT_CAPABILITIES[t].video }]))
+    Object.fromEntries(TIERS.map((t) => [t, capabilityJson(DEFAULT_CAPABILITIES[t])]))
   ),
 };
 

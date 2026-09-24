@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { addMonths, countWord, DEFAULTS, formatLongDate, readPlanCapability, readPlanInfo, type SettingKey } from "@/lib/settings";
+import { addMonths, countWord, DEFAULTS, formatLongDate, readPlanCapability, readPlanInfo, SETTING_RANGES, type SettingKey } from "@/lib/settings";
 import { isStripeConfigured } from "@/lib/stripe";
 import { DEFAULT_CAPABILITIES, DEFAULT_PLANS, TIERS } from "@/lib/tiers";
 import { savePlanCapabilities, savePlans, saveSetting } from "./actions";
@@ -132,6 +132,36 @@ export default async function AdminSettingsPage({
       </section>
 
       <section className="border-t border-border pt-6">
+        <h2 className="font-display text-[26px] leading-none text-ink">Place pages and featured spots</h2>
+        <p className="mt-1 max-w-[62ch] text-sm text-muted">
+          Counted per profession, so ten coaches in Geelong don&apos;t switch on a Geelong farriers page.
+        </p>
+        <div className="mt-5 flex flex-col gap-6">
+          {(
+            [
+              ["area_page_min_providers", "Providers before a place gets its own page", "Below this, /farriers/in/ballarat-vic sends people to the farriers page instead. Saving re-checks every place straight away."],
+              ["featured_min_providers", "Providers nearby before featured spots appear", "In a smaller area a featured spot isn't worth paying for, so none show."],
+              ["featured_slots_per_area", "Featured spots per profession in one place", "Shown in a labelled block above the results, taking turns day to day. Never a place in the results themselves."],
+            ] as const
+          ).map(([key, title, help]) => (
+            <div key={key}>
+              <h3 className="text-[15px] font-semibold text-fg">{title}</h3>
+              <p className="mt-1 max-w-[62ch] text-sm text-muted">{help}</p>
+              {notice(key)}
+              <form action={saveSetting} className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end">
+                <input type="hidden" name="key" value={key} />
+                <label className="block">
+                  <span className="mb-1 block text-sm font-medium text-fg">Number</span>
+                  <input type="number" name="value" min={SETTING_RANGES[key][0]} max={SETTING_RANGES[key][1]} required defaultValue={stored(key)} className={input} />
+                </label>
+                <Button type="submit">Save</Button>
+              </form>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="border-t border-border pt-6">
         <h2 className="font-display text-[26px] leading-none text-ink">Plans</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
           The names, prices and taglines shown on the pricing pages, the home page and the dashboard. One set of plans covers every profession.
@@ -171,7 +201,7 @@ export default async function AdminSettingsPage({
       <section className="border-t border-border pt-6">
         <h2 className="font-display text-[26px] leading-none text-ink">What each plan includes</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
-          How many live events a plan can have at once (leave empty for no limit), and whether it can add an intro video.
+          How many live events a plan can have at once (leave empty for no limit), whether it can add an intro video, and whether it takes turns in the featured spots.
         </p>
         {notice("plan_capabilities")}
         <form action={savePlanCapabilities} className="mt-4 flex flex-col gap-3">
@@ -185,6 +215,10 @@ export default async function AdminSettingsPage({
               <label className="flex items-center gap-2 pb-2.5 text-sm text-fg">
                 <input type="checkbox" name={`${c.tier}.video`} defaultChecked={c.video} />
                 Intro video
+              </label>
+              <label className="flex items-center gap-2 pb-2.5 text-sm text-fg">
+                <input type="checkbox" name={`${c.tier}.featured`} defaultChecked={c.featured} />
+                Featured spot
               </label>
             </div>
           ))}

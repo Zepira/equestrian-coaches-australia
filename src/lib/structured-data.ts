@@ -40,7 +40,7 @@ export function itemListSchema(items: ItemListEntry[]) {
   };
 }
 
-export type CoachSchemaInput = {
+export type ProviderSchemaInput = {
   name: string;
   slug: string;
   headline: string;
@@ -52,38 +52,51 @@ export type CoachSchemaInput = {
   photoUrl: string | null;
   disciplineNames: string[];
   skillNames?: string[];
+  /** From the primary profession's row (profession_details.job_title). */
+  jobTitle: string;
+  businessName?: string | null;
 };
 
-// Person, not LocalBusiness/Organization — coaches on EPA are individuals,
-// not registered businesses (that's EquiDirectory's model, not this one).
-// knowsAbout carries the disciplines plus skills (schema.org allows either
-// — "what a coach knows about" fairly includes "float loading" alongside
-// "dressage") since skills are real search terms riders type; aliases
-// (bridleless → "at liberty", "groundwork") deliberately don't appear here
-// — the spec's "four places" rule for aliases doesn't include structured
-// data beyond alternateName, and these are already the canonical term names.
-export function coachPersonSchema(coach: CoachSchemaInput) {
-  return {
+/**
+ * A provider's profile markup (The Site as a CMS §05.6). A Person, whose
+ * job title comes from their primary profession's row ("Riding coach",
+ * "Farrier") and whose knowsAbout is their disciplines or specialities
+ * plus skills: real search terms, canonical names only (aliases stay out,
+ * per the spec's "four places" rule). A provider who trades under a
+ * business name also gets a LocalBusiness they work for, at the same
+ * address; one without stays a Person, since most are individuals.
+ */
+export function providerSchemas(p: ProviderSchemaInput) {
+  const url = absoluteUrl(profilePath(p.slug));
+  const address = { "@type": "PostalAddress", addressLocality: p.suburb, addressRegion: p.state, addressCountry: "AU" };
+  const geo = p.lat != null && p.long != null ? { geo: { "@type": "GeoCoordinates", latitude: p.lat, longitude: p.long } } : {};
+  const knows = [...p.disciplineNames, ...(p.skillNames ?? [])];
+  const business = p.businessName?.trim()
+    ? {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "@id": `${url}#business`,
+        name: p.businessName.trim(),
+        url,
+        address,
+        ...geo,
+        ...(p.photoUrl ? { image: p.photoUrl } : {}),
+      }
+    : null;
+  const person = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: coach.name,
-    url: absoluteUrl(profilePath(coach.slug)),
-    ...(coach.photoUrl ? { image: coach.photoUrl } : {}),
-    description: coach.headline || coach.bio || undefined,
-    jobTitle: "Riding Coach",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: coach.suburb,
-      addressRegion: coach.state,
-      addressCountry: "AU",
-    },
-    ...(coach.lat != null && coach.long != null
-      ? { geo: { "@type": "GeoCoordinates", latitude: coach.lat, longitude: coach.long } }
-      : {}),
-    ...(coach.disciplineNames.length > 0 || coach.skillNames?.length
-      ? { knowsAbout: [...coach.disciplineNames, ...(coach.skillNames ?? [])] }
-      : {}),
+    name: p.name,
+    url,
+    ...(p.photoUrl ? { image: p.photoUrl } : {}),
+    description: p.headline || p.bio || undefined,
+    jobTitle: p.jobTitle,
+    address,
+    ...geo,
+    ...(knows.length > 0 ? { knowsAbout: knows } : {}),
+    ...(business ? { worksFor: { "@id": business["@id"] } } : {}),
   };
+  return business ? [person, business] : [person];
 }
 
 export type ClinicSchemaInput = {

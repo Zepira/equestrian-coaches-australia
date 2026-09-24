@@ -49,7 +49,10 @@ export function SearchBar({
   disciplineOptions,
   tone = "glass",
   autoFocus = false,
+  profession,
 }: {
+  /** Search another profession than coaching (/search?p=farriers): its words label the card. */
+  profession?: { slug: string; singular: string; termNoun: string };
   defaultDiscipline?: string;
   defaultLocation?: string;
   defaultSkills?: string[];
@@ -66,6 +69,10 @@ export function SearchBar({
   autoFocus?: boolean;
 }) {
   const router = useRouter();
+  const termLabel = profession ? profession.termNoun.charAt(0).toUpperCase() + profession.termNoun.slice(1) : "Discipline";
+  const anyTerm = `Any ${profession?.termNoun ?? "discipline"}`;
+  const findLabel = `Find a ${profession?.singular ?? "coach"}`;
+  const professionSlug = profession?.slug;
   const disciplineList: TermOption[] = disciplineOptions ?? disciplines.map((d) => ({ slug: d.slug, name: d.name }));
   const [discipline, setDiscipline] = useState(defaultDiscipline);
   const [location, setLocation] = useState(defaultLocation);
@@ -138,6 +145,7 @@ export function SearchBar({
       }
       const params = new URLSearchParams({ location: q });
       if (discipline) params.set("d", discipline);
+      if (professionSlug) params.set("p", professionSlug);
       fetch(`/api/coach-count?${params}`, { signal: controller.signal })
         .then((r) => r.json())
         .then((data: { count: number | null }) => setCount(data.count ?? null))
@@ -147,7 +155,7 @@ export function SearchBar({
       clearTimeout(timer);
       controller.abort();
     };
-  }, [location, discipline]);
+  }, [location, discipline, professionSlug]);
 
   // The card grows downward when the suggestion row opens — but the hero's
   // column is bottom-anchored on phones and centred from 1100px, so left
@@ -171,7 +179,7 @@ export function SearchBar({
   const stateTyped = parseState(location);
   const town = stateTyped ? stateTyped.name : location.trim().split(/\s+/)[0];
   const hasLoc = location.trim().length > 0;
-  const cta = hasLoc && count != null ? `Show ${count} ${stateTyped ? "across" : "near"} ${town}` : "Find a coach";
+  const cta = hasLoc && count != null ? `Show ${count} ${stateTyped ? "across" : "near"} ${town}` : findLabel;
 
   // Skills and attributes are separate URL params (`s` and `a`) because the
   // RPC ORs within a kind and ANDs across them — but they share one picker,
@@ -183,6 +191,7 @@ export function SearchBar({
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
+    if (profession) params.set("p", profession.slug);
     if (location.trim()) params.set("location", location.trim());
     if (discipline) params.set("d", discipline);
     if (pickedSkills.length) params.set("s", pickedSkills.join(","));
@@ -295,10 +304,10 @@ export function SearchBar({
       {/* The real control: a styled menu, so the option list carries the
           palette, the radii and the type instead of the OS's own grey list. */}
       <SelectMenu
-        label="Discipline"
+        label={termLabel}
         value={discipline}
         onChange={setDiscipline}
-        placeholder="Any discipline"
+        placeholder={anyTerm}
         options={disciplineList.map((d) => ({ value: d.slug, label: d.name, keywords: d.aliases }))}
         // A floor, not a fixed width: the drawn caret is wider than the "▾"
         // it replaced, and without this "Any discipline" truncates to "Any
@@ -309,13 +318,13 @@ export function SearchBar({
       {/* JavaScript off: the plain form control takes over (globals.css hides
           it, layout.tsx's <noscript> block swaps the two back). */}
       <label className="nojs-only nojs-select relative order-3 min-w-0 flex-1 items-center rounded-[9px] bg-surface px-3.5 text-fg wide:order-2 wide:rounded-[10px] wide:px-4">
-        <span className="sr-only">Discipline</span>
+        <span className="sr-only">{termLabel}</span>
         <select
           name="d"
           defaultValue={discipline}
           className="w-full appearance-none bg-transparent py-[13px] pr-[18px] text-[16px] text-fg outline-none wide:py-4 wide:text-[18px]"
         >
-          <option value="">Any discipline</option>
+          <option value="">{anyTerm}</option>
           {disciplineList.map((d) => (
             <option key={d.slug} value={d.slug}>
               {d.name}
@@ -338,7 +347,7 @@ export function SearchBar({
       type="submit"
       className="order-4 flex min-h-12 w-[150px] shrink-0 items-center justify-center rounded-[9px] bg-accent px-[18px] text-center text-[16px] font-semibold leading-tight text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:order-3 wide:w-[206px] wide:rounded-[10px] wide:px-[18px]"
     >
-      <span className="wide:hidden">Find a coach</span>
+      <span className="wide:hidden">{findLabel}</span>
       <span className="hidden wide:inline">{cta}</span>
     </button>
   );
@@ -397,8 +406,9 @@ export function SearchBar({
         method="get"
         onSubmit={submit}
         className={`relative flex flex-wrap gap-1.5 p-2 ${shell}`}
-        aria-label="Find a coach"
+        aria-label={findLabel}
       >
+        {profession && <input type="hidden" name="p" value={profession.slug} />}
         {locationField}
         {disciplineField}
         {button}

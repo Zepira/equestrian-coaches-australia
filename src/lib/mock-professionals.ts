@@ -155,6 +155,9 @@ export type ProfessionalCard = {
   distanceKm: number | null;
   professionSlug: string;
   travelRadiusKm: number;
+  lat: number;
+  long: number;
+  takingStudents: "yes" | "waitlist";
 };
 
 function toCard(p: MockProfessional, distanceKm: number | null): ProfessionalCard {
@@ -171,6 +174,9 @@ function toCard(p: MockProfessional, distanceKm: number | null): ProfessionalCar
     distanceKm,
     professionSlug: p.professionSlug,
     travelRadiusKm: p.travelRadiusKm,
+    lat: p.lat,
+    long: p.long,
+    takingStudents: p.taking,
   };
 }
 

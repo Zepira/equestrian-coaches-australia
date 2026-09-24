@@ -6,6 +6,10 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { CoachResultCard, type CoachResultData, whereLine } from "@/components/coach-result-card";
 import { SearchChips, useChipState } from "@/components/search-chips";
 import { SearchFacets } from "@/components/search-facets";
+import { FeaturedBlock } from "@/components/featured-block";
+
+export type SearchNouns = { slug: string; singular: string; plural: string; termNoun: string };
+const COACH_NOUNS: SearchNouns = { slug: "coaches", singular: "coach", plural: "coaches", termNoun: "discipline" };
 import type { TermOption } from "@/components/ui/multi-select-menu";
 import { SearchBar } from "@/components/search-bar";
 import { useWide } from "@/lib/use-wide";
@@ -55,8 +59,20 @@ export function SearchResults({
   locationNotFound,
   skills,
   attributes,
+  featured = [],
+  nouns = COACH_NOUNS,
+  disciplineOptions,
+  coachFacets = true,
 }: {
   results: CoachResultData[];
+  /** The featured block's providers (src/lib/featured.ts); empty for most searches. */
+  featured?: CoachResultData[];
+  /** Words for the profession being searched, from its row. */
+  nouns?: SearchNouns;
+  /** The profession's disciplines or specialities, for the edit card. */
+  disciplineOptions?: TermOption[];
+  /** The skills/setup pill and the chips are coaching's vocabulary; off for other professions. */
+  coachFacets?: boolean;
   origin: { lat: number; long: number } | null;
   searchTown: string | null;
   /** The state's full name when the search is state-wide, else null. */
@@ -121,7 +137,8 @@ export function SearchResults({
     .map((c) => ({ slug: c.slug, lat: c.lat as number, long: c.long as number, km: c.distanceKm ?? null, name: c.name }));
   const near = stateWide ? ` across ${stateWide}` : searchTown ? ` near ${searchTown}` : "";
   const orderLabel = origin ? "Nearest first" : "A to Z";
-  const countText = `${results.length} coach${results.length === 1 ? "" : "es"}`;
+  const countText = `${results.length} ${results.length === 1 ? nouns.singular : nouns.plural}`;
+  const noneText = `No ${nouns.plural} match that search yet. Try a wider radius or another ${nouns.termNoun}.`;
 
   const radiusSlider = (
     <input
@@ -143,7 +160,7 @@ export function SearchResults({
       <div>
         <div className="font-display text-[26px] leading-none wide:text-[28px]">Nobody quite right?</div>
         <p className="mt-2 text-[14px] leading-[1.5] text-ink-fg/78 wide:text-[15px]">
-          Tell us your discipline and town and we&apos;ll email you when a coach lists nearby.
+          Tell us your {nouns.termNoun} and town and we&apos;ll email you when a {nouns.singular} lists nearby.
         </p>
       </div>
       <Link
@@ -204,6 +221,8 @@ export function SearchResults({
               defaultAttributes={attributeSlugs}
               skills={skills}
               attributes={attributes}
+              disciplineOptions={disciplineOptions}
+              profession={nouns.slug === "coaches" ? undefined : nouns}
               autoFocus
             />
           </div>
@@ -216,14 +235,14 @@ export function SearchResults({
           <div className="px-[18px] pb-[100px] pt-[18px]">
             {locationNotFound && (
               <p className="mb-4 rounded-[12px] border border-border bg-accent-soft p-3 text-[14px] text-fg">
-                Couldn&apos;t find &ldquo;{locationText}&rdquo; — showing coaches anywhere instead.
+                Couldn&apos;t find &ldquo;{locationText}&rdquo; — showing {nouns.plural} anywhere instead.
               </p>
             )}
             <div className="flex items-baseline justify-between">
               <h1 className="font-display text-[30px] leading-none text-ink">{countText}</h1>
               <span className="text-[13px] text-subtle">{orderLabel}</span>
             </div>
-            {stateWide && <p className="mt-1.5 text-[14px] text-subtle">Every coach based in {stateWide}</p>}
+            {stateWide && <p className="mt-1.5 text-[14px] text-subtle">Every {nouns.singular} based in {stateWide}</p>}
             {origin && (
               <>
                 <p className="mt-1.5 text-[14px] text-subtle">
@@ -236,14 +255,13 @@ export function SearchResults({
                 </div>
               </>
             )}
+            <FeaturedBlock providers={featured} searchTown={searchTown} className="mt-5" />
             <div className="mt-5 flex flex-col gap-3.5">
               {results.map((c) => (
                 <CoachResultCard key={c.slug} coach={c} searchTown={searchTown} className="fade-in" />
               ))}
               {results.length === 0 && (
-                <div className="rounded-[16px] border border-dashed border-border p-8 text-center text-muted">
-                  No coaches match that search yet. Try a wider radius or another discipline.
-                </div>
+                <div className="rounded-[16px] border border-dashed border-border p-8 text-center text-muted">{noneText}</div>
               )}
             </div>
             {notify}
@@ -267,8 +285,12 @@ export function SearchResults({
       <div className={`hidden min-h-[728px] wide:grid ${showMap ? "grid-cols-[1fr_480px]" : "grid-cols-1"}`}>
         <div className={`pb-12 pl-12 pt-7 ${showMap ? "pr-8" : "pr-12"}`}>
           <div className="flex flex-wrap items-center gap-2">
-            <SearchFacets skills={skills} attributes={attributes} />
-            <SearchChips />
+            {coachFacets && (
+              <>
+                <SearchFacets skills={skills} attributes={attributes} />
+                <SearchChips />
+              </>
+            )}
             <span className="ml-auto flex items-center gap-4">
               {origin && (
                 <span className="flex items-center gap-2.5 text-[13px] text-subtle">
@@ -290,7 +312,7 @@ export function SearchResults({
           </div>
           {locationNotFound && (
             <p className="mt-5 rounded-[12px] border border-border bg-accent-soft p-3 text-[14px] text-fg">
-              Couldn&apos;t find &ldquo;{locationText}&rdquo; — showing coaches anywhere instead.
+              Couldn&apos;t find &ldquo;{locationText}&rdquo; — showing {nouns.plural} anywhere instead.
             </p>
           )}
           <div className="mt-7 flex items-baseline justify-between">
@@ -300,6 +322,7 @@ export function SearchResults({
             </h1>
             <span className="text-[14px] text-subtle">{orderLabel}</span>
           </div>
+          <FeaturedBlock providers={featured} searchTown={searchTown} className={`mt-6 ${showMap ? "" : "max-w-[66%]"}`} />
           <div className={`mt-6 grid gap-4 ${showMap ? "grid-cols-2" : "grid-cols-3"}`}>
             {results.map((c) => (
               <CoachResultCard
@@ -311,9 +334,7 @@ export function SearchResults({
               />
             ))}
             {results.length === 0 && (
-              <div className="col-span-full rounded-[18px] border border-dashed border-border p-8 text-center text-muted">
-                No coaches match that search yet. Try a wider radius or another discipline.
-              </div>
+              <div className="col-span-full rounded-[18px] border border-dashed border-border p-8 text-center text-muted">{noneText}</div>
             )}
           </div>
           {notify}

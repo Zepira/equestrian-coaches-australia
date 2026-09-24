@@ -34,12 +34,13 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-export default async function TermPage({ params }: Params) {
+export default async function TermPage({ params, searchParams }: Params & { searchParams: Promise<{ location?: string }> }) {
   const { profession: slug, term } = await params;
   const profession = await requireSection(slug);
   if (profession.door === "coaches") return <CoachDiscipline profession={profession} slug={term} />;
   const specialities = await getSectionTerms(profession.id);
   const speciality = specialities.find((t) => t.slug === term);
   if (!speciality) return redirectMissingTerm(profession, term);
-  return <ProfessionalListing profession={profession} speciality={speciality} specialities={specialities} />;
+  const { location = "" } = await searchParams;
+  return <ProfessionalListing profession={profession} speciality={speciality} specialities={specialities} location={location} />;
 }

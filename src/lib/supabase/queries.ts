@@ -210,6 +210,12 @@ export type CoachSearchResult = {
   long: number | null;
   takingStudents: "yes" | "waitlist" | "no";
   travelRadiusKm: number | null;
+  /** Within the rider's radius of the searched point (else they travel to it, or work remotely). */
+  basedIn?: boolean;
+  /** Reached only because they work remotely and their profession allows it. */
+  isRemote?: boolean;
+  /** The profession this provider matched the search on. */
+  professionId?: string | null;
 };
 
 export type SearchFilters = {
@@ -221,20 +227,36 @@ export type SearchFilters = {
   radiusKm?: number;
   /** State code (VIC, NSW…) for a state-wide search — no radius applied. */
   state?: string | null;
+  /** Include remote providers (where their profession allows it). Place pages pass false. */
+  includeRemote?: boolean;
 };
 
 // Runs nearby_providers() scoped to the coaching profession (OR within a
 // kind, AND across kinds), then hydrates the thin result rows with what
 // CoachCard needs to render (disciplines, a thumbnail) in a second batched
 // query, preserving the RPC's distance/match-count ordering.
-export async function searchCoaches(
-  supabase: SupabaseClient,
-  { disciplineIds, skillIds, attributeIds, lat, long, radiusKm = 50, state }: SearchFilters
-): Promise<CoachSearchResult[]> {
+export async function searchCoaches(supabase: SupabaseClient, filters: SearchFilters): Promise<CoachSearchResult[]> {
   const coachingId = await getCoachingId(supabase);
   if (!coachingId) return [];
+  return searchProviders(supabase, [coachingId], filters);
+}
+
+/**
+ * nearby_providers() for any profession(s) of one door (The Site as a CMS
+ * §05.1): OR within a kind, AND across kinds; based in the area above
+ * travels to it; remote providers last and only where their profession
+ * allows it. Then hydrated with terms, first photo and the provider fields
+ * the cards need.
+ */
+export async function searchProviders(
+  supabase: SupabaseClient,
+  professionIds: string[],
+  { disciplineIds, skillIds, attributeIds, lat, long, radiusKm = 50, state, includeRemote = true }: SearchFilters
+): Promise<CoachSearchResult[]> {
+  if (!professionIds.length) return [];
   const { data: matches, error } = await supabase.rpc("nearby_providers", {
-    p_profession_ids: [coachingId],
+    p_profession_ids: professionIds,
+    p_include_remote: includeRemote,
     p_discipline_ids: disciplineIds?.length ? disciplineIds : null,
     p_skill_ids: skillIds?.length ? skillIds : null,
     p_attribute_ids: attributeIds?.length ? attributeIds : null,
@@ -274,7 +296,8 @@ export async function searchCoaches(
     }
   }
 
-  return matches.map((m: { id: string; slug: string; name: string; headline: string; suburb: string; state: string; distance_km: number | null }) => ({
+  type Match = { id: string; slug: string; name: string; headline: string; suburb: string; state: string; distance_km: number | null; based_in: boolean; is_remote: boolean; profession_id: string | null };
+  return (matches as Match[]).map((m) => ({
     id: m.id,
     slug: m.slug,
     name: m.name || "Coach",
@@ -290,6 +313,9 @@ export async function searchCoaches(
     long: (coachById.get(m.id)?.long as number | null) ?? null,
     takingStudents: ((coachById.get(m.id)?.availability as "yes" | "waitlist" | "no" | undefined) ?? "yes"),
     travelRadiusKm: (coachById.get(m.id)?.travel_radius_km as number | null) ?? null,
+    basedIn: m.based_in,
+    isRemote: m.is_remote,
+    professionId: m.profession_id,
   }));
 }
 

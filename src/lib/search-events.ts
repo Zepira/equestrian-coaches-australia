@@ -8,6 +8,8 @@ import { isSupabaseConfigured } from "@/lib/supabase/client";
 // only ever be written server-side, never from the browser.
 export async function logSearchEvent(event: {
   termIds: string[];
+  /** The profession searched, so a zero-result search reads "farriers near Ballarat", not just "Ballarat". */
+  professionId?: string | null;
   locationText?: string | null;
   lat?: number | null;
   lng?: number | null;
@@ -23,6 +25,7 @@ export async function logSearchEvent(event: {
     );
     await supabase.from("search_events").insert({
       term_ids: event.termIds,
+      profession_id: event.professionId ?? null,
       location_text: event.locationText ?? null,
       lat: event.lat ?? null,
       lng: event.lng ?? null,

@@ -19,7 +19,7 @@ import { EnquirySheet } from "@/components/enquiry-sheet";
 import { JsonLd } from "@/components/json-ld";
 import { PhoneReveal } from "@/components/phone-reveal";
 import { ProfessionGlyph, hasGlyph } from "@/components/profession-glyph";
-import { breadcrumbSchema } from "@/lib/structured-data";
+import { breadcrumbSchema, providerSchemas } from "@/lib/structured-data";
 import { horseCareResultsPattern, sectionHref } from "@/lib/professions";
 import { getProfession, getProfessions } from "@/lib/cms/read";
 import { getMockProfessionalBySlug } from "@/lib/mock-professionals";
@@ -64,12 +64,27 @@ export async function ProfessionalProfile({ slug }: { slug: string }) {
     <div className="coach-profile">
       <PageContext door="horse-care" resultsHref="/horse-care/search" resultsFrom={horseCareResultsPattern(professions)} />
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", url: "/" },
-          { name: "Horse care", url: "/horse-care" },
-          { name: profession.name, url: sectionHref(profession) },
-          { name: pro.name, url: profilePath(pro.slug) },
-        ])}
+        data={[
+          ...providerSchemas({
+            name: pro.name,
+            slug: pro.slug,
+            headline: pro.headline,
+            bio: pro.bio,
+            suburb: pro.suburb,
+            state: pro.state,
+            lat: pro.lat,
+            long: pro.long,
+            photoUrl: pro.photoUrl,
+            disciplineNames: pro.specialities,
+            jobTitle: profession.jobTitle,
+          }),
+          breadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Horse care", url: "/horse-care" },
+            { name: profession.name, url: sectionHref(profession) },
+            { name: pro.name, url: profilePath(pro.slug) },
+          ]),
+        ]}
       />
 
       {/* phone-only top bar over the photo (the desktop header has its own back link) */}

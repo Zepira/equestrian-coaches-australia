@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { disciplinePath, eventPath, profilePath } from "@/lib/page-paths";
+import { eventPath, profilePath, termPath } from "@/lib/page-paths";
 import { notFound } from "next/navigation";
 import { ContactForm } from "@/components/contact-form";
 import { JsonLd } from "@/components/json-ld";
@@ -15,7 +15,7 @@ async function getClinic(id: string) {
   const { data } = await supabase
     .from("events")
     .select(
-      "title, description, location_text, start_date, end_date, capacity, places_left, terms!events_term_id_fkey(slug, name), providers(id, slug, name, suburb, state, headline, show_contact_form, availability, status, provider_photos(storage_path, sort_order))"
+      "title, description, location_text, start_date, end_date, capacity, places_left, terms!events_term_id_fkey(slug, name), profession:terms!events_profession_id_fkey(slug), providers(id, slug, name, suburb, state, headline, show_contact_form, availability, status, provider_photos(storage_path, sort_order))"
     )
     .eq("id", id)
     .maybeSingle();
@@ -45,6 +45,8 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
   const supabase = await createClient();
 
   const discipline = (clinic as unknown as { terms: { slug: string; name: string } | null }).terms;
+  // The term links under its own profession: /coaches/dressage, /farriers/remedial-shoeing.
+  const professionSlug = (clinic as unknown as { profession: { slug: string } | null }).profession?.slug ?? "coaches";
   const coach = (
     clinic as unknown as {
       providers: {
@@ -126,7 +128,7 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
               <div className="rounded-[14px] border border-border bg-surface px-3.5 py-3.5">
                 <dt className="text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Discipline</dt>
                 <dd className="mt-1.5 text-[15px] leading-[1.35] text-ink">
-                  <Link href={disciplinePath(discipline.slug)} className="text-accent">
+                  <Link href={termPath(professionSlug, discipline.slug)} className="text-accent">
                     {discipline.name}
                   </Link>
                 </dd>

@@ -4,15 +4,17 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isStripeConfigured } from "@/lib/stripe";
-import { TIERS } from "@/lib/tiers";
+import { TIERS, capabilityJson } from "@/lib/tiers";
 import {
   LOCKED_ONCE_SET,
   SETTINGS_TAG,
+  SETTING_RANGES,
   getPlans,
   readPlanCapability,
   readPlanInfo,
   type SettingKey,
 } from "@/lib/settings";
+import { createServiceSupabase } from "@/lib/supabase/service";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -67,6 +69,9 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     if (parsed.date > limit) return { error: "More than three years away. Check the year." };
     return { value: parsed.value };
   },
+  area_page_min_providers: wholeNumber("area_page_min_providers"),
+  featured_min_providers: wholeNumber("featured_min_providers"),
+  featured_slots_per_area: wholeNumber("featured_slots_per_area"),
   plans(raw) {
     const parsed = parseObject(raw);
     if (!parsed) return { error: "That isn't a valid set of plans." };
@@ -86,13 +91,21 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     return {
       value: JSON.stringify(
         Object.fromEntries(TIERS.map((t) => {
-          const c = readPlanCapability(parsed[t])!;
-          return [t, { event_limit: c.eventLimit, video: c.video }];
+          return [t, capabilityJson(readPlanCapability(parsed[t])!)];
         }))
       ),
     };
   },
 };
+
+function wholeNumber(key: keyof typeof SETTING_RANGES) {
+  const [min, max] = SETTING_RANGES[key];
+  return (raw: string): { value: string } | { error: string } => {
+    const n = Number(raw.trim());
+    if (!raw.trim() || !Number.isInteger(n) || n < min || n > max) return { error: `Enter a whole number from ${min} to ${max}.` };
+    return { value: String(n) };
+  };
+}
 
 function parseObject(raw: string): Record<string, unknown> | null {
   try {
@@ -108,6 +121,9 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   launch_date: ["/for-coaches"],
   founding_free_months: ["/for-coaches"],
   founding_join_by: ["/for-coaches"],
+  area_page_min_providers: ["/sitemap.xml"],
+  featured_min_providers: ["/search"],
+  featured_slots_per_area: ["/search"],
   plans: ["/", "/coaches", "/horse-care", "/for-coaches", "/list-your-business", "/dashboard", "/dashboard/billing"],
   plan_capabilities: ["/dashboard", "/dashboard/clinics", "/dashboard/profile"],
 };
@@ -136,12 +152,12 @@ export async function savePlans(formData: FormData) {
   await writeSetting("plans", JSON.stringify(next));
 }
 
-/** The plan features form: event limit (blank = unlimited) and video, per tier. */
+/** The plan features form: event limit (blank = unlimited), video and a featured spot, per tier. */
 export async function savePlanCapabilities(formData: FormData) {
   const next = Object.fromEntries(
     TIERS.map((t) => {
       const raw = String(formData.get(`${t}.event_limit`) ?? "").trim();
-      return [t, { event_limit: raw === "" ? null : Number(raw), video: formData.get(`${t}.video`) === "on" }];
+      return [t, { event_limit: raw === "" ? null : Number(raw), video: formData.get(`${t}.video`) === "on", featured: formData.get(`${t}.featured`) === "on" }];
     })
   );
   await writeSetting("plan_capabilities", JSON.stringify(next));
@@ -177,6 +193,12 @@ async function writeSetting(key: SettingKey, raw: string) {
   if (!updated?.length) {
     const { error: insertError } = await supabase.from("settings").insert({ key, value: result.value });
     if (insertError) throw insertError;
+  }
+
+  // A new gate applies now, not at tonight's recompute.
+  if (key === "area_page_min_providers") {
+    const service = createServiceSupabase();
+    await service?.rpc("recompute_indexable_pages", { p_min_providers: Number(result.value) });
   }
 
   revalidateTag(SETTINGS_TAG, { expire: 0 });

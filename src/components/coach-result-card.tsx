@@ -7,6 +7,10 @@ export type CoachResultData = CoachCardData & {
   travelRadiusKm?: number | null;
   lat?: number | null;
   long?: number | null;
+  /** From nearby_providers: inside the rider's radius. Absent for mock data. */
+  basedIn?: boolean;
+  /** From nearby_providers: reached only because they work remotely. */
+  isRemote?: boolean;
 };
 
 /**
@@ -18,6 +22,7 @@ export type CoachResultData = CoachCardData & {
  */
 export function whereLine(coach: CoachResultData, searchTown: string | null) {
   const home = `${coach.suburb}`;
+  if (coach.isRemote) return `Works remotely, based in ${home}`;
   const d = coach.distanceKm;
   if (!searchTown || d == null) return `Based in ${home}`;
   const sameTown = d <= 5 || coach.suburb.toLowerCase() === searchTown.toLowerCase();

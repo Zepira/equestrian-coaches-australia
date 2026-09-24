@@ -19,15 +19,25 @@ export const DEFAULT_PLANS: Plans = {
   clinic: { name: "Clinic", monthly: "$49.95", yearly: "$499", tagline: "For coaches who are already full" },
 };
 
-/** What a plan unlocks. `eventLimit` null = unlimited live events. */
-export type PlanCapability = { eventLimit: number | null; video: boolean };
+/** What a plan unlocks. `eventLimit` null = unlimited live events; `featured` = a turn in the featured block. */
+export type PlanCapability = { eventLimit: number | null; video: boolean; featured: boolean };
 export type PlanCapabilities = Record<Tier, PlanCapability>;
 
 export const DEFAULT_CAPABILITIES: PlanCapabilities = {
-  listed: { eventLimit: 1, video: false },
-  spotlight: { eventLimit: null, video: true },
-  clinic: { eventLimit: null, video: true },
+  listed: { eventLimit: 1, video: false, featured: false },
+  spotlight: { eventLimit: null, video: true, featured: true },
+  clinic: { eventLimit: null, video: true, featured: true },
 };
+
+/** How a capability is stored in the plan_capabilities setting. */
+export function capabilityJson(c: PlanCapability) {
+  return { event_limit: c.eventLimit, video: c.video, featured: c.featured };
+}
+
+/** The tiers whose plan includes a featured spot. */
+export function featuredTiers(caps: PlanCapabilities): Tier[] {
+  return TIERS.filter((t) => caps[t].featured);
+}
 
 export function isTier(v: unknown): v is Tier {
   return v === "listed" || v === "spotlight" || v === "clinic";

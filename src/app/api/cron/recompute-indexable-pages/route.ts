@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
+import { getAreaPageMinProviders } from "@/lib/settings";
 
 // Nightly eligibility recompute for indexable_pages (see
 // supabase/migrations/0001_baseline.sql). The sitemap and the place pages
@@ -18,7 +19,7 @@ export async function GET(request: Request) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const { error } = await supabase.rpc("recompute_indexable_pages", { p_min_providers: 3 });
+  const { error } = await supabase.rpc("recompute_indexable_pages", { p_min_providers: await getAreaPageMinProviders() });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const { count: eligibleCount } = await supabase

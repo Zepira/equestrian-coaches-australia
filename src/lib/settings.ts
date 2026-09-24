@@ -4,6 +4,7 @@ import {
   DEFAULT_CAPABILITIES,
   DEFAULT_PLANS,
   TIERS,
+  capabilityJson,
   type PlanCapabilities,
   type PlanCapability,
   type PlanInfo,
@@ -34,11 +35,17 @@ export const DEFAULTS = {
   founding_free_months: "6",
   /** Last day to sign up as a founding member, ISO date. Empty means still open. */
   founding_join_by: "",
+  /** Providers of one profession a place needs before its place pages exist (the gate, §05.2). */
+  area_page_min_providers: "3",
+  /** Providers of one profession near a place before a featured block shows there at all. */
+  featured_min_providers: "8",
+  /** Featured slots per profession per place. */
+  featured_slots_per_area: "3",
   /** Plan names, display prices and taglines, JSON (PlanInfo per tier). */
   plans: JSON.stringify(DEFAULT_PLANS),
-  /** What each plan unlocks, JSON: { tier: { event_limit: number | null, video: boolean } }. */
+  /** What each plan unlocks, JSON: { tier: { event_limit: number | null, video: boolean, featured: boolean } }. */
   plan_capabilities: JSON.stringify(
-    Object.fromEntries(TIERS.map((t) => [t, { event_limit: DEFAULT_CAPABILITIES[t].eventLimit, video: DEFAULT_CAPABILITIES[t].video }]))
+    Object.fromEntries(TIERS.map((t) => [t, capabilityJson(DEFAULT_CAPABILITIES[t])]))
   ),
 } as const satisfies Record<string, string>;
 
@@ -112,6 +119,24 @@ export async function isFoundingOpen(now = new Date()): Promise<boolean> {
   return today <= joinBy;
 }
 
+// ── Gates and featured placement ───────────────────────────────────────────
+
+/** Whole number from a setting, clamped to its allowed range, else the default. */
+async function intSetting(key: SettingKey, min: number, max: number): Promise<number> {
+  const n = Number(await getSetting(key));
+  return Number.isInteger(n) && n >= min && n <= max ? n : Number(DEFAULTS[key]);
+}
+
+export const SETTING_RANGES = {
+  area_page_min_providers: [1, 20],
+  featured_min_providers: [2, 50],
+  featured_slots_per_area: [0, 10],
+} as const satisfies Partial<Record<SettingKey, readonly [number, number]>>;
+
+export const getAreaPageMinProviders = () => intSetting("area_page_min_providers", ...SETTING_RANGES.area_page_min_providers);
+export const getFeaturedMinProviders = () => intSetting("featured_min_providers", ...SETTING_RANGES.featured_min_providers);
+export const getFeaturedSlotsPerArea = () => intSetting("featured_slots_per_area", ...SETTING_RANGES.featured_slots_per_area);
+
 // ── Plans ──────────────────────────────────────────────────────────────────
 
 function parseJson(raw: string): unknown {
@@ -140,8 +165,8 @@ export function readPlanCapability(v: unknown): PlanCapability | null {
   const o = v as Record<string, unknown>;
   const limit = o.event_limit;
   const limitOk = limit === null || (Number.isInteger(limit) && (limit as number) >= 0 && (limit as number) <= 100);
-  if (!limitOk || typeof o.video !== "boolean") return null;
-  return { eventLimit: limit as number | null, video: o.video };
+  if (!limitOk || typeof o.video !== "boolean" || typeof o.featured !== "boolean") return null;
+  return { eventLimit: limit as number | null, video: o.video, featured: o.featured };
 }
 
 /** Names, prices and taglines per plan; a malformed tier falls back to its default. */

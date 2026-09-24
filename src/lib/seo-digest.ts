@@ -33,17 +33,22 @@ async function zeroResultSplit(supabase: SupabaseClient): Promise<DigestSection>
   const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const { data } = await supabase
     .from("search_events")
-    .select("term_ids, location_text")
+    .select("term_ids, profession_id, location_text, profession:terms!search_events_profession_id_fkey(plural:profession_details(plural))")
     .eq("result_count", 0)
     .gte("created_at", since);
 
   const rows = data ?? [];
-  const supplyGaps = rows.filter((r) => (r.term_ids ?? []).length > 0);
-  const vocabGaps = rows.filter((r) => (r.term_ids ?? []).length === 0);
+  // A search that named a profession or a term knew what it wanted: nobody
+  // matched, a recruiting target. One that resolved neither is a words problem.
+  const knewWhat = (r: { term_ids: string[] | null; profession_id: string | null }) => (r.term_ids ?? []).length > 0 || Boolean(r.profession_id);
+  const supplyGaps = rows.filter(knewWhat);
+  const vocabGaps = rows.filter((r) => !knewWhat(r));
 
   const byLocation = new Map<string, number>();
+  // Split by profession (§05.6): "farriers near Ballarat", not just "Ballarat".
   for (const r of supplyGaps) {
-    const key = r.location_text ?? "(no location)";
+    const plural = (r as unknown as { profession: { plural: { plural: string } | null } | null }).profession?.plural?.plural;
+    const key = `${plural ?? "providers"} near ${r.location_text ?? "(no location)"}`;
     byLocation.set(key, (byLocation.get(key) ?? 0) + 1);
   }
   const topSupplyGaps = [...byLocation.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
@@ -51,7 +56,7 @@ async function zeroResultSplit(supabase: SupabaseClient): Promise<DigestSection>
   return {
     title: "Zero-result searches, last 7 days",
     lines: [
-      `${supplyGaps.length} supply gap${supplyGaps.length === 1 ? "" : "s"} (a discipline was picked, nothing matched — recruiting targets)`,
+      `${supplyGaps.length} supply gap${supplyGaps.length === 1 ? "" : "s"} (a profession or discipline was searched, nobody matched: recruiting targets)`,
       ...topSupplyGaps.map(([loc, n]) => `  - ${loc}: ${n}`),
       `${vocabGaps.length} vocabulary gap${vocabGaps.length === 1 ? "" : "s"} (no discipline resolved — feed the alias pipeline)`,
     ],
@@ -69,6 +74,21 @@ const GSC_NOT_CONNECTED: DigestSection = {
     "Not connected yet — set GOOGLE_SERVICE_ACCOUNT_KEY and GSC_SITE_URL, verify the domain property, and add the service account as a user on it. See CLAUDE.md, \"Search & taxonomy build spec\".",
   ],
 };
+
+// The fallback ladder's assertion (§05.2): every published provider should
+// be listed on some page besides their profile. unlisted_providers()
+// (0003_provider_search.sql) returns anyone who isn't; it should be empty.
+async function unlistedProviders(supabase: SupabaseClient): Promise<DigestSection> {
+  const { data, error } = await supabase.rpc("unlisted_providers");
+  if (error) return { title: "Providers no page lists", lines: [`Couldn't check: ${error.message}`] };
+  const rows = (data ?? []) as { slug: string; name: string; reason: string }[];
+  return {
+    title: "Providers no page lists",
+    lines: rows.length
+      ? [`${rows.length} published provider${rows.length === 1 ? "" : "s"} only reachable by search or a direct link:`, ...rows.map((r) => `  - ${r.name} (/profile/${r.slug}): ${r.reason}`)]
+      : ["None. Every published provider is listed on at least one page."],
+  };
+}
 
 async function unmappedQueries(supabase: SupabaseClient, rows: GscRow[]): Promise<DigestSection> {
   const { data: aliasRows } = await supabase.from("term_aliases").select("alias");
@@ -186,7 +206,7 @@ async function promotionCandidates(supabase: SupabaseClient, rows: GscRow[]): Pr
 }
 
 export async function buildSeoDigest(supabase: SupabaseClient): Promise<DigestSection[]> {
-  const sections: DigestSection[] = [await zeroResultSplit(supabase)];
+  const sections: DigestSection[] = [await zeroResultSplit(supabase), await unlistedProviders(supabase)];
 
   if (!isGscConfigured) {
     sections.push(GSC_NOT_CONNECTED);

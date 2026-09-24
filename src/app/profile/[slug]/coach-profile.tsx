@@ -1,9 +1,11 @@
 /**
- * A coach's profile, one of the two renderers behind /profile/[slug]
- * (page.tsx picks): real providers from the database, then the mock and
- * placeholder coaches. A real provider whose primary profession is a horse
- * care one gets that door's colours through PageContext; everything else on
- * the page still speaks coaching until stage 4 generalises it.
+ * The profile renderer for real providers of any profession, and for the
+ * mock and placeholder coaches (page.tsx picks; mock horse care
+ * professionals have their own). The words come from the provider's primary
+ * profession row: job title, "years in practice" or "years coaching",
+ * students or clients, riders or horse owners, disciplines or specialities
+ * and where they link. A horse care provider gets that door's colours
+ * through PageContext.
  */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -15,9 +17,9 @@ import { EnquirySheet } from "@/components/enquiry-sheet";
 import { PhoneReveal } from "@/components/phone-reveal";
 import { BackToResults } from "@/components/back-to-results";
 import { PageContext } from "@/components/page-context";
-import { disciplinePath, eventPath, profilePath } from "@/lib/page-paths";
+import { disciplinePath, eventPath, profilePath, sectionPath, termPath } from "@/lib/page-paths";
 import { getProfession, getProfessions } from "@/lib/cms/read";
-import { horseCareResultsPattern } from "@/lib/professions";
+import { FALLBACK_PROFESSIONS, horseCareResultsPattern } from "@/lib/professions";
 import { createClient } from "@/lib/supabase/server";
 import { PROVIDER_PHOTOS, sortByName } from "@/lib/supabase/queries";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
@@ -25,13 +27,16 @@ import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 export const PLACEHOLDER_COACH_SLUGS = placeholderCoaches.map((c) => c.slug);
 import { getMockCoachBySlug, SKILL_NAMES, ATTRIBUTE_NAMES } from "@/lib/mock-coaches";
 import { getDisciplineBySlug } from "@/lib/disciplines";
-import { breadcrumbSchema, coachPersonSchema } from "@/lib/structured-data";
+import { breadcrumbSchema, providerSchemas } from "@/lib/structured-data";
 import { logView } from "@/lib/coach-events";
 
 type CoachView = {
   id: string | null;
   /** The primary profession's slug (lowest sort_order); null for mock and placeholder coaches, which are all coaches. */
   professionSlug: string | null;
+  /** Names of the disciplines/specialities, in the provider's order (disciplineSlugs' twins). */
+  disciplineNames: string[] | null;
+  businessName: string | null;
   // Identifier to submit the contact form against — coach.id for a real DB
   // coach; a "mock:<slug>" sentinel for a demo/mock coach with the form
   // switched on (sendCoachEnquiry short-circuits on that prefix rather than
@@ -77,7 +82,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
   const { data: coach } = await supabase
     .from("providers")
     .select(
-      "id, name, headline, bio, suburb, state, lat, long, qualifications, video_url, availability, travel_radius_km, years_experience, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form"
+      "id, name, business_name, headline, bio, suburb, state, lat, long, qualifications, video_url, availability, travel_radius_km, years_experience, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form"
     )
     .eq("slug", slug)
     .eq("status", "published")
@@ -112,6 +117,11 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
   return {
     id: coach.id,
     professionSlug: primaryProfession,
+    businessName: coach.business_name ?? null,
+    disciplineNames: (disciplineRows ?? [])
+      .map((r) => (r as unknown as { terms: { name: string; kind: string } | null }).terms)
+      .filter((t): t is { name: string; kind: string } => Boolean(t) && t!.kind === "discipline")
+      .map((t) => t.name),
     contactId: coach.id,
     slug,
     name: coach.name || "Coach",
@@ -178,6 +188,8 @@ function getCoachFromMock(slug: string): CoachView | null {
   return {
     id: null,
     professionSlug: null,
+    businessName: null,
+    disciplineNames: null,
     contactId: coach.contact.showContactForm ? `mock:${coach.slug}` : null,
     slug: coach.slug,
     name: coach.name,
@@ -215,6 +227,8 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
   return {
     id: null,
     professionSlug: null,
+    businessName: null,
+    disciplineNames: null,
     contactId: null,
     slug: coach.slug,
     name: coach.name,
@@ -253,8 +267,8 @@ export async function coachMetadata(slug: string): Promise<Metadata> {
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function StatusPill({ status, className = "" }: { status: CoachView["takingStudents"]; className?: string }) {
-  const label = status === "yes" ? "Taking new students" : status === "waitlist" ? "Waitlist open" : "Not taking students right now";
+function StatusPill({ status, who, className = "" }: { status: CoachView["takingStudents"]; who: string; className?: string }) {
+  const label = status === "yes" ? `Taking new ${who}` : status === "waitlist" ? "Waitlist open" : `Not taking ${who} right now`;
   return (
     <span className={`fade-in inline-flex items-center gap-2 rounded-[var(--radius-pill)] bg-ink px-3 py-[7px] text-[12px] font-medium text-ink-fg ${className}`} style={{ animationDuration: "0.6s" }}>
       <span aria-hidden className={`h-[7px] w-[7px] rounded-full ${status === "yes" ? "bg-success" : status === "waitlist" ? "bg-peach" : "bg-ink-fg/40"}`} />
@@ -267,11 +281,16 @@ export async function CoachProfile({ slug }: { slug: string }) {
   const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
   if (!coach) notFound();
   if (coach.id) await logView(coach.id); // real coaches only; deduped per visitor per day
-  const horseCare = coach.professionSlug ? (await getProfession(coach.professionSlug))?.door === "horse_care" : false;
+  const profession = (await getProfession(coach.professionSlug ?? "coaches")) ?? FALLBACK_PROFESSIONS[0];
+  const horseCare = profession.door === "horse_care";
+  // Coaching has students; everyone else has clients. Riders vs horse owners from the row.
+  const who = horseCare ? "clients" : "students";
+  const audiencePlural = `${profession.audienceNoun}s`;
+  const yearsText = (n: number) => `${n} ${n === 1 ? profession.yearsLabel.replace(/^years/, "year") : profession.yearsLabel}`;
 
-  const disciplineNames = coach.disciplineSlugs
-    .map((s) => getDisciplineBySlug(s)?.name)
-    .filter((n): n is string => Boolean(n));
+  const disciplineNames =
+    coach.disciplineNames ??
+    coach.disciplineSlugs.map((s) => getDisciplineBySlug(s)?.name).filter((n): n is string => Boolean(n));
   const firstName = coach.name.split(" ")[0];
   const [nameFirst, ...nameRest] = coach.name.split(" ");
   const canEnquire = Boolean(coach.contactId && coach.contact.showContactForm);
@@ -283,7 +302,7 @@ export async function CoachProfile({ slug }: { slug: string }) {
       Based in <strong className="font-medium text-fg">{coach.suburb} {coach.state}</strong>
     </span>,
     ...(coach.travelRadiusKm && coach.travelRadiusKm > 0 ? [<span key="travel">travels up to {coach.travelRadiusKm} km</span>] : []),
-    ...(coach.yearsCoaching ? [<span key="years">{coach.yearsCoaching} year{coach.yearsCoaching === 1 ? "" : "s"} coaching</span>] : []),
+    ...(coach.yearsCoaching ? [<span key="years">{yearsText(coach.yearsCoaching)}</span>] : []),
   ];
   const nextClinic = coach.canListClinics
     ? coach.clinics.find((c) => new Date(c.date) >= new Date(new Date().toDateString())) ?? null
@@ -300,7 +319,7 @@ export async function CoachProfile({ slug }: { slug: string }) {
       )}
       <JsonLd
         data={[
-          coachPersonSchema({
+          ...providerSchemas({
             name: coach.name,
             slug: coach.slug,
             headline: coach.headline,
@@ -312,10 +331,12 @@ export async function CoachProfile({ slug }: { slug: string }) {
             photoUrl: coach.photoUrl,
             disciplineNames,
             skillNames: coach.skillNames,
+            jobTitle: profession.jobTitle,
+            businessName: coach.businessName,
           }),
           breadcrumbSchema([
             { name: "Home", url: "/" },
-            { name: "Find a coach", url: "/search" },
+            { name: profession.name, url: sectionPath(profession.slug) },
             { name: coach.name, url: profilePath(coach.slug) },
           ]),
         ]}
@@ -342,7 +363,7 @@ export async function CoachProfile({ slug }: { slug: string }) {
               <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,24,18,.15),rgba(13,24,18,0)_35%,rgba(246,241,231,0)_70%,#f6f1e7_100%)] wide:hidden" />
             </div>
             <div className="relative -mt-14 px-[18px] wide:mt-0 wide:px-0 wide:pb-2">
-              <StatusPill status={coach.takingStudents} />
+              <StatusPill status={coach.takingStudents} who={who} />
               <h1 className="fade-in mt-3.5 text-[46px] leading-[0.98] -tracking-[0.025em] text-ink wide:mt-4 wide:text-[68px] wide:leading-[0.95] wide:-tracking-[0.03em]" style={{ animationDuration: "0.7s", animationDelay: "0.05s" }}>
                 <span className="wide:hidden">{coach.name}</span>
                 <span className="hidden wide:inline">
@@ -365,11 +386,11 @@ export async function CoachProfile({ slug }: { slug: string }) {
               </p>
               <div className="fade-in mt-3.5 flex flex-wrap gap-1.5" style={{ animationDuration: "0.7s", animationDelay: "0.15s" }}>
                 {coach.disciplineSlugs.map((s, i) => {
-                  const name = getDisciplineBySlug(s)?.name ?? s;
+                  const name = disciplineNames[i] ?? getDisciplineBySlug(s)?.name ?? s;
                   return (
                     <Link
                       key={s}
-                      href={disciplinePath(s)}
+                      href={horseCare ? termPath(profession.slug, s) : disciplinePath(s)}
                       className={`rounded-[var(--radius-pill)] border px-3 py-1.5 text-[13px] font-medium wide:px-[13px] wide:py-[7px] ${i === 0 ? "border-accent text-accent" : "border-border bg-surface text-fg"}`}
                     >
                       {name}
@@ -455,9 +476,9 @@ export async function CoachProfile({ slug }: { slug: string }) {
           {coach.testimonials.length > 0 && (
             <section className="mt-9 bg-ink pt-10 text-ink-fg wide:mt-14 wide:rounded-[22px] wide:p-9">
               <div className="px-[18px] wide:px-0">
-                <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-ink-fg/60">From {firstName}&rsquo;s riders</p>
+                <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-ink-fg/60">From {firstName}&rsquo;s {audiencePlural}</p>
                 <h2 className="mt-2.5 text-[34px] leading-none wide:text-[40px]">
-                  What riders <em className="text-peach">say</em>
+                  What {audiencePlural} <em className="text-peach">say</em>
                 </h2>
               </div>
               <div className="hs mt-[22px] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[18px] pb-9 wide:mt-6 wide:grid wide:grid-cols-3 wide:gap-3.5 wide:overflow-visible wide:px-0 wide:pb-0">
@@ -477,7 +498,7 @@ export async function CoachProfile({ slug }: { slug: string }) {
           <div className="px-[18px] pb-[120px] pt-9 wide:px-0 wide:pb-0">
             {nextClinic && clinicDate && (
               <section>
-                <h2 className="text-[30px] leading-none text-ink wide:mt-12 wide:text-[32px]">Upcoming clinic</h2>
+                <h2 className="text-[30px] leading-none text-ink wide:mt-12 wide:text-[32px]">{horseCare ? "Upcoming event" : "Upcoming clinic"}</h2>
                 <Link
                   href={nextClinic.id ? eventPath(nextClinic.id) : "#"}
                   className="mt-3.5 grid grid-cols-[64px_1fr] gap-3.5 rounded-[16px] border border-border bg-surface p-3.5 text-inherit transition-colors duration-300 hover:border-accent wide:grid-cols-[72px_1fr_auto] wide:items-center wide:gap-[18px] wide:py-3.5 wide:pl-3.5 wide:pr-[18px]"
@@ -508,7 +529,7 @@ export async function CoachProfile({ slug }: { slug: string }) {
               )}
               <ContactLinks email={coach.contact.email} facebookUrl={coach.contact.facebookUrl} className="mt-3.5" />
               {!canEnquire && !coach.contact.hasPhone && !coach.contact.email && !coach.contact.facebookUrl && (
-                <p className="mt-2 text-[14px] text-subtle">This coach hasn&apos;t published contact details yet.</p>
+                <p className="mt-2 text-[14px] text-subtle">This {profession.singular} hasn&apos;t published contact details yet.</p>
               )}
             </section>
           </div>
@@ -522,7 +543,7 @@ export async function CoachProfile({ slug }: { slug: string }) {
           </p>
           <div className="mt-[18px]">
             {enquiryId ? (
-              <ContactForm coachId={enquiryId} coachName={coach.name} firstName={firstName} />
+              <ContactForm coachId={enquiryId} coachName={coach.name} firstName={firstName} kind={horseCare ? "professional" : undefined} />
             ) : (
               <p className="rounded-[12px] bg-shade p-4 text-[14px] text-subtle">
                 {coach.takingStudents === "no" ? `${firstName} isn't taking new students right now.` : "This coach isn't taking enquiries through the site right now."}
@@ -539,7 +560,7 @@ export async function CoachProfile({ slug }: { slug: string }) {
         </aside>
       </div>
 
-      <EnquirySheet coachId={enquiryId} coachName={coach.name} firstName={firstName} takingStudents={coach.takingStudents} />
+      <EnquirySheet coachId={enquiryId} coachName={coach.name} firstName={firstName} takingStudents={coach.takingStudents} kind={horseCare ? "professional" : undefined} />
     </div>
   );
 }

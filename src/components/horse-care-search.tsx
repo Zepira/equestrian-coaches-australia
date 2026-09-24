@@ -6,6 +6,7 @@ import { SelectMenu } from "@/components/ui/select-menu";
 import { LocateButton } from "@/components/locate-button";
 import { Caret } from "@/components/ui/caret";
 import { sectionHref, type Profession } from "@/lib/professions";
+import { termPath } from "@/lib/page-paths";
 
 /**
  * The Horse care door's search card: the coach card's shell and fields
@@ -23,11 +24,14 @@ import { sectionHref, type Profession } from "@/lib/professions";
 export function HorseCareSearch({
   professions: horseCare,
   defaultProfession = "",
+  defaultTerm = "",
   defaultLocation = "",
   tone = "glass",
 }: {
   professions: Pick<Profession, "slug" | "name" | "open">[];
   defaultProfession?: string;
+  /** On a speciality page: kept while the profession stays the same. */
+  defaultTerm?: string;
   defaultLocation?: string;
   tone?: "glass" | "plain";
 }) {
@@ -40,7 +44,8 @@ export function HorseCareSearch({
     e.preventDefault();
     const p = horseCare.find((x) => x.slug === profession);
     const q = location.trim() ? `?location=${encodeURIComponent(location.trim())}` : "";
-    router.push((p ? sectionHref(p) : "/horse-care/search") + q);
+    const base = p ? (defaultTerm && p.slug === defaultProfession ? termPath(p.slug, defaultTerm) : sectionHref(p)) : "/horse-care/search";
+    router.push(base + q);
   }
 
   return (

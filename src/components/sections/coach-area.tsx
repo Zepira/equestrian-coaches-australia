@@ -12,6 +12,8 @@ import { absoluteUrl } from "@/lib/site-url";
 import { areaPagePath, disciplinePath, profilePath } from "@/lib/page-paths";
 import { getArea, isAreaPageEligible, redirectMissingTerm } from "@/lib/sections";
 import type { Profession } from "@/lib/professions";
+import { pickFeatured } from "@/lib/featured";
+import { FeaturedBlock } from "@/components/featured-block";
 
 /**
  * /coaches/in/[area] and /coaches/[discipline]/in/[area]. The first catches
@@ -59,9 +61,18 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
   }
 
   const radiusKm = area.default_radius_km ?? 50;
+  // Remote coaches never appear on a place page (they'd undo the gate).
+  const real = await searchCoaches(supabase, {
+    disciplineIds: discipline ? [discipline.id] : undefined,
+    lat: area.lat,
+    long: area.long,
+    radiusKm,
+    includeRemote: false,
+  });
+  const featured = await pickFeatured(supabase, real, { point: true });
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const coaches = [
-    ...(await searchCoaches(supabase, { disciplineIds: discipline ? [discipline.id] : undefined, lat: area.lat, long: area.long, radiusKm })),
+    ...real,
     ...searchMockCoaches({ disciplineSlugs: discipline ? [discipline.slug] : undefined, lat: area.lat, long: area.long, radiusKm }),
   ].sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
 
@@ -103,6 +114,8 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
         {coaches.length} {noun}
         {coaches.length === 1 ? "" : "es"} in {area.name}
       </p>
+
+      <FeaturedBlock providers={featured} searchTown={area.name} className="mt-4" />
 
       <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         {coaches.map((coach) => (

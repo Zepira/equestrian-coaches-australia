@@ -142,6 +142,18 @@ function SearchSummary({ className = "" }: { className?: string }) {
   );
 }
 
+/** The phone rail's skills/setup pill and chips: coaching's vocabulary, so only on a coaching search. */
+function CoachRefineRail() {
+  const p = useSearchParams().get("p");
+  if (p && p !== "coaches") return null;
+  return (
+    <div className="mt-2.5 flex items-center gap-2">
+      <SearchFacets tone="ink" />
+      <SearchChips rail className="-mr-[18px] min-w-0 flex-1 pr-[18px]" />
+    </div>
+  );
+}
+
 function Avatar({ name, src }: { name: string | null; src?: string | null }) {
   const initial = (name ?? "?").trim().charAt(0).toUpperCase() || "?";
   if (src) {
@@ -413,10 +425,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
                 it: `.hs` scrolls on x, and an element that scrolls on one
                 axis clips the other too, which would cut the panel off at
                 the rail's edge. */}
-            <div className="mt-2.5 flex items-center gap-2">
-              <SearchFacets tone="ink" />
-              <SearchChips rail className="-mr-[18px] min-w-0 flex-1 pr-[18px]" />
-            </div>
+            <CoachRefineRail />
           </Suspense>
         </div>
       )}
