@@ -248,7 +248,9 @@ try {
          availability, years_experience, status, published_at, cohort, created_at, updated_at)
        values ($1,$2,$3,$4,$5,$6,$7,$8,
          case when $9::float8 is null then null else st_setsrid(st_makepoint($10, $9), 4326)::geography end, $9, $10,
-         (select area_id from public.postcodes where postcode = $8 and upper(suburb) = upper($6) limit 1),
+         -- By suburb and state, as the old profile's area was: a stored
+         -- postcode can disagree with the suburb (Lilydale saved with 3178).
+         (select id from public.areas where state = upper($7) and slug = public.slugify(lower(trim($6))) || '-' || lower($7)),
          $11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,null,$22::public.availability,$23,$24,$25,'founding',$26,$27)`,
       [
         c.id, c.slug, name, c.headline, c.bio, c.suburb, c.state, c.postcode, c.lat, c.long,

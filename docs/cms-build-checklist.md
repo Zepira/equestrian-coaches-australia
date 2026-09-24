@@ -17,7 +17,7 @@ Working list for **The Site as a CMS** (`content/handbook/cms-model.html`, revis
 
 ## 1. Clean baseline (§03, §04)
 
-**Status 24 Sep:** schema, seed and code are written and build clean. **The wipe has not run yet**: the Claude Code permission check blocked `scripts/db/rebuild.mjs` (it deletes stored files and drops `public`). Alana runs it, or allows it. Until it runs, the code expects tables the database doesn't have yet, so the dev site shows empty listings and errors on sign-in pages.
+**Status 24 Sep: done.** Alana ran `scripts/db/rebuild.mjs`; counts, route walk and signed-in flows verified (below). One fix afterwards: the restored profile's area (see the last list).
 
 Schema, `supabase/migrations/0001_baseline.sql` (old `0001`–`0023` moved to `supabase/migrations/archive-pre-cms/`):
 
@@ -37,7 +37,7 @@ Schema, `supabase/migrations/0001_baseline.sql` (old `0001`–`0023` moved to `s
 
 Seed and reload, `scripts/db/rebuild.mjs --yes-wipe` (after `export-keepers.mjs`), seed content in `supabase/seed/professions.mjs`:
 
-- [ ] **Run it.** Blocked by the permission check; see status above.
+- [x] **Run** by Alana, 24 Sep. Verified counts: 18,533 postcodes all with an area, 17,515 areas, 9 professions + details, 61 disciplines/specialities (19 coaching + 42 horse care), 25 skills, 24 attributes (6 shared), 113 aliases (72 + 41, none lost), 53 suggestions, 2 accounts (typo account gone), 2 admins, `alana-l` published with its terms, photo (in `provider-photos`) and plan.
 - [x] Written: wipe `public`, run baseline, empty and delete `coach-*` buckets, create `provider-*` buckets.
 - [x] Written: reload postcodes (reads the CSV itself) and areas.
 - [x] Written: nine professions + `profession_details` from today's code; disciplines, skills, attributes, aliases, suggestions from the export with ids kept (disciplines and skills under Riding coaches; four setup terms shared, plus "Mobile service" and "After-hours service"); horse care specialities and profession aliases; featured disciplines.
@@ -54,7 +54,8 @@ Code renamed to match:
 - [x] Middleware: `/dashboard` gated on role provider; slug history lookup tolerates the parent-scoped key.
 - [x] Founding settings (done in stage 0): `launch_date` (locks once set, enforced server-side), `founding_free_months`, `founding_join_by`; accessors, admin screen, `/for-coaches` and billing copy.
 - [ ] Smoke scripts (`scripts/smoke/*.mjs`) and the design-reference suites still insert into the old tables. Update them after the rebuild runs, against the real schema.
-- [ ] After the rebuild: route walk, sign in as Alana and Kim, dashboard, profile save (check the profession row survives), mock checkout, enquiry, favourites, account alert, admin disciplines.
+- [x] After the rebuild, with throwaway accounts (deleted after, with their providers and the test enquiry): 19 public routes 200 with no errors; sign-up trigger makes a farrier provider with the farriers profession, an old `role=coach` link a coaching provider, a rider no provider; coach logs in, saves profile (fields, geocode, area, two disciplines, **profession row kept**), mock checkout (subscription active, profile published), appears in Bendigo search, creates an event (coaching profession + discipline) whose public page renders; admin disciplines/terms/aliases/settings render and disciplines lists coaching's 19 only; rider favourites and enquires to `alana-l`, saves an alert to `rider_alerts`, account page shows both; `riders_for_event()` matches the rider at 250 km.
+- [ ] Stage 5: sign-up records every new provider as cohort `open`; while the founding offer is open it should record `founding` (pass `cohort` in the sign-up metadata).
 
 Found and fixed while writing this stage (would have broken at runtime, not at compile time):
 
@@ -62,6 +63,7 @@ Found and fixed while writing this stage (would have broken at runtime, not at c
 - Upserts can't target expression or partial unique indexes: `provider_events` dedupe (index changed to plain columns), `notifications_log` (insert, ignore duplicates), `term_slug_history` (delete then insert).
 - `events` has two foreign keys to `terms`, so the bare `terms(...)` embed on the event page would have been ambiguous; named explicitly.
 - Known and carried over, not fixed: the SEO digest's 90-day prune list can never fill, because the nightly recompute recreates every row (needs a `first_eligible_at`).
+- After the run: `alana-l` came back with no area, because its stored postcode (3178, Rowville) disagrees with its suburb (Lilydale, 3140) and the script matched on both. Fixed in the database (area by suburb and state, as the old profile had it) and in `rebuild.mjs`; the gate recompute then produced its four (ineligible) area rows. Worth correcting the postcode on the profile.
 
 ## 2. Read from rows (§02, §05.5)
 
