@@ -10,7 +10,7 @@ import { logSearchEvent } from "@/lib/search-events";
 import { logImpressions } from "@/lib/coach-events";
 
 // noindex, follow — faceted URLs are the classic directory crawl-budget
-// disaster (spec: "What earns a page"). /disciplines/[slug] is the
+// disaster (spec: "What earns a page"). /coaches/[discipline] is the
 // indexable equivalent for a single discipline.
 export const metadata = {
   title: "Find a coach",

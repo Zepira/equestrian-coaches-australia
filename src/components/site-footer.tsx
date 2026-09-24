@@ -7,7 +7,7 @@ const columns = [
     links: [
       { href: "/search", label: "Riding coaches" },
       { href: "/horse-care", label: "Horse care" },
-      { href: "/disciplines", label: "Disciplines" },
+      { href: "/coaches#disciplines", label: "Disciplines" },
       { href: "/account", label: "My account" },
     ],
   },

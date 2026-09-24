@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Hanken_Grotesk, Instrument_Serif } from "next/font/google";
 import Script from "next/script";
-import { horseCareOf, horseCarePrefixes, horseCareResultsPattern, sectionHref } from "@/lib/professions";
+import { horseCareOf, horseCarePrefixes, sectionHref } from "@/lib/professions";
 import { getContent, getFeaturedDisciplines, getProfessions } from "@/lib/cms/read";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Parallax } from "@/components/hero-parallax";
+import { disciplinePath } from "@/lib/page-paths";
+import { SITE_URL } from "@/lib/site-url";
 
 // Golden Hour type: Instrument Serif (display, regular + italic — the face
 // has no other weights) and Hanken Grotesk (body).
@@ -25,7 +27,6 @@ const hanken = Hanken_Grotesk({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const title = "Equine Professionals Australia";
 const description =
   "Find your perfect riding coach, nearby. Search verified coaches across Australia by discipline and location.";
@@ -49,7 +50,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: title,
     template: `%s | ${title}`,
@@ -87,11 +88,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       { href: "/horse-care", label: "All horse care" },
     ],
     coachesMenu: [
-      ...featured.map((d) => ({ href: `/disciplines/${d.slug}`, label: d.name })),
-      { href: "/disciplines", label: "All disciplines" },
+      ...featured.map((d) => ({ href: disciplinePath(d.slug), label: d.name })),
+      { href: "/coaches#disciplines", label: "All disciplines" },
     ],
     horseCarePrefixes: prefixes,
-    horseCareResults: horseCareResultsPattern(professions),
   };
   return (
     <html

@@ -1,34 +1,32 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplineContent } from "@/lib/supabase/queries";
-import { horseCareOf, sectionHref } from "@/lib/professions";
 import { getProfessions } from "@/lib/cms/read";
-import { areaPagePath, providerPath } from "@/lib/page-paths";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+import { areaPagePath, disciplinePath, profilePath, sectionPath } from "@/lib/page-paths";
+import { SITE_URL as siteUrl } from "@/lib/site-url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
-    { url: `${siteUrl}/coaches`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/search`, changeFrequency: "daily", priority: 0.9 },
     { url: `${siteUrl}/for-coaches`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.4 },
-    { url: `${siteUrl}/disciplines`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${siteUrl}/horse-care`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/list-your-business`, changeFrequency: "monthly", priority: 0.5 },
-    // Each open horse care profession's section (/farriers…). Professional
-    // profiles are mock data for now, so like mock coaches they stay out.
-    ...horseCareOf(await getProfessions())
+    // Every open profession's section (/coaches, /farriers…). Horse care
+    // specialities (/farriers/[term]) stay out while every listing on them
+    // is mock data; coaching's disciplines are below. Professional profiles
+    // are mock data too, so like mock coaches they stay out.
+    ...(await getProfessions())
       .filter((p) => p.open)
-      .map((p) => ({ url: `${siteUrl}${sectionHref(p)}`, changeFrequency: "daily" as const, priority: 0.8 })),
+      .map((p) => ({ url: `${siteUrl}${sectionPath(p.slug)}`, changeFrequency: "daily" as const, priority: 0.9 })),
   ];
 
   const supabase = await createClient();
   // Active disciplines only, straight from the terms table — a deactivated
   // discipline leaves the sitemap the moment an admin switches it off.
   const disciplineRoutes: MetadataRoute.Sitemap = (await getDisciplineContent(supabase)).map((d) => ({
-    url: `${siteUrl}/disciplines/${d.slug}`,
+    url: `${siteUrl}${disciplinePath(d.slug)}`,
     lastModified: d.updated_at ? new Date(d.updated_at) : undefined,
     changeFrequency: "daily",
     priority: 0.8,
@@ -40,18 +38,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let coachRoutes: MetadataRoute.Sitemap = [];
   let areaRoutes: MetadataRoute.Sitemap = [];
   if (supabase) {
-    // Published providers, at the address their primary profession gives
-    // them (src/lib/page-paths.ts).
-    const { data } = await supabase
-      .from("providers")
-      .select("slug, updated_at, provider_terms(sort_order, terms(slug, kind))")
-      .eq("status", "published");
+    // Published providers, every profession at /profile/[slug].
+    const { data } = await supabase.from("providers").select("slug, updated_at").eq("status", "published");
     coachRoutes = (data ?? []).map((p) => {
-      const primary = ((p as unknown as { provider_terms: { sort_order: number; terms: { slug: string; kind: string } | null }[] }).provider_terms ?? [])
-        .filter((t) => t.terms?.kind === "profession")
-        .sort((a, b) => a.sort_order - b.sort_order)[0]?.terms?.slug;
       return {
-        url: `${siteUrl}${providerPath(p.slug, primary)}`,
+        url: `${siteUrl}${profilePath(p.slug)}`,
         lastModified: p.updated_at ? new Date(p.updated_at) : undefined,
         changeFrequency: "weekly" as const,
         priority: 0.7,
@@ -59,8 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     // Only pages the nightly recompute has cleared the gate for, never every
-    // area: that's the doorway-page mistake the spec warns against. Rows
-    // with no route yet (horse care, before stage 3) are left out.
+    // area: that's the doorway-page mistake the spec warns against.
     const { data: pages } = await supabase
       .from("indexable_pages")
       .select("last_change, profession:terms!indexable_pages_profession_id_fkey(slug), term:terms!indexable_pages_term_id_fkey(slug), areas(slug)")
@@ -69,9 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const row = p as unknown as { last_change: string | null; profession: { slug: string } | null; term: { slug: string } | null; areas: { slug: string } | null };
       if (!row.profession || !row.areas) return [];
       const path = areaPagePath({ professionSlug: row.profession.slug, termSlug: row.term?.slug, areaSlug: row.areas.slug });
-      return path
-        ? [{ url: `${siteUrl}${path}`, lastModified: row.last_change ? new Date(row.last_change) : undefined, changeFrequency: "weekly" as const, priority: 0.75 }]
-        : [];
+      return [{ url: `${siteUrl}${path}`, lastModified: row.last_change ? new Date(row.last_change) : undefined, changeFrequency: "weekly" as const, priority: 0.75 }];
     });
   }
 

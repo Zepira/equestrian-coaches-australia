@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { revealPhone } from "@/app/coaches/[slug]/actions";
+import { revealPhone } from "@/app/profile/[slug]/actions";
 
 /**
  * Click-to-reveal phone (canvas: "Show phone number"). The number is never

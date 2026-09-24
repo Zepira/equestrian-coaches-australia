@@ -16,7 +16,7 @@ export async function setTakingStudents(value: TakingStudents) {
     .eq("id", providerId);
   if (error) throw error;
   revalidatePath("/dashboard");
-  revalidatePath("/coaches/[slug]", "page");
+  revalidatePath("/profile/[slug]", "page");
   return { value };
 }
 

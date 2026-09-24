@@ -40,27 +40,9 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Slug trap redirect — /disciplines/[slug] and /disciplines/[slug]/[area]
-  // are the only URLs a term slug appears in (disciplines are the only
-  // kind that generates_pages today). term_id is the join key rather than
-  // old_slug -> new_slug directly, so this resolves correctly no matter how
-  // many times a term's been renamed since (see changeTermSlug,
-  // src/app/admin/terms/actions.ts).
-  const disciplineMatch = pathname.match(/^\/disciplines\/([^/]+)(\/.*)?$/);
-  if (disciplineMatch) {
-    const [, oldSlug, rest = ""] = disciplineMatch;
-    const { data: history } = await supabase
-      .from("term_slug_history")
-      .select("terms(slug)")
-      .eq("kind", "discipline")
-      .eq("old_slug", oldSlug)
-      .limit(1)
-      .maybeSingle();
-    const currentSlug = (history as unknown as { terms: { slug: string } | null } | null)?.terms?.slug;
-    if (currentSlug && currentSlug !== oldSlug) {
-      return NextResponse.redirect(new URL(`/disciplines/${currentSlug}${rest}`, request.url), 301);
-    }
-  }
+  // Renamed term slugs used to 301 here, costing a database read on every
+  // request. They're resolved on a miss by the term pages now
+  // (redirectMissingTerm, src/lib/sections.ts).
 
   const needsAuth =
     pathname.startsWith(COACH_ROUTES) ||

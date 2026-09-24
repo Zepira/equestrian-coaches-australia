@@ -52,6 +52,8 @@ Verified on the merged tree: typecheck, lint and a production build clean; every
 
 **Stage 2 done (24 Sep 2026): the site reads its words from rows.** Professions, the header menus, the Horse care door's paths, featured disciplines, page copy (`content_blocks`, keys and defaults in `src/lib/cms/content-defaults.ts`) and plan names/prices/capabilities (`plans`, `plan_capabilities` settings) all come through `src/lib/cms/read.ts` and `src/lib/settings.ts`, cookie-free and cached under a tag, with code fallbacks. **Never type a price, plan name or profession list into JSX again:** use `getPlans()`, `getProfessions()`, `getContent(key)`. Client components take these as props; `src/lib/professions.ts` has no DB access so it is safe to import anywhere. New content keys: add the default, then run `node --experimental-strip-types scripts/db/seed-content.mjs`.
 
+**Stage 3 done (24 Sep 2026): the addresses moved.** Every profession uses one template, `src/app/[profession]/…`: `/coaches`, `/coaches/dressage`, `/coaches/in/geelong-vic`, `/coaches/dressage/in/geelong-vic`, and the same for `/farriers` and the rest. Every provider is at `/profile/[slug]`, events at `/events/[id]`. `/disciplines/*`, `/riding-instructors/*`, `/clinics/*` and old `/coaches/<provider>` links redirect. **Build addresses only with `src/lib/page-paths.ts` and absolute URLs only with `src/lib/site-url.ts`.** A profile names its door with `<PageContext>`, not the path. The route table under "Route changes that come with it" below is now built, except `/for-farriers` (stage 5). Full record in `docs/cms-build-checklist.md` §3.
+
 **Route decision (23 Sep 2026): `/horse-care` is the index of every profession; a profession that opens gets its own top-level section** (`/farriers`, `/farriers/[speciality]`, `/farriers/in/[area]`) per site-structure.html, and its `/horse-care/[slug]` holding page 301s there. `sectionHref()` in `src/lib/professions.ts` is the single switch (`open: true` on the entry flips every link); the 301 itself is not built yet, build it with the first profession that opens.
 
 Not done, and deliberately left for its own pass: the two canvas-name comments that reference the design file "ECA Redesign › 1a" (that is the file's real name); `docs/` and the captured design-reference JSON, which are historical records; the URL taxonomy question of whether discipline pages should move under `/coaches/` (see "One site, subfolders, never subdomains" below — nothing that will eventually hold every profession should carry "coach" in its path, and `/disciplines/[slug]` currently does not say which profession it belongs to); and the site copy itself, which still talks only about coaches.
@@ -113,7 +115,7 @@ A profession is the level above a discipline: coaching is a profession, dressage
 
 ### Route changes that come with it
 
-Planned, not yet built. `/coaches/[slug]` is the rule violation to fix first: every profession needs a profile page, so profiles move off the coaching path.
+Built 24 Sep 2026 (CMS stage 3), apart from `/for-farriers`. `/disciplines` went to `/coaches#disciplines` rather than becoming a page. `/coaches/[slug]` was the rule violation to fix first: every profession needs a profile page, so profiles move off the coaching path.
 
 | Today | Becomes |
 |---|---|

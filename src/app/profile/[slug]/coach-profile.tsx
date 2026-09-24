@@ -1,3 +1,11 @@
+/**
+ * A coach's profile, one of the two renderers behind /profile/[slug]
+ * (page.tsx picks): real providers from the database, then the mock and
+ * placeholder coaches. A real provider whose primary profession is a horse
+ * care one gets that door's colours through PageContext; everything else on
+ * the page still speaks coaching until stage 4 generalises it.
+ */
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { FavouriteButton } from "@/components/favourite-button";
@@ -6,20 +14,24 @@ import { ContactForm } from "@/components/contact-form";
 import { EnquirySheet } from "@/components/enquiry-sheet";
 import { PhoneReveal } from "@/components/phone-reveal";
 import { BackToResults } from "@/components/back-to-results";
+import { PageContext } from "@/components/page-context";
+import { disciplinePath, eventPath, profilePath } from "@/lib/page-paths";
+import { getProfession, getProfessions } from "@/lib/cms/read";
+import { horseCareResultsPattern } from "@/lib/professions";
 import { createClient } from "@/lib/supabase/server";
 import { PROVIDER_PHOTOS, sortByName } from "@/lib/supabase/queries";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
+
+export const PLACEHOLDER_COACH_SLUGS = placeholderCoaches.map((c) => c.slug);
 import { getMockCoachBySlug, SKILL_NAMES, ATTRIBUTE_NAMES } from "@/lib/mock-coaches";
 import { getDisciplineBySlug } from "@/lib/disciplines";
 import { breadcrumbSchema, coachPersonSchema } from "@/lib/structured-data";
 import { logView } from "@/lib/coach-events";
 
-export function generateStaticParams() {
-  return placeholderCoaches.map((c) => ({ slug: c.slug }));
-}
-
 type CoachView = {
   id: string | null;
+  /** The primary profession's slug (lowest sort_order); null for mock and placeholder coaches, which are all coaches. */
+  professionSlug: string | null;
   // Identifier to submit the contact form against — coach.id for a real DB
   // coach; a "mock:<slug>" sentinel for a demo/mock coach with the form
   // switched on (sendCoachEnquiry short-circuits on that prefix rather than
@@ -76,7 +88,7 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
     await Promise.all([
       supabase
         .from("provider_terms")
-        .select("detail, terms(slug, name, kind)")
+        .select("detail, sort_order, terms(slug, name, kind)")
         .eq("provider_id", coach.id),
       supabase.from("testimonials").select("quote, author_name").eq("provider_id", coach.id),
       supabase
@@ -92,8 +104,14 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
         .limit(1),
     ]);
 
+  const primaryProfession = (disciplineRows ?? [])
+    .map((r) => r as unknown as { sort_order: number; terms: { slug: string; kind: string } | null })
+    .filter((r) => r.terms?.kind === "profession")
+    .sort((a, b) => a.sort_order - b.sort_order)[0]?.terms?.slug ?? null;
+
   return {
     id: coach.id,
+    professionSlug: primaryProfession,
     contactId: coach.id,
     slug,
     name: coach.name || "Coach",
@@ -159,6 +177,7 @@ function getCoachFromMock(slug: string): CoachView | null {
   if (!coach) return null;
   return {
     id: null,
+    professionSlug: null,
     contactId: coach.contact.showContactForm ? `mock:${coach.slug}` : null,
     slug: coach.slug,
     name: coach.name,
@@ -195,6 +214,7 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
   if (!coach) return null;
   return {
     id: null,
+    professionSlug: null,
     contactId: null,
     slug: coach.slug,
     name: coach.name,
@@ -221,13 +241,13 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
   };
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export async function coachMetadata(slug: string): Promise<Metadata> {
   const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
   if (!coach) return { title: "Coach not found" };
   return {
     title: coach.name,
     description: `${coach.headline} ${coach.suburb} ${coach.state}.`,
+    alternates: { canonical: profilePath(coach.slug) },
   };
 }
 
@@ -243,11 +263,11 @@ function StatusPill({ status, className = "" }: { status: CoachView["takingStude
   );
 }
 
-export default async function CoachPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export async function CoachProfile({ slug }: { slug: string }) {
   const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
   if (!coach) notFound();
   if (coach.id) await logView(coach.id); // real coaches only; deduped per visitor per day
+  const horseCare = coach.professionSlug ? (await getProfession(coach.professionSlug))?.door === "horse_care" : false;
 
   const disciplineNames = coach.disciplineSlugs
     .map((s) => getDisciplineBySlug(s)?.name)
@@ -273,6 +293,11 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="coach-profile">
+      {horseCare ? (
+        <PageContext door="horse-care" resultsHref="/horse-care/search" resultsFrom={horseCareResultsPattern(await getProfessions())} />
+      ) : (
+        <PageContext />
+      )}
       <JsonLd
         data={[
           coachPersonSchema({
@@ -291,7 +316,7 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
           breadcrumbSchema([
             { name: "Home", url: "/" },
             { name: "Find a coach", url: "/search" },
-            { name: coach.name, url: `/coaches/${coach.slug}` },
+            { name: coach.name, url: profilePath(coach.slug) },
           ]),
         ]}
       />
@@ -344,7 +369,7 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
                   return (
                     <Link
                       key={s}
-                      href={`/disciplines/${s}`}
+                      href={disciplinePath(s)}
                       className={`rounded-[var(--radius-pill)] border px-3 py-1.5 text-[13px] font-medium wide:px-[13px] wide:py-[7px] ${i === 0 ? "border-accent text-accent" : "border-border bg-surface text-fg"}`}
                     >
                       {name}
@@ -454,7 +479,7 @@ export default async function CoachPage({ params }: { params: Promise<{ slug: st
               <section>
                 <h2 className="text-[30px] leading-none text-ink wide:mt-12 wide:text-[32px]">Upcoming clinic</h2>
                 <Link
-                  href={nextClinic.id ? `/clinics/${nextClinic.id}` : "#"}
+                  href={nextClinic.id ? eventPath(nextClinic.id) : "#"}
                   className="mt-3.5 grid grid-cols-[64px_1fr] gap-3.5 rounded-[16px] border border-border bg-surface p-3.5 text-inherit transition-colors duration-300 hover:border-accent wide:grid-cols-[72px_1fr_auto] wide:items-center wide:gap-[18px] wide:py-3.5 wide:pl-3.5 wide:pr-[18px]"
                 >
                   <span className="rounded-[10px] bg-shade py-2 text-center wide:py-2.5">

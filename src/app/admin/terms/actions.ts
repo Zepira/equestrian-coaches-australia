@@ -2,6 +2,8 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 import { CMS_TAG } from "@/lib/cms/read";
+import { reservedSlugError } from "@/lib/reserved-slugs";
+import { getCoachingId } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
 
 function slugify(input: string) {
@@ -29,9 +31,15 @@ export async function createTerm(formData: FormData) {
     throw new Error("A name and a valid kind are required.");
   }
 
+  const slug = slugify(name);
+  const reserved = reservedSlugError(kind, slug);
+  if (reserved) throw new Error(reserved);
+
+  // This screen edits coaching's vocabulary, so new terms belong to coaching.
   const { error } = await supabase.from("terms").insert({
     kind,
-    slug: slugify(name),
+    parent_id: await getCoachingId(supabase),
+    slug,
     name,
     generates_pages: kind === "discipline",
   });
@@ -78,6 +86,8 @@ export async function changeTermSlug(termId: string, formData: FormData) {
     .single();
   if (fetchError) throw fetchError;
   if (term.slug === newSlug) return;
+  const reserved = reservedSlugError(term.kind, newSlug);
+  if (reserved) throw new Error(reserved);
 
   // One row per (kind, parent, old slug). If this exact slug was vacated
   // before (a rename-and-revert), the newest departure wins, so the

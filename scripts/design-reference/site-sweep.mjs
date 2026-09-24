@@ -37,11 +37,11 @@ const settle = (p) => p.waitForLoadState("networkidle", { timeout: 6000 }).catch
 const noise = (t) => /GL Driver Message|WebGL-0x|Download the React DevTools|favicon/.test(t);
 
 const PUBLIC = [
-  ["/", 200], ["/search", 200], ["/search?d=dressage&location=Bendigo+VIC", 200], ["/disciplines/dressage", 200],
-  [`/coaches/${coachSlug}`, 200], ["/coaches/emma-dawson-0", 200], ["/for-coaches", 200], ["/login", 200],
+  ["/", 200], ["/search", 200], ["/search?d=dressage&location=Bendigo+VIC", 200], ["/coaches/dressage", 200],
+  [`/profile/${coachSlug}`, 200], ["/profile/emma-dawson-0", 200], ["/for-coaches", 200], ["/login", 200],
   ["/signup", 200], ["/signup?role=coach", 200], ["/forgot-password", 200], ["/reset-password", 200],
-  ["/riding-instructors/bendigo-vic", 200], ["/nope-404", 404],
-  ...(clinicId ? [[`/clinics/${clinicId}`, 200]] : []),
+  ["/coaches/in/bendigo-vic", 200], ["/nope-404", 404],
+  ...(clinicId ? [[`/events/${clinicId}`, 200]] : []),
 ];
 const COACH = ["/dashboard", "/dashboard/enquiries", "/dashboard/profile", "/dashboard/clinics", "/dashboard/billing", ...(clinicId ? [`/dashboard/clinics/${clinicId}/edit`] : [])];
 const RIDER = ["/account", "/account/delete"];
@@ -115,7 +115,7 @@ if (riderLogin) {
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
   const sizes = [[320, 568], [390, 844], [768, 1024], [1024, 768], [1280, 800], [1440, 900], [1920, 1080], [2560, 1440]];
-  for (const route of ["/", "/search", `/coaches/${coachSlug}`, "/for-coaches"]) {
+  for (const route of ["/", "/search", `/profile/${coachSlug}`, "/for-coaches"]) {
     const bad = [];
     for (const [w, h] of sizes) {
       await page.setViewportSize({ width: w, height: h });
@@ -140,7 +140,7 @@ if (riderLogin) {
 {
   const ctx = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
   const page = await ctx.newPage();
-  for (const route of ["/", "/for-coaches", `/coaches/${coachSlug}`, "/search"]) {
+  for (const route of ["/", "/for-coaches", `/profile/${coachSlug}`, "/search"]) {
     await page.goto(`${base}${route}`, { waitUntil: "load" }); await settle(page);
     const r = await page.evaluate(() => {
       const reveals = [...document.querySelectorAll("[data-reveal]")];
@@ -158,7 +158,7 @@ if (riderLogin) {
 {
   const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   const page = await ctx.newPage();
-  for (const route of ["/", "/for-coaches", `/coaches/${coachSlug}`, "/disciplines/dressage", "/search?d=dressage&location=Bendigo+VIC"]) {
+  for (const route of ["/", "/for-coaches", `/profile/${coachSlug}`, "/coaches/dressage", "/search?d=dressage&location=Bendigo+VIC"]) {
     await page.goto(`${base}${route}`, { waitUntil: "load" });
     const r = await page.evaluate((route) => {
       const reveals = [...document.querySelectorAll("[data-reveal]")];
@@ -166,7 +166,7 @@ if (riderLogin) {
         h1: document.querySelector("h1")?.textContent?.trim().length ?? 0,
         hidden: reveals.filter((el) => parseFloat(getComputedStyle(el).opacity) < 0.99).length,
         form: route === "/" ? Boolean(document.querySelector("form[action='/search']")) : true,
-        cards: document.querySelectorAll("a[href^='/coaches/']").length,
+        cards: document.querySelectorAll("a[href^='/profile/']").length,
       };
     }, route);
     row(r.h1 > 0 && r.hidden === 0 && r.form, `no-js ${route}: h1, ${r.cards} coach links, reveals visible`, r.hidden ? `${r.hidden} hidden` : !r.form ? "no GET form" : "");
@@ -210,7 +210,7 @@ if (riderLogin) {
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await ctx.newPage();
-  await page.goto(`${base}/coaches/${coachSlug}`, { waitUntil: "load" }); await settle(page);
+  await page.goto(`${base}/profile/${coachSlug}`, { waitUntil: "load" }); await settle(page);
   const opener = page.locator(".enquiry-bar button").first();
   if ((await opener.count()) > 0) {
     await opener.focus(); await page.keyboard.press("Enter"); await page.waitForTimeout(600);
@@ -252,8 +252,8 @@ if (coachLogin) {
 // ── sitemap, robots, structured data ─────────────────────────────────────
 {
   const sm = await (await fetch(`${base}/sitemap.xml`)).text();
-  row(sm.includes(`/coaches/${coachSlug}`) && !sm.includes("emma-dawson-0"), "sitemap: real coach in, mock coach out");
-  row(sm.includes("/disciplines/dressage") && sm.includes("/for-coaches"), "sitemap: static + discipline routes");
+  row(sm.includes(`/profile/${coachSlug}`) && !sm.includes("emma-dawson-0"), "sitemap: real coach in, mock coach out");
+  row(sm.includes("/coaches/dressage") && sm.includes("/for-coaches"), "sitemap: static + discipline routes");
   const rb = await (await fetch(`${base}/robots.txt`)).text();
   row(/Disallow: \/dashboard/.test(rb) && /Disallow: \/account/.test(rb) && /Sitemap:/.test(rb), "robots: private routes disallowed, sitemap pointed");
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
@@ -262,11 +262,11 @@ if (coachLogin) {
     await page.goto(`${base}${route}`, { waitUntil: "load" });
     return page.evaluate(() => [...document.querySelectorAll("script[type='application/ld+json']")].flatMap((s) => { const j = JSON.parse(s.textContent); return Array.isArray(j) ? j : [j]; }).map((j) => j["@type"]));
   };
-  const coachLd = await ld(`/coaches/${coachSlug}`);
+  const coachLd = await ld(`/profile/${coachSlug}`);
   row(coachLd.includes("Person") && coachLd.includes("BreadcrumbList"), "json-ld coach: Person + BreadcrumbList", coachLd.join(","));
-  const discLd = await ld("/disciplines/dressage");
+  const discLd = await ld("/coaches/dressage");
   row(discLd.includes("ItemList") && discLd.includes("BreadcrumbList"), "json-ld discipline: ItemList + BreadcrumbList", discLd.join(","));
-  if (clinicId) { const cl = await ld(`/clinics/${clinicId}`); row(cl.includes("Event") && cl.includes("BreadcrumbList"), "json-ld clinic: Event + BreadcrumbList", cl.join(",")); }
+  if (clinicId) { const cl = await ld(`/events/${clinicId}`); row(cl.includes("Event") && cl.includes("BreadcrumbList"), "json-ld clinic: Event + BreadcrumbList", cl.join(",")); }
   const noindex = await page.goto(`${base}/search`, { waitUntil: "load" }).then(() => page.evaluate(() => document.querySelector("meta[name=robots]")?.content ?? ""));
   row(/noindex/.test(noindex), "/search is noindex", noindex);
   await page.close(); await ctx.close();

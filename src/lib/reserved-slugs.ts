@@ -18,3 +18,22 @@ export const RESERVED_SLUGS = [
 export function isReservedSlug(slug: string) {
   return (RESERVED_SLUGS as readonly string[]).includes(slug.toLowerCase());
 }
+
+/**
+ * Words a discipline or speciality slug can never take: the second segment
+ * of /[profession]/[term] shares its position with the `in` of
+ * /[profession]/in/[area]. Mirrors `terms_term_slug_not_reserved`
+ * (supabase/migrations/0002_reserved_term_slugs.sql).
+ */
+export const RESERVED_TERM_SLUGS = ["in"] as const;
+
+export function isReservedTermSlug(slug: string) {
+  return (RESERVED_TERM_SLUGS as readonly string[]).includes(slug.toLowerCase());
+}
+
+/** The admin forms' check for any term: professions against the top-level list, the rest against `in`. */
+export function reservedSlugError(kind: string, slug: string): string | null {
+  if (kind === "profession" && isReservedSlug(slug)) return `"${slug}" is already a page on the site, so a profession can't use it.`;
+  if (kind !== "profession" && isReservedTermSlug(slug)) return `"${slug}" is part of the site's addresses (/coaches/in/geelong), so it can't be a slug.`;
+  return null;
+}

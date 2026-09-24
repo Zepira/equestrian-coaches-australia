@@ -5,6 +5,7 @@ import { getDisciplines } from "@/lib/supabase/queries";
 import { canListClinics, clinicLimit } from "@/lib/tiers";
 import { countWord, getPlanCapabilities, getPlans } from "@/lib/settings";
 import { createClinic, deleteClinic } from "./actions";
+import { eventPath } from "@/lib/page-paths";
 
 export const metadata = { title: "Clinics" };
 const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -83,7 +84,7 @@ export default async function ClinicsPage() {
                   <Link href={`/dashboard/clinics/${c.id}/edit`} className="text-accent">
                     Edit
                   </Link>
-                  <Link href={`/clinics/${c.id}`} className="text-ink">
+                  <Link href={eventPath(c.id)} className="text-ink">
                     View page
                   </Link>
                   <form action={deleteClinic.bind(null, c.id)} className="ml-auto">

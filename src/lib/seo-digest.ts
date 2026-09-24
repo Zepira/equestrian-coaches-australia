@@ -1,22 +1,27 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { areaPagePath } from "@/lib/page-paths";
 import { isGscConfigured, pagePerformance, queryPerformance, type GscRow } from "@/lib/search-console";
+import { SITE_URL } from "@/lib/site-url";
+import { isReservedSlug } from "@/lib/reserved-slugs";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export type DigestSection = { title: string; lines: string[] };
 
-// Buckets a GSC page URL into the same route-pattern groups the spec asks
-// to review impressions "by URL pattern" — coach profiles, plain discipline
-// pages, discipline+area pages, riding-instructors area pages, everything
-// else.
+// Buckets a GSC page URL into the route-pattern groups the spec asks to
+// review impressions "by URL pattern", per profession: /farriers/[term],
+// /coaches/in/[area] and so on, plus profiles and events. The shapes are
+// the one profession template's (src/lib/page-paths.ts), so a new
+// profession gets its own buckets with no change here.
 function urlPattern(url: string): string {
-  const path = url.replace(siteUrl, "");
-  if (/^\/coaches\//.test(path)) return "/coaches/[slug]";
-  if (/^\/disciplines\/[^/]+\/[^/]+/.test(path)) return "/disciplines/[slug]/[area]";
-  if (/^\/disciplines\//.test(path)) return "/disciplines/[slug]";
-  if (/^\/riding-instructors\//.test(path)) return "/riding-instructors/[area]";
-  return path || "/";
+  const path = url.replace(SITE_URL, "").split("?")[0] || "/";
+  const [first, second, third, fourth] = path.split("/").filter(Boolean);
+  if (!first) return "/";
+  if (first === "profile" && second) return "/profile/[slug]";
+  if (first === "events" && second) return "/events/[id]";
+  if (isReservedSlug(first) || !second) return path;
+  if (second === "in") return `/${first}/in/[area]`;
+  if (third === "in" && fourth) return `/${first}/[term]/in/[area]`;
+  return `/${first}/[term]`;
 }
 
 // Zero-result search_events split into supply gaps (a real discipline was
@@ -125,7 +130,7 @@ function performanceByPattern(rows: GscRow[]): DigestSection {
 // serves that got zero GSC impressions across the queried window. Spec:
 // "prune or merge any page with zero impressions after 90 days."
 async function pruneCandidates(supabase: SupabaseClient, rows: GscRow[]): Promise<DigestSection> {
-  const seenUrls = new Set(rows.map((r) => urlPattern(r.keys[0]) + "|" + r.keys[0].replace(siteUrl, "")));
+  const seenUrls = new Set(rows.map((r) => urlPattern(r.keys[0]) + "|" + r.keys[0].replace(SITE_URL, "")));
   const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
   // Known gap, carried over: recompute_indexable_pages() recreates every

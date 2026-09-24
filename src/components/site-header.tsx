@@ -12,6 +12,7 @@ import { BackToResults } from "@/components/back-to-results";
 import { NavDropdown, type NavDropdownItem } from "@/components/nav-dropdown";
 import { pathInPrefixes } from "@/lib/professions";
 import { createClient } from "@/lib/supabase/client";
+import { profilePath } from "@/lib/page-paths";
 
 /**
  * Header from the Golden Hour canvases. Three variants, resolved from the
@@ -41,7 +42,7 @@ const OVERLAY_ROUTES = ["/", "/coaches", "/horse-care", "/for-coaches"];
  */
 function variantFor(pathname: string): { variant: Variant; coachProfile?: boolean } {
   if (OVERLAY_ROUTES.includes(pathname)) return { variant: "overlay" };
-  if (pathname.startsWith("/coaches/") || pathname.startsWith("/profile/")) return { variant: "light", coachProfile: true };
+  if (pathname.startsWith("/profile/")) return { variant: "light", coachProfile: true };
   if (pathname === "/search") return { variant: "ink" };
   return { variant: "light" };
 }
@@ -162,12 +163,12 @@ function Avatar({ name, src }: { name: string | null; src?: string | null }) {
 }
 
 /**
- * The coaches section's own navigation — every route below /coaches, /search,
- * /disciplines and /for-coaches.
+ * The coaches section's own navigation: /coaches and everything under it,
+ * /search and /for-coaches.
  */
 const NAV = [
   { href: "/search", label: "Find a coach" },
-  { href: "/disciplines", label: "Disciplines", match: "/disciplines" },
+  { href: "/coaches#disciplines", label: "Disciplines", match: "/coaches/" },
   { href: "/for-coaches", label: "For coaches" },
   { href: "/about", label: "About" },
 ];
@@ -180,6 +181,8 @@ const NAV = [
  * coaches section's "List your profile".
  */
 const PARENT_ROUTES = ["/", "/about", "/list-your-business"];
+// Profiles hold every profession, so they wear the parent nav whoever's they are.
+const PARENT_PREFIXES = ["/profile/"];
 
 /**
  * What the header needs from the CMS, read by the root layout (a server
@@ -190,12 +193,12 @@ export type HeaderData = {
   horseCareMenu: NavDropdownItem[];
   coachesMenu: NavDropdownItem[];
   horseCarePrefixes: string[];
-  horseCareResults: string;
 };
 
-export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHES_MENU, horseCarePrefixes, horseCareResults }: HeaderData) {
+export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHES_MENU, horseCarePrefixes }: HeaderData) {
   const isHorseCarePath = (pathname: string) => pathInPrefixes(pathname, horseCarePrefixes);
-  const isParentRoute = (pathname: string) => PARENT_ROUTES.includes(pathname) || isHorseCarePath(pathname);
+  const isParentRoute = (pathname: string) =>
+    PARENT_ROUTES.includes(pathname) || PARENT_PREFIXES.some((p) => pathname.startsWith(p)) || isHorseCarePath(pathname);
   const [open, setOpen] = useState(false);
   const auth = useAuthState();
   const pathname = usePathname();
@@ -215,12 +218,16 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
   // <html data-door> — the Horse care door's steel accent (globals.css).
   // The inline script in layout.tsx covers the first paint; this keeps it
   // right across client-side navigation. Both read the same prefixes, built
-  // from the profession rows.
-  const door = isHorseCarePath(pathname) ? "horse-care" : null;
+  // from the profession rows. A page whose door the path can't tell (a
+  // profile) says so through its PageContext marker, read here after the
+  // navigation has committed.
+  const pathDoor = isHorseCarePath(pathname) ? "horse-care" : null;
   useEffect(() => {
+    const marked = document.querySelector<HTMLElement>("[data-page-context]")?.dataset.pageDoor || null;
+    const door = pathDoor ?? marked;
     if (door) document.documentElement.dataset.door = door;
     else delete document.documentElement.dataset.door;
-  }, [door]);
+  }, [pathDoor, pathname]);
 
   const firstName = auth.name?.split(" ")[0] ?? null;
   const accountHref = auth.role === "provider" ? "/dashboard" : "/account";
@@ -236,7 +243,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
   // The front door wears the parent brand's nav; every coaches-section
   // route keeps NAV.
   const parentNav = isParentRoute(pathname);
-  const profileHref = auth.coachSlug ? `/coaches/${auth.coachSlug}` : "/dashboard/profile";
+  const profileHref = auth.coachSlug ? profilePath(auth.coachSlug) : "/dashboard/profile";
 
   return (
     <header
@@ -265,7 +272,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
         {coachProfile && (
           <BackToResults
             label="Back to results"
-            {...(pathname.startsWith("/profile/") ? { fallback: "/horse-care/search", from: horseCareResults } : {})}
+            fromPage
             className="site-header__muted -ml-2 mr-auto hidden text-[14px] font-medium md:inline"
           />
         )}

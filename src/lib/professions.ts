@@ -163,13 +163,15 @@ export function findProfession(list: Profession[], slug: string): Profession | u
 }
 
 /**
- * Paths that belong to the Horse care door: the index, every live horse care
- * section, and professional profiles. Drives `data-door` (the steel accent)
- * and the parent navigation, in the first-paint script and the header. Built
- * from the rows, so a new profession joins the door with no deploy.
+ * Paths that belong to the Horse care door: the index and every live horse
+ * care section with everything under it. Drives `data-door` (the steel
+ * accent) and the parent navigation, in the first-paint script and the
+ * header. Built from the rows, so a new profession joins the door with no
+ * deploy. Profiles aren't here: /profile holds every profession, so each
+ * profile names its own door (src/components/page-context.tsx).
  */
 export function horseCarePrefixes(list: Profession[]): string[] {
-  return ["/horse-care", "/profile", ...horseCareOf(list).filter((p) => p.open).map((p) => `/${p.slug}`)];
+  return ["/horse-care", ...horseCareOf(list).filter((p) => p.open).map((p) => `/${p.slug}`)];
 }
 
 export function pathInPrefixes(pathname: string, prefixes: string[]): boolean {

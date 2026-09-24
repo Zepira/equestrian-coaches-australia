@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { CoachCardData } from "@/components/coach-card";
+import { profilePath } from "@/lib/page-paths";
 
 export type CoachResultData = CoachCardData & {
   takingStudents?: "yes" | "waitlist" | "no";
@@ -48,7 +49,7 @@ export function CoachResultCard({
   const tags = (coach.attributeNames ?? []).slice(0, 2);
   return (
     <Link
-      href={`/coaches/${coach.slug}`}
+      href={profilePath(coach.slug)}
       onMouseEnter={onHover}
       onFocus={onHover}
       data-active={active}

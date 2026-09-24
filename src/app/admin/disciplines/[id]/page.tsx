@@ -5,6 +5,7 @@ import { DISCIPLINE_CONTENT_COLUMNS } from "@/lib/supabase/queries";
 import type { DisciplineContent } from "@/lib/discipline-content";
 import { DisciplineForm } from "./discipline-form";
 import { deleteDiscipline, setDisciplineActive } from "../actions";
+import { disciplinePath } from "@/lib/page-paths";
 
 export const metadata = { title: "Edit discipline" };
 
@@ -31,8 +32,8 @@ export default async function AdminDisciplineEditPage({ params }: { params: Prom
           <h2 className="mt-2 font-display text-[30px] leading-none text-ink">{discipline.name}</h2>
           <p className="mt-1.5 text-[13px] text-subtle">
             Live at{" "}
-            <Link href={`/disciplines/${discipline.slug}`} target="_blank" className="text-accent underline-offset-2 hover:underline">
-              /disciplines/{discipline.slug}
+            <Link href={disciplinePath(discipline.slug)} target="_blank" className="text-accent underline-offset-2 hover:underline">
+              {disciplinePath(discipline.slug)}
             </Link>
             {" · "}
             {coaches ?? 0} coach{coaches === 1 ? "" : "es"}, {clinics ?? 0} clinic{clinics === 1 ? "" : "s"}

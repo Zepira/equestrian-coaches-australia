@@ -106,8 +106,11 @@
    included, keeps the original palette. Steel on cream measures 5.6:1 and
    sky on deep ink 8.6:1, the same jobs terracotta and peach do. */
 /* Also usable on any element, to put one block in the door's colours
-   (e.g. the horse care card on /list-your-business). */
+   (e.g. the horse care card on /list-your-business). A page whose door the
+   path can't tell (a profile) carries a PageContext marker instead, and
+   :has() applies the colours from the first paint with no script. */
 html[data-door="horse-care"],
+html:has([data-page-door="horse-care"]),
 [data-door="horse-care"] {
   --color-accent: #3f6480; /* steel */
   --color-accent-hover: #345468;

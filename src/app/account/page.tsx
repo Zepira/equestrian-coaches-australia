@@ -5,6 +5,7 @@ import { getDisciplines, resolveLocation } from "@/lib/supabase/queries";
 import { titleCase } from "@/lib/text";
 import { removeFavourite } from "./actions";
 import { ClinicAlertsForm } from "./clinic-alerts-form";
+import { eventPath, profilePath } from "@/lib/page-paths";
 
 export const metadata = { title: "My account", robots: { index: false, follow: false } };
 
@@ -153,14 +154,14 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
                     data-fav
                     className="grid grid-cols-[72px_1fr_auto] items-center gap-3.5 rounded-[16px] border border-border bg-surface p-3 transition-[border-color] duration-300 hover:border-accent wide:grid-cols-[84px_1fr_auto_auto] wide:gap-[18px] wide:py-3 wide:pr-[18px] wide:pl-3"
                   >
-                    <Link href={`/coaches/${f.slug}`} className="block h-[86px] w-[72px] overflow-hidden rounded-t-[36px] rounded-b-[8px] bg-shade wide:h-[100px] wide:w-[84px] wide:rounded-t-[42px]">
+                    <Link href={profilePath(f.slug)} className="block h-[86px] w-[72px] overflow-hidden rounded-t-[36px] rounded-b-[8px] bg-shade wide:h-[100px] wide:w-[84px] wide:rounded-t-[42px]">
                       {f.photoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={f.photoUrl} alt="" className="block h-full w-full object-cover" />
                       ) : null}
                     </Link>
                     <div className="min-w-0">
-                      <Link href={`/coaches/${f.slug}`} className="font-display text-[21px] leading-[1.05] text-ink wide:text-[24px]">
+                      <Link href={profilePath(f.slug)} className="font-display text-[21px] leading-[1.05] text-ink wide:text-[24px]">
                         {f.name}
                       </Link>
                       <div className="mt-1 text-[13px] text-subtle wide:text-[14px]">{f.where}</div>
@@ -237,7 +238,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
                 nearby.map((c) => (
                   <Link
                     key={c.id}
-                    href={`/clinics/${c.id}`}
+                    href={eventPath(c.id)}
                     data-clinic
                     className="grid grid-cols-[56px_1fr] gap-3 rounded-[14px] border border-border bg-surface p-3 text-fg wide:grid-cols-[52px_1fr] wide:rounded-[12px] wide:border-0 wide:bg-ink-card wide:text-ink-fg"
                   >

@@ -6,6 +6,7 @@ import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend"
 import { logReveal } from "@/lib/coach-events";
 import { getMockProfessionalBySlug } from "@/lib/mock-professionals";
 import { getMockCoachBySlug } from "@/lib/mock-coaches";
+import { absoluteUrl } from "@/lib/site-url";
 
 export type EnquiryResult = { ok: boolean; message: string };
 export type EnquiryWant = "regular" | "one_off" | "clinic";
@@ -107,7 +108,7 @@ export async function sendCoachEnquiry(
         to: coach.contact_email,
         replyTo: looksLikeEmail(riderContact) ? riderContact : undefined,
         subject: `New enquiry from ${riderName} via Equine Professionals Australia`,
-        text: `Hi ${coachName},\n\n${riderName} sent you an enquiry through your Equine Professionals Australia profile.\n\nLooking for: ${WANT_LABEL[want]}\nContact: ${riderContact}\n\n"${message}"\n\nMark it replied / booked in your dashboard: ${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/dashboard/enquiries`,
+        text: `Hi ${coachName},\n\n${riderName} sent you an enquiry through your Equine Professionals Australia profile.\n\nLooking for: ${WANT_LABEL[want]}\nContact: ${riderContact}\n\n"${message}"\n\nMark it replied / booked in your dashboard: ${absoluteUrl("/dashboard/enquiries")}`,
       });
     } catch (err) {
       console.error("sendCoachEnquiry: send failed", err);

@@ -78,7 +78,7 @@ async function withAliases<T extends { id: string }>(supabase: SupabaseClient, r
 }
 
 // The discipline rows with their page content (0020_discipline_content.sql):
-// what /disciplines, /disciplines/[slug], the sitemap and the homepage
+// what /coaches, /coaches/[discipline], the sitemap and the homepage
 // tiles read. Same static fallback as getTerms when Supabase isn't there.
 export const DISCIPLINE_CONTENT_COLUMNS =
   "id, slug, name, blurb, description, image_path, image_alt, image_credit, seo_title, seo_description, active, updated_at";

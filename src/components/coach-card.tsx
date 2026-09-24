@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { profilePath } from "@/lib/page-paths";
 
 export type CoachCardData = {
   slug: string;
@@ -28,7 +29,7 @@ export function CoachCard({ coach, className = "" }: { coach: CoachCardData; cla
       : `${coach.suburb} ${coach.state}`;
   return (
     <Link
-      href={coach.href ?? `/coaches/${coach.slug}`}
+      href={coach.href ?? profilePath(coach.slug)}
       className={`flex flex-col gap-3 text-inherit transition-transform duration-500 ease-[cubic-bezier(.16,1,.3,1)] wide:gap-3.5 wide:hover:-translate-y-1.5 ${className}`}
     >
       <div className="relative aspect-[4/5] overflow-hidden rounded-t-[125px] rounded-b-[10px] bg-shade wide:rounded-t-[999px] wide:rounded-b-[12px]">

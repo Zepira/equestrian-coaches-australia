@@ -3,8 +3,8 @@
 // to remove: set MOCK_COACHES_ENABLED to false, or delete this file and
 // the four small merge blocks that import from it (search each for
 // "mock-coaches" to find them all: src/app/page.tsx, src/app/search/
-// page.tsx, src/app/disciplines/[slug]/page.tsx,
-// src/app/coaches/[slug]/page.tsx). Nothing here ever touches the DB.
+// page.tsx, src/components/sections/coach-discipline.tsx,
+// src/app/profile/[slug]/coach-profile.tsx). Nothing here ever touches the DB.
 import { getDisciplineBySlug } from "@/lib/disciplines";
 
 export const MOCK_COACHES_ENABLED = true;

@@ -113,12 +113,12 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
   await page.waitForTimeout(120);
   await page.keyboard.press("Tab");
   const focusedHref = await page.evaluate(() => document.activeElement?.getAttribute("href"));
-  ok("Tab from button reaches first menu link", focusedHref === "/disciplines/dressage", String(focusedHref));
+  ok("Tab from button reaches first menu link", focusedHref === "/coaches/dressage", String(focusedHref));
 
   // a link actually navigates
   await page.keyboard.press("Enter");
-  await page.waitForURL("**/disciplines/dressage", { timeout: 5000 });
-  ok("menu link navigates", page.url().endsWith("/disciplines/dressage"));
+  await page.waitForURL("**/coaches/dressage", { timeout: 5000 });
+  ok("menu link navigates", page.url().endsWith("/coaches/dressage"));
 
   // and the coaches section gets its own nav back
   const navText = await page.locator("header.site-header").innerText();

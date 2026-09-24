@@ -17,6 +17,7 @@ import { searchMockCoaches } from "@/lib/mock-coaches";
 import { FALLBACK_PROFESSIONS } from "@/lib/professions";
 import { getContent, getProfession } from "@/lib/cms/read";
 import { getPlans } from "@/lib/settings";
+import { disciplinePath } from "@/lib/page-paths";
 
 
 // "Start with what you ride" lists every discipline, alphabetically (the
@@ -108,7 +109,7 @@ export async function CoachesHome() {
       </div>
 
       {/* ── By discipline ────────────────────────────────────────────── */}
-      <Reveal as="section" className="mt-12 bg-ink text-ink-fg wide:mt-[88px]">
+      <Reveal as="section" id="disciplines" className="mt-12 scroll-mt-20 bg-ink text-ink-fg wide:mt-[88px]">
         <div className="mx-auto max-w-[1184px] px-[18px] py-14 wide:grid wide:grid-cols-[1fr_1.4fr] wide:items-start wide:gap-16 wide:px-12 wide:py-[88px]">
           <div className="wide:sticky wide:top-[100px]">
             <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-ink-fg/60 wide:tracking-[0.2em]">
@@ -134,7 +135,7 @@ export async function CoachesHome() {
             {allDisciplines.map((d) => (
               <Link
                 key={d.slug}
-                href={`/disciplines/${d.slug}`}
+                href={disciplinePath(d.slug)}
                 className="flex items-center justify-between gap-3.5 border-b border-ink-fg/20 py-3.5 text-ink-fg"
               >
                 <span className="flex min-w-0 items-center gap-3.5">
@@ -168,7 +169,7 @@ export async function CoachesHome() {
             {allDisciplines.map((d) => (
               <Link
                 key={d.slug}
-                href={`/disciplines/${d.slug}`}
+                href={disciplinePath(d.slug)}
                 className="group relative block aspect-[1.25] overflow-hidden rounded-[14px] bg-ink-deep text-ink-fg"
               >
                 <span data-parallax="drift" data-parallax-speed="0.08" data-parallax-max="40" className="parallax-drift absolute inset-0 block">

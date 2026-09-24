@@ -8,6 +8,7 @@
 // so distance search and the per-profession counts behave like real data.
 import { FIRST_NAMES, LAST_NAMES, TOWNS, haversineKm, mockPhone, slugify } from "@/lib/mock-coaches";
 import { FALLBACK_PROFESSIONS, findProfession, horseCareOf } from "@/lib/professions";
+import { profilePath } from "@/lib/page-paths";
 
 // Mock data is code, so it builds from the code list of professions.
 const horseCare = horseCareOf(FALLBACK_PROFESSIONS);
@@ -160,7 +161,7 @@ function toCard(p: MockProfessional, distanceKm: number | null): ProfessionalCar
   const profession = findProfession(FALLBACK_PROFESSIONS, p.professionSlug);
   return {
     slug: p.slug,
-    href: `/profile/${p.slug}`,
+    href: profilePath(p.slug),
     name: p.name,
     suburb: p.suburb,
     state: p.state,
@@ -184,14 +185,20 @@ export function searchMockProfessionals({
   long = null,
   radiusKm = 100,
   state = null,
+  speciality = null,
 }: {
   professionSlug?: string;
+  /** A speciality's name; matched case-insensitively against what each professional lists. */
+  speciality?: string | null;
   lat?: number | null;
   long?: number | null;
   radiusKm?: number;
   state?: string | null;
 }): ProfessionalCard[] {
-  const pool = mockProfessionals.filter((p) => !professionSlug || p.professionSlug === professionSlug);
+  const wanted = speciality?.toLowerCase();
+  const pool = mockProfessionals.filter(
+    (p) => (!professionSlug || p.professionSlug === professionSlug) && (!wanted || p.specialities.some((s) => s.toLowerCase() === wanted))
+  );
   if (lat != null && long != null) {
     return pool
       .map((p) => ({ p, d: haversineKm(lat, long, p.lat, p.long) }))

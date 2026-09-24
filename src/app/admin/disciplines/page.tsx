@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCoachingId, DISCIPLINE_CONTENT_COLUMNS } from "@/lib/supabase/queries";
 import { disciplineImage, type DisciplineContent } from "@/lib/discipline-content";
 import { createDiscipline } from "./actions";
+import { disciplinePath } from "@/lib/page-paths";
 
 export const metadata = { title: "Disciplines" };
 
@@ -37,7 +38,7 @@ export default async function AdminDisciplinesPage() {
       <div className="flex flex-col gap-1">
         <h2 className="font-display text-[26px] leading-none text-ink">Disciplines</h2>
         <p className="text-[14px] text-muted">
-          Each row is a public page at <code className="text-[13px]">/disciplines/[slug]</code>. Name, blurb, photo, long copy and SEO fields are edited here; the URL slug and the 301 that goes with changing it live under{" "}
+          Each row is a public page at <code className="text-[13px]">/coaches/[discipline]</code>. Name, blurb, photo, long copy and SEO fields are edited here; the URL slug and the 301 that goes with changing it live under{" "}
           <Link href="/admin/terms" className="text-accent underline-offset-2 hover:underline">Terms</Link>.
         </p>
       </div>
@@ -70,7 +71,7 @@ export default async function AdminDisciplinesPage() {
                 </div>
               </div>
               <div className="flex shrink-0 items-center gap-3 text-[14px]">
-                <Link href={`/disciplines/${d.slug}`} target="_blank" className="hidden text-subtle hover:text-fg sm:inline">
+                <Link href={disciplinePath(d.slug)} target="_blank" className="hidden text-subtle hover:text-fg sm:inline">
                   View
                 </Link>
                 <Link href={`/admin/disciplines/${d.id}`} className="font-medium text-accent hover:text-accent-hover">

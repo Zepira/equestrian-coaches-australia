@@ -3,7 +3,8 @@
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
-import { toggleFavourite } from "@/app/coaches/actions";
+import { toggleFavourite } from "@/app/profile/actions";
+import { profilePath } from "@/lib/page-paths";
 
 /**
  * Save-to-favourites (canvas: Coach Profile). Two shapes: `icon` — the 40px
@@ -48,7 +49,7 @@ export function FavouriteButton({
   function handleClick() {
     if (!coachId) return;
     if (!loggedIn) {
-      router.push(`/login?next=/coaches/${coachSlug}`);
+      router.push(`/login?next=${profilePath(coachSlug)}`);
       return;
     }
     setError(null);

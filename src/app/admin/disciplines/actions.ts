@@ -2,6 +2,8 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 import { CMS_TAG } from "@/lib/cms/read";
+import { reservedSlugError } from "@/lib/reserved-slugs";
+import { disciplinePath } from "@/lib/page-paths";
 import { getCoachingId } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -34,8 +36,8 @@ async function requireAdmin() {
 // with it.
 function revalidateDiscipline(slug: string | null) {
   revalidatePath("/");
-  revalidatePath("/disciplines");
-  if (slug) revalidatePath(`/disciplines/${slug}`);
+  revalidatePath("/coaches");
+  if (slug) revalidatePath(disciplinePath(slug));
   revalidatePath("/sitemap.xml");
   revalidatePath("/admin/disciplines");
   // The header menu and home chips read disciplines through the CMS cache.
@@ -87,6 +89,8 @@ export async function createDiscipline(formData: FormData) {
   if (!name) throw new Error("A name is required.");
   const slug = slugify(name);
   if (!slug) throw new Error("That name doesn't make a usable URL.");
+  const reserved = reservedSlugError("discipline", slug);
+  if (reserved) throw new Error(reserved);
 
   const { data, error } = await supabase
     .from("terms")

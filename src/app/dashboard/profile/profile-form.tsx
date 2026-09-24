@@ -5,6 +5,7 @@ import { useState } from "react";
 import { saveProfile, addTestimonial, deleteTestimonial } from "./actions";
 import { MediaUploadForm } from "./media-upload-form";
 import { LocationAutocomplete } from "@/components/location-autocomplete";
+import { profilePath } from "@/lib/page-paths";
 
 type Term = { id: string; slug: string; name: string; blurb?: string };
 type Coach = {
@@ -166,7 +167,7 @@ export function ProfileForm({ configured, coach, disciplines, skills, attributes
       <div className="flex items-end justify-between gap-4">
         <h1 className="text-[40px] leading-none -tracking-[0.02em] text-ink wide:text-[56px] wide:leading-[0.98] wide:-tracking-[0.025em]">Your profile</h1>
         {coachSlug && (
-          <a href={`/coaches/${coachSlug}`} className="shrink-0 text-[14px] font-medium text-accent wide:text-[15px]">
+          <a href={profilePath(coachSlug)} className="shrink-0 text-[14px] font-medium text-accent wide:text-[15px]">
             <span className="wide:hidden">Preview →</span>
             <span className="hidden wide:inline">Preview as a rider →</span>
           </a>

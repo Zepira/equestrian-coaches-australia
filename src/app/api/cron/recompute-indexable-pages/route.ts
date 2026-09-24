@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 
 // Nightly eligibility recompute for indexable_pages (see
-// supabase/migrations/0012_indexable_pages.sql). The sitemap and the
-// /riding-instructors/[area] and /disciplines/[slug]/[area] routes all
+// supabase/migrations/0001_baseline.sql). The sitemap and the place pages
+// (/[profession]/in/[area], /[profession]/[term]/in/[area]) all
 // read this table rather than recomputing coach counts on every request.
 // Configure as a Vercel Cron job (see vercel.json) once deployed; call
 // manually with the CRON_SECRET header until then.

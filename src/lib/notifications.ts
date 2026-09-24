@@ -1,5 +1,7 @@
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
+import { eventPath } from "@/lib/page-paths";
+import { absoluteUrl } from "@/lib/site-url";
 
 // Service-role client, not the request-scoped one — this runs after the
 // coach's own request context ends (fire-and-forget from createClinic)
@@ -39,8 +41,6 @@ export async function notifyRidersOfClinic(clinicId: string) {
   }
   if (!matches || matches.length === 0) return { sent: 0, matched: 0 };
 
-  const coachSlug = (clinic as unknown as { providers: { slug: string } | null }).providers?.slug;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const clinicDate = new Date(clinic.start_date).toLocaleDateString("en-AU", {
     day: "numeric",
     month: "long",
@@ -57,9 +57,7 @@ export async function notifyRidersOfClinic(clinicId: string) {
           from: NOTIFICATIONS_FROM,
           to: match.email,
           subject: `New clinic: ${clinic.title}`,
-          text: `${clinic.title}\n${clinicDate} · ${clinic.location_text}\n\nSee it here: ${siteUrl}${
-            coachSlug ? `/coaches/${coachSlug}` : "/search"
-          }`,
+          text: `${clinic.title}\n${clinicDate} · ${clinic.location_text}\n\nSee it here: ${absoluteUrl(eventPath(clinicId))}`,
         });
         sent += 1;
       } catch (err) {

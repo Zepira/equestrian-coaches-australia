@@ -1,8 +1,11 @@
 /**
- * A horse care listing page: one profession's section (/farriers) or every
- * profession near a place (/horse-care/search). Laid out like a discipline
- * page (src/app/disciplines/[slug]/page.tsx): breadcrumb, copy + photo,
- * the search card pre-set, then the cards, then the other professions.
+ * A horse care listing page, for every address the profession template
+ * gives a horse care profession: the section (/farriers), a speciality
+ * (/farriers/remedial-shoeing), a place page (/farriers/in/ballarat-vic, and
+ * with a speciality) and every profession near a place (/horse-care/search).
+ * Laid out like a coach discipline page (src/components/sections/
+ * coach-discipline.tsx): breadcrumb, copy + photo, the search card pre-set,
+ * then the cards, then the specialities and the other professions.
  *
  * The listings are mock data (src/lib/mock-professionals.ts) until the
  * schema carries a profession. A typed place resolves against the real
@@ -21,6 +24,8 @@ import { titleCase } from "@/lib/text";
 import { breadcrumbSchema, itemListSchema } from "@/lib/structured-data";
 import { horseCareOf, sectionHref, type Profession } from "@/lib/professions";
 import { getProfessions } from "@/lib/cms/read";
+import { areaPagePath, termPath } from "@/lib/page-paths";
+import type { SectionTerm } from "@/lib/sections";
 import { professionPhoto, searchMockProfessionals } from "@/lib/mock-professionals";
 
 const RADIUS_KM = 100;
@@ -33,21 +38,41 @@ async function place(text: string) {
   return resolveSearchLocation(supabase, q);
 }
 
-export async function ProfessionalListing({ profession, location = "" }: { profession?: Profession; location?: string }) {
-  const where = await place(location);
+export async function ProfessionalListing({
+  profession,
+  location = "",
+  speciality,
+  specialities = [],
+  area,
+}: {
+  profession?: Profession;
+  location?: string;
+  /** Set on /farriers/[speciality] and its place pages. */
+  speciality?: SectionTerm;
+  /** The profession's specialities, linked under the cards. */
+  specialities?: SectionTerm[];
+  /** Set on a place page (/farriers/in/[area]); the place is fixed, not typed. */
+  area?: { slug: string; name: string; state: string };
+}) {
+  const where = await place(area ? `${area.name} ${area.state}` : location);
   const cards = searchMockProfessionals({
     professionSlug: profession?.slug,
     lat: where?.kind === "point" ? where.lat : null,
     long: where?.kind === "point" ? where.long : null,
     state: where?.kind === "state" ? where.state.code : null,
     radiusKm: RADIUS_KM,
+    speciality: speciality?.name ?? null,
   });
   const noun = profession ? profession.name.toLowerCase() : "professionals";
   const placeName = where?.kind === "point" ? `${titleCase(where.suburb)} ${where.state}` : where?.kind === "state" ? where.state.name : null;
   const horseCare = horseCareOf(await getProfessions());
   const others = horseCare.filter((p) => p.slug !== profession?.slug);
   const photo = profession ? professionPhoto(profession.slug, 1200) : professionPhoto("farriers", 1200, 1);
-  const self = profession ? sectionHref(profession) : "/horse-care/search";
+  const sectionSelf = profession ? sectionHref(profession) : "/horse-care/search";
+  const termSelf = profession && speciality ? termPath(profession.slug, speciality.slug) : sectionSelf;
+  // "Clear place" goes to the page without the place: the speciality page if there is one.
+  const self = termSelf;
+  const pageUrl = profession && area ? areaPagePath({ professionSlug: profession.slug, termSlug: speciality?.slug, areaSlug: area.slug }) : termSelf;
 
   return (
     <div>
@@ -56,7 +81,9 @@ export async function ProfessionalListing({ profession, location = "" }: { profe
           breadcrumbSchema([
             { name: "Home", url: "/" },
             { name: "Horse care", url: "/horse-care" },
-            { name: profession ? profession.name : "Search", url: self },
+            { name: profession ? profession.name : "Search", url: sectionSelf },
+            ...(speciality ? [{ name: speciality.name, url: termSelf }] : []),
+            ...(area ? [{ name: area.name, url: pageUrl }] : []),
           ]),
           ...(cards.length > 0 ? [itemListSchema(cards.map((c) => ({ name: c.name, url: c.href })))] : []),
         ]}
@@ -69,7 +96,17 @@ export async function ProfessionalListing({ profession, location = "" }: { profe
             Horse care
           </Link>
           <span className="mx-2">/</span>
-          <span className="text-fg">{profession ? profession.name : "Search"}</span>
+          {speciality && profession ? (
+            <>
+              <Link href={sectionSelf} className="hover:text-ink">
+                {profession.name}
+              </Link>
+              <span className="mx-2">/</span>
+              <span className="text-fg">{speciality.name}</span>
+            </>
+          ) : (
+            <span className="text-fg">{profession ? profession.name : "Search"}</span>
+          )}
         </nav>
         <div className="mt-5 wide:grid wide:grid-cols-[1.15fr_1fr] wide:items-center wide:gap-14">
           <div>
@@ -80,7 +117,11 @@ export async function ProfessionalListing({ profession, location = "" }: { profe
               className="fade-in text-[48px] leading-[0.96] -tracking-[0.02em] text-ink wide:text-[84px] wide:leading-[0.92] wide:-tracking-[0.03em]"
               style={{ animationDelay: "0.1s" }}
             >
-              {profession ? (
+              {profession && speciality ? (
+                <>
+                  {profession.name} for <em className="text-accent">{speciality.name.toLowerCase()}</em>
+                </>
+              ) : profession ? (
                 <em className="text-accent">{profession.name}</em>
               ) : (
                 placeName ? (
@@ -125,7 +166,7 @@ export async function ProfessionalListing({ profession, location = "" }: { profe
         </div>
 
         <div className="fade-in mt-8 wide:mt-12" style={{ animationDelay: "0.6s" }}>
-          <HorseCareSearch professions={horseCare.map(({ slug, name, open }) => ({ slug, name, open }))} tone="plain" defaultProfession={profession?.slug ?? ""} defaultLocation={location} />
+          <HorseCareSearch professions={horseCare.map(({ slug, name, open }) => ({ slug, name, open }))} tone="plain" defaultProfession={profession?.slug ?? ""} defaultLocation={area ? `${area.name} ${area.state}` : location} />
         </div>
       </section>
 
@@ -173,8 +214,29 @@ export async function ProfessionalListing({ profession, location = "" }: { profe
         )}
       </Reveal>
 
-      {/* ── Other professions ────────────────────────────────────────── */}
+      {/* ── Specialities, then the other professions ─────────────────── */}
       <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] py-14 wide:px-12 wide:py-20">
+        {profession && specialities.length > 0 && (
+          <div className="mb-10 border-t border-border pt-8 wide:pt-10">
+            <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-accent wide:tracking-[0.2em]">
+              {speciality ? `Other ${profession.termNounPlural}` : `By ${profession.termNoun}`}
+            </p>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {specialities
+                .filter((t) => t.slug !== speciality?.slug)
+                .map((t) => (
+                  <li key={t.slug}>
+                    <Link
+                      href={termPath(profession.slug, t.slug)}
+                      className="inline-block rounded-[var(--radius-pill)] border border-border bg-surface px-3.5 py-2 text-[14px] font-medium text-fg transition-colors duration-200 hover:border-ink hover:bg-shade"
+                    >
+                      {t.name}
+                    </Link>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
         <div className="border-t border-border pt-8 wide:pt-10">
           <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-accent wide:tracking-[0.2em]">
             {profession ? "Other horse care" : "By profession"}

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
 import { CoachListMap } from "@/components/coach-list-map";
 import { JsonLd } from "@/components/json-ld";
@@ -13,17 +12,15 @@ import { getMockCoachesByDiscipline } from "@/lib/mock-coaches";
 import { descriptionParagraphs, disciplineImage, disciplineSeo } from "@/lib/discipline-content";
 import { toTermOption } from "@/lib/term-options";
 import { breadcrumbSchema, itemListSchema } from "@/lib/structured-data";
+import { absoluteUrl } from "@/lib/site-url";
+import { disciplinePath, profilePath } from "@/lib/page-paths";
+import { redirectMissingTerm } from "@/lib/sections";
+import type { Profession } from "@/lib/professions";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+/** The seed disciplines, for the term route's generateStaticParams. */
+export const SEED_DISCIPLINE_SLUGS = staticDisciplines.map((d) => d.slug);
 
-// The seed list pre-renders at build; anything an admin adds afterwards
-// renders on first request (dynamicParams is on by default).
-export function generateStaticParams() {
-  return staticDisciplines.map((d) => ({ slug: d.slug }));
-}
-
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
+export async function coachDisciplineMetadata(slug: string): Promise<Metadata> {
   const supabase = await createClient();
   const discipline = (await getDisciplineContent(supabase)).find((d) => d.slug === slug);
   if (!discipline) return { title: "Discipline not found" };
@@ -32,24 +29,23 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: seo.title,
     description: seo.description,
-    alternates: { canonical: `${siteUrl}/disciplines/${slug}` },
+    alternates: { canonical: absoluteUrl(disciplinePath(slug)) },
     openGraph: {
       title: seo.title,
       description: seo.description,
-      url: `${siteUrl}/disciplines/${slug}`,
+      url: absoluteUrl(disciplinePath(slug)),
       images: [{ url: image.src, alt: image.alt || `${discipline.name} coaching` }],
     },
   };
 }
 
 /**
- * /disciplines/[slug] — one discipline's page, built from its `terms` row:
+ * /coaches/[discipline] — one discipline's page, built from its `terms` row:
  * name, blurb, long description, photo and SEO fields are all admin-edited
  * (see /admin/disciplines). Then the search card pre-set to it, and every
  * coach tagged with it.
  */
-export default async function DisciplinePage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export async function CoachDiscipline({ profession, slug }: { profession: Profession; slug: string }) {
   const supabase = await createClient();
   const [disciplines, skills, attributes] = await Promise.all([
     getDisciplineContent(supabase),
@@ -57,7 +53,7 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
     getAttributes(supabase),
   ]);
   const discipline = disciplines.find((d) => d.slug === slug);
-  if (!discipline) notFound();
+  if (!discipline) return redirectMissingTerm(profession, slug);
 
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const coaches = supabase
@@ -76,17 +72,17 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
         data={[
           breadcrumbSchema([
             { name: "Home", url: "/" },
-            { name: "Disciplines", url: "/disciplines" },
-            { name: `${discipline.name} coaches`, url: `/disciplines/${slug}` },
+            { name: "Coaches", url: "/coaches" },
+            { name: `${discipline.name} coaches`, url: disciplinePath(slug) },
           ]),
-          ...(coaches.length > 0 ? [itemListSchema(coaches.map((c) => ({ name: c.name, url: `/coaches/${c.slug}` })))] : []),
+          ...(coaches.length > 0 ? [itemListSchema(coaches.map((c) => ({ name: c.name, url: profilePath(c.slug) })))] : []),
         ]}
       />
 
       {/* ── Header: copy left, photograph right ──────────────────────── */}
       <section className="mx-auto max-w-[1184px] px-[18px] pt-8 wide:px-12 wide:pt-16">
         <nav aria-label="Breadcrumb" className="fade-in text-[13px] text-subtle">
-          <Link href="/disciplines" className="hover:text-ink">Disciplines</Link>
+          <Link href="/coaches" className="hover:text-ink">Coaches</Link>
           <span className="mx-2">/</span>
           <span className="text-fg">{discipline.name}</span>
         </nav>
@@ -180,7 +176,7 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
             {others.map((d) => (
               <li key={d.slug}>
                 <Link
-                  href={`/disciplines/${d.slug}`}
+                  href={disciplinePath(d.slug)}
                   className="inline-block rounded-[var(--radius-pill)] border border-border bg-surface px-3.5 py-2 text-[14px] font-medium text-fg transition-colors duration-200 hover:border-ink hover:bg-shade"
                 >
                   {d.name}
@@ -188,7 +184,7 @@ export default async function DisciplinePage({ params }: { params: Promise<{ slu
               </li>
             ))}
             <li>
-              <Link href="/disciplines" className="inline-block rounded-[var(--radius-pill)] px-3.5 py-2 text-[14px] font-medium text-accent underline-offset-4 hover:underline">
+              <Link href="/coaches#disciplines" className="inline-block rounded-[var(--radius-pill)] px-3.5 py-2 text-[14px] font-medium text-accent underline-offset-4 hover:underline">
                 All disciplines →
               </Link>
             </li>

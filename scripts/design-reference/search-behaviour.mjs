@@ -31,7 +31,7 @@ const START = "/search?location=Bendigo+VIC&d=dressage";
   await page.waitForTimeout(1500);
 
   const countOf = async () => Number((await page.locator("h1").first().innerText()).match(/^(\d+)/)?.[1] ?? -1);
-  const cards = async () => page.locator(".grid-cols-2 > a[href^='/coaches/']").count();
+  const cards = async () => page.locator(".grid-cols-2 > a[href^='/profile/']").count();
   const n0 = await countOf();
   row(n0 === (await cards()), `h1 count equals rendered cards (${n0})`);
   const api = await page.evaluate(() => fetch("/api/coach-count?location=Bendigo%20VIC&d=dressage").then((r) => r.json()));
@@ -88,7 +88,7 @@ const START = "/search?location=Bendigo+VIC&d=dressage";
   row(canvas === 1, "MapLibre canvas mounted");
 
   // hover card → pin active
-  const second = page.locator(".grid-cols-2 > a[href^='/coaches/']").nth(1);
+  const second = page.locator(".grid-cols-2 > a[href^='/profile/']").nth(1);
   await second.hover();
   await page.waitForTimeout(300);
   const secondSlug = (await second.getAttribute("href")).split("/").pop();
@@ -97,12 +97,12 @@ const START = "/search?location=Bendigo+VIC&d=dressage";
   row(activePins === 1, "exactly one active pin after hover");
   // click a DIFFERENT coach's pin → its card active (pins may overlap when
   // two coaches share a town, so pick by slug, not by position)
-  const otherSlug = (await page.locator(".grid-cols-2 > a[href^='/coaches/']").nth(0).getAttribute("href")).split("/").pop();
+  const otherSlug = (await page.locator(".grid-cols-2 > a[href^='/profile/']").nth(0).getAttribute("href")).split("/").pop();
   await page.locator(`.map-pin[data-slug="${otherSlug}"]`).evaluate((el) => el.click());
   await page.waitForTimeout(300);
   const activeCard = await page.locator(".grid-cols-2 > a[data-active=true]").getAttribute("href");
   row(Boolean(activeCard) && activeCard.split("/").pop() === otherSlug && otherSlug !== secondSlug, "clicking a pin moves the selection", activeCard ?? "(none)");
-  const overlay = await page.locator(".sticky.top-\\[72px\\] a[href^='/coaches/']").getAttribute("href");
+  const overlay = await page.locator(".sticky.top-\\[72px\\] a[href^='/profile/']").getAttribute("href");
   row(overlay === activeCard, "map overlay card shows the selected coach");
 
   // keyboard reach
@@ -140,7 +140,7 @@ const START = "/search?location=Bendigo+VIC&d=dressage";
   const before = page.url();
   await toggle.click();
   await page.waitForTimeout(500);
-  row(page.url() === before && (await page.locator("main a[href^='/coaches/']").count()) > 0, "phone: back to list keeps URL and results");
+  row(page.url() === before && (await page.locator("main a[href^='/profile/']").count()) > 0, "phone: back to list keeps URL and results");
   row(!(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)), "phone: no horizontal scroll");
   await page.close();
 }

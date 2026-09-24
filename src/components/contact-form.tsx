@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { sendCoachEnquiry, type EnquiryResult, type EnquiryWant } from "@/app/coaches/[slug]/actions";
+import { sendCoachEnquiry, type EnquiryResult, type EnquiryWant } from "@/app/profile/[slug]/actions";
 
 const WANTS: Record<"coach" | "professional", { value: EnquiryWant; label: string }[]> = {
   coach: [

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { disciplinePath, eventPath, profilePath } from "@/lib/page-paths";
 import { notFound } from "next/navigation";
 import { ContactForm } from "@/components/contact-form";
 import { JsonLd } from "@/components/json-ld";
@@ -83,8 +84,8 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
           }),
           breadcrumbSchema([
             { name: "Home", url: "/" },
-            ...(coach ? [{ name: coachName, url: `/coaches/${coach.slug}` }] : []),
-            { name: clinic.title, url: `/clinics/${id}` },
+            ...(coach ? [{ name: coachName, url: profilePath(coach.slug) }] : []),
+            { name: clinic.title, url: eventPath(id) },
           ]),
         ]}
       />
@@ -125,7 +126,7 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
               <div className="rounded-[14px] border border-border bg-surface px-3.5 py-3.5">
                 <dt className="text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Discipline</dt>
                 <dd className="mt-1.5 text-[15px] leading-[1.35] text-ink">
-                  <Link href={`/disciplines/${discipline.slug}`} className="text-accent">
+                  <Link href={disciplinePath(discipline.slug)} className="text-accent">
                     {discipline.name}
                   </Link>
                 </dd>
@@ -134,7 +135,7 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
           </dl>
           {coach && (
             <section data-organiser className="grid grid-cols-[72px_1fr] items-center gap-3.5 rounded-[16px] border border-border bg-surface p-3 wide:grid-cols-[84px_1fr] wide:gap-[18px] wide:py-3 wide:pr-[18px] wide:pl-3">
-              <Link href={`/coaches/${coach.slug}`} className="block h-[86px] w-[72px] overflow-hidden rounded-t-[36px] rounded-b-[8px] bg-shade wide:h-[100px] wide:w-[84px] wide:rounded-t-[42px]">
+              <Link href={profilePath(coach.slug)} className="block h-[86px] w-[72px] overflow-hidden rounded-t-[36px] rounded-b-[8px] bg-shade wide:h-[100px] wide:w-[84px] wide:rounded-t-[42px]">
                 {photoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={photoUrl} alt="" className="block h-full w-full object-cover" />
@@ -142,7 +143,7 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
               </Link>
               <div className="min-w-0">
                 <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Hosted by</p>
-                <Link href={`/coaches/${coach.slug}`} className="mt-1 block font-display text-[22px] leading-[1.05] text-ink wide:text-[26px]">
+                <Link href={profilePath(coach.slug)} className="mt-1 block font-display text-[22px] leading-[1.05] text-ink wide:text-[26px]">
                   {coachName}
                 </Link>
                 <p className="mt-1 text-[13px] text-subtle wide:text-[14px]">
@@ -169,7 +170,7 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
               {coach && (
                 <>
                   {" "}
-                  <Link href={`/coaches/${coach.slug}`} className="font-medium text-accent">
+                  <Link href={profilePath(coach.slug)} className="font-medium text-accent">
                     View profile →
                   </Link>
                 </>

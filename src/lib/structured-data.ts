@@ -4,11 +4,8 @@
 // src/components/json-ld.tsx — kept out of the page components so the
 // schema shape lives in one place.
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-
-function absoluteUrl(path: string) {
-  return path.startsWith("http") ? path : `${siteUrl}${path}`;
-}
+import { absoluteUrl } from "@/lib/site-url";
+import { eventPath, profilePath } from "@/lib/page-paths";
 
 export type BreadcrumbItem = { name: string; url: string };
 
@@ -70,7 +67,7 @@ export function coachPersonSchema(coach: CoachSchemaInput) {
     "@context": "https://schema.org",
     "@type": "Person",
     name: coach.name,
-    url: absoluteUrl(`/coaches/${coach.slug}`),
+    url: absoluteUrl(profilePath(coach.slug)),
     ...(coach.photoUrl ? { image: coach.photoUrl } : {}),
     description: coach.headline || coach.bio || undefined,
     jobTitle: "Riding Coach",
@@ -112,7 +109,7 @@ export function clinicEventSchema(clinic: ClinicSchemaInput) {
     "@context": "https://schema.org",
     "@type": "Event",
     name: clinic.title,
-    url: absoluteUrl(`/clinics/${clinic.id}`),
+    url: absoluteUrl(eventPath(clinic.id)),
     ...(clinic.description ? { description: clinic.description } : {}),
     startDate: clinic.startDate,
     ...(clinic.endDate ? { endDate: clinic.endDate } : {}),
@@ -128,7 +125,7 @@ export function clinicEventSchema(clinic: ClinicSchemaInput) {
           organizer: {
             "@type": "Person",
             name: clinic.coach.name,
-            url: absoluteUrl(`/coaches/${clinic.coach.slug}`),
+            url: absoluteUrl(profilePath(clinic.coach.slug)),
           },
         }
       : {}),

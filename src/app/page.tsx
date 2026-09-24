@@ -26,6 +26,7 @@ import { getContent, getFeaturedDisciplines, getProfessions } from "@/lib/cms/re
 import { getPlans } from "@/lib/settings";
 import { mockProfessionalCount } from "@/lib/mock-professionals";
 import { ProfessionGlyph, hasGlyph } from "@/components/profession-glyph";
+import { disciplinePath } from "@/lib/page-paths";
 
 // Overrides the root layout's cream themeColor (src/app/layout.tsx): the
 // hero, not the cream header, is this route's own top edge.
@@ -122,7 +123,7 @@ export default async function Home() {
                 {chips.map((d) => (
                   <li key={d.slug}>
                     <Link
-                      href={`/disciplines/${d.slug}`}
+                      href={disciplinePath(d.slug)}
                       className="block rounded-[var(--radius-pill)] border border-ink-fg/25 px-3.5 py-1.5 text-[13px] transition-colors hover:border-peach hover:text-peach"
                     >
                       {d.name}

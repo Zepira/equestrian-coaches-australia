@@ -5,6 +5,7 @@ import { getStripe, isMockPayments, TIER_PRICE_IDS } from "@/lib/stripe";
 import { requireProvider } from "@/lib/provider-session";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { isTier, type Tier } from "@/lib/tiers";
+import { SITE_URL } from "@/lib/site-url";
 
 /**
  * Billing writes go to `subscriptions` (one per provider, covering every
@@ -85,7 +86,7 @@ export async function startCheckout(tier: Tier) {
     await saveSubscription(service, providerId, { stripe_customer_id: customerId });
   }
 
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const origin = SITE_URL;
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
@@ -116,7 +117,7 @@ export async function openBillingPortal() {
   const { data: sub } = await service.from("subscriptions").select("stripe_customer_id").eq("provider_id", providerId).maybeSingle();
   if (!sub?.stripe_customer_id) throw new Error("No Stripe customer on file yet.");
 
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const origin = SITE_URL;
   const session = await stripe.billingPortal.sessions.create({
     customer: sub.stripe_customer_id as string,
     return_url: `${origin}/dashboard/billing`,

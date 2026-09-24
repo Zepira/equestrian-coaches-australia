@@ -9,6 +9,7 @@ import { SearchFacets } from "@/components/search-facets";
 import type { TermOption } from "@/components/ui/multi-select-menu";
 import { SearchBar } from "@/components/search-bar";
 import { useWide } from "@/lib/use-wide";
+import { profilePath } from "@/lib/page-paths";
 
 const CoachMap = dynamic(() => import("@/components/coach-map").then((m) => m.CoachMap), {
   ssr: false,
@@ -159,7 +160,7 @@ export function SearchResults({
       <CoachMap origin={origin} radiusKm={radiusKm} pins={pins} activeSlug={activeCoach?.slug ?? null} onSelect={setActive} />
       {activeCoach && (
         <Link
-          href={`/coaches/${activeCoach.slug}`}
+          href={profilePath(activeCoach.slug)}
           className="fade-in absolute inset-x-3.5 bottom-[88px] z-10 grid grid-cols-[72px_1fr] gap-3 rounded-[14px] border border-border bg-surface p-2.5 text-inherit shadow-[0_20px_50px_rgba(31,58,46,.18)] wide:inset-x-4 wide:bottom-4"
           style={{ animationDuration: "0.4s" }}
         >
