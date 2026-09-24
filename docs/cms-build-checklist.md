@@ -8,11 +8,12 @@ Working list for **The Site as a CMS** (`content/handbook/cms-model.html`, revis
 
 ## 0. Before starting
 
-- [ ] Commit or stash the current uncommitted work (horse care launch, logo, CMS plan) so the rebuild starts from a clean tree.
-- [ ] Export anything worth keeping from the live DB: settings rows, the two admin user ids, any discipline copy/images edited in `/admin/disciplines` (the `term-images` bucket and the `terms` content columns).
-- [ ] Sync `content/handbook/` with the newer copies in `Claude outputs/` (`site-structure-1.html` is "One Site, Two Front Doors"; the other six have name-sweep updates). Update `src/lib/handbook.ts` titles and dates to match.
-- [ ] Tidy CLAUDE.md contradictions: "launch scope is coaches only", the $14.95 tier mentions, domain registered vs not, founding offer length (now: dates in settings, §09).
-- [ ] Still open, not blocking the build (§13): $24.95 / $49.95 with Kim; card at founding sign-up or at the end of the free period; each profession's pitch copy.
+- [x] Commit the current work (`c0d70f8`). `Claude outputs/` held back: the repo is public and it holds the partnership agreement drafts.
+- [x] Export what's worth keeping: `node scripts/db/export-keepers.mjs` wrote `supabase/data/pre-rebuild-2026-09-24/` (gitignored): settings, 3 users (Kim has a second account at `gnail.com`, a typo; drop it), 2 admins, Alana's coach profile `alana-l` with its 10 terms and photo, 66 terms, 72 aliases, 53 suggestions, and all 6 stored files. No discipline copy or images had been edited in admin, and no area intros exist.
+- [x] Sync `content/handbook/` with the newer copies in `Claude outputs/` (eight documents; `site-structure-1.html` became `site-structure.html`, "One Site, Two Front Doors"); manifest titles and dates updated.
+- [x] Tidy CLAUDE.md contradictions: launch scope, the $14.95 tier mentions, founding offer terms. Domain and ASIC registration marked unconfirmed (the handbook says registered, the Status list says not): **confirm with Alana.**
+- [x] Decided 24 Sep: prices at the lower figures ($9.99 / $24.95 / $49.95), configurable in admin. Card taken at sign-up, no charge until `founding_free_months` (6) after `launch_date`, which is set and locked on launch day (§09).
+- [ ] Still open, not blocking: each profession's pitch copy.
 
 ## 1. Clean baseline (§03, §04)
 
@@ -40,7 +41,7 @@ Seed and reload:
 - [ ] Reload postcodes and areas (`supabase/scripts/load-postcodes.mjs`, areas build).
 - [ ] Seed the nine professions + `profession_details` from today's code (`professions.ts`, hero copy, glyph keys) so nothing on screen changes.
 - [ ] Seed disciplines (parent = Riding coaches), skills, attributes, aliases, suggestions (from 0008), plus each profession's specialities and aliases (from `mock-professionals.ts` SPECIALITIES; shoer, blacksmith, barefoot trimmer, hoof trimmer, equine dentist).
-- [ ] Seed settings: founding_join_by, founding_free_until (both 2027-04-30), review_required (true), review_alert_emails, event_reach_km (250), gate numbers (min providers per page 3, featured min 8, featured slots 3), limits.
+- [ ] Seed settings: launch_date (empty), founding_free_months (6), founding_join_by, review_required (true), review_alert_emails, event_reach_km (250), gate numbers (min providers per page 3, featured min 8, featured slots 3), limits, tier prices + Stripe price IDs.
 - [ ] Seed `content_blocks` with today's page copy.
 - [ ] Re-grant the two admins; both re-sign up.
 
@@ -50,7 +51,7 @@ Code renamed to match:
 - [ ] `ensureCoachProfile` → provider row + owner membership created at sign-up (§06.2).
 - [ ] Middleware: `/dashboard` gate on role provider; slug-history redirects for professions and specialities, not only `/disciplines/`.
 - [ ] Smoke scripts and parity/behaviour suites updated to the new names.
-- [ ] Rename the settings accessor for founding (`getFoundingOfferEnd` → join-by and free-until).
+- [x] Founding settings (done in stage 0): `launch_date` (locks once set, enforced server-side), `founding_free_months`, `founding_join_by`; accessors `getLaunchDate`, `getFoundingFreeMonths`, `getFirstChargeDate`, `getFoundingJoinBy`, `isFoundingOpen`; admin screen; `/for-coaches` and billing copy read them. The old `founding_offer_ends` row is orphaned and goes with the wipe.
 
 ## 2. Read from rows (§02, §05.5)
 
@@ -91,7 +92,10 @@ Code renamed to match:
 - [ ] Review actions: publish (sends the where-you-appear email) / ask for changes (note shown to the provider). `review_required` off → auto-publish + "new provider" notice.
 - [ ] Edits to published profiles go live; photo/name changes listed under "recent changes" in admin.
 - [ ] Invites: admin creates (name, email, profession, optional prefill), link opens pre-filled sign-up, single use, expiring, records Kim as source.
-- [ ] Founding: eligibility by sign-up date vs `founding_join_by`; Spotlight free until `founding_free_until`, then Listed at the founding $9.99 Stripe price; cohort founding/open fixed at sign-up.
+- [ ] Founding: eligibility by sign-up date vs `founding_join_by`; Spotlight free until `launch_date` + `founding_free_months`, then Listed at the founding $9.99 Stripe price; cohort founding/open fixed at sign-up.
+- [ ] Card at sign-up: Stripe Checkout in setup mode (card saved, no subscription) while `launch_date` is empty; plain wording beside the card field ("nothing is charged until six months after we launch; we'll email the exact date on launch day").
+- [ ] Launch-day action in admin: set `launch_date` (then locked), create each saved-card founding member's subscription with `trial_end` = first charge date, email everyone their date.
+- [ ] After launch: founding sign-ups get the subscription with its trial straight away. Reminder emails 30, 14 and 3 days before the first charge.
 
 ## 6. Riders (§07)
 
@@ -119,7 +123,7 @@ Code renamed to match:
 - [ ] Pages: one form per page (home, each door, list-your-business, professionals pitch, About, FAQ).
 - [ ] Emails: subject/body per email, variables listed, "send me a test".
 - [ ] Plans and prices: names, taglines, display price + Stripe price ID pair verified against Stripe on save, founding price, capability map, net-after-fees beside each price, "affects new subscriptions only, N stay on their price".
-- [ ] Settings: founding dates, review switch, alert emails, event reach, gates, limits.
+- [ ] Settings: launch date (lock once set), founding months and join-by, review switch, alert emails, event reach, gates, limits.
 - [ ] Review queue (count on the tab), Providers list (filter by profession/status/cohort, hide/unhide, source, recent changes), Invites, Riders (counts, unsubscribes, delete on request), Areas (intros per profession).
 - [ ] Every save revalidates the pages showing it; history list on every screen.
 

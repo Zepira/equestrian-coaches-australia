@@ -598,12 +598,21 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
         <tr><td>Events</td><td>On for every profession at launch</td><td><code>events_enabled</code> per profession, all on; the tier limits apply to everyone</td></tr>
         <tr><td>Remote work</td><td>A switch per profession</td><td><code>remote_allowed</code> on the profession row</td></tr>
         <tr><td>Who the founding offer covers</td><td>Every profession, with no cap on numbers</td><td>Eligibility is the sign-up date only</td></tr>
-        <tr><td>What a founding member gets</td><td>Spotlight free until the offer ends, then Listed at $9.99, locked for as long as they stay</td><td>A founding Stripe price at $9.99, separate from the open one; they can upgrade any time</td></tr>
+        <tr><td>What a founding member gets</td><td>Spotlight free until six months after launch, then Listed at $9.99, locked for as long as they stay</td><td>A founding Stripe price at $9.99, separate from the open one; they can upgrade any time</td></tr>
+        <tr><td>Prices</td><td>The lower figures: Listed $9.99, Spotlight $24.95, Clinic $49.95, monthly; annual is ten months</td><td>Settings, editable in admin, each paired with its Stripe price ID</td></tr>
+        <tr><td>Card at sign-up</td><td>Taken at sign-up, never charged until the free period ends</td><td>Card saved at sign-up; the subscription and its first charge date are set once the launch date is locked (below)</td></tr>
       </tbody>
     </table>
   </div>
   <div class="col">
-    <p>The founding offer is two dates in settings, both editable in admin and both set to 30 April 2027 to start: <code>founding_join_by</code> (sign up before this to qualify) and <code>founding_free_until</code> (when billing starts). They are separate so the offer can close to new sign-ups without shortening it for the people already on it. A provider's cohort is recorded as <code>founding</code> or <code>open</code> at sign-up and never changes, so the month-eight question "did the founding offer convert?" can be answered per profession.</p>
+    <p>The founding offer hangs off the launch date, which does not exist yet. Three settings, all in admin:</p>
+    <ul>
+      <li><code>launch_date</code>: empty until launch day, when it is set once and then locked. It is the date every founding member's free period is counted from.</li>
+      <li><code>founding_free_months</code>: 6. The first charge for a founding member is this many months after <code>launch_date</code>.</li>
+      <li><code>founding_join_by</code>: sign up before this to qualify. Separate from the free period, so the offer can close to new sign-ups without shortening it for the people already on it.</li>
+    </ul>
+    <p>A card is taken at sign-up and the sign-up says, in plain words next to the card field, that nothing is charged until six months after launch. Before launch day the wording is "six months after we launch, and we'll email you the exact date on launch day"; from launch day it is the date itself. On launch day every founding member gets that email with their first charge date, and the usual reminders go out 30, 14 and 3 days before it. Technically: the card is saved without a subscription (Stripe setup mode) while there is no launch date; locking the date creates each founding member's subscription with its trial ending on the first charge date; after launch, sign-ups get the subscription and its trial straight away.</p>
+    <p>A provider's cohort is recorded as <code>founding</code> or <code>open</code> at sign-up and never changes, so the month-eight question "did the founding offer convert?" can be answered per profession.</p>
   </div>
 </section>
 
@@ -710,7 +719,9 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
         <tr><td>Which professions at launch?</td><td>All of them, coaches and all eight horse care professions.</td></tr>
         <tr><td>Prices</td><td>The same for every profession.</td></tr>
         <tr><td>Founding offer</td><td>Covers every profession. No cap on numbers; limited by sign-up date, set in the database.</td></tr>
-        <tr><td>Founding terms</td><td>Spotlight free until the offer ends, then Listed at $9.99, locked.</td></tr>
+        <tr><td>Founding terms</td><td>Spotlight free until six months after launch, then Listed at $9.99, locked.</td></tr>
+        <tr><td>Prices</td><td>The lower figures ($9.99, $24.95, $49.95), configurable in admin.</td></tr>
+        <tr><td>Card at sign-up</td><td>Yes, with no charge until six months after the launch date, which is locked on launch day. Said plainly at sign-up.</td></tr>
         <tr><td>People or practices</td><td>People only at launch, with the architecture ready for practices with employee profiles later (section 04 D and E).</td></tr>
         <tr><td>Renames</td><td>Rename and reorganise everything now. The database can be wiped.</td></tr>
         <tr><td>Two professions</td><td>One plan covers all.</td></tr>
@@ -721,7 +732,7 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
     </table>
   </div>
   <div class="col">
-    <p>Still open and not changed by this plan: the $24.95 and $49.95 prices (with Kim), whether a card is taken at founding sign-up or only when the free period ends, and each profession's pitch, which stays generic until it can be written from the first ten conversations with that profession.</p>
+    <p>Still open: each profession's pitch, which stays generic until it can be written from the first ten conversations with that profession. The $24.95 and $49.95 prices are set at the lower figures for now and can be changed in admin once Kim has weighed in.</p>
   </div>
 </section>
 

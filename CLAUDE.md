@@ -72,7 +72,7 @@ The full reasoning, the route changes, the redirect map and the schema plan are 
 
 **Equestrian Coaches Australia is retired as a name (22 Sep 2026).** It was never mentioned to a coach, so there is no recognition to carry and no second domain or business name to buy — one domain, one ASIC name, one Search Console property. The coaching section is just "Coaches", the way Horse Deals' transport section is just transport. Kim's outreach links end in `/coaches` or `/farriers`, which explains itself and teaches the site's name at the same time. "Equestrian Professionals Australia" was written down as the parent for a while; it fails this repo's own two tests for a parent name (descriptive, so near impossible to trade mark, and forgettable), so it is not the answer either. The repo folder keeps its old name; do not rename it.
 
-**State of the build:** the app is built and unlaunched. No domain is registered, no ASIC business name exists, Search Console is not verified, and nothing is indexed. That is why the route move in the handbook doc is free this week and a migration after launch. This file (and this Cowork project folder) is the source of truth for the concept as it develops.
+**State of the build:** the app is built and unlaunched. Nothing is indexed and Search Console is not verified. **Registration is unconfirmed:** *One Site, Two Front Doors* (23 Sep) records equineprofessionals.com.au as registered, while the Status list below still has "register the name and buy the domain" open; check before relying on either. That is why the route move in the handbook doc is free this week and a migration after launch. This file (and this Cowork project folder) is the source of truth for the concept as it develops.
 
 ## Core concept
 
@@ -151,12 +151,12 @@ Primary rider use case: *"find a dressage instructor near me"* → see all coach
 
 Ideally riders can opt in to notifications like: *"Jane Smith is hosting a dressage clinic in your area."* This implies:
 - Riders need some way to express "my area" and "my disciplines of interest" (even without a full account system) for this to be targetable
-- Ties directly to the $14.95 coach tier, since only those coaches can post clinics/events
+- Ties to events, which every provider on every tier can list (one live event on Listed); the Clinic tier pushes them further, to `event_reach_km` (see *The Site as a CMS* §07)
 - Treat as a v1.x/v2 feature to design around, not necessarily to build first
 
 ## Roadmap beyond coaches
 
-The long-term vision is broader than riding coaches — the plan is to eventually expand the same directory/marketplace model to adjacent equine service providers: **bodyworkers, equine chiropractors, farriers**, etc. Implication for design/architecture: the category and profile system should be modelled generically enough (e.g. "service provider" as a concept, with "riding coach" as the first provider type) that new provider types can be added later without a rebuild. Launch scope is riding coaches only — do not build out the other provider types yet, just don't design it into a corner.
+The long-term vision is broader than riding coaches — the plan is to eventually expand the same directory/marketplace model to adjacent equine service providers: **bodyworkers, equine chiropractors, farriers**, etc. Implication for design/architecture: the category and profile system should be modelled generically enough (e.g. "service provider" as a concept, with "riding coach" as the first provider type) that new provider types can be added later without a rebuild. ~~Launch scope is riding coaches only.~~ **Superseded 23–24 Sep 2026: coaches and all eight horse care professions launch together**, on the model in *The Site as a CMS* (`content/handbook/cms-model.html`).
 
 ## Competitive reference
 
@@ -186,7 +186,7 @@ Full writeup: `Competitor-Landscape.docx` in this folder. Headline findings:
 
 Build platform decision: custom-coded (via Claude Code), not a no-code site builder — so any payment provider with a proper API/SDK works. This was checked against Wix/Squarespace (27 Aug 2026) and confirmed: the product needs self-serve coach-editable profiles, structured discipline+location search across many listings, and feature-gated subscription tiers — a combination neither builder handles natively (Squarespace's Member Areas only gate whole pages/content by plan, not fine-grained features; Wix could technically get there via its Velo custom-code layer, but that's writing real code inside a platform with its own data/hosting ceilings and lock-in, not a no-code shortcut). Custom code wins on all three of quickest/cheapest/most flexible for this specific product shape — see chat for the full reasoning. Wix/Squarespace would still be the fast, cheap right answer for a simple waitlist/landing page if one's wanted before the full app is ready.
 
-Money only flows one direction at launch: coach → platform (the $9.99/$14.95 monthly subscription). Riders never pay, so there's no need for split/marketplace payouts (Stripe Connect etc.) yet — plain recurring subscription billing is enough. Revisit this only if a future feature has riders paying coaches directly through the platform.
+Money only flows one direction at launch: provider → platform (three tiers: $9.99 / $24.95 / $49.95 a month, set in admin). Riders never pay, so there's no need for split/marketplace payouts (Stripe Connect etc.) yet — plain recurring subscription billing is enough. Revisit this only if a future feature has riders paying coaches directly through the platform.
 
 Recommendation: **Stripe** (Checkout + Subscriptions/Billing + Customer Portal), for AUD-native support, cheapest domestic-card rate of the options compared, and by far the best-documented option for an AI-assisted custom build (Customer Portal gives free self-serve plan management/cancellation, so it doesn't need to be hand-built).
 
@@ -197,7 +197,7 @@ Fee snapshot per provider (approx. cost on a $9.99 charge, AU domestic card unle
 - GoCardless (BECS direct debit): 1% + $0.40 (capped $4) ≈ $0.50 (~5%) — bank debit clears in 2–3 business days, so provisioning logic needs to account for delayed confirmation, not instant like a card
 - Paddle / Lemon Squeezy (Merchant of Record): 5% + $0.50 ≈ $1.00 (~10%) — much pricier per-transaction, but they become the legal seller and handle all sales-tax/GST compliance for you; worth revisiting if/when expanding beyond Australia
 
-Important regulatory note: the RBA's card surcharge ban takes effect 1 October 2026 (eftpos/Mastercard/Visa) — you will not be able to pass the processing fee back to coaches as a checkout surcharge, so whichever provider's fee applies comes straight out of the $9.99/$14.95 revenue. Factor that into margin, not into pricing display.
+Important regulatory note: the RBA's card surcharge ban takes effect 1 October 2026 (eftpos/Mastercard/Visa) — you will not be able to pass the processing fee back to coaches as a checkout surcharge, so whichever provider's fee applies comes straight out of the subscription revenue. Factor that into margin, not into pricing display.
 
 GST: flag to an accountant/bookkeeper before launch — Stripe Tax exists to automate this (percentage or flat per-transaction cost) but for a single-country, single 10%-rate business it may be simpler to just build the 10% GST into the listed price manually rather than pay for Stripe Tax at this stage.
 
@@ -554,9 +554,9 @@ Full plan: **["The First 100 Coaches"](https://claude.ai/code/artifact/7e3f85dd-
 - **Budget: A$5,408 year one**, two gated tranches — $1,448 committed (months 1–6), $3,960 released only if gates pass (months 7–12).
 - **Gates:** (1) week 12 — 25 complete published profiles in the beachhead region, under 12 = stop; (2) month 6 — 40+ coaches, 750+ rider sessions/mo, half of founders report an enquiry; (3) month 8 — founding-cohort paid conversion, 40%+ = release tranche two, under 25% = pivot to free listings + paid featured placement.
 - **Launch shape:** nationally available day one, marketing concentrated on one beachhead region (the one Kim teaches in) and led on Western/liberty/natural horsemanship — the disciplines EA doesn't accredit, which makes the pitch concrete and doubles as a press angle.
-- **Founding cohort:** first 25 get 12 months free, no card, price locked forever; coaches 26–100 get 6 months free with a **card required at signup** (trials with a card convert at 40–60% vs 15–25% without).
+- **Founding cohort:** ~~first 25 get 12 months free, no card; 26–100 get 6 months free with a card.~~ **Superseded 24 Sep 2026:** every profession, no cap, eligibility by sign-up date (`founding_join_by`); **card taken at sign-up**, no charge until `founding_free_months` (6) after `launch_date`, which is set and locked in admin on launch day; Spotlight free until then, then Listed at a locked $9.99. The card-at-signup reasoning still holds: trials with a card convert at 40–60% vs 15–25% without.
 - **Hard rules:** never pre-create unclaimed profiles from scraped data (build it, then email for permission — reputation is the whole asset in a community this small); Spam Act 2003 requires consent + sender ID + working unsubscribe (live 30 days, honoured within 5 working days), with inferred consent only covering conspicuously published *business* addresses where the message is relevant to that role.
-- **Biggest untested risk:** good coaches may already be full. If the first ten conversations say "I have a waitlist", the value proposition shifts from "get students" to "fill your clinics / be found when you move", and the $14.95 clinics tier becomes the main product rather than the upsell.
+- **Biggest untested risk:** good coaches may already be full. If the first ten conversations say "I have a waitlist", the value proposition shifts from "get students" to "fill your clinics / be found when you move", and the Clinic tier becomes the main product rather than the upsell.
 ### What competitors actually spend on marketing (researched 30 Aug 2026)
 
 Nobody publishes a budget, so this is what's observable. Written into section 3 of the marketing plan.
@@ -575,7 +575,7 @@ Nobody publishes a budget, so this is what's observable. Written into section 3 
 **"The most important thing is that riders/horse owners keep coming back, whether it's for coaches, farriers etc."** That reframes a few things:
 
 - **A directory is inherently low-frequency.** A rider finds a coach once and may not return for two years. Adding professions widens the *catchment* (more reasons for a first visit) far more than it deepens the *frequency* — a horse owner needs a farrier every 4–8 weeks but already has one, so they only search when theirs retires, moves or is booked out.
-- **Clinics and events are the actual retention engine.** They have dates, they expire, they recur, and they're the one genuinely repeating reason to come back. That makes the $14.95 tier strategically more important than its price suggests — it is the retention product, not an upsell.
+- **Clinics and events are the actual retention engine.** They have dates, they expire, they recur, and they're the one genuinely repeating reason to come back. That makes the event features (and the Clinic tier that promotes them) strategically more important than their price suggests: they are the retention product, not an upsell.
 - **The rider email list is the most valuable asset the business builds** — arguably more than coach subscriptions, because it is what makes the second and third profession launches cheap. Capture it early (favourites, clinic alerts by area + discipline) with proper consent, and send one monthly email worth opening.
 - **The brand consequence:** the email sender and the site header must be the **parent** brand, or the retention asset accrues to a name that only covers coaches. See decision 9 above.
 - Other genuine return triggers worth designing for: moving house or changing agistment (needs everything again), a new horse with new needs, and someone asking them for a recommendation (re-engagement with no personal need — make profiles easy to share).

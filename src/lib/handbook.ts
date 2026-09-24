@@ -63,7 +63,7 @@ export const HANDBOOK_DOCS: HandbookDoc[] = [
     summary:
       "The running agenda for Kim and Alana's catch-ups — what is settled, what is still open, and the order to work through it.",
     audience: "Both",
-    updated: "2026-09-22",
+    updated: "2026-09-23",
   },
   {
     slug: "before-we-start",
@@ -73,17 +73,17 @@ export const HANDBOOK_DOCS: HandbookDoc[] = [
     summary:
       "The partnership setup: the split, how Alana is paid, who pays for what, roles, and the questions for Kim's accountant.",
     audience: "Both",
-    updated: "2026-09-22",
+    updated: "2026-09-23",
   },
   {
     slug: "site-structure",
     file: "site-structure.html",
-    title: "One Site, Two Professions",
+    title: "One Site, Two Front Doors",
     kicker: "Site structure",
     summary:
-      "Why coaches and farriers share one site, what the site is called, which domain it launches on, and the routes, redirects and schema that follow.",
+      "One name and one domain for every equine profession, a coaches door and a horse care door, and how each profession gets its own pages without a redesign.",
     audience: "Both",
-    updated: "2026-09-22",
+    updated: "2026-09-23",
   },
   {
     slug: "first-100-coaches",
@@ -93,7 +93,7 @@ export const HANDBOOK_DOCS: HandbookDoc[] = [
     summary:
       "The twelve-month plan for getting coaches on the site, with the checkpoints that decide whether to keep going.",
     audience: "Kim",
-    updated: "2026-09-22",
+    updated: "2026-09-23",
   },
   {
     slug: "coach-tiers",
@@ -103,7 +103,7 @@ export const HANDBOOK_DOCS: HandbookDoc[] = [
     summary:
       "Three tiers, what goes in each, and the argument a coach has to believe before they hand over a card.",
     audience: "Both",
-    updated: "2026-09-07",
+    updated: "2026-09-23",
   },
   {
     slug: "about-page",
@@ -113,7 +113,7 @@ export const HANDBOOK_DOCS: HandbookDoc[] = [
     summary:
       "The About page written out in full, the two decisions it needs, and the facts still waiting on Kim.",
     audience: "Both",
-    updated: "2026-09-17",
+    updated: "2026-09-23",
   },
   {
     slug: "search-foundation",
@@ -123,7 +123,7 @@ export const HANDBOOK_DOCS: HandbookDoc[] = [
     summary:
       "The search and page-taxonomy spec: what earns a page, the fallback ladder, and how a coach always lands somewhere.",
     audience: "Build",
-    updated: "2026-09-07",
+    updated: "2026-09-23",
   },
   {
     slug: "proof-of-value",
@@ -133,7 +133,7 @@ export const HANDBOOK_DOCS: HandbookDoc[] = [
     summary:
       "The analytics spec — what gets counted, what a coach is shown, and the honest zero-month email.",
     audience: "Build",
-    updated: "2026-09-07",
+    updated: "2026-09-23",
   },
 ];
 

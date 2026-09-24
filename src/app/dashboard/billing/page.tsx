@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { loadDashboard } from "@/lib/dashboard";
 import { isMockPayments } from "@/lib/stripe";
 import { TIERS, TIER_META } from "@/lib/tiers";
+import { countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths } from "@/lib/settings";
 import { startCheckout, changePlan, openBillingPortal, mockCancelSubscription } from "./actions";
 
 export const metadata = { title: "Billing" };
@@ -18,11 +19,12 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   if (!ctx) redirect("/login?next=/dashboard/billing");
   const { tier, status, planName } = ctx;
   const active = status === "active";
+  const [firstCharge, freeMonths] = await Promise.all([getFirstChargeDate(), getFoundingFreeMonths()]);
   const nextCharge = active ? (isMockPayments ? "— (mock)" : "See portal") : "—";
   const billingLine = active
     ? tier === "spotlight"
-      ? "Founding offer: Spotlight free for six months, then $9.99 a month for as long as you stay — even after the price goes up for everyone else."
-      : `${TIER_META[tier!].monthly} a month. Your founding $9.99 Listed rate is kept for you if you come back down.`
+      ? `Founding offer: Spotlight free ${firstCharge ? `until ${formatLongDate(firstCharge)}` : `for ${countWord(freeMonths)} months after launch`}, then ${TIER_META.listed.monthly} a month for as long as you stay, even after the price goes up for everyone else.`
+      : `${TIER_META[tier!].monthly} a month. Your founding ${TIER_META.listed.monthly} Listed rate is kept for you if you come back down.`
     : status === "past_due"
       ? "Your last payment didn't go through. Update your card to keep your listing live."
       : "No active subscription. Pick a plan below to publish your profile and appear in search.";

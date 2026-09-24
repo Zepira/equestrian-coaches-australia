@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { DEFAULTS, formatLongDate } from "@/lib/settings";
+import { addMonths, countWord, DEFAULTS, formatLongDate, type SettingKey } from "@/lib/settings";
 import { saveSetting } from "./actions";
 
 export const metadata = { title: "Settings" };
@@ -35,43 +35,87 @@ export default async function AdminSettingsPage({
       .limit(30),
   ]);
   const history = (historyRows ?? []) as unknown as HistoryRow[];
-  const foundingRaw = settingRows?.find((r) => r.key === "founding_offer_ends")?.value ?? DEFAULTS.founding_offer_ends;
-  const foundingEnds = new Date(`${foundingRaw}T00:00:00Z`);
+  const stored = (key: SettingKey) => settingRows?.find((r) => r.key === key)?.value ?? DEFAULTS[key];
+  const launchRaw = stored("launch_date");
+  const monthsRaw = stored("founding_free_months");
+  const joinByRaw = stored("founding_join_by");
+  const months = Number(monthsRaw) || Number(DEFAULTS.founding_free_months);
+  const launch = launchRaw ? new Date(`${launchRaw}T00:00:00Z`) : null;
+  const firstCharge = launch ? addMonths(launch, months) : null;
+
+  const notice = (key: SettingKey) => (
+    <>
+      {saved === key && <p className="mt-3 rounded-[12px] bg-accent-soft px-3 py-2 text-sm text-fg">Saved.</p>}
+      {error && errorKey === key && <p className="mt-3 rounded-[12px] bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+    </>
+  );
+  const input = "w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-fg";
 
   return (
     <div className="flex flex-col gap-8">
       <section>
         <h2 className="font-display text-[26px] leading-none text-ink">Founding offer</h2>
-        <p className="mt-1 text-sm text-muted">
-          The last day a coach can sign up as a founding coach. Printed on /for-coaches as
-          &ldquo;Free until {formatLongDate(foundingEnds)}&rdquo;. Changes show on the site within a
-          minute.
+        <p className="mt-1 max-w-[62ch] text-sm text-muted">
+          Founding members give their card at sign-up and aren&apos;t charged until {countWord(months)} months after launch.
+          {firstCharge
+            ? ` The site launched on ${formatLongDate(launch!)}, so the first charge date is ${formatLongDate(firstCharge)}.`
+            : " There's no launch date yet, so /for-coaches says \"six months after we launch\" instead of a date."}{" "}
+          Changes show on the site within a minute.
         </p>
 
-        {saved === "founding_offer_ends" && (
-          <p className="mt-3 rounded-[12px] bg-accent-soft px-3 py-2 text-sm text-fg">Saved.</p>
-        )}
-        {error && errorKey === "founding_offer_ends" && (
-          <p className="mt-3 rounded-[12px] bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
-        )}
+        <div className="mt-5 flex flex-col gap-6">
+          <div>
+            <h3 className="text-[15px] font-semibold text-fg">Launch date</h3>
+            {launch ? (
+              <p className="mt-1 text-sm text-muted">
+                <strong className="font-medium text-fg">{formatLongDate(launch)}</strong>. Locked: it can only be changed in the database.
+              </p>
+            ) : (
+              <>
+                <p className="mt-1 max-w-[62ch] text-sm text-muted">
+                  Set this on launch day. It locks once saved, and every founding member&apos;s free period counts from it.
+                </p>
+                {notice("launch_date")}
+                <form action={saveSetting} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+                  <input type="hidden" name="key" value="launch_date" />
+                  <label className="block">
+                    <span className="mb-1 block text-sm font-medium text-fg">Launched on</span>
+                    <input type="date" name="value" required className={input} />
+                  </label>
+                  <Button type="submit">Lock the launch date</Button>
+                </form>
+              </>
+            )}
+            {launch && notice("launch_date")}
+          </div>
 
-        <form action={saveSetting} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
-          <input type="hidden" name="key" value="founding_offer_ends" />
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-fg">Offer ends</span>
-            <input
-              type="date"
-              name="value"
-              required
-              defaultValue={foundingRaw}
-              className="w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-fg"
-            />
-          </label>
-          <Button type="submit">Save</Button>
-        </form>
-        <p className="mt-2 text-xs text-muted">
-          Default if the row is ever missing: {DEFAULTS.founding_offer_ends}.
-        </p>
+          <div>
+            <h3 className="text-[15px] font-semibold text-fg">Free months after launch</h3>
+            {notice("founding_free_months")}
+            <form action={saveSetting} className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end">
+              <input type="hidden" name="key" value="founding_free_months" />
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-fg">Months</span>
+                <input type="number" name="value" min={1} max={24} required defaultValue={monthsRaw} className={input} />
+              </label>
+              <Button type="submit">Save</Button>
+            </form>
+          </div>
+
+          <div>
+            <h3 className="text-[15px] font-semibold text-fg">Last day to join as a founding member</h3>
+            <p className="mt-1 text-sm text-muted">Leave empty to keep the offer open.</p>
+            {notice("founding_join_by")}
+            <form action={saveSetting} className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end">
+              <input type="hidden" name="key" value="founding_join_by" />
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-fg">Join by</span>
+                <input type="date" name="value" defaultValue={joinByRaw} className={input} />
+              </label>
+              <Button type="submit">Save</Button>
+            </form>
+          </div>
+        </div>
       </section>
 
       <section className="border-t border-border pt-6">

@@ -1,4 +1,4 @@
-<title>One Site, Two Professions</title>
+<title>One Site, Two Front Doors</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -165,11 +165,11 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
   <div class="wrap">
     <header class="masthead">
       <div class="mast-top">
-        <span class="mast-mark">ECA</span>
-        <span class="mast-org">Equestrian Coaches Australia</span>
+        <span class="mast-mark">Handbook</span>
+        <span class="mast-org">Equine Professionals Australia</span>
       </div>
-      <h1>One site, two professions</h1>
-      <p class="lede">Coaches and farriers launching together changes the shape of the thing. This is the recommendation on sites, names and domains, then the routes, redirects, navigation and database work that follow from it. Revised the same day: one domain only, and the coaches name is retired. Section seven, added 23 September, is how the coaching section keeps a clear identity of its own inside one brand.</p>
+      <h1>One site, two front doors</h1>
+      <p class="lede">Coaches and every other equine profession on one site, under one name. The recommendation on sites, names and domains, then the routes, redirects, navigation and database work that follow. Settled 23 September: Equine Professionals Australia, at equineprofessionals.com.au, registered. Section seven is how the coaching section keeps a clear identity of its own, and how every profession after it gets the same treatment without a redesign.</p>
       <div class="mast-meta">
         <span>Site structure</span>
         <span>September 2026</span>
@@ -185,7 +185,7 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
 <section>
   <div class="sec-head"><span class="sec-num">01</span><h2>The recommendation</h2></div>
   <div class="col">
-    <p><strong>One website. One domain. One database. One rider account. Two sections.</strong> There is no site two. There is a coaching section and a farrier section on the same site, and more professions later if the first two work.</p>
+    <p><strong>One website. One domain. One database. One rider account. Two front doors.</strong> There is no site two. There is a coaching section, and a horse care section that holds every other profession, starting with farriers. Each profession behind the second door gets its own pages without anyone touching the design.</p>
     <p>That was already the plan for the build. What is new is that both professions launch at once, which turns two decisions that were comfortably in the future into decisions for this month: the name at the top of the site, and the domain it lives on.</p>
   </div>
 
@@ -312,8 +312,8 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
 <section>
   <div class="sec-head"><span class="sec-num">02</span><h2>The name</h2></div>
   <div class="note">
-    <span class="chip">Decided 22 September, still being mulled</span>
-    <p><strong>Equine Professionals Australia</strong>, at <strong>equineprofessionals.com.au</strong> and <strong>equineprofessionals.au</strong>. One business name, one domain. Both forms of the domain showed no registration record on 22 September and ABR shows no matching business name; the nearest is Equine Professional Hub Pty Ltd in Queensland. The IP Australia search has not been run. Equine rather than Equestrian because a farrier or a dentist serves the horse, not the rider, and because it does not read as an arm of Equestrian Australia.</p>
+    <span class="chip">Settled 23 September</span>
+    <p><strong>Equine Professionals Australia</strong>, at <strong>equineprofessionals.com.au</strong> and <strong>equineprofessionals.au</strong>. One business name, one domain. The partnership, its ABN and TFN and the business name were registered on 23 September 2026. The IP Australia trade mark search on the exact string is the one check still outstanding; the nearest existing name is Equine Professional Hub Pty Ltd in Queensland. Equine rather than Equestrian because a farrier or a dentist serves the horse, not the rider, and because it does not read as an arm of Equestrian Australia.</p>
     <p>Two rules that come with a descriptive name. <strong>The wordmark is the words, never the initials</strong>: EPA is the Environment Protection Authority in every state. And a descriptive name cannot be protected by registration alone, so the site has to be the one everybody uses, which is a marketing fact rather than a legal one. The section below is the reasoning that ran before the decision, kept because the trade-offs are still true.</p>
   </div>
 
@@ -442,13 +442,18 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
         </tr>
         <tr>
           <td>nothing yet</td>
-          <td><code>/farriers</code>, <code>/farriers/[speciality]</code>, <code>/farriers/in/[area]</code>, <code>/farriers/[speciality]/in/[area]</code></td>
-          <td>Identical shape, different section. Nothing new to design.</td>
+          <td><code>/horse-care</code></td>
+          <td>The second front door. One page listing every horse care profession with real counts, and the search card scoped to it. A landing page and a menu, not a parent in the URL, so profession addresses stay short.</td>
+        </tr>
+        <tr>
+          <td>nothing yet</td>
+          <td><code>/[profession]</code>, <code>/[profession]/[speciality]</code>, <code>/[profession]/in/[area]</code>, <code>/[profession]/[speciality]/in/[area]</code></td>
+          <td>One template for every profession: <code>/farriers/in/geelong</code> today, <code>/dentists/in/geelong</code> the day a dentist row exists. Nothing new to design per profession.</td>
         </tr>
         <tr>
           <td><code>/for-coaches</code></td>
-          <td><code>/for-coaches</code> and <code>/for-farriers</code></td>
-          <td>Both render from one template driven by per profession content rows. Coaches search this page; it keeps its address.</td>
+          <td><code>/for-coaches</code> and <code>/for-professionals</code></td>
+          <td>One pitch page per door. The coaching one keeps its address because coaches search for it. The horse care one takes a profession picker in the form and per profession copy blocks from the row where they have been written.</td>
         </tr>
         <tr>
           <td><code>/search</code></td>
@@ -518,23 +523,23 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
       <tbody>
         <tr>
           <td>Header</td>
-          <td>Parent wordmark. Then Find a coach, Find a farrier, Clinics, About, and List your profile. At three professions the first two collapse into one Find menu grouped by profession.</td>
+          <td>Brand mark, then two tabs: Coaches and Horse care. Horse care opens a menu of professions with their glyphs and counts. Then Clinics, About, and List your profile. Two tabs whether there are two professions or twelve; that is the point of the doors.</td>
         </tr>
         <tr>
           <td>Home search card</td>
-          <td>A two option control above the card, Coaches or Farriers, which swaps the second field between Discipline and Speciality. The card stays at two fields. It defaults to coaches, because coaches are the supply that exists and the queries that convert.</td>
+          <td>A two option control above the card in plain words, "A coach" or "Help for my horse", which swaps the second field between Discipline and Profession. Location stays third. Specialities are chips on the results page, not fields on the card. It defaults to coaches, because coaches are the supply that exists and the queries that convert.</td>
         </tr>
         <tr>
           <td>Home, below the fold</td>
-          <td>One block per profession, each with real counts. The farrier block is honest about being new rather than padded out.</td>
+          <td>One block per door. The horse care block lists its professions as small tiles with real counts, honest about which ones are new rather than padded out.</td>
         </tr>
         <tr>
           <td>Search</td>
-          <td>Profession is a scope, not a clearable filter. A result list mixing a dressage coach and a farrier answers nobody's question. Chips, radius and the map all stay as they are.</td>
+          <td>Profession is a scope, not a clearable filter. A result list mixing a dressage coach and a farrier answers nobody's question, and neither does one mixing a farrier and a dentist. Chips, radius and the map all stay as they are.</td>
         </tr>
         <tr>
           <td>Footer</td>
-          <td>A column per profession, listing that profession's top specialities and biggest areas. This is also where a lot of the internal linking that makes the section pages rank comes from.</td>
+          <td>A Coaches column and a Horse care column, the second listing every profession. Under each, the top specialities and biggest areas. This is also where a lot of the internal linking that makes the section pages rank comes from.</td>
         </tr>
         <tr>
           <td>Rider account</td>
@@ -548,18 +553,54 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
 <section>
   <div class="sec-head"><span class="sec-num">07</span><h2>One brand, two front doors</h2></div>
   <div class="col">
-    <p>The brief from Alana and Kim on 23 September: one name and one domain, but the coaching section has to stand out clearly and be able to stand on its own, and every profession that follows needs the same. This section is how you get that without a second brand.</p>
-    <p>The principle is simple to state. <strong>The brand is the frame; the section is the picture.</strong> Everything structural is shared and identical: the header, the footer, the type, the radii, the motion, the search card, the result cards, the dashboard. Exactly five things change when you step into a section: the front door, the accent colour, the glyph, the words, and the photographs. That is enough for a coach to feel the site was built for coaches, and little enough that it is one codebase and a data change per profession.</p>
+    <p>The brief from Alana and Kim: one name and one domain, the coaching section has to stand out clearly and be able to stand on its own, and the design must not be a coaches and farriers design. Farriers are one profession of many. Bodyworkers, dentists, saddle fitters and vets follow, and the system has to take each of them as a row in a table, not a design job.</p>
+    <p>The first version of this section got that wrong by treating each profession as a section. This version fixes it with one idea. <strong>The top level of the site is not the profession. It is who the client is.</strong> A rider is either looking for someone for themselves, which is a coach, or for someone for their horse, which is everyone else. That is the whole top level, it never grows past two, and every profession fits under one of the two doors.</p>
   </div>
 
   <div class="tablewrap">
     <table>
-      <caption>What is shared, and what belongs to the section</caption>
-      <thead><tr><th>Shared, never varies</th><th>Per section, from data</th></tr></thead>
+      <caption>Two levels, and what identity lives at each</caption>
+      <thead><tr><th>Level</th><th>What it is</th><th>Identity it carries</th></tr></thead>
       <tbody>
         <tr>
-          <td>The brand mark and wordmark, the header and footer structure, type, radii, motion, the cream and ink grounds, the search card, result and profile cards, the map, the dashboard, the rider account, the email sender.</td>
-          <td>The landing page and its promise, the accent pair, the glyph, the nouns (discipline or speciality, rider or horse owner, lesson or booking), the professional-facing pitch page, the photographs, the section tab in the header, badges and map pins.</td>
+          <td><strong>Door</strong><span class="sub">Exactly two. Coaches, and Horse care.</span></td>
+          <td>Who the client is. Coaches serve the rider. Horse care serves the horse: farriers, bodyworkers, dentists, saddle fitters, vets, and whatever comes next.</td>
+          <td>The accent pair, the front-door landing page, the header tab, the search-card control, the pitch page. Fixed in code; a third door is a deliberate migration and a new accent pair, which is the right amount of friction.</td>
+        </tr>
+        <tr>
+          <td><strong>Profession</strong><span class="sub">As many as you like.</span></td>
+          <td>A row on <code>terms</code> with a door. Riding coaches today under the first door; farriers today under the second, then the rest.</td>
+          <td>The glyph, its own landing page, its nouns and copy, its photographs, its area and speciality pages, its pitch copy block. Never its own colour.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="chip">Why colour stops at the door</span>
+    <p>Six professions with six colours is a rainbow, and a rainbow is what a site looks like when nobody decided anything. The Guardian caps its section colours at five for the same reason. Here the colour says which door you are behind and the glyph says which profession you are looking at. Farriers and dentists share the steel and sky pair and differ by a horseshoe and a tooth. A rider never has to learn a palette.</p>
+  </div>
+
+  <div class="col">
+    <p>The principle underneath is unchanged. <strong>The brand is the frame; the door is the picture; the profession is the caption.</strong> Everything structural is shared and identical: header and footer, type, radii, motion, the search card, result cards, the map, the dashboard, the rider account, the email sender. The door changes the colour and the front page. The profession changes the words, the glyph and the photographs. That is enough for a coach to feel the site was built for coaches, enough for a farrier to find a farriers page rather than a page about horse care in general, and little enough that the twelfth profession costs nothing but its row.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Calling the second door</caption>
+      <thead><tr><th>Option</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Horse care</strong> <span class="chip">Suggested</span></td>
+          <td>Plain, warm, and it covers every profession on the list, because every one of them is care of the horse. In the search card it becomes "Help for my horse", which is how an owner would say it.</td>
+        </tr>
+        <tr>
+          <td>Professionals</td>
+          <td>No. The brand is Equine Professionals Australia and coaches are professionals too. A section called Professionals collides with the name above it and quietly says coaches are not.</td>
+        </tr>
+        <tr>
+          <td>Services</td>
+          <td>Keep in reserve. If transport, agistment or arena hire ever join, they are services rather than care, and the door may need the wider word then. Not now.</td>
         </tr>
       </tbody>
     </table>
@@ -569,69 +610,71 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
     <div class="step">
       <div class="smark">1</div>
       <div class="sbody">
-        <h3>A real front door at <code>/coaches</code></h3>
-        <p>This is what "stand on its own" actually means. The coaching landing page has its own rise headline, its own one-line promise, the search card already scoped to coaches, real counts (coaches and disciplines), its own photograph, the founding offer, and a single "List your coaching profile" call to action. A coach who arrives from Kim's message and never sees the rest of the site has seen a complete coaching site. Kim links to it, flyers print equineprofessionals.com.au/coaches, and the same page shape serves <code>/farriers</code> with different rows in the database.</p>
-        <p>The homepage becomes the switchboard rather than the coaching site: the brand, one search card with the profession control, and one block per section with honest numbers. It is the page a rider lands on from the brand name; the section pages are the ones they land on from a search.</p>
+        <h3>Two real front doors, then a page per profession</h3>
+        <p><code>/coaches</code> is the first door and, while coaching is the only profession behind it, also the coaching landing page: its own rise headline, promise line, search card scoped to coaches, real counts, its own photograph, the founding offer, and one "List your coaching profile" button. A coach arriving from Kim's message has seen a complete coaching site. <code>/horse-care</code> is the second door: a hero, the search card with the profession select, and one tile per profession with its glyph and a real count, honest about the new ones. Behind it, <code>/farriers</code> is a profession page from one template, with the door's accent and its own glyph, copy and photo. When a dentist row appears, <code>/dentists</code> renders with no code change. That is the test the build has to pass.</p>
+        <p>The homepage is the switchboard: the brand, one search card with the two door control, and a block per door.</p>
       </div>
     </div>
     <div class="step">
       <div class="smark">2</div>
       <div class="sbody">
-        <h3>One accent pair per profession</h3>
-        <p>Coaches keep what they have: terracotta <code>#B4553A</code> on the cream ground and peach <code>#e8b79a</code> for italic emphasis and eyebrows on the ink ground. That is the launch identity and it does not move. Farriers get steel <code>#3F6480</code> on cream and sky <code>#A9C4DA</code> on ink. Measured against the real grounds: steel on cream is 5.6:1 and cream on steel is 5.6:1, so it works for text and for buttons; sky on deep ink is 8.6:1, the same job peach does at 8.6:1. Steel and terracotta are a blue-against-orange pair, which is the one combination that stays distinct for the most common colour blindness. Each later profession gets one pair chosen the same way, against both grounds, at AA, and distinct from its neighbours.</p>
-        <p>The mechanism is one attribute. The layout sets <code>data-section</code> on the html element for anything under a profession path, the same way Phase 18 sets <code>data-overlay-route</code>, and the stylesheet swaps the accent tokens off it. The accent shows in italic emphasis, eyebrows, primary buttons, chips, map pins, the section badge and focus rings. It never touches the brand mark, the footer or body text, which is what keeps it one brand.</p>
+        <h3>One accent pair per door, set by one attribute</h3>
+        <p>Coaches keep terracotta <code>#B4553A</code> on cream and peach <code>#e8b79a</code> on ink. Horse care gets steel <code>#3F6480</code> on cream and sky <code>#A9C4DA</code> on ink. Measured on the real grounds: steel on cream 5.6:1, cream on steel 5.6:1, sky on deep ink 8.6:1, the same job peach does at 8.6:1. Blue against orange stays distinct under the common colour blindness. The layout sets <code>data-door</code> on the html element for anything under a door or a profession, the way Phase 18 sets <code>data-overlay-route</code>, and the stylesheet swaps the accent tokens off it. Accent appears in italic emphasis, eyebrows, primary buttons, chips, map pins, badges and focus rings, never on the brand mark, the footer or body text.</p>
       </div>
     </div>
     <div class="step">
       <div class="smark">3</div>
       <div class="sbody">
-        <h3>A glyph per profession, and a brand mark that is not initials</h3>
-        <p>One simple line glyph each, used in the header tab, on badges, on result cards and as the map pin: a riding helmet for coaches, a horseshoe for farriers. Small enough to read at 16 pixels, drawn in <code>currentColor</code> so it takes the accent for free.</p>
-        <p>The brand mark needs rethinking anyway, because the current "ECA" wordmark carries the retired name. Do not replace it with "EPA". The suggestion is the arch: it is already the site's photographic signature on every coach and discipline photo, it scales to a favicon, it belongs to nobody, and it means the mark and the photographs are the same shape. The wordmark is the full name in Instrument Serif on desktop and "Equine Professionals" on phones. The favicon and the app icon are the arch alone.</p>
+        <h3>A glyph per profession, a brand mark that is not initials</h3>
+        <p>One simple line glyph per profession in <code>currentColor</code>, so it takes the door's accent: helmet, horseshoe, tooth, saddle, a stethoscope for vets, and so on as rows arrive. Used in the Horse care menu, on badges, on result cards and as the map pin. It has to read at 16 pixels, which is the constraint that keeps them simple.</p>
+        <p>The brand mark is still to be rebuilt, because the current wordmark carries the retired name. Never the initials; EPA is a state regulator. The arch is the suggestion: already the photographic signature, scales to a favicon, belongs to nobody. Full wordmark in Instrument Serif on desktop, "Equine Professionals" on phones.</p>
       </div>
     </div>
     <div class="step">
       <div class="smark">4</div>
       <div class="sbody">
         <h3>The words come from the profession row</h3>
-        <p>A coach teaches disciplines to riders and runs clinics; a farrier has specialities, serves horse owners and takes bookings. Those nouns are data, not code: name, plural, tagline, hero title, hero copy, the word for what they specialise in, the word for who they serve, the verb on the call to action, the image and the accent pair. Professions are already terms, and terms already carry description, image and SEO fields from the discipline editor, so this is a handful of extra columns and the same admin screen with a second tab.</p>
-        <p>The professional-facing promise is the one thing not to invent. The coaching pitch exists and is honest because it came from the plan. The farrier pitch gets written after the first ten conversations with farriers, the same way the coaching one did. Until then the farrier page says what is true: riders and owners search here, you get an email when one gets in touch, and here is what it costs.</p>
+        <p>A coach teaches disciplines to riders and runs clinics. A farrier has specialities, serves horse owners and takes bookings. A dentist has services and a recall interval. Those nouns are data: plural, tagline, hero title, hero copy, the word for what they specialise in, the word for who they serve, the verb on the call to action, the image, the glyph, and the door. Professions are already terms, and terms already carry description, image and SEO fields from the discipline editor, so this is a handful of nullable columns and a second tab on the same admin screen.</p>
+        <p>Do not invent a profession's pitch. The coaching pitch is honest because it came from the plan. Each new profession's pitch block gets written after the first ten conversations with that profession. Until then the generic horse care pitch says what is true for all of them: owners search here, you get an email when one gets in touch, here is what it costs.</p>
       </div>
     </div>
     <div class="step">
       <div class="smark">5</div>
       <div class="sbody">
         <h3>Same photographs, different subject</h3>
-        <p>Same golden-hour grade, same arch crop, same rules about horses showing no stress. Coaches are rider and coach together, the lesson moment, the arena at the end of the day. Farriers are hands and hooves, the forge, the ute with the door open. The photography half-day already in the budget shoots both on the same day, ideally with a founding coach and a founding farrier at the same property.</p>
+        <p>Same golden-hour grade, same arch crop, same rule that no horse shows stress. Coaches are rider and coach together in the arena at the end of the day. Horse care is hands and the horse: a farrier at a hoof, a bodyworker's hands on a back, a dentist with a gag and a head torch. One photographic language, the subject says the profession. The budgeted half-day shoots coaches and at least one horse care profession at the same property.</p>
       </div>
     </div>
   </div>
 
   <div class="col">
-    <h3>How it holds together when someone moves between sections</h3>
-    <p>The header carries the brand mark on the left and the section tabs beside it, Coaches and Farriers, with the active one in its accent. Inside a section the tab stays lit and the accent stays on, so a rider three pages deep still knows where they are. Switching tabs keeps the location they typed. The search card never mixes professions; it changes the second field's label and options when the tab changes. A profile page takes the accent of the provider's primary profession, and someone who coaches and shoes shows both badges on one page. Emails come from the brand, and the template's accent and glyph follow the section the email is about. The dashboard is identical for everyone with the labels read from the profession row.</p>
-    <p>Page titles follow one pattern with the section in the body and the brand as the suffix: "Dressage coaches in Geelong | Equine Professionals Australia", "Farriers in Geelong | Equine Professionals Australia". The word riders search is in the title where it counts; the brand is where it is remembered.</p>
+    <h3>How it holds together when someone moves around</h3>
+    <p>The header carries the brand mark and the two door tabs, the active one in its accent. The Horse care tab opens a menu of professions with glyphs and counts, and it is the same menu at two professions or twelve. Inside a door the tab stays lit and the accent stays on. Switching doors keeps the town the rider typed. The search card never mixes professions. A profile page takes the accent of its primary profession's door and shows every profession badge the person has, so someone who coaches and does bodywork is one page with two badges in two colours, which is honest. Emails come from the brand with the door's accent and the profession's glyph. The dashboard is identical for everyone with labels read from the row.</p>
+    <p>Page titles keep the search word in the body and the brand as the suffix: "Dressage coaches in Geelong | Equine Professionals Australia", "Farriers in Geelong | Equine Professionals Australia", "Equine dentists in Geelong | Equine Professionals Australia". Breadcrumbs show the door: Home, Horse care, Farriers, Geelong.</p>
   </div>
 
   <div class="note">
     <span class="chip">What this is not</span>
-    <p>It is not two brands. No section logo, no section domain, no section social account, no section email address. Those are the things that make a section feel like a separate company to a rider, and they are also the things that cost two of everything to keep alive. If a section ever genuinely needs them, the answer is the carsales model, and the price of that is what SEEK paid to keep three names on one platform.</p>
+    <p>It is not two brands, and it is not one brand per profession. No section logo, no section domain, no section social account, no section email address, and no profession gets its own colour. Those are the things that make a section feel like a separate company to a rider, and they are the things that cost two of everything to keep alive.</p>
   </div>
 
   <div class="tablewrap">
     <table>
-      <caption>The build list for section identity</caption>
+      <caption>The build list for door and profession identity</caption>
       <thead><tr><th>Piece</th><th>What</th></tr></thead>
       <tbody>
-        <tr><td><code>data-section</code></td><td>Set on the html element by the layout for <code>/coaches/*</code>, <code>/farriers/*</code>, <code>/for-coaches</code>, <code>/for-farriers</code>, and on <code>/profile/[slug]</code> from the primary profession. Inline script for first paint plus the header effect for client navigation, exactly as Phase 18 does it.</td></tr>
-        <tr><td>Accent tokens</td><td><code>--accent</code>, <code>--accent-hover</code>, <code>--accent-on-ink</code> swapped per section in <code>globals.css</code>. Every use of the terracotta and peach tokens already goes through these names, so nothing else changes.</td></tr>
-        <tr><td>Profession content</td><td>Columns on <code>terms</code> used when kind is profession: plural, tagline, hero title, hero copy, term noun, audience noun, action verb, accent light, accent dark, glyph. Edited at <code>/admin/professions</code>, a copy of the discipline editor.</td></tr>
-        <tr><td>Section landing</td><td>One page template at <code>/[profession]</code> driven by the row. Coaches first, farriers when there is a row.</td></tr>
-        <tr><td>Pitch page</td><td>One template at <code>/for-[profession]</code>. The coaching copy moves into the coaching row; nothing is lost.</td></tr>
-        <tr><td>Header</td><td>Brand mark plus a section tab component reading the professions list. Active tab from <code>data-section</code>. Collapses to one menu at three or more professions.</td></tr>
-        <tr><td>Badge, pin, glyph</td><td>A badge component and a pin variant that read the accent and the glyph. Result cards and the profile page use the badge; the map uses the pin.</td></tr>
-        <tr><td>Brand mark</td><td>Arch mark, full wordmark on desktop, short on phones, favicon and app icon regenerated. Replaces the ECA wordmark everywhere.</td></tr>
-        <tr><td>Email</td><td>The transactional and monthly templates take a section parameter for accent and glyph. Sender unchanged.</td></tr>
+        <tr><td><code>data-door</code></td><td>Set on the html element by the layout: <code>coaches</code> under <code>/coaches/*</code> and <code>/for-coaches</code>; <code>horse-care</code> under <code>/horse-care</code>, every horse care profession's paths and <code>/for-professionals</code>; on <code>/profile/[slug]</code> from the primary profession's door. Inline script for first paint plus the header effect for client navigation, as Phase 18 does it.</td></tr>
+        <tr><td>Accent tokens</td><td><code>--accent</code>, <code>--accent-hover</code>, <code>--accent-on-ink</code> swapped per door in <code>globals.css</code>. Two doors, two blocks. Everything already routes through these token names.</td></tr>
+        <tr><td>Doors</td><td>Two, in code: slug, label, search-card phrase, pitch route, accent block. A third is a migration on purpose.</td></tr>
+        <tr><td>Profession content</td><td>Columns on <code>terms</code> used when kind is profession: door, plural, tagline, hero title, hero copy, term noun, audience noun, action verb, glyph. Edited at <code>/admin/professions</code>, a copy of the discipline editor.</td></tr>
+        <tr><td>Door landing</td><td><code>/coaches</code> and <code>/horse-care</code>. The horse care one lists its professions from the table with counts from <code>indexable_pages</code> or a plain count query.</td></tr>
+        <tr><td>Profession landing</td><td>One template at <code>/[profession]</code> driven by the row, plus the speciality and area routes under it. Coaches use it too; there is no special case.</td></tr>
+        <tr><td>Pitch pages</td><td><code>/for-coaches</code> unchanged in address. <code>/for-professionals</code> with a profession picker and optional per profession copy block.</td></tr>
+        <tr><td>Header</td><td>Brand mark plus two door tabs; the Horse care tab is a menu built from the professions table. Never more than two tabs.</td></tr>
+        <tr><td>Badge, pin, glyph</td><td>A badge component and a pin variant reading the door's accent and the profession's glyph. Cards and the profile use the badge; the map uses the pin.</td></tr>
+        <tr><td>Brand mark</td><td>Arch mark, full wordmark on desktop, short on phones, favicon and app icon regenerated. Replaces the old wordmark everywhere, including the site footer, the email sender name and the metadata.</td></tr>
+        <tr><td>Email</td><td>Transactional and monthly templates take a door and a profession for accent and glyph. Sender unchanged.</td></tr>
+        <tr><td>The test</td><td>Insert a dentist row with a glyph and copy and nothing else. <code>/dentists</code>, <code>/dentists/in/[area]</code>, the Horse care menu, the footer column, the sitemap and the search select must all show it with no deploy.</td></tr>
       </tbody>
     </table>
   </div>
