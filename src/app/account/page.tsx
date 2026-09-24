@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getDisciplines, resolveLocation } from "@/lib/supabase/queries";
-import { titleCase } from "@/lib/text";
-import { removeFavourite } from "./actions";
-import { ClinicAlertsForm } from "./clinic-alerts-form";
+import { resolveLocation } from "@/lib/supabase/queries";
+import { getProfessions } from "@/lib/cms/read";
+import { getSectionTerms } from "@/lib/sections";
+import { deleteAlert, removeFavourite, setAlertActive } from "./actions";
+import { AlertForm, type AlertDefaults, type AlertProfession } from "./alert-form";
 import { eventPath, profilePath } from "@/lib/page-paths";
 
 export const metadata = { title: "My account", robots: { index: false, follow: false } };
@@ -46,16 +47,38 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number) {
  * five blocks fall into the canvas's phone order via `order-*` and into
  * two flex columns from `wide:` up.
  */
-export default async function AccountPage({ searchParams }: { searchParams: Promise<{ saved?: string }> }) {
-  const { saved } = await searchParams;
+type AlertRow = {
+  id: string;
+  suburb: string | null;
+  postcode: string | null;
+  radius_km: number;
+  door: string | null;
+  profession_ids: string[];
+  term_ids: string[];
+  wants_events: boolean;
+  wants_new_providers: boolean;
+  unsubscribed_at: string | null;
+};
+
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ saved?: string; alerts?: string; location?: string; d?: string; p?: string; alert_error?: string }>;
+}) {
+  const sp = await searchParams;
+  const { saved } = sp;
   const supabase = await createClient();
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
   if (!supabase || !user) redirect("/login?next=/account");
 
-  const [{ data: profile }, disciplines, { data: prefs }, { data: favouriteRows }, { data: sentRows }, { data: nearbyRows }] = await Promise.all([
+  const [{ data: profile }, allProfessions, { data: alertRows }, { data: favouriteRows }, { data: sentRows }, { data: nearbyRows }] = await Promise.all([
     supabase.from("profiles").select("name").eq("id", user.id).maybeSingle(),
-    getDisciplines(supabase),
-    supabase.from("rider_alerts").select("suburb, postcode, term_ids").eq("rider_id", user.id).order("created_at").limit(1).maybeSingle(),
+    getProfessions(),
+    supabase
+      .from("rider_alerts")
+      .select("id, suburb, postcode, radius_km, door, profession_ids, term_ids, wants_events, wants_new_providers, unsubscribed_at")
+      .eq("rider_id", user.id)
+      .order("created_at"),
     supabase
       .from("favourites")
       .select("provider_id, created_at, providers(slug, name, headline, suburb, state, lat, long, provider_terms(sort_order, terms(name, kind)), provider_photos(storage_path, sort_order))")
@@ -66,10 +89,56 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
   ]);
 
   const firstName = (profile?.name ?? user.user_metadata?.name ?? "there").split(" ")[0];
-  const followedIds: string[] = prefs?.term_ids ?? [];
-  const savedArea = prefs ? [prefs.suburb, prefs.postcode].filter(Boolean).join(" ") : "";
+  const alerts = (alertRows ?? []) as AlertRow[];
+  // Distances to saved profiles are measured from the first live alert's place.
+  const firstAlert = alerts.find((a) => !a.unsubscribed_at) ?? alerts[0];
+  const savedArea = firstAlert ? [firstAlert.suburb, firstAlert.postcode].filter(Boolean).join(" ") : "";
   const home = savedArea ? await resolveLocation(supabase, savedArea) : null;
-  const area = home ? [titleCase(home.suburb), home.state, home.postcode].filter(Boolean).join(" ") : savedArea;
+
+  // Every profession a rider can follow, with its disciplines or specialities.
+  const professions: AlertProfession[] = await Promise.all(
+    allProfessions
+      .filter((p) => p.open && p.id)
+      .map(async (p) => ({
+        id: p.id!,
+        slug: p.slug,
+        name: p.name,
+        singular: p.singular,
+        termNounPlural: p.termNounPlural,
+        door: p.door,
+        terms: (await getSectionTerms(p.id)).map((t) => ({ id: t.id, slug: t.slug, name: t.name })),
+      }))
+  );
+  const describe = (a: AlertRow) => {
+    const prof = professions.find((p) => a.profession_ids.includes(p.id));
+    const who = prof ? prof.name : a.door === "horse_care" ? "All horse care" : a.door === "coaches" ? "Riding coaches" : "Everyone";
+    const terms = prof ? prof.terms.filter((t) => a.term_ids.includes(t.id)).map((t) => t.name) : [];
+    const what = [a.wants_events && "clinics and events", a.wants_new_providers && "new people"].filter(Boolean).join(" and ");
+    const place = [a.suburb, a.postcode].filter(Boolean).join(" ") || "?";
+    return { who: terms.length ? `${who}: ${terms.join(", ")}` : who, where: `${place}, within ${a.radius_km} km`, what };
+  };
+  const toDefaults = (a: AlertRow): AlertDefaults => ({
+    id: a.id,
+    place: [a.suburb, a.postcode].filter(Boolean).join(" "),
+    radiusKm: a.radius_km,
+    who: a.profession_ids[0] ? `p:${a.profession_ids[0]}` : a.door ? `door:${a.door}` : "",
+    termIds: a.term_ids,
+    wantsEvents: a.wants_events,
+    wantsNewProviders: a.wants_new_providers,
+  });
+  // "Notify me" from a search arrives as ?alerts=1&location=…&p=…&d=… and opens a filled-in form.
+  const fromSearch = sp.alerts === "1";
+  const searchProfession = professions.find((p) => p.slug === (sp.p || "coaches"));
+  const searchTerm = sp.d ? searchProfession?.terms.find((t) => t.slug === sp.d) : undefined;
+  const newDefaults: AlertDefaults = {
+    place: fromSearch ? (sp.location ?? "") : "",
+    radiusKm: 100,
+    who: fromSearch && searchProfession ? `p:${searchProfession.id}` : "",
+    termIds: searchTerm ? [searchTerm.id] : [],
+    wantsEvents: true,
+    wantsNewProviders: fromSearch,
+    source: fromSearch ? "search" : "account",
+  };
 
   const favourites: Favourite[] = (favouriteRows ?? [])
     .map((row) => {
@@ -95,7 +164,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
       return {
         coachId: row.provider_id,
         slug: c.slug,
-        name: c.name || "Coach",
+        name: c.name,
         headline: c.headline,
         where: `${c.suburb} ${c.state}${km != null ? ` · ${km} km` : ""}`,
         tags: (c.provider_terms ?? [])
@@ -127,7 +196,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
       <p data-eyebrow className="text-[12px] font-medium uppercase tracking-[0.18em] text-subtle">My account</p>
       <div className="wide:flex wide:items-end wide:justify-between wide:gap-6">
         <h1 className="mt-1.5 font-display text-[40px] leading-none -tracking-[0.02em] text-ink wide:mt-2 wide:text-[56px] wide:leading-[0.98] wide:-tracking-[0.025em]">Hello, {firstName}</h1>
-        <p className="mt-2.5 max-w-[44ch] text-[15px] leading-[1.5] text-muted wide:mt-0 wide:text-right">Free, always. This is just where your saved coaches and clinic alerts live.</p>
+        <p className="mt-2.5 max-w-[44ch] text-[15px] leading-[1.5] text-muted wide:mt-0 wide:text-right">Free, always. This is where the people you&apos;ve saved and your alerts live.</p>
       </div>
 
       <div className="mt-[26px] grid grid-cols-1 gap-8 wide:mt-10 wide:grid-cols-[1.6fr_1fr] wide:items-start wide:gap-10">
@@ -135,16 +204,16 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
         <div className="contents wide:flex wide:flex-col">
           <section data-saved className="order-1">
             <div className="flex items-baseline justify-between">
-              <h2 className={h2}>Saved coaches</h2>
+              <h2 className={h2}>Saved</h2>
               <span data-fav-count className="text-[14px] text-subtle">{favourites.length > 0 ? `${favourites.length} saved` : ""}</span>
             </div>
             <div className="mt-3.5 flex flex-col gap-2.5 wide:mt-4">
               {favourites.length === 0 ? (
                 <div data-empty className="rounded-[16px] border border-dashed border-[#d9cdb6] px-[18px] py-[26px] text-center wide:p-9">
                   <p className="font-display text-[20px] leading-[1.2] text-ink wide:text-[24px]">Nothing saved yet</p>
-                  <p className="mt-2 text-[14px] leading-[1.5] text-muted wide:text-[15px]">Tap the heart on any coach to keep them here.</p>
+                  <p className="mt-2 text-[14px] leading-[1.5] text-muted wide:text-[15px]">Tap the heart on anyone&apos;s profile to keep them here.</p>
                   <Link href="/search" className="mt-3.5 inline-block rounded-[var(--radius-pill)] border border-ink px-4 py-2.5 text-[14px] font-medium text-ink wide:mt-4 wide:px-[18px] wide:py-[11px]">
-                    Browse coaches
+                    Find someone
                   </Link>
                 </div>
               ) : (
@@ -182,7 +251,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
                       ))}
                     </div>
                     <form action={removeFavourite.bind(null, f.coachId)}>
-                      <button type="submit" title="Remove" aria-label={`Remove ${f.name} from saved coaches`} className="p-1.5 text-[20px] leading-none text-accent wide:text-[22px]">
+                      <button type="submit" title="Remove" aria-label={`Remove ${f.name} from saved`} className="p-1.5 text-[20px] leading-none text-accent wide:text-[22px]">
                         ♥
                       </button>
                     </form>
@@ -196,7 +265,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
             <h2 className={h2}>Enquiries you&apos;ve sent</h2>
             <div className="mt-3.5 flex flex-col border-t border-border">
               {sent.length === 0 ? (
-                <p className="py-3.5 text-[14px] text-subtle">Nothing sent yet. Every coach page has an enquiry form — what you send shows up here.</p>
+                <p className="py-3.5 text-[14px] text-subtle">Nothing sent yet. Every profile has an enquiry form, and what you send shows up here.</p>
               ) : (
                 sent.map((s) => (
                   <div key={s.id} data-sent-row className="grid grid-cols-[1fr_auto] items-center gap-3 border-b border-border py-3.5 wide:grid-cols-[1fr_auto_auto] wide:gap-5 wide:py-4">
@@ -220,12 +289,47 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
 
         {/* right column on desktop */}
         <div className="contents wide:flex wide:flex-col wide:gap-4">
-          <section data-alerts className="order-2 wide:rounded-[18px] wide:border wide:border-border wide:bg-surface wide:px-6 wide:py-[22px]">
-            <h2 className="font-display text-[28px] leading-none text-ink">Clinic alerts</h2>
-            <p className="mt-2 text-[14.5px] leading-[1.5] text-muted wide:text-[14px]">One email when a coach lists a clinic near you or in a discipline you follow. Nothing else.</p>
-            <div className="wide:mt-4">
-              <ClinicAlertsForm area={area} disciplines={disciplines} followedIds={followedIds} saved={saved === "1"} />
-            </div>
+          <section id="alerts" data-alerts className="order-2 scroll-mt-24 wide:rounded-[18px] wide:border wide:border-border wide:bg-surface wide:px-6 wide:py-[22px]">
+            <h2 className="font-display text-[28px] leading-none text-ink">Alerts</h2>
+            <p className="mt-2 text-[14.5px] leading-[1.5] text-muted wide:text-[14px]">
+              An email when a clinic comes up or someone new starts near you, for whoever you follow. Nothing else.
+            </p>
+            {saved === "1" && <p role="status" className="mt-3 text-[13.5px] text-muted">Alert saved.</p>}
+            {sp.alert_error && <p role="alert" className="mt-3 text-[13.5px] text-accent">{sp.alert_error}</p>}
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {alerts.map((a) => {
+                const d = describe(a);
+                return (
+                  <li key={a.id} data-alert className={`rounded-[14px] border border-border bg-surface p-3.5 ${a.unsubscribed_at ? "opacity-70" : ""}`}>
+                    <p className="text-[15px] font-medium text-fg">{d.who}</p>
+                    <p className="mt-0.5 text-[13.5px] text-subtle">
+                      {d.where} · {d.what}
+                      {a.unsubscribed_at ? " · off" : ""}
+                    </p>
+                    <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13.5px]">
+                      <form action={setAlertActive.bind(null, a.id, Boolean(a.unsubscribed_at))}>
+                        <button type="submit" className="font-medium text-accent">
+                          {a.unsubscribed_at ? "Turn back on" : "Turn off"}
+                        </button>
+                      </form>
+                      <form action={deleteAlert.bind(null, a.id)}>
+                        <button type="submit" className="text-subtle">
+                          Delete
+                        </button>
+                      </form>
+                      <details className="w-full [&[open]>summary]:mb-3">
+                        <summary className="cursor-pointer font-medium text-accent">Change</summary>
+                        <AlertForm professions={professions} defaults={toDefaults(a)} submitLabel="Save changes" />
+                      </details>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+            <details open={alerts.length === 0 || fromSearch} className="mt-4 rounded-[14px] border border-dashed border-border p-3.5 [&[open]>summary]:mb-3">
+              <summary className="cursor-pointer text-[15px] font-medium text-accent">{alerts.length ? "Add another alert" : "Set up an alert"}</summary>
+              <AlertForm professions={professions} defaults={newDefaults} submitLabel="Save alert" />
+            </details>
           </section>
 
           <section data-nearby className="order-3 wide:rounded-[18px] wide:bg-ink wide:px-6 wide:py-[22px] wide:text-ink-fg">
@@ -233,7 +337,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
             <p className="hidden text-[11px] font-medium uppercase tracking-[0.16em] text-peach wide:block">Coming up near you</p>
             <div className="mt-3.5 flex flex-col gap-2.5">
               {nearby.length === 0 ? (
-                <p className="text-[14px] leading-[1.5] text-subtle wide:text-ink-fg/70">Nothing listed near you yet. Save an area and the disciplines you follow, and clinics show up here as coaches list them.</p>
+                <p className="text-[14px] leading-[1.5] text-subtle wide:text-ink-fg/70">Nothing listed near you yet. Set up an alert and clinics and events show up here as they&apos;re listed.</p>
               ) : (
                 nearby.map((c) => (
                   <Link

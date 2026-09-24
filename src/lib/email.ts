@@ -12,11 +12,14 @@ export async function sendEmail({
   subject,
   text,
   replyTo,
+  unsubscribe,
 }: {
   to: string | string[];
   subject: string;
   text: string;
   replyTo?: string;
+  /** The one-click unsubscribe endpoint (RFC 8058): mail apps show their own "Unsubscribe" button for it. */
+  unsubscribe?: string;
 }): Promise<"sent" | "logged" | "failed"> {
   const recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);
   if (recipients.length === 0) return "logged";
@@ -26,7 +29,14 @@ export async function sendEmail({
     return "logged";
   }
   try {
-    await resend.emails.send({ from: NOTIFICATIONS_FROM, to: recipients, subject, text, ...(replyTo ? { replyTo } : {}) });
+    await resend.emails.send({
+      from: NOTIFICATIONS_FROM,
+      to: recipients,
+      subject,
+      text,
+      ...(replyTo ? { replyTo } : {}),
+      ...(unsubscribe ? { headers: { "List-Unsubscribe": `<${unsubscribe}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } } : {}),
+    });
     return "sent";
   } catch (err) {
     console.error("sendEmail failed", subject, err);

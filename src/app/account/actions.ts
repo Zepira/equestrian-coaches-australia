@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { resolveLocation } from "@/lib/supabase/queries";
+import { titleCase } from "@/lib/text";
 
 export async function removeFavourite(coachId: string) {
   const supabase = await createServerClient();
@@ -25,47 +26,97 @@ export async function removeFavourite(coachId: string) {
   revalidatePath("/account");
 }
 
-export async function saveRiderPreferences(formData: FormData) {
+const RADII = [25, 50, 100, 200];
+
+async function requireRider() {
   const supabase = await createServerClient();
   if (!supabase) throw new Error("Supabase isn't connected yet.");
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Not signed in.");
+  return { supabase, userId: user.id };
+}
 
-  const area = String(formData.get("area") ?? "").trim();
-  const disciplineIds = formData.getAll("discipline").map(String);
+/**
+ * Create or edit one alert (The Site as a CMS §07.1): a place and radius,
+ * who (everyone, a door, or one profession), optional disciplines or
+ * specialities of that profession, and what to hear about. A new alert
+ * records when and where the rider opted in (consent_source: the account
+ * page, or the "notify me" link on a search).
+ */
+export async function saveAlert(formData: FormData) {
+  const { supabase, userId } = await requireRider();
+  const id = String(formData.get("id") ?? "");
+  const place = String(formData.get("place") ?? "").trim();
+  const resolved = place ? await resolveLocation(supabase, place) : null;
+  if (!resolved) redirect(`/account?alert_error=${encodeURIComponent(place ? `We couldn't find "${place}". Try a suburb and state, or a postcode.` : "Add the place you want to hear about.")}#alerts`);
 
-  const resolved = area ? await resolveLocation(supabase, area) : null;
+  const radius = Number(formData.get("radius_km"));
+  const who = String(formData.get("who") ?? "");
+  const wantsEvents = formData.get("wants_events") === "on";
+  const wantsNew = formData.get("wants_new_providers") === "on";
+  if (!wantsEvents && !wantsNew) redirect(`/account?alert_error=${encodeURIComponent("Tick at least one thing to hear about.")}#alerts`);
 
-  // The account page's single "notify me" form edits the rider's first
-  // alert (rider_alerts, The Site as a CMS §07); several alerts per rider,
-  // for any profession, arrive with stage 6.
+  let door: string | null = null;
+  let professionIds: string[] = [];
+  let termIds: string[] = [];
+  if (who.startsWith("door:")) door = who.slice(5);
+  if (who.startsWith("p:")) {
+    const professionId = who.slice(2);
+    professionIds = [professionId];
+    // Only terms that belong to that profession.
+    const picked = formData.getAll("term").map(String);
+    if (picked.length) {
+      const { data } = await supabase.from("terms").select("id").eq("parent_id", professionId).in("id", picked);
+      termIds = (data ?? []).map((t) => t.id as string);
+    }
+  }
+
+  const now = new Date().toISOString();
   const fields = {
-    suburb: resolved?.suburb ?? null,
-    postcode: resolved?.postcode ?? null,
-    location: resolved ? `SRID=4326;POINT(${resolved.long} ${resolved.lat})` : null,
-    term_ids: disciplineIds,
-    profession_ids: [] as string[],
-    wants_events: true,
-    unsubscribed_at: null,
-    updated_at: new Date().toISOString(),
+    suburb: titleCase(resolved.suburb),
+    postcode: resolved.postcode,
+    location: `SRID=4326;POINT(${resolved.long} ${resolved.lat})`,
+    radius_km: RADII.includes(radius) ? radius : 100,
+    door,
+    profession_ids: professionIds,
+    term_ids: termIds,
+    wants_events: wantsEvents,
+    wants_new_providers: wantsNew,
+    updated_at: now,
   };
-  const { data: existing } = await supabase
-    .from("rider_alerts")
-    .select("id")
-    .eq("rider_id", user.id)
-    .order("created_at")
-    .limit(1)
-    .maybeSingle();
-  const { error } = existing
-    ? await supabase.from("rider_alerts").update(fields).eq("id", existing.id)
-    : await supabase.from("rider_alerts").insert({ rider_id: user.id, consent_source: "account", ...fields });
+  const { error } = id
+    ? await supabase.from("rider_alerts").update(fields).eq("id", id).eq("rider_id", userId)
+    : await supabase.from("rider_alerts").insert({
+        rider_id: userId,
+        ...fields,
+        consent_source: String(formData.get("source") ?? "") === "search" ? "search" : "account",
+        consented_at: now,
+      });
   if (error) throw error;
-
   revalidatePath("/account");
-  redirect("/account?saved=1");
+  redirect("/account?saved=1#alerts");
+}
+
+export async function deleteAlert(id: string) {
+  const { supabase, userId } = await requireRider();
+  const { error } = await supabase.from("rider_alerts").delete().eq("id", id).eq("rider_id", userId);
+  if (error) throw error;
+  revalidatePath("/account");
+}
+
+/** Pause or resume. Resuming is a fresh opt-in, so it records new consent. */
+export async function setAlertActive(id: string, active: boolean) {
+  const { supabase, userId } = await requireRider();
+  const now = new Date().toISOString();
+  const { error } = await supabase
+    .from("rider_alerts")
+    .update(active ? { unsubscribed_at: null, consented_at: now, consent_source: "account", updated_at: now } : { unsubscribed_at: now, updated_at: now })
+    .eq("id", id)
+    .eq("rider_id", userId);
+  if (error) throw error;
+  revalidatePath("/account");
 }
 
 /**

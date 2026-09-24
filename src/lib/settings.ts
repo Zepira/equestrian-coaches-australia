@@ -45,6 +45,8 @@ export const DEFAULTS = {
   featured_min_providers: "8",
   /** Featured slots per profession per place. */
   featured_slots_per_area: "3",
+  /** How far a Clinic-tier event is emailed to riders, in km (others reach each rider's own alert radius, §07.2). */
+  event_reach_km: "250",
   /** Plan names, display prices and taglines, JSON (PlanInfo per tier). */
   plans: JSON.stringify(DEFAULT_PLANS),
   /** What each plan unlocks, JSON: { tier: { event_limit: number | null, video: boolean, featured: boolean } }. */
@@ -135,11 +137,13 @@ export const SETTING_RANGES = {
   area_page_min_providers: [1, 20],
   featured_min_providers: [2, 50],
   featured_slots_per_area: [0, 10],
+  event_reach_km: [25, 2000],
 } as const satisfies Partial<Record<SettingKey, readonly [number, number]>>;
 
 export const getAreaPageMinProviders = () => intSetting("area_page_min_providers", ...SETTING_RANGES.area_page_min_providers);
 export const getFeaturedMinProviders = () => intSetting("featured_min_providers", ...SETTING_RANGES.featured_min_providers);
 export const getFeaturedSlotsPerArea = () => intSetting("featured_slots_per_area", ...SETTING_RANGES.featured_slots_per_area);
+export const getEventReachKm = () => intSetting("event_reach_km", ...SETTING_RANGES.event_reach_km);
 
 // ── Review ─────────────────────────────────────────────────────────────────
 

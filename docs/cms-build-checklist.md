@@ -126,11 +126,15 @@ Found and fixed while writing this stage (would have broken at runtime, not at c
 
 ## 6. Riders (§07)
 
-- [ ] `rider_alerts` UI on `/account`: several alerts, each with place + radius, door or professions, optional terms, what to hear about.
-- [ ] Matching: new events and new providers → riders; event reach = alert radius, Clinic tier = `event_reach_km`.
-- [ ] Saved providers for any profession; "Coming up near you" across followed professions.
-- [ ] Rider monthly email: one email, a section per door followed.
-- [ ] Consent stored per alert; one-click unsubscribe in every email, honoured at once.
+- [x] Alerts on `/account`: as many as a rider wants, each with a place (suburb autocomplete) and radius (25/50/100/200 km), who (everyone, all horse care, or one profession), that profession's disciplines or specialities (optional), and what to hear about (clinics and events; someone new starting nearby). Listed in plain words ("Farriers: Remedial shoeing · Bendigo 3550, within 100 km · clinics and events and new people") with Change, Turn off / Turn back on, Delete. `AlertForm` (`src/app/account/alert-form.tsx`), actions `saveAlert` / `setAlertActive` / `deleteAlert`. The old single "clinic alerts" form is gone.
+- [x] A search's "Notify me" opens `/account?alerts=1&p=…&location=…&d=…` with the form filled in.
+- [x] Matching (`0005_rider_alerts.sql`, `src/lib/rider-email.ts`): new events through `riders_for_event` (profession, term, door, within the alert radius, or `event_reach_km` for a Clinic-plan provider; new setting, 250 km, in admin); new providers through the new `riders_for_provider` on every publish (profession or door, terms, within the alert radius or the provider's travel radius). Each once per rider (`notifications_log`).
+- [x] Saved providers work for any profession (favourites were already provider-level); the account page's wording is no longer coach-only. "Coming up near you" (`events_for_rider`, now door-aware and limited to alerts that want events) covers every profession followed.
+- [x] Monthly email (`sendRiderMonthly`, `/api/cron/rider-monthly`, 1st of the month in vercel.json): one email, a section per door (events in the next five weeks; people who joined near them in the last month through `new_providers_for_rider`); nothing to say, nothing sent; once a month per rider.
+- [x] Consent per alert: `consent_source` (account or search) and `consented_at`; turning an alert back on records fresh consent. Every email has an unsubscribe link: an alert's own token stops that alert, the monthly email's rider token stops everything. `/unsubscribe` is one button (not on page load, so mail scanners opening links can't unsubscribe anyone); mail apps get a real one-click `List-Unsubscribe` + `List-Unsubscribe-Post` header pointing at `POST /api/unsubscribe`. Honoured at once.
+- [x] `onboarding` and `unsubscribe` added to the reserved profession slugs (`0006_reserved_slugs.sql` and `src/lib/reserved-slugs.ts`).
+- [x] Check: 15/15 end to end with a throwaway rider, admin and six providers: alert from the account page (profession, speciality, both wants, consent account), alert from a Notify me link (filled in, consent search), a farrier published through the review queue emails the rider and a vet doesn't, events (near Listed and 130 km Clinic-tier matched; 130 km Listed not), Coming up near you, the monthly email once (both door sections in the logged text), one-click POST unsubscribe, a plain GET changing nothing, the monthly link stopping everything, turning back on with fresh consent, deleting. No page errors; everything deleted after. `tsc`, lint, build, nav 31/31, search suite ok.
+- [ ] Not done: the monthly email's "a profession has opened in your area" note (no profession opens after launch yet); emails are logged until Resend is set up.
 
 ## 7. Proof (§08)
 

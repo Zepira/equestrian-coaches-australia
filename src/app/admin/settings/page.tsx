@@ -169,7 +169,7 @@ export default async function AdminSettingsPage({
       </section>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">Place pages and featured spots</h2>
+        <h2 className="font-display text-[26px] leading-none text-ink">Place pages, featured spots and event reach</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
           Counted per profession, so ten coaches in Geelong don&apos;t switch on a Geelong farriers page.
         </p>
@@ -179,6 +179,7 @@ export default async function AdminSettingsPage({
               ["area_page_min_providers", "Providers before a place gets its own page", "Below this, /farriers/in/ballarat-vic sends people to the farriers page instead. Saving re-checks every place straight away."],
               ["featured_min_providers", "Providers nearby before featured spots appear", "In a smaller area a featured spot isn't worth paying for, so none show."],
               ["featured_slots_per_area", "Featured spots per profession in one place", "Shown in a labelled block above the results, taking turns day to day. Never a place in the results themselves."],
+              ["event_reach_km", "How far a Clinic plan's events are emailed, in km", "Other plans' events reach riders within each rider's own alert distance. Clinic events go this far."],
             ] as const
           ).map(([key, title, help]) => (
             <div key={key}>

@@ -164,7 +164,7 @@ export function SearchResults({
         </p>
       </div>
       <Link
-        href={`/account?alerts=1${locationText ? `&location=${encodeURIComponent(locationText)}` : ""}${disciplineSlug ? `&d=${disciplineSlug}` : ""}#alerts`}
+        href={`/account?alerts=1&p=${nouns.slug}${locationText ? `&location=${encodeURIComponent(locationText)}` : ""}${disciplineSlug ? `&d=${disciplineSlug}` : ""}#alerts`}
         className="inline-block self-start border-b border-current text-[14px] font-medium text-peach wide:shrink-0 wide:rounded-[var(--radius-pill)] wide:border-0 wide:bg-bg wide:px-[22px] wide:py-[13px] wide:text-[15px] wide:font-semibold wide:text-ink"
       >
         Notify me

@@ -87,6 +87,7 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
   area_page_min_providers: wholeNumber("area_page_min_providers"),
   featured_min_providers: wholeNumber("featured_min_providers"),
   featured_slots_per_area: wholeNumber("featured_slots_per_area"),
+  event_reach_km: wholeNumber("event_reach_km"),
   plans(raw) {
     const parsed = parseObject(raw);
     if (!parsed) return { error: "That isn't a valid set of plans." };
@@ -141,6 +142,7 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   area_page_min_providers: ["/sitemap.xml"],
   featured_min_providers: ["/search"],
   featured_slots_per_area: ["/search"],
+  event_reach_km: [],
   plans: ["/", "/coaches", "/horse-care", "/for-coaches", "/list-your-business", "/dashboard", "/dashboard/billing"],
   plan_capabilities: ["/dashboard", "/dashboard/clinics", "/dashboard/profile"],
 };

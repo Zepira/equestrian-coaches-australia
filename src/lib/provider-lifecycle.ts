@@ -6,6 +6,7 @@ import { getAreaPageMinProviders, getReviewAlertEmails } from "@/lib/settings";
 import { absoluteUrl } from "@/lib/site-url";
 import { profilePath, sectionPath, termPath } from "@/lib/page-paths";
 import { isLiveStatus } from "@/lib/tiers";
+import { notifyRidersOfProvider } from "@/lib/rider-email";
 
 /**
  * A provider's way from sign-up to live (The Site as a CMS §06.4–5):
@@ -110,6 +111,9 @@ export async function publish(service: SupabaseClient, providerId: string, revie
     .eq("id", providerId);
   if (error) throw error;
   await service.rpc("recompute_indexable_pages", { p_min_providers: await getAreaPageMinProviders() });
+
+  // Riders who asked to hear when someone like this starts near them (§07.1).
+  await notifyRidersOfProvider(service, providerId);
 
   const s = await summary(service, providerId);
   if (s) {
