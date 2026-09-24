@@ -85,6 +85,11 @@ try {
   await q("drop schema public cascade");
   await q("create schema public");
   await q(readFileSync(resolve(ROOT, "supabase/migrations/0001_baseline.sql"), "utf8"));
+  // Then every migration written since, in order (0002_reserved_term_slugs…).
+  for (const file of readdirSync(resolve(ROOT, "supabase/migrations")).filter((f) => /^\d{4}_.+\.sql$/.test(f) && f !== "0001_baseline.sql").sort()) {
+    console.log(`   ${file}`);
+    await q(readFileSync(resolve(ROOT, "supabase/migrations", file), "utf8"));
+  }
 
   // ── 3. Places ─────────────────────────────────────────────────────────────
   console.log("3. postcodes and areas");

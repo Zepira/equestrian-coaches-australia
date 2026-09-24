@@ -75,7 +75,7 @@ type CoachView = {
 
 const noContact = { email: null, hasPhone: false, facebookUrl: null, showContactForm: false };
 
-async function getCoachFromDb(slug: string): Promise<CoachView | null> {
+async function getCoachFromDb(slug: string, preview = false): Promise<CoachView | null> {
   const supabase = await createClient();
   if (!supabase) return null;
 
@@ -85,7 +85,9 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
       "id, name, business_name, headline, bio, suburb, state, lat, long, qualifications, video_url, availability, travel_radius_km, years_experience, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form"
     )
     .eq("slug", slug)
-    .eq("status", "published")
+    // A preview drops the published filter and leaves the rest to RLS, which
+    // shows an unpublished profile only to its own members and admins.
+    .in("status", preview ? ["draft", "in_review", "changes_requested", "hidden", "published"] : ["published"])
     .maybeSingle();
   if (!coach) return null;
 
@@ -277,10 +279,10 @@ function StatusPill({ status, who, className = "" }: { status: CoachView["taking
   );
 }
 
-export async function CoachProfile({ slug }: { slug: string }) {
-  const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
+export async function CoachProfile({ slug, preview = false }: { slug: string; preview?: boolean }) {
+  const coach = (await getCoachFromDb(slug, preview)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
   if (!coach) notFound();
-  if (coach.id) await logView(coach.id); // real coaches only; deduped per visitor per day
+  if (coach.id && !preview) await logView(coach.id); // real coaches only; deduped per visitor per day
   const profession = (await getProfession(coach.professionSlug ?? "coaches")) ?? FALLBACK_PROFESSIONS[0];
   const horseCare = profession.door === "horse_care";
   // Coaching has students; everyone else has clients. Riders vs horse owners from the row.
@@ -312,6 +314,11 @@ export async function CoachProfile({ slug }: { slug: string }) {
 
   return (
     <div className="coach-profile">
+      {preview && (
+        <p className="relative z-40 bg-ink px-[18px] py-2.5 text-center text-[14px] text-ink-fg">
+          Preview: this is how your profile will look once it&apos;s live.
+        </p>
+      )}
       {horseCare ? (
         <PageContext door="horse-care" resultsHref="/horse-care/search" resultsFrom={horseCareResultsPattern(await getProfessions())} />
       ) : (

@@ -132,6 +132,43 @@ export default async function AdminSettingsPage({
       </section>
 
       <section className="border-t border-border pt-6">
+        <h2 className="font-display text-[26px] leading-none text-ink">Review</h2>
+        <p className="mt-1 max-w-[62ch] text-sm text-muted">
+          With review on, a finished profile waits in the review queue until one of you publishes it. With it off, it goes live straight away and you get an email saying who joined.
+        </p>
+        <div className="mt-5 flex flex-col gap-6">
+          <div>
+            <h3 className="text-[15px] font-semibold text-fg">Review new profiles</h3>
+            {notice("review_required")}
+            <form action={saveSetting} className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end">
+              <input type="hidden" name="key" value="review_required" />
+              <label className="block">
+                <span className="mb-1 block text-sm font-medium text-fg">Review</span>
+                <select name="value" defaultValue={stored("review_required")} className={input}>
+                  <option value="true">On: we look before it goes live</option>
+                  <option value="false">Off: publish as soon as it&apos;s finished</option>
+                </select>
+              </label>
+              <Button type="submit">Save</Button>
+            </form>
+          </div>
+          <div>
+            <h3 className="text-[15px] font-semibold text-fg">Who gets the email</h3>
+            <p className="mt-1 max-w-[62ch] text-sm text-muted">One or more addresses, separated by commas. Empty means nobody is told, so fill this in before launch.</p>
+            {notice("review_alert_emails")}
+            <form action={saveSetting} className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end">
+              <input type="hidden" name="key" value="review_alert_emails" />
+              <label className="block min-w-0 flex-1">
+                <span className="mb-1 block text-sm font-medium text-fg">Email addresses</span>
+                <input name="value" defaultValue={stored("review_alert_emails")} className={input} />
+              </label>
+              <Button type="submit">Save</Button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-border pt-6">
         <h2 className="font-display text-[26px] leading-none text-ink">Place pages and featured spots</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
           Counted per profession, so ten coaches in Geelong don&apos;t switch on a Geelong farriers page.

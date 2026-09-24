@@ -3,7 +3,9 @@ import { loadDashboard } from "@/lib/dashboard";
 import { isMockPayments } from "@/lib/stripe";
 import { TIERS } from "@/lib/tiers";
 import { countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths } from "@/lib/settings";
-import { startCheckout, changePlan, openBillingPortal, mockCancelSubscription } from "./actions";
+import { startCheckout, changePlan, openBillingPortal, mockCancelSubscription, saveFoundingCardFromBilling } from "./actions";
+import { chargeWording } from "@/lib/founding";
+import { isLiveStatus } from "@/lib/tiers";
 
 export const metadata = { title: "Billing" };
 
@@ -17,17 +19,24 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   const { changed } = await searchParams;
   const ctx = await loadDashboard();
   if (!ctx) redirect("/login?next=/dashboard/billing");
-  const { tier, status, planName, plans } = ctx;
-  const active = status === "active";
-  const [firstCharge, freeMonths] = await Promise.all([getFirstChargeDate(), getFoundingFreeMonths()]);
+  const { tier, status, planName, plans, provider } = ctx;
+  // Founding members are on a plan from the moment their card is saved
+  // (card_saved before launch, trialing after), not only once paying.
+  const active = isLiveStatus(status);
+  const foundingNoCard = provider.cohort === "founding" && !active;
+  const [firstCharge, freeMonths, charge] = await Promise.all([getFirstChargeDate(), getFoundingFreeMonths(), chargeWording()]);
   const nextCharge = active ? (isMockPayments ? "— (mock)" : "See portal") : "—";
-  const billingLine = active
+  const billingLine = status === "card_saved"
+    ? `Founding member: your card is saved. ${charge}`
+    : active
     ? tier === "spotlight"
       ? `Founding offer: ${plans.spotlight.name} free ${firstCharge ? `until ${formatLongDate(firstCharge)}` : `for ${countWord(freeMonths)} months after launch`}, then ${plans.listed.monthly} a month for as long as you stay, even after the price goes up for everyone else.`
       : `${plans[tier!].monthly} a month. Your founding ${plans.listed.monthly} ${plans.listed.name} rate is kept for you if you come back down.`
     : status === "past_due"
       ? "Your last payment didn't go through. Update your card to keep your listing live."
-      : "No active subscription. Pick a plan below to publish your profile and appear in search.";
+      : foundingNoCard
+        ? `You're a founding member. Save your card to keep your place: ${charge}`
+        : "No active subscription. Pick a plan below to publish your profile and appear in search.";
 
   return (
     <div className="fade-in" style={{ animationDuration: "0.5s" }}>
@@ -38,6 +47,13 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         </p>
       )}
       {changed === "1" && <p className="mt-4 rounded-[12px] bg-shade p-3 text-[14px] text-fg">Plan changed.</p>}
+      {foundingNoCard && (
+        <form action={saveFoundingCardFromBilling} className="mt-4">
+          <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover">
+            Save my card
+          </button>
+        </form>
+      )}
 
       <div className="mt-[18px] wide:mt-7 wide:grid wide:grid-cols-2 wide:items-start wide:gap-4">
         <div className="rounded-[16px] bg-ink px-5 py-[22px] text-ink-fg wide:rounded-[18px] wide:p-7" data-plan-card>

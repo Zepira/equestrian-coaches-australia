@@ -14,12 +14,18 @@ export function generateStaticParams() {
   return [...mockProfessionals.map((p) => ({ slug: p.slug })), ...PLACEHOLDER_COACH_SLUGS.map((slug) => ({ slug }))];
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ preview?: string }> };
+
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug } = await params;
+  if ((await searchParams).preview) return { title: "Preview", robots: { index: false, follow: false } };
   return isProfessionalSlug(slug) ? professionalMetadata(slug) : coachMetadata(slug);
 }
 
-export default async function ProfilePage({ params }: { params: Promise<{ slug: string }> }) {
+// ?preview=1: the provider's own look at an unpublished profile (onboarding's
+// last step), shown only to its members and admins by RLS.
+export default async function ProfilePage({ params, searchParams }: Props) {
   const { slug } = await params;
-  return isProfessionalSlug(slug) ? <ProfessionalProfile slug={slug} /> : <CoachProfile slug={slug} />;
+  const preview = Boolean((await searchParams).preview);
+  return isProfessionalSlug(slug) ? <ProfessionalProfile slug={slug} /> : <CoachProfile slug={slug} preview={preview} />;
 }

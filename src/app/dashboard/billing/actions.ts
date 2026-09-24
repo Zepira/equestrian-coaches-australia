@@ -6,15 +6,16 @@ import { requireProvider } from "@/lib/provider-session";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { isTier, type Tier } from "@/lib/tiers";
 import { SITE_URL } from "@/lib/site-url";
+import { syncVisibility } from "@/lib/provider-lifecycle";
+import { startFoundingCard } from "@/lib/founding";
 
 /**
  * Billing writes go to `subscriptions` (one per provider, covering every
  * profession they have) with the service role: members can read their plan
  * but never write it, so nobody can grant themselves a tier.
  *
- * Until the review queue exists (CMS build stage 5), an active plan also
- * publishes the profile, as it always has. Stage 5 moves publishing to
- * review and leaves billing to billing.
+ * Billing never publishes: review does (src/lib/provider-lifecycle.ts). A
+ * plan that lapses hides a reviewed profile, and resuming shows it again.
  */
 async function requireBilling() {
   const session = await requireProvider();
@@ -37,24 +38,23 @@ async function saveSubscription(
   if (error) throw error;
 }
 
-async function setPublished(service: NonNullable<ReturnType<typeof createServiceSupabase>>, providerId: string, published: boolean) {
-  const { error } = await service
-    .from("providers")
-    .update({
-      status: published ? "published" : "draft",
-      ...(published ? { published_at: new Date().toISOString() } : {}),
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", providerId);
-  if (error) throw error;
-}
-
 // Creates (or reuses) a Stripe customer for this provider, starts a Checkout
 // session for the chosen tier, and sends them there. Publishing happens in
 // the webhook once payment actually succeeds, never here, so a user can't
 // grant themselves a free listing by hitting cancel.
 export async function startCheckout(tier: Tier) {
+  return checkout(tier, "dashboard");
+}
+
+/** The plan step of onboarding: same checkout, back to the preview afterwards. */
+export async function startCheckoutFromOnboarding(tier: Tier) {
+  return checkout(tier, "onboarding");
+}
+
+async function checkout(tier: Tier, from: "dashboard" | "onboarding") {
   if (!isTier(tier)) throw new Error("Unknown plan.");
+  const done = from === "onboarding" ? "/onboarding?step=preview&checkout=success" : "/dashboard?checkout=success";
+  const back = from === "onboarding" ? "/onboarding?step=plan&checkout=cancelled" : "/dashboard/billing?checkout=cancelled";
   const { service, providerId, email } = await requireBilling();
 
   // No Stripe account yet (see CLAUDE.md, Payments). Mock mode writes the
@@ -68,8 +68,8 @@ export async function startCheckout(tier: Tier) {
       stripe_customer_id: `mock_${providerId.slice(0, 8)}`,
       stripe_subscription_id: `mock_sub_${Date.now()}`,
     });
-    await setPublished(service, providerId, true);
-    redirect("/dashboard?checkout=success&mock=1");
+    await syncVisibility(service, providerId, true);
+    redirect(`${done}&mock=1`);
   }
 
   const stripe = getStripe();
@@ -91,8 +91,8 @@ export async function startCheckout(tier: Tier) {
     mode: "subscription",
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${origin}/dashboard?checkout=success`,
-    cancel_url: `${origin}/dashboard/billing?checkout=cancelled`,
+    success_url: `${origin}${done}`,
+    cancel_url: `${origin}${back}`,
     metadata: { provider_id: providerId, tier },
     subscription_data: { metadata: { provider_id: providerId, tier } },
   });
@@ -134,7 +134,7 @@ export async function changePlan(tier: Tier) {
   const { service, providerId } = await requireBilling();
   if (isMockPayments) {
     await saveSubscription(service, providerId, { tier, status: "active" });
-    await setPublished(service, providerId, true);
+    await syncVisibility(service, providerId, true);
     redirect("/dashboard/billing?changed=1");
   }
   await openBillingPortal();
@@ -147,7 +147,25 @@ export async function mockCancelSubscription() {
   if (!isMockPayments) throw new Error("Not in mock mode.");
 
   await saveSubscription(service, providerId, { status: "canceled" });
-  await setPublished(service, providerId, false);
+  await syncVisibility(service, providerId, false);
 
   redirect("/dashboard/billing");
+}
+
+// The founding card step (onboarding, or billing for a founding member who
+// skipped it). Mock mode saves the row and comes straight back.
+export async function saveFoundingCard() {
+  return foundingCard("onboarding");
+}
+
+export async function saveFoundingCardFromBilling() {
+  return foundingCard("dashboard");
+}
+
+async function foundingCard(from: "dashboard" | "onboarding") {
+  const { service, providerId, email, provider } = await requireBilling();
+  if (provider.cohort !== "founding") throw new Error("The founding offer isn't open to this account.");
+  const back = from === "onboarding" ? "/onboarding?step=plan" : "/dashboard/billing";
+  const url = await startFoundingCard(service, providerId, email, back);
+  redirect(url ?? `${back}${back.includes("?") ? "&" : "?"}card=saved`);
 }

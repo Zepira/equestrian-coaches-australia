@@ -3,14 +3,15 @@ import { getDisciplines, getSkills, getAttributes, ensureProvider, PROVIDER_PHOT
 import { getPlanCapabilities } from "@/lib/settings";
 import { hasVideo } from "@/lib/tiers";
 import { ProfileForm } from "./profile-form";
+import { getSectionTerms } from "@/lib/sections";
 
 export const metadata = { title: "Edit profile" };
 
 export default async function ProfileEditPage() {
   const supabase = await createClient();
-  const disciplines = await getDisciplines(supabase);
-  const skills = await getSkills(supabase);
-  const attributes = await getAttributes(supabase);
+  let disciplines: { id: string; slug: string; name: string }[] = await getDisciplines(supabase);
+  let skills: { id: string; slug: string; name: string }[] = await getSkills(supabase);
+  let attributes: { id: string; slug: string; name: string }[] = await getAttributes(supabase);
 
   if (!supabase) {
     return (
@@ -40,6 +41,24 @@ export default async function ProfileEditPage() {
 
   const provider = await ensureProvider(supabase, user.id, profile?.name ?? "Coach");
   const providerId = provider.id;
+
+  // A horse care provider edits their own profession's specialities, and the
+  // setup terms every profession shares; coaching's lists are coaching's.
+  const { data: professionRow } = await supabase
+    .from("provider_terms")
+    .select("sort_order, terms!inner(id, slug, kind)")
+    .eq("provider_id", providerId)
+    .eq("terms.kind", "profession")
+    .order("sort_order")
+    .limit(1)
+    .maybeSingle();
+  const primary = (professionRow as unknown as { terms: { id: string; slug: string } } | null)?.terms;
+  if (primary && primary.slug !== "coaches") {
+    disciplines = await getSectionTerms(primary.id);
+    skills = [];
+    const { data: shared } = await supabase.from("terms").select("id, slug, name").eq("kind", "attribute").is("parent_id", null).eq("active", true).order("name");
+    attributes = (shared ?? []) as typeof attributes;
+  }
 
   const [{ data: selected }, { data: photos }, { data: testimonials }, { data: sub }] = await Promise.all([
     supabase.from("provider_terms").select("term_id").eq("provider_id", providerId),

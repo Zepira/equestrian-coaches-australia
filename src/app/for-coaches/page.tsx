@@ -208,7 +208,7 @@ export default async function ForCoachesPage() {
               Most directories take your money and show you nothing. We email you every month with how many riders saw your profile, how many clicked to call, and how many got in touch — including the months when the answer is none.
             </p>
             <div className="fade-in flex flex-col gap-2 wide:flex-row wide:gap-2.5" style={{ animationDelay: "0.85s" }}>
-              <Link href="/signup?role=coach&plan=founding" className="block rounded-[10px] bg-accent px-[26px] py-[15px] text-center text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:py-4">
+              <Link href="/join/coaches?plan=founding" className="block rounded-[10px] bg-accent px-[26px] py-[15px] text-center text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:py-4">
                 Join as a founding coach
               </Link>
               <Link href="#included" className="block rounded-[10px] border border-ink-fg/40 px-[26px] py-3.5 text-center text-[16px] font-medium text-ink-fg transition-colors duration-[250ms] hover:bg-ink-fg/10 wide:py-[15px]">
@@ -250,7 +250,7 @@ export default async function ForCoachesPage() {
                 Until then you&rsquo;re on {plans.spotlight.name}, our middle plan. After that it&rsquo;s {listedPrice} a month, and that price stays yours for as long as you keep your listing, even when it goes up for new coaches. All we ask is a finished profile: a photo, a bio in your own words, your disciplines and where you teach.
                 {joinBy && foundingOpen && ` Founding spots close on ${formatLongDate(joinBy)}.`}
               </p>
-              <Link href="/signup?role=coach&plan=founding" className="mt-[22px] inline-block rounded-[10px] bg-accent px-[22px] py-3.5 text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:mt-6 wide:px-6">
+              <Link href="/join/coaches?plan=founding" className="mt-[22px] inline-block rounded-[10px] bg-accent px-[22px] py-3.5 text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:mt-6 wide:px-6">
                 Claim a founding spot
               </Link>
             </div>

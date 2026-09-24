@@ -232,7 +232,7 @@ export async function CoachesHome() {
             <strong className="font-semibold text-fg">{plans.listed.monthly} a month</strong>. Riders contact you direct. No commission, ever.
           </p>
           <Link
-            href="/signup?role=coach"
+            href="/join/coaches"
             className="mt-[18px] block rounded-[10px] bg-ink py-[15px] text-center text-[16px] font-semibold text-ink-fg transition-colors duration-[250ms] hover:bg-accent wide:mt-6 wide:inline-block wide:rounded-[var(--radius-pill)] wide:px-[26px]"
           >
             List your profile

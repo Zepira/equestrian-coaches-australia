@@ -2,7 +2,9 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 
-const COACH_ROUTES = "/dashboard";
+// Provider-only: the dashboard and the onboarding steps.
+const PROVIDER_ROUTES = ["/dashboard", "/onboarding"];
+const isProviderRoute = (path: string) => PROVIDER_ROUTES.some((r) => path === r || path.startsWith(`${r}/`));
 const RIDER_ROUTES = "/account";
 const ADMIN_ROUTES = "/admin";
 
@@ -45,7 +47,7 @@ export async function updateSession(request: NextRequest) {
   // (redirectMissingTerm, src/lib/sections.ts).
 
   const needsAuth =
-    pathname.startsWith(COACH_ROUTES) ||
+    isProviderRoute(pathname) ||
     pathname.startsWith(RIDER_ROUTES) ||
     pathname.startsWith(ADMIN_ROUTES);
 
@@ -55,7 +57,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (user && pathname.startsWith(COACH_ROUTES)) {
+  if (user && isProviderRoute(pathname)) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")

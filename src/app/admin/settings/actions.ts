@@ -9,12 +9,15 @@ import {
   LOCKED_ONCE_SET,
   SETTINGS_TAG,
   SETTING_RANGES,
+  isEmail,
+  parseEmailList,
   getPlans,
   readPlanCapability,
   readPlanInfo,
   type SettingKey,
 } from "@/lib/settings";
 import { createServiceSupabase } from "@/lib/supabase/service";
+import { activateFoundingMembers } from "@/lib/founding";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -69,6 +72,18 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     if (parsed.date > limit) return { error: "More than three years away. Check the year." };
     return { value: parsed.value };
   },
+  review_required(raw) {
+    const v = raw.trim();
+    if (v !== "true" && v !== "false") return { error: "Choose on or off." };
+    return { value: v };
+  },
+  review_alert_emails(raw) {
+    const list = parseEmailList(raw);
+    const bad = list.find((e) => !isEmail(e));
+    if (bad) return { error: `"${bad}" isn't an email address.` };
+    if (list.length > 10) return { error: "Ten addresses at most." };
+    return { value: list.join(", ") };
+  },
   area_page_min_providers: wholeNumber("area_page_min_providers"),
   featured_min_providers: wholeNumber("featured_min_providers"),
   featured_slots_per_area: wholeNumber("featured_slots_per_area"),
@@ -121,6 +136,8 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   launch_date: ["/for-coaches"],
   founding_free_months: ["/for-coaches"],
   founding_join_by: ["/for-coaches"],
+  review_required: [],
+  review_alert_emails: [],
   area_page_min_providers: ["/sitemap.xml"],
   featured_min_providers: ["/search"],
   featured_slots_per_area: ["/search"],
@@ -193,6 +210,13 @@ async function writeSetting(key: SettingKey, raw: string) {
   if (!updated?.length) {
     const { error: insertError } = await supabase.from("settings").insert({ key, value: result.value });
     if (insertError) throw insertError;
+  }
+
+  // Locking the launch date starts every saved-card founding member's free
+  // period and emails them their first charge date (src/lib/founding.ts).
+  if (key === "launch_date") {
+    const service = createServiceSupabase();
+    if (service) await activateFoundingMembers(service, new Date(`${result.value}T00:00:00Z`));
   }
 
   // A new gate applies now, not at tonight's recompute.

@@ -171,7 +171,7 @@ export function findProfession(list: Profession[], slug: string): Profession | u
  * profile names its own door (src/components/page-context.tsx).
  */
 export function horseCarePrefixes(list: Profession[]): string[] {
-  return ["/horse-care", ...horseCareOf(list).filter((p) => p.open).map((p) => `/${p.slug}`)];
+  return ["/horse-care", "/for-professionals", ...horseCareOf(list).filter((p) => p.open).map((p) => `/${p.slug}`)];
 }
 
 export function pathInPrefixes(pathname: string, prefixes: string[]): boolean {

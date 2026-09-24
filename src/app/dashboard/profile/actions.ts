@@ -6,6 +6,7 @@ import { PROVIDER_PHOTOS, PROVIDER_VIDEOS, resolveLocation } from "@/lib/supabas
 import { hasVideo } from "@/lib/tiers";
 import { getPlanCapabilities, getPlans } from "@/lib/settings";
 import { TIERS } from "@/lib/tiers";
+import { logChange } from "@/lib/provider-lifecycle";
 
 // Video is a plan perk: which plans is the plan_capabilities setting.
 async function requireVideoTierCoach() {
@@ -119,7 +120,7 @@ export async function saveProfile(formData: FormData) {
 }
 
 export async function uploadPhoto(formData: FormData) {
-  const { supabase, providerId } = await requireProvider();
+  const { supabase, providerId, userId } = await requireProvider();
 
   const file = formData.get("photo") as File | null;
   if (!file || file.size === 0) throw new Error("No file provided.");
@@ -142,11 +143,14 @@ export async function uploadPhoto(formData: FormData) {
     .insert({ provider_id: providerId, storage_path: path, sort_order: count ?? 0 });
   if (insertError) throw insertError;
 
+  // A live profile's photos change without another review; admin sees it in "recent changes".
+  await logChange(supabase, providerId, userId, "photo added", null, path);
   revalidatePath("/dashboard/profile");
+  revalidatePath("/onboarding");
 }
 
 export async function deletePhoto(photoId: string, storagePath: string) {
-  const { supabase, providerId } = await requireProvider();
+  const { supabase, providerId, userId } = await requireProvider();
 
   await supabase.storage.from(PROVIDER_PHOTOS).remove([storagePath]);
   const { error } = await supabase
@@ -156,7 +160,9 @@ export async function deletePhoto(photoId: string, storagePath: string) {
     .eq("provider_id", providerId);
   if (error) throw error;
 
+  await logChange(supabase, providerId, userId, "photo removed", storagePath, null);
   revalidatePath("/dashboard/profile");
+  revalidatePath("/onboarding");
 }
 
 export async function uploadVideo(formData: FormData) {

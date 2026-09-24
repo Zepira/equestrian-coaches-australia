@@ -55,7 +55,7 @@ export default async function ListYourBusiness() {
             >
               See coach plans
             </Link>
-            <Link href="/signup?role=coach" className="border-b border-current text-[15px] font-medium text-accent">
+            <Link href="/join/coaches" className="border-b border-current text-[15px] font-medium text-accent">
               Sign up now
             </Link>
           </div>
@@ -69,7 +69,7 @@ export default async function ListYourBusiness() {
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Link
-              href="/signup?role=coach"
+              href="/for-professionals"
               className="rounded-[var(--radius-pill)] bg-accent px-[26px] py-[14px] text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover"
             >
               Create your profile

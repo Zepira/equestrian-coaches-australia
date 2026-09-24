@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
-import { getStripe } from "@/lib/stripe";
+import { FOUNDING_PRICE_ID, getStripe } from "@/lib/stripe";
+import { syncVisibility } from "@/lib/provider-lifecycle";
 import type Stripe from "stripe";
 
 // Uses the service-role key: Stripe calls this with no user session, and
@@ -17,6 +18,7 @@ const TIER_BY_PRICE_ENV: Record<string, "listed" | "spotlight" | "clinic"> = {
   [process.env.NEXT_PUBLIC_STRIPE_PRICE_LISTED ?? ""]: "listed",
   [process.env.NEXT_PUBLIC_STRIPE_PRICE_SPOTLIGHT ?? ""]: "spotlight",
   [process.env.NEXT_PUBLIC_STRIPE_PRICE_CLINIC ?? ""]: "clinic",
+  [FOUNDING_PRICE_ID ?? "-"]: "listed",
 };
 
 function statusFromStripe(status: Stripe.Subscription.Status): "active" | "trialing" | "past_due" | "canceled" | "inactive" {
@@ -32,9 +34,12 @@ async function syncSubscription(supabase: ReturnType<typeof serviceClient>, subs
   if (!providerId) return; // not one of ours
 
   const priceId = subscription.items.data[0]?.price?.id;
-  const tier = priceId ? TIER_BY_PRICE_ENV[priceId] : undefined;
   const status = statusFromStripe(subscription.status);
   const live = status === "active" || status === "trialing";
+  // A founding member is on Spotlight while their free period runs, then on
+  // the founding Listed price it's billed at (The Site as a CMS §09).
+  const founding = subscription.metadata?.founding === "true";
+  const tier = founding && status === "trialing" ? "spotlight" : priceId ? TIER_BY_PRICE_ENV[priceId] : undefined;
 
   await supabase.from("subscriptions").upsert(
     {
@@ -44,16 +49,15 @@ async function syncSubscription(supabase: ReturnType<typeof serviceClient>, subs
       stripe_price_id: priceId ?? null,
       tier: tier ?? null,
       status,
+      ...(founding ? { founding: true } : {}),
       trial_ends_at: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "provider_id" }
   );
-  // Until the review queue (CMS build stage 5), a live plan publishes.
-  await supabase
-    .from("providers")
-    .update({ status: live ? "published" : "draft", ...(live ? { published_at: new Date().toISOString() } : {}), updated_at: new Date().toISOString() })
-    .eq("id", providerId);
+  // Review publishes; the plan only hides a reviewed profile when it lapses
+  // and brings it back when it resumes.
+  await syncVisibility(supabase, providerId, live);
 }
 
 export async function POST(request: Request) {
@@ -82,7 +86,19 @@ export async function POST(request: Request) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      if (session.subscription) {
+      if (session.mode === "setup" && session.metadata?.provider_id && session.setup_intent) {
+        // Founding card before launch: make the saved card the customer's
+        // default so launch day can start the subscription on it.
+        const intent = await stripe.setupIntents.retrieve(session.setup_intent as string);
+        const customer = typeof session.customer === "string" ? session.customer : session.customer?.id;
+        if (customer && intent.payment_method) {
+          await stripe.customers.update(customer, { invoice_settings: { default_payment_method: intent.payment_method as string } });
+        }
+        await supabase.from("subscriptions").upsert(
+          { provider_id: session.metadata.provider_id, stripe_customer_id: customer ?? null, tier: "spotlight", status: "card_saved", founding: true, updated_at: new Date().toISOString() },
+          { onConflict: "provider_id" }
+        );
+      } else if (session.subscription) {
         const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
         await syncSubscription(supabase, subscription);
       }
@@ -98,7 +114,7 @@ export async function POST(request: Request) {
       const providerId = subscription.metadata?.provider_id;
       if (providerId) {
         await supabase.from("subscriptions").update({ status: "canceled", updated_at: new Date().toISOString() }).eq("provider_id", providerId);
-        await supabase.from("providers").update({ status: "draft", updated_at: new Date().toISOString() }).eq("id", providerId);
+        await syncVisibility(supabase, providerId, false);
       }
       break;
     }

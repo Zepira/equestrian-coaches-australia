@@ -82,7 +82,7 @@ for (const width of [390, 1280]) {
   row((await buttons.nth(2).evaluate((b) => b.querySelector("span:last-child").textContent)) === "+", `${W} control reads + when closed`);
 
   // anchors + CTAs
-  const ctas = await page.locator("a[href^='/signup?role=coach']").count();
+  const ctas = await page.locator("a[href^='/join/coaches']").count();
   row(ctas >= 5, `${W} coach signup CTAs present (${ctas})`);
   await page.locator(".hero__col a[href='#included']").click();
   await page.waitForTimeout(600);

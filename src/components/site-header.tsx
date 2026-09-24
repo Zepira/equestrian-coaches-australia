@@ -192,7 +192,7 @@ const NAV = [
  * horse care and coaches, and carries "List your business" instead of the
  * coaches section's "List your profile".
  */
-const PARENT_ROUTES = ["/", "/about", "/list-your-business"];
+const PARENT_ROUTES = ["/", "/about", "/list-your-business", "/signup", "/onboarding"];
 // Profiles hold every profession, so they wear the parent nav whoever's they are.
 const PARENT_PREFIXES = ["/profile/"];
 
@@ -370,7 +370,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
               </Link>
               {!isSearch && (
                 <Link
-                  href={parentNav ? "/list-your-business" : "/signup?role=coach"}
+                  href={parentNav ? "/list-your-business" : "/join/coaches"}
                   className="site-header__outline rounded-[var(--radius-pill)] px-[18px] py-2.5 hover:bg-ink hover:text-ink-fg"
                 >
                   {parentNav ? "List your business" : "List your profile"}
@@ -516,7 +516,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
             ) : (
               <li className="pt-4">
                 <Link
-                  href={parentNav ? "/list-your-business" : "/signup?role=coach"}
+                  href={parentNav ? "/list-your-business" : "/join/coaches"}
                   onClick={close}
                   className="block rounded-[var(--radius-soft)] bg-ink py-[15px] text-center text-[16px] font-semibold text-ink-fg"
                 >

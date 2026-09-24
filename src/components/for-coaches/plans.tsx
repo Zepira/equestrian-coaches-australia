@@ -89,7 +89,7 @@ export function Plans({ tiers, rows }: { tiers: Tier[]; rows: ComparisonRow[] })
               </div>
               <p className="mt-3.5 text-[14.5px] leading-[1.5] opacity-85 wide:mt-[18px] wide:flex-1 wide:text-[15px]">{t.summary}</p>
               <Link
-                href={`/signup?role=coach&plan=${t.key}`}
+                href={`/join/coaches?plan=${t.key}`}
                 className={`mt-[18px] block rounded-[10px] border py-3.5 text-center text-[15px] font-semibold transition-colors duration-[250ms] wide:mt-6 wide:py-[15px] ${
                   f ? "border-accent bg-accent text-accent-fg hover:bg-accent-hover" : "border-ink bg-transparent text-ink hover:bg-shade"
                 }`}

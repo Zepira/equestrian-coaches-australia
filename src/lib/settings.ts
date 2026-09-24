@@ -35,6 +35,10 @@ export const DEFAULTS = {
   founding_free_months: "6",
   /** Last day to sign up as a founding member, ISO date. Empty means still open. */
   founding_join_by: "",
+  /** Whether a finished profile waits for a person to look at it before going live (§06.5). */
+  review_required: "true",
+  /** Who hears when a profile is submitted (or, with review off, when one goes live). Comma-separated. */
+  review_alert_emails: "",
   /** Providers of one profession a place needs before its place pages exist (the gate, §05.2). */
   area_page_min_providers: "3",
   /** Providers of one profession near a place before a featured block shows there at all. */
@@ -136,6 +140,24 @@ export const SETTING_RANGES = {
 export const getAreaPageMinProviders = () => intSetting("area_page_min_providers", ...SETTING_RANGES.area_page_min_providers);
 export const getFeaturedMinProviders = () => intSetting("featured_min_providers", ...SETTING_RANGES.featured_min_providers);
 export const getFeaturedSlotsPerArea = () => intSetting("featured_slots_per_area", ...SETTING_RANGES.featured_slots_per_area);
+
+// ── Review ─────────────────────────────────────────────────────────────────
+
+export async function isReviewRequired(): Promise<boolean> {
+  return (await getSetting("review_required")) !== "false";
+}
+
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export function parseEmailList(raw: string): string[] {
+  return raw.split(/[,\s]+/).map((e) => e.trim()).filter(Boolean);
+}
+export function isEmail(value: string) {
+  return EMAIL.test(value);
+}
+
+export async function getReviewAlertEmails(): Promise<string[]> {
+  return parseEmailList(await getSetting("review_alert_emails")).filter(isEmail);
+}
 
 // ── Plans ──────────────────────────────────────────────────────────────────
 

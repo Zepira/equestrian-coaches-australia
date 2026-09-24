@@ -26,3 +26,10 @@ export const TIER_PRICE_IDS: Record<Tier, string | undefined> = {
   spotlight: process.env.NEXT_PUBLIC_STRIPE_PRICE_SPOTLIGHT,
   clinic: process.env.NEXT_PUBLIC_STRIPE_PRICE_CLINIC,
 };
+
+/**
+ * The founding Listed price ($9.99, kept for as long as they stay), separate
+ * from the open Listed price so a price rise for new members never touches
+ * founding ones (The Site as a CMS §09).
+ */
+export const FOUNDING_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRICE_FOUNDING;
