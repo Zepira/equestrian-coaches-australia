@@ -3,17 +3,18 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { isStripeConfigured } from "@/lib/stripe";
-import { DEFAULT_CAPABILITIES, TIERS, capabilityJson } from "@/lib/tiers";
+import { getStripe, isStripeConfigured } from "@/lib/stripe";
+import { DEFAULT_CAPABILITIES, TIERS, capabilityJson, type Tier } from "@/lib/tiers";
 import {
   LOCKED_ONCE_SET,
   SETTINGS_TAG,
   SETTING_RANGES,
   isEmail,
   parseEmailList,
-  getPlans,
   readPlanCapability,
   readPlanInfo,
+  readStripePrices,
+  PRICE,
   type SettingKey,
 } from "@/lib/settings";
 import { createServiceSupabase } from "@/lib/supabase/service";
@@ -99,6 +100,16 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     }
     return { value: JSON.stringify(Object.fromEntries(TIERS.map((t) => [t, readPlanInfo(parsed[t])]))) };
   },
+  founding_price(raw) {
+    const v = raw.trim();
+    if (!PRICE.test(v)) return { error: "Write the founding price like $9.99." };
+    return { value: v };
+  },
+  stripe_prices(raw) {
+    const parsed = readStripePrices(parseObject(raw));
+    if (!parsed) return { error: "Stripe price IDs start with price_ and have no spaces." };
+    return { value: JSON.stringify(parsed) };
+  },
   plan_capabilities(raw) {
     const parsed = parseObject(raw);
     if (!parsed) return { error: "That isn't a valid set of plan features." };
@@ -145,7 +156,9 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   featured_slots_per_area: ["/search"],
   event_reach_km: [],
   benchmark_min_providers: ["/dashboard"],
-  plans: ["/", "/coaches", "/horse-care", "/for-coaches", "/list-your-business", "/dashboard", "/dashboard/billing"],
+  plans: ["/", "/coaches", "/horse-care", "/for-coaches", "/for-professionals", "/list-your-business", "/dashboard", "/dashboard/billing"],
+  founding_price: ["/for-coaches", "/onboarding", "/dashboard/billing"],
+  stripe_prices: [],
   plan_capabilities: ["/dashboard", "/dashboard/clinics", "/dashboard/profile"],
 };
 
@@ -154,23 +167,80 @@ export async function saveSetting(formData: FormData) {
   await writeSetting(key, String(formData.get("value") ?? ""));
 }
 
-/** The plans form: name, tagline and both prices for each tier, saved as one `plans` value. */
-export async function savePlans(formData: FormData) {
-  const field = (t: string, f: string) => String(formData.get(`${t}.${f}`) ?? "").trim();
-  const next = Object.fromEntries(
-    TIERS.map((t) => [t, { name: field(t, "name"), tagline: field(t, "tagline"), monthly: field(t, "monthly"), yearly: field(t, "yearly") }])
-  );
-  // Prices shown must match what Stripe charges (CLAUDE.md, "Prices are the
-  // exception"). Until the plans screen can check a price against its Stripe
-  // Price, a live Stripe account means prices can't change from here.
-  if (isStripeConfigured) {
-    const current = await getPlans();
-    const moved = TIERS.some((t) => next[t].monthly !== current[t].monthly || next[t].yearly !== current[t].yearly);
-    if (moved) {
-      redirect(`/admin/settings?error=${encodeURIComponent("Prices are paired with Stripe and can't be changed here yet. Names and taglines can.")}&key=plans`);
+/** "$24.95" → 2495. */
+const cents = (price: string) => Math.round(Number(price.replace(/[^0-9.]/g, "")) * 100);
+
+/**
+ * Checks one display price against its Stripe Price: it exists, it's live,
+ * it's in AUD, it recurs on the right interval and it charges exactly the
+ * amount shown. A mismatch refuses the whole save (CLAUDE.md, "Prices are the
+ * exception"): showing one figure and charging another is a consumer-law
+ * problem, not a typo.
+ */
+async function checkStripePrice(label: string, id: string, shown: string, interval: "month" | "year"): Promise<string | null> {
+  const stripe = getStripe();
+  if (!stripe) return null;
+  if (!id) return `${label} needs its Stripe price ID now that Stripe is connected.`;
+  try {
+    const price = await stripe.prices.retrieve(id);
+    if (!price.active) return `${label}: that Stripe price is archived.`;
+    if (price.currency !== "aud") return `${label}: that Stripe price isn't in Australian dollars.`;
+    if (price.recurring?.interval !== interval) return `${label}: that Stripe price isn't charged ${interval === "month" ? "monthly" : "yearly"}.`;
+    if (price.unit_amount !== cents(shown)) {
+      return `${label}: Stripe charges $${((price.unit_amount ?? 0) / 100).toFixed(2)}, but the page would show ${shown}. Make a new price in Stripe at ${shown} and paste its ID, or change the price shown.`;
     }
+    return null;
+  } catch {
+    return `${label}: Stripe has no price ${id}.`;
   }
-  await writeSetting("plans", JSON.stringify(next));
+}
+
+/**
+ * The plans form (Admin → Plans and prices): each plan's name, tagline,
+ * display prices and their Stripe Price IDs, and the founding price and its
+ * ID, saved together or not at all. With Stripe connected every price is
+ * checked against its ID first; without it (mock payments) the IDs are
+ * stored as typed and checked the first time the plans are saved after
+ * Stripe is connected.
+ */
+export async function savePlansAndPrices(formData: FormData) {
+  const field = (k: string) => String(formData.get(k) ?? "").trim();
+  const back = (message: string) => redirect(`/admin/plans?error=${encodeURIComponent(message)}`);
+  const plans = Object.fromEntries(
+    TIERS.map((t) => [t, { name: field(`${t}.name`), tagline: field(`${t}.tagline`), monthly: field(`${t}.monthly`), yearly: field(`${t}.yearly`) }])
+  );
+  const foundingPrice = field("founding.price");
+  const ids = {
+    ...(Object.fromEntries(TIERS.map((t) => [t, { monthly: field(`${t}.monthly_id`), yearly: field(`${t}.yearly_id`) }])) as Record<Tier, { monthly: string; yearly: string }>),
+    founding: field("founding.id"),
+  };
+
+  for (const [key, raw] of [["plans", JSON.stringify(plans)], ["founding_price", foundingPrice], ["stripe_prices", JSON.stringify(ids)]] as const) {
+    const r = VALIDATORS[key](raw);
+    if ("error" in r) back(r.error);
+  }
+
+  if (isStripeConfigured) {
+    const checks = await Promise.all([
+      ...TIERS.flatMap((t) => [
+        checkStripePrice(`${plans[t].name} monthly`, ids[t].monthly, plans[t].monthly, "month"),
+        // A yearly price is only checked once there's a yearly Stripe price to sell.
+        ids[t].yearly ? checkStripePrice(`${plans[t].name} yearly`, ids[t].yearly, plans[t].yearly, "year") : null,
+      ]),
+      checkStripePrice("Founding price", ids.founding, foundingPrice, "month"),
+    ]);
+    const problem = checks.find(Boolean);
+    if (problem) back(problem);
+  }
+
+  const { supabase } = await requireAdminWithId();
+  for (const [key, value] of [["plans", VALIDATORS.plans(JSON.stringify(plans))], ["founding_price", VALIDATORS.founding_price(foundingPrice)], ["stripe_prices", VALIDATORS.stripe_prices(JSON.stringify(ids))]] as const) {
+    if ("value" in value) await storeSetting(supabase, key, value.value);
+  }
+  revalidateTag(SETTINGS_TAG, { expire: 0 });
+  for (const path of [...SHOWN_ON.plans, ...SHOWN_ON.founding_price]) revalidatePath(path);
+  revalidatePath("/admin/plans");
+  redirect("/admin/plans?saved=plans");
 }
 
 /** The plan features form: event limit (blank = unlimited), video and a featured spot, per tier. */
@@ -181,10 +251,24 @@ export async function savePlanCapabilities(formData: FormData) {
       return [t, { event_limit: raw === "" ? null : Number(raw), video: formData.get(`${t}.video`) === "on", featured: formData.get(`${t}.featured`) === "on", benchmarks: formData.get(`${t}.benchmarks`) === "on" }];
     })
   );
-  await writeSetting("plan_capabilities", JSON.stringify(next));
+  await writeSetting("plan_capabilities", JSON.stringify(next), "/admin/plans");
 }
 
-async function writeSetting(key: SettingKey, raw: string) {
+async function requireAdminWithId() {
+  return { supabase: await requireAdmin() };
+}
+
+/** Update, else insert: an upsert fires both history triggers for one change. */
+async function storeSetting(supabase: Awaited<ReturnType<typeof requireAdmin>>, key: SettingKey, value: string) {
+  const { data: updated, error } = await supabase.from("settings").update({ value }).eq("key", key).select("key");
+  if (error) throw error;
+  if (!updated?.length) {
+    const { error: insertError } = await supabase.from("settings").insert({ key, value });
+    if (insertError) throw insertError;
+  }
+}
+
+async function writeSetting(key: SettingKey, raw: string, page = "/admin/settings") {
   const supabase = await requireAdmin();
   if (!(key in VALIDATORS)) throw new Error("Unknown setting.");
 
@@ -193,28 +277,19 @@ async function writeSetting(key: SettingKey, raw: string) {
   if (LOCKED_ONCE_SET.has(key)) {
     const { data: current } = await supabase.from("settings").select("value").eq("key", key).maybeSingle();
     if (current?.value) {
-      redirect(`/admin/settings?error=${encodeURIComponent("This is locked. It can only be changed in the database.")}&key=${key}`);
+      redirect(`${page}?error=${encodeURIComponent("This is locked. It can only be changed in the database.")}&key=${key}`);
     }
   }
 
   const result = VALIDATORS[key](raw);
   if ("error" in result) {
-    redirect(`/admin/settings?error=${encodeURIComponent(result.error)}&key=${key}`);
+    redirect(`${page}?error=${encodeURIComponent(result.error)}&key=${key}`);
   }
 
   // Update first, insert only if the row is missing. Not an upsert: on a
   // conflict Postgres fires the BEFORE INSERT trigger and then the BEFORE
   // UPDATE one, which would write two history rows for one change.
-  const { data: updated, error } = await supabase
-    .from("settings")
-    .update({ value: result.value })
-    .eq("key", key)
-    .select("key");
-  if (error) throw error;
-  if (!updated?.length) {
-    const { error: insertError } = await supabase.from("settings").insert({ key, value: result.value });
-    if (insertError) throw insertError;
-  }
+  await storeSetting(supabase, key, result.value);
 
   // Locking the launch date starts every saved-card founding member's free
   // period and emails them their first charge date (src/lib/founding.ts).
@@ -230,7 +305,7 @@ async function writeSetting(key: SettingKey, raw: string) {
   }
 
   revalidateTag(SETTINGS_TAG, { expire: 0 });
-  revalidatePath("/admin/settings");
+  revalidatePath(page);
   for (const path of SHOWN_ON[key]) revalidatePath(path);
-  redirect(`/admin/settings?saved=${key}`);
+  redirect(`${page}?saved=${key}`);
 }

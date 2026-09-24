@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { addMonths, countWord, DEFAULTS, formatLongDate, readPlanCapability, readPlanInfo, SETTING_RANGES, type SettingKey } from "@/lib/settings";
-import { isStripeConfigured } from "@/lib/stripe";
-import { DEFAULT_CAPABILITIES, DEFAULT_PLANS, TIERS } from "@/lib/tiers";
-import { savePlanCapabilities, savePlans, saveSetting } from "./actions";
+import { addMonths, countWord, DEFAULTS, formatLongDate, SETTING_RANGES, type SettingKey } from "@/lib/settings";
+import { saveSetting } from "./actions";
+import Link from "next/link";
 
 export const metadata = { title: "Settings" };
 
@@ -44,18 +43,6 @@ export default async function AdminSettingsPage({
   const months = Number(monthsRaw) || Number(DEFAULTS.founding_free_months);
   const launch = launchRaw ? new Date(`${launchRaw}T00:00:00Z`) : null;
   const firstCharge = launch ? addMonths(launch, months) : null;
-  const json = (key: SettingKey) => {
-    try {
-      return JSON.parse(stored(key)) as Record<string, unknown>;
-    } catch {
-      return {};
-    }
-  };
-  const plansJson = json("plans");
-  const capsJson = json("plan_capabilities");
-  const plans = TIERS.map((t) => ({ tier: t, ...(readPlanInfo(plansJson[t]) ?? DEFAULT_PLANS[t]) }));
-  const caps = TIERS.map((t) => ({ tier: t, ...(readPlanCapability(capsJson[t], DEFAULT_CAPABILITIES[t]) ?? DEFAULT_CAPABILITIES[t]) }));
-
   const notice = (key: SettingKey) => (
     <>
       {saved === key && <p className="mt-3 rounded-[12px] bg-accent-soft px-3 py-2 text-sm text-fg">Saved.</p>}
@@ -200,76 +187,10 @@ export default async function AdminSettingsPage({
         </div>
       </section>
 
-      <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">Plans</h2>
-        <p className="mt-1 max-w-[62ch] text-sm text-muted">
-          The names, prices and taglines shown on the pricing pages, the home page and the dashboard. One set of plans covers every profession.
-          {isStripeConfigured
-            ? " Prices are paired with Stripe, so only names and taglines can change here for now."
-            : " Payments are in test mode, so prices can change here. Once Stripe is connected, a price change will need its Stripe price checked first."}
-        </p>
-        {notice("plans")}
-        <form action={savePlans} className="mt-4 flex flex-col gap-4">
-          {plans.map((p) => (
-            <fieldset key={p.tier} className="grid gap-3 rounded-[14px] border border-border bg-surface p-4 sm:grid-cols-2">
-              <legend className="px-1 text-xs font-medium uppercase tracking-[0.12em] text-subtle">{p.tier}</legend>
-              <label className="block">
-                <span className="mb-1 block text-sm font-medium text-fg">Name</span>
-                <input name={`${p.tier}.name`} required maxLength={30} defaultValue={p.name} className={input} />
-              </label>
-              <label className="block">
-                <span className="mb-1 block text-sm font-medium text-fg">Tagline</span>
-                <input name={`${p.tier}.tagline`} required maxLength={80} defaultValue={p.tagline} className={input} />
-              </label>
-              <label className="block">
-                <span className="mb-1 block text-sm font-medium text-fg">Monthly price</span>
-                <input name={`${p.tier}.monthly`} required defaultValue={p.monthly} readOnly={isStripeConfigured} className={input} />
-              </label>
-              <label className="block">
-                <span className="mb-1 block text-sm font-medium text-fg">Yearly price</span>
-                <input name={`${p.tier}.yearly`} required defaultValue={p.yearly} readOnly={isStripeConfigured} className={input} />
-              </label>
-            </fieldset>
-          ))}
-          <div>
-            <Button type="submit">Save plans</Button>
-          </div>
-        </form>
-      </section>
-
-      <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">What each plan includes</h2>
-        <p className="mt-1 max-w-[62ch] text-sm text-muted">
-          How many live events a plan can have at once (leave empty for no limit), whether it can add an intro video, whether it takes turns in the featured spots, and whether the dashboard compares them with others in their profession.
-        </p>
-        {notice("plan_capabilities")}
-        <form action={savePlanCapabilities} className="mt-4 flex flex-col gap-3">
-          {caps.map((c) => (
-            <div key={c.tier} className="flex flex-wrap items-end gap-4 rounded-[14px] border border-border bg-surface p-4">
-              <span className="w-24 text-sm font-medium text-fg">{plans.find((p) => p.tier === c.tier)?.name}</span>
-              <label className="block">
-                <span className="mb-1 block text-sm font-medium text-fg">Live events</span>
-                <input type="number" name={`${c.tier}.event_limit`} min={0} max={100} defaultValue={c.eventLimit ?? ""} placeholder="No limit" className={`${input} w-32`} />
-              </label>
-              <label className="flex items-center gap-2 pb-2.5 text-sm text-fg">
-                <input type="checkbox" name={`${c.tier}.video`} defaultChecked={c.video} />
-                Intro video
-              </label>
-              <label className="flex items-center gap-2 pb-2.5 text-sm text-fg">
-                <input type="checkbox" name={`${c.tier}.featured`} defaultChecked={c.featured} />
-                Featured spot
-              </label>
-              <label className="flex items-center gap-2 pb-2.5 text-sm text-fg">
-                <input type="checkbox" name={`${c.tier}.benchmarks`} defaultChecked={c.benchmarks} />
-                Benchmarks
-              </label>
-            </div>
-          ))}
-          <div>
-            <Button type="submit">Save</Button>
-          </div>
-        </form>
-      </section>
+      <p className="border-t border-border pt-6 text-sm text-muted">
+        Plan names, prices, their Stripe prices and what each plan includes are on the{" "}
+        <Link href="/admin/plans" className="text-accent underline-offset-2 hover:underline">Plans and prices</Link> tab.
+      </p>
 
       <section className="border-t border-border pt-6">
         <h2 className="font-display text-[26px] leading-none text-ink">History</h2>

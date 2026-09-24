@@ -2,7 +2,8 @@
 
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
+import { sendEmail } from "@/lib/email";
+import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
 import { logReveal, primaryProfessionOf } from "@/lib/coach-events";
 import { getMockProfessionalBySlug } from "@/lib/mock-professionals";
 import { getMockCoachBySlug } from "@/lib/mock-coaches";
@@ -84,11 +85,12 @@ export async function sendCoachEnquiry(
     data: { user },
   } = await supabase.auth.getUser();
 
+  const professionId = await primaryProfessionOf(coachId);
   try {
     const service = createServiceClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
     const { error } = await service.from("enquiries").insert({
       provider_id: coachId,
-      profession_id: await primaryProfessionOf(coachId),
+      profession_id: professionId,
       rider_id: user?.id ?? null,
       rider_name: riderName,
       rider_contact: riderContact,
@@ -101,27 +103,23 @@ export async function sendCoachEnquiry(
     return { ok: false, message: "Something went wrong saving that — please try again shortly." };
   }
 
-  const resend = getResend();
-  if (isResendConfigured && resend && coach.contact_email) {
-    try {
-      await resend.emails.send({
-        from: NOTIFICATIONS_FROM,
-        to: coach.contact_email,
-        replyTo: looksLikeEmail(riderContact) ? riderContact : undefined,
-        subject: `New enquiry from ${riderName} via Equine Professionals Australia`,
-        text: `Hi ${coachName},\n\n${riderName} sent you an enquiry through your Equine Professionals Australia profile.\n\nLooking for: ${WANT_LABEL[want]}\nContact: ${riderContact}\n\n"${message}"\n\nMark it replied / booked in your dashboard: ${absoluteUrl("/dashboard/enquiries")}`,
-      });
-    } catch (err) {
-      console.error("sendCoachEnquiry: send failed", err);
-      // The row is saved — the coach will still see it in the inbox.
-    }
-  } else {
-    console.log("[enquiry:mock] RESEND_API_KEY not set — saved to inbox, logging instead of sending.", {
-      to: coach.contact_email,
-      riderName,
-      riderContact,
-      want,
+  if (coach.contact_email) {
+    // Saved either way: the inbox has it even if the email doesn't go.
+    const copy = await getContent("email.enquiry");
+    const vars = {
+      first_name: coachName,
+      rider_name: riderName,
+      rider_contact: riderContact,
+      // "Regular visits" for a farrier: the profession's own options first.
+      want: (await getProfessions()).find((x) => x.id === professionId)?.enquiryOptions.find((o) => o.value === want)?.label ?? WANT_LABEL[want] ?? want,
       message,
+      dashboard_url: absoluteUrl("/dashboard/enquiries"),
+    };
+    await sendEmail({
+      to: coach.contact_email,
+      replyTo: looksLikeEmail(riderContact) ? riderContact : undefined,
+      subject: fillVariables(copy.subject, vars),
+      text: fillVariables(copy.body, vars),
     });
   }
 

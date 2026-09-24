@@ -3,9 +3,13 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { RiseWords } from "@/components/hero";
+import { RichText } from "@/components/rich-text";
+import { getContent } from "@/lib/cms/read";
 
 /**
- * /about — the two people behind the site, and how it runs.
+ * /about: the two people behind the site, and how it runs. Every word is
+ * a content block (about.*, edited under Admin → Pages → About); the photos
+ * and layout stay here.
  *
  * Copy: "Claude outputs/about-us-copy.md" (draft 2, 16 Sep 2026). Facts the
  * draft left in square brackets are left OUT here rather than guessed at —
@@ -26,50 +30,13 @@ export const metadata: Metadata = {
 
 const srcset = (crop: string, ext: string, widths: number[]) => widths.map((w) => `/hero/${crop}-${w}.${ext} ${w}w`).join(", ");
 
-const PRINCIPLES: { lead: string; rest: string }[] = [
-  {
-    lead: "We don't take a commission.",
-    rest: "Coaches pay a flat monthly fee to be listed. What you agree with your coach is between you and your coach, and we never see a cent of it.",
-  },
-  {
-    lead: "We don't vet coaches, and we'd rather say that plainly.",
-    rest: "We check that a listing belongs to a real person who agreed to be listed. We don't inspect facilities, verify qualifications or assess teaching. Ask the questions you'd ask anyone you were about to get on a horse for.",
-  },
-  {
-    lead: "Nobody gets listed without saying yes.",
-    rest: "We don't scrape profiles or build pages about coaches who haven't heard of us.",
-  },
-  {
-    lead: "We tell coaches the truth about their numbers.",
-    rest: "Every listed coach can see how many riders saw their profile and how many got in touch — including when the answer is none. A directory that hides that is selling hope.",
-  },
-  {
-    lead: "We don't sell anyone's details.",
-    rest: "Not riders', not coaches'.",
-  },
-];
-
-const ALANA_FACTS: [string, string][] = [
-  ["First lesson", "Fifteen"],
-  ["First horse", "Eighteen"],
-  ["Rides", "Rosie, a grey Australian Andalusian"],
-  ["Day job", "Builds software"],
-];
-
-const KIM_FACTS: [string, string][] = [
-  ["Teaches", "Connection, lightness and body feel"],
-  ["Specialties", "Liberty, bridleless, classical dressage, showjumping, going bitless"],
-  ["Works with", "Youngsters to advanced horses; first lessons to competition"],
-  ["Listed here as", "A coach like any other"],
-];
-
-function FactRail({ facts, dark = false }: { facts: [string, string][]; dark?: boolean }) {
+function FactRail({ facts, dark = false }: { facts: { title: string; body: string }[]; dark?: boolean }) {
   const line = dark ? "border-ink-fg/18" : "border-border";
   const k = dark ? "text-ink-fg/55" : "text-subtle";
   const v = dark ? "text-ink-fg" : "text-ink";
   return (
     <dl className={`grid grid-cols-[auto_1fr] gap-x-5 border-t text-[14px] leading-[1.45] wide:text-[15px] ${line}`}>
-      {facts.map(([key, val]) => (
+      {facts.map(({ title: key, body: val }) => (
         <div key={key} className="contents">
           <dt className={`border-b py-2.5 text-[11px] font-medium uppercase tracking-[0.16em] ${line} ${k} pt-3.5`}>{key}</dt>
           <dd className={`border-b py-2.5 ${line} ${v}`}>{val}</dd>
@@ -79,6 +46,12 @@ function FactRail({ facts, dark = false }: { facts: [string, string][]; dark?: b
   );
 }
 
+/** Block text with its *italic* in the accent the section uses. */
+function Em({ text, cls }: { text: string; cls: string }) {
+  return <RichText text={text} emClassName={cls} strongClassName="font-medium text-ink" />;
+}
+const inBody = "font-display text-[1.1em] text-ink";
+
 function Eyebrow({ children, tone = "light" }: { children: ReactNode; tone?: "light" | "dark" }) {
   return (
     <p className={`text-[12px] font-medium uppercase tracking-[0.18em] wide:tracking-[0.2em] ${tone === "dark" ? "text-peach" : "text-accent"}`}>
@@ -87,24 +60,37 @@ function Eyebrow({ children, tone = "light" }: { children: ReactNode; tone?: "li
   );
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const [opening, why, rider, coach, principles, record, cta] = await Promise.all([
+    getContent("about.opening"),
+    getContent("about.why"),
+    getContent("about.rider"),
+    getContent("about.coach"),
+    getContent("about.principles"),
+    getContent("about.record"),
+    getContent("about.cta"),
+  ]);
   return (
     <div className="about">
       {/* ── 1. Opening ─────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-[1184px] px-[18px] pb-12 pt-12 wide:px-12 wide:pb-20 wide:pt-24">
         <p className="fade-in text-[12px] font-medium uppercase tracking-[0.18em] text-subtle wide:tracking-[0.2em]" style={{ animationDelay: "0.05s" }}>
-          About us
+          {opening.eyebrow}
         </p>
         <h1 className="mt-4 max-w-[14ch] text-[50px] leading-[0.96] -tracking-[0.02em] text-ink wide:mt-6 wide:text-[104px] wide:leading-[0.92] wide:-tracking-[0.03em]">
-          <RiseWords words={["Finding", "a", "coach", "should", "be", "a", "search,", "not", "luck."]} emphasis={[6, 8]} />
+          <RiseWords words={opening.words} emphasis={opening.emphasis} />
         </h1>
         <div className="mt-9 grid gap-6 border-t border-border pt-7 wide:mt-14 wide:grid-cols-[1fr_1fr] wide:gap-14 wide:pt-10">
           <p className="fade-in text-[19px] leading-[1.4] text-ink wide:text-[26px] wide:leading-[1.3]" style={{ animationDelay: "0.7s" }}>
-            Finding a riding coach in Australia still runs on word of mouth. You ask at a competition, you ask in a Facebook group, you ask the person whose horse goes the way you&rsquo;d like yours to go.
+            {opening.lead}
           </p>
           <div className="fade-in flex flex-col gap-4 text-[16px] leading-[1.55] text-muted wide:text-[17px]" style={{ animationDelay: "0.85s" }}>
-            <p>It works, eventually, if you already know people. If you&rsquo;re new, or you&rsquo;ve moved, or you want something more specific than general ridden work, it mostly doesn&rsquo;t.</p>
-            <p className="font-medium text-ink">We built this so that finding a coach is a search, not a stroke of luck.</p>
+            {opening.paragraphs.map((t) => (
+              <p key={t}>
+                <Em text={t} cls={inBody} />
+              </p>
+            ))}
+            <p className="font-medium text-ink">{opening.closing}</p>
           </div>
         </div>
       </section>
@@ -113,19 +99,21 @@ export default function AboutPage() {
       <Reveal as="section" className="bg-ink-deep text-ink-fg">
         <div className="mx-auto max-w-[1184px] px-[18px] py-14 wide:grid wide:grid-cols-[1.1fr_1fr] wide:items-start wide:gap-16 wide:px-12 wide:py-[104px]">
           <div className="wide:sticky wide:top-[100px]">
-            <Eyebrow tone="dark">Why we built it</Eyebrow>
+            <Eyebrow tone="dark">{why.eyebrow}</Eyebrow>
             <h2 className="mt-3 text-[40px] leading-[0.98] -tracking-[0.02em] wide:mt-4 wide:text-[68px] wide:leading-[0.96] wide:-tracking-[0.025em]">
-              Alana found her coach <em className="text-peach">by accident.</em>
+              <Em text={why.title} cls="text-peach" />
             </h2>
           </div>
           <div className="mt-7 flex flex-col gap-5 text-[16px] leading-[1.55] text-ink-fg/82 wide:mt-2 wide:text-[18px]">
-            <p>
-              Kim&rsquo;s posts turned up on Instagram, and that was it. No directory, no search, no recommendation. There are very few coaches in Australia teaching what Kim teaches, and there was no way to go looking for one on purpose.
-            </p>
+            {why.paragraphs.map((t) => (
+              <p key={t}>
+                <Em text={t} cls="text-peach" />
+              </p>
+            ))}
             <p className="font-display text-[26px] leading-[1.15] text-ink-fg wide:text-[32px]">
-              Somewhere a rider is looking for a liberty coach, or a Western coach, or a dressage coach who works with nervous riders. Somewhere near them is exactly that person. <em className="text-peach">And neither of them will ever hear about the other.</em>
+              <Em text={why.pullQuote} cls="text-peach" />
             </p>
-            <p>A directory is an unglamorous fix for that. But it is the fix.</p>
+            <p>{why.closing}</p>
           </div>
         </div>
       </Reveal>
@@ -134,21 +122,22 @@ export default function AboutPage() {
       <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] pt-14 wide:px-12 wide:pt-[104px]">
         <div className="wide:grid wide:grid-cols-[1fr_360px] wide:items-end wide:gap-16">
           <div>
-            <Eyebrow>The rider</Eyebrow>
+            <Eyebrow>{rider.eyebrow}</Eyebrow>
             <h2 className="mt-3 text-[40px] leading-[0.98] -tracking-[0.02em] text-ink wide:mt-4 wide:text-[68px] wide:leading-[0.96] wide:-tracking-[0.025em]">
-              I came to horses <em className="text-accent">late.</em>
+              <Em text={rider.title} cls="text-accent" />
             </h2>
             <div className="mt-6 flex max-w-[62ch] flex-col gap-4 text-[16px] leading-[1.55] text-muted wide:mt-8 wide:text-[17px]">
-              <p>My first lesson was at fifteen, which in pony-club terms is close to a mature-age student, and I bought my first horse at eighteen.</p>
-              <p>
-                My mare now is Rosie, a grey Australian Andalusian who would much rather learn a trick than do another twenty-metre circle. She is clever, opinionated and genuinely willing, which is a combination that doesn&rsquo;t let you get away with anything. Most of what I know about working <em className="font-display text-[1.1em] text-ink">with</em> a horse rather than <em className="font-display text-[1.1em] text-ink">at</em> one, I know because she made it clear when I&rsquo;d asked badly.
-              </p>
-              <p className="font-medium text-ink">I build software for a living. So I built this.</p>
-              <p className="text-[14px] text-subtle">— Alana</p>
+              {rider.paragraphs.map((t) => (
+                <p key={t}>
+                  <Em text={t} cls={inBody} />
+                </p>
+              ))}
+              <p className="font-medium text-ink">{rider.closing}</p>
+              <p className="text-[14px] text-subtle">{rider.signature}</p>
             </div>
           </div>
           <div className="mt-8 wide:mt-0">
-            <FactRail facts={ALANA_FACTS} />
+            <FactRail facts={rider.facts} />
           </div>
         </div>
         <figure className="relative mt-9 overflow-hidden rounded-[16px] bg-shade wide:mt-14 wide:rounded-[20px]">
@@ -199,9 +188,9 @@ export default function AboutPage() {
             </figcaption>
           </figure>
           <div className="mt-10 wide:mt-0">
-            <Eyebrow>The coach</Eyebrow>
+            <Eyebrow>{coach.eyebrow}</Eyebrow>
             <h2 className="mt-3 text-[40px] leading-[0.98] -tracking-[0.02em] text-ink wide:mt-4 wide:text-[68px] wide:leading-[0.96] wide:-tracking-[0.025em]">
-              What I&rsquo;m after is <em className="text-accent">harmony.</em>
+              <Em text={coach.title} cls="text-accent" />
             </h2>
             <div className="mt-6 flex max-w-[62ch] flex-col gap-4 text-[16px] leading-[1.55] text-muted wide:mt-8 wide:text-[17px]">
               <p>
@@ -216,7 +205,7 @@ export default function AboutPage() {
               <p className="text-[14px] text-subtle">— Kim</p>
             </div>
             <div className="mt-8 wide:mt-10">
-              <FactRail facts={KIM_FACTS} />
+              <FactRail facts={coach.facts} />
             </div>
           </div>
         </div>
@@ -226,21 +215,19 @@ export default function AboutPage() {
       <Reveal as="section" className="mt-16 bg-ink text-ink-fg wide:mt-[120px]">
         <div className="mx-auto max-w-[1184px] px-[18px] py-14 wide:grid wide:grid-cols-[1fr_1.5fr] wide:items-start wide:gap-16 wide:px-12 wide:py-[104px]">
           <div className="wide:sticky wide:top-[100px]">
-            <Eyebrow tone="dark">How we do things</Eyebrow>
+            <Eyebrow tone="dark">{principles.eyebrow}</Eyebrow>
             <h2 className="mt-3 text-[40px] leading-[0.98] -tracking-[0.02em] wide:mt-4 wide:text-[64px] wide:leading-[0.96] wide:-tracking-[0.025em]">
-              Five things we&rsquo;d rather <em className="text-peach">say plainly.</em>
+              <Em text={principles.title} cls="text-peach" />
             </h2>
-            <p className="mt-5 hidden max-w-[36ch] text-[16px] leading-[1.5] text-ink-fg/70 wide:block">
-              None of these are policies we might get around to. They&rsquo;re how the site already works.
-            </p>
+            <p className="mt-5 hidden max-w-[36ch] text-[16px] leading-[1.5] text-ink-fg/70 wide:block">{principles.lead}</p>
           </div>
           <ol className="mt-7 flex flex-col border-t border-ink-fg/20 wide:mt-0">
-            {PRINCIPLES.map((p, i) => (
-              <li key={p.lead} className="grid grid-cols-[36px_1fr] gap-2.5 border-b border-ink-fg/20 py-5 wide:grid-cols-[52px_1fr] wide:gap-4 wide:py-7">
+            {principles.items.map((p, i) => (
+              <li key={p.title} className="grid grid-cols-[36px_1fr] gap-2.5 border-b border-ink-fg/20 py-5 wide:grid-cols-[52px_1fr] wide:gap-4 wide:py-7">
                 <span className="pt-1 font-display text-[22px] italic leading-none text-peach wide:text-[28px]">{String(i + 1).padStart(2, "0")}</span>
                 <div>
-                  <p className="font-display text-[24px] leading-[1.1] wide:text-[30px]">{p.lead}</p>
-                  <p className="mt-2 text-[15px] leading-[1.5] text-ink-fg/75 wide:mt-2.5 wide:max-w-[58ch] wide:text-[16px]">{p.rest}</p>
+                  <p className="font-display text-[24px] leading-[1.1] wide:text-[30px]">{p.title}</p>
+                  <p className="mt-2 text-[15px] leading-[1.5] text-ink-fg/75 wide:mt-2.5 wide:max-w-[58ch] wide:text-[16px]">{p.body}</p>
                 </div>
               </li>
             ))}
@@ -252,24 +239,16 @@ export default function AboutPage() {
       <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] pt-14 wide:px-12 wide:pt-[104px]">
         <div className="grid gap-4 wide:grid-cols-2 wide:gap-6">
           <div className="rounded-[16px] bg-shade px-5 py-6 wide:rounded-[20px] wide:px-9 wide:py-9">
-            <Eyebrow>Who we are, for the record</Eyebrow>
-            <p className="mt-3 font-display text-[26px] leading-[1.12] text-ink wide:text-[32px]">
-              We&rsquo;re Alana and Kim, based in south-east Victoria, registering as a partnership.
-            </p>
-            <p className="mt-4 text-[15px] leading-[1.55] text-muted wide:text-[16px]">
-              Kim coaches, and she&rsquo;s listed on this site like any other coach — she gets no ranking advantage, no editorial preference and no discount. If that ever changes, we&rsquo;ll say so here.
-            </p>
+            <Eyebrow>{record.recordEyebrow}</Eyebrow>
+            <p className="mt-3 font-display text-[26px] leading-[1.12] text-ink wide:text-[32px]">{record.recordTitle}</p>
+            <p className="mt-4 text-[15px] leading-[1.55] text-muted wide:text-[16px]">{record.recordBody}</p>
           </div>
           <div className="rounded-[16px] border border-border bg-surface px-5 py-6 wide:rounded-[20px] wide:px-9 wide:py-9">
-            <Eyebrow>We&rsquo;re new, and we&rsquo;d rather say so</Eyebrow>
-            <p className="mt-3 font-display text-[26px] leading-[1.12] text-ink wide:text-[32px]">
-              The coach list is still filling out.
-            </p>
-            <p className="mt-4 text-[15px] leading-[1.55] text-muted wide:text-[16px]">
-              If there&rsquo;s nobody in your area yet, that&rsquo;s because we haven&rsquo;t reached them — not because they don&rsquo;t exist. Tell us who&rsquo;s missing, or tell your coach we&rsquo;re here.
-            </p>
-            <a href="mailto:hello@equineprofessionals.au" className="mt-5 inline-block border-b border-current text-[15px] font-medium text-accent hover:text-accent-hover wide:text-[16px]">
-              hello@equineprofessionals.au
+            <Eyebrow>{record.newEyebrow}</Eyebrow>
+            <p className="mt-3 font-display text-[26px] leading-[1.12] text-ink wide:text-[32px]">{record.newTitle}</p>
+            <p className="mt-4 text-[15px] leading-[1.55] text-muted wide:text-[16px]">{record.newBody}</p>
+            <a href={`mailto:${record.email}`} className="mt-5 inline-block border-b border-current text-[15px] font-medium text-accent hover:text-accent-hover wide:text-[16px]">
+              {record.email}
             </a>
           </div>
         </div>
@@ -279,26 +258,26 @@ export default function AboutPage() {
       <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] py-14 wide:px-12 wide:py-[104px]">
         <div className="relative overflow-hidden rounded-[16px] bg-ink-deep px-6 py-10 text-center text-ink-fg wide:rounded-[24px] wide:px-12 wide:py-20">
           <p className="mx-auto font-display text-[36px] leading-[1.02] -tracking-[0.02em] wide:max-w-[20ch] wide:text-[64px] wide:leading-none wide:-tracking-[0.025em]">
-            Two of us built it. <em className="text-peach">Riders and coaches</em> are what make it work.
+            <Em text={cta.title} cls="text-peach" />
           </p>
           <div className="mx-auto mt-8 grid max-w-[560px] gap-3 wide:mt-10 wide:grid-cols-2">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-ink-fg/55">Riders</span>
+              <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-ink-fg/55">{cta.ridersLabel}</span>
               <Link href="/search" className="block w-full rounded-[10px] bg-accent px-[26px] py-[15px] text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover">
-                Find a coach
+                {cta.ridersButton}
               </Link>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-ink-fg/55">Coaches</span>
+              <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-ink-fg/55">{cta.coachesLabel}</span>
               <Link href="/for-coaches" className="block w-full rounded-[10px] border border-ink-fg/40 px-[26px] py-3.5 text-[16px] font-medium text-ink-fg transition-colors duration-[250ms] hover:bg-ink-fg/10">
-                List your coaching
+                {cta.coachesButton}
               </Link>
             </div>
           </div>
           <p className="mt-7 text-[14px] text-ink-fg/60 wide:mt-9 wide:text-[15px]">
-            Questions, corrections, or a coach we should know about:{" "}
-            <a href="mailto:hello@equineprofessionals.au" className="border-b border-current text-peach hover:text-ink-fg">
-              hello@equineprofessionals.au
+            {cta.contactLine}{" "}
+            <a href={`mailto:${record.email}`} className="border-b border-current text-peach hover:text-ink-fg">
+              {record.email}
             </a>
           </p>
         </div>

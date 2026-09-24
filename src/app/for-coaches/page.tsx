@@ -7,7 +7,8 @@ import { PromiseTicker } from "@/components/for-coaches/promise-ticker";
 import { Plans, type Tier as PlanCard } from "@/components/for-coaches/plans";
 import { RiseWords } from "@/components/hero";
 import type { Plans as PlanSet } from "@/lib/tiers";
-import { countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getFoundingJoinBy, getPlans, isFoundingOpen } from "@/lib/settings";
+import { countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getFoundingJoinBy, getFoundingPrice, getPlans, isFoundingOpen } from "@/lib/settings";
+import { getContent } from "@/lib/cms/read";
 
 // Dark hero at the top of this route too — see the same export on "/".
 export const viewport: Viewport = {
@@ -133,40 +134,6 @@ const COMPARISON_ROWS: { label: string; listed: boolean; spotlight: boolean; cli
   ...CLINIC_ADDS.map((label) => ({ label, listed: false, spotlight: false, clinic: true })),
 ];
 
-const FAQ_ITEMS = [
-  {
-    q: "What if I don't get any enquiries?",
-    a: "You'll know, because we'll tell you. The monthly email shows the real numbers whether they're good or not, and when it's quiet it says so and tells you what's most likely to change it. Cancel any time — no contract, no notice.",
-  },
-  {
-    q: "Can I cancel any time?",
-    a: "Yes, one click in your dashboard. Your listing stays live until the end of the period you've paid for, and nothing you've added is deleted.",
-  },
-  {
-    q: "Do you take a cut of my lesson fees?",
-    a: "No. Never. A flat monthly fee and nothing else.",
-  },
-  {
-    q: "What happens to my testimonials if I leave?",
-    a: "They're yours. They stay on your profile if you come back, and we'll send you a copy if you ask.",
-  },
-  {
-    q: "Will you sell my details?",
-    a: "No. Your contact details are shown to riders who click to see them, and that's it. We don't sell or rent our lists.",
-  },
-  {
-    q: "Do I need to be accredited?",
-    a: "No. We list Western, liberty, natural horsemanship and trail coaches alongside accredited ones, because riders look for all of them. Any qualifications you upload are displayed as supplied by you — we don't verify or endorse anyone.",
-  },
-  {
-    q: "What if there aren't many coaches in my area?",
-    a: "Then you're the answer to every search in it. We don't build an area page until three coaches exist there, so a thin area may take a while to get its own page — but your profile is live and findable from day one. We also switch the featured slot off in small areas, because being one of three isn't worth paying for.",
-  },
-  {
-    q: "How long before I see anything?",
-    a: "Six to twelve months for Google traffic to build properly. That's normal for a new site and we'd rather say it than pretend otherwise. What moves first is your search impressions — how often you're appearing — and you'll see those from the start.",
-  },
-];
 
 const WIDTHS = [768, 1024, 1280, 1536, 1920];
 const srcset = (crop: string, ext: string, widths: number[]) => widths.map((w) => `/hero/${crop}-${w}.${ext} ${w}w`).join(", ");
@@ -175,15 +142,16 @@ export default async function ForCoachesPage() {
   // Editable in /admin/settings. Before launch day there is no date to
   // print, so the copy says "six months after we launch"; from launch day
   // it names the first charge date.
-  const [firstCharge, freeMonths, joinBy, foundingOpen, plans] = await Promise.all([
+  const [firstCharge, freeMonths, joinBy, foundingOpen, plans, faq, foundingPrice] = await Promise.all([
     getFirstChargeDate(),
     getFoundingFreeMonths(),
     getFoundingJoinBy(),
     isFoundingOpen(),
     getPlans(),
+    getContent("for_coaches.faq"),
+    getFoundingPrice(),
   ]);
   const monthsWord = countWord(freeMonths);
-  const listedPrice = plans.listed.monthly;
   return (
     <div>
       {/* ── 1. Hero ─────────────────────────────────────────────────────── */}
@@ -247,7 +215,7 @@ export default async function ForCoachesPage() {
                 {firstCharge
                   ? `We take your card when you sign up and don't charge it until ${formatLongDate(firstCharge)}, with a reminder before then.`
                   : `We take your card when you sign up, and we don't charge it until ${monthsWord} months after the site launches. On launch day you'll get an email with the exact date, and a reminder before the first payment.`}{" "}
-                Until then you&rsquo;re on {plans.spotlight.name}, our middle plan. After that it&rsquo;s {listedPrice} a month, and that price stays yours for as long as you keep your listing, even when it goes up for new coaches. All we ask is a finished profile: a photo, a bio in your own words, your disciplines and where you teach.
+                Until then you&rsquo;re on {plans.spotlight.name}, our middle plan. After that it&rsquo;s {foundingPrice} a month, and that price stays yours for as long as you keep your listing, even when it goes up for new coaches. All we ask is a finished profile: a photo, a bio in your own words, your disciplines and where you teach.
                 {joinBy && foundingOpen && ` Founding spots close on ${formatLongDate(joinBy)}.`}
               </p>
               <Link href="/join/coaches?plan=founding" className="mt-[22px] inline-block rounded-[10px] bg-accent px-[22px] py-3.5 text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:mt-6 wide:px-6">
@@ -319,7 +287,7 @@ export default async function ForCoachesPage() {
         </div>
         <div>
           <div className="mt-5 wide:mt-0">
-            <Accordion items={FAQ_ITEMS} />
+            <Accordion items={faq.items.map((x) => ({ q: x.title, a: x.body }))} />
           </div>
           <div className="feedback mt-7 rounded-[16px] bg-shade px-5 py-6 wide:hidden">
             <p className="font-display text-[24px] leading-[1.1] text-ink">Tell us what to fix</p>

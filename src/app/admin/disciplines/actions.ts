@@ -3,10 +3,9 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { CMS_TAG } from "@/lib/cms/read";
 import { reservedSlugError } from "@/lib/reserved-slugs";
-import { disciplinePath } from "@/lib/page-paths";
-import { getCoachingId } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { sectionPath, termPath } from "@/lib/page-paths";
 
 /**
  * Admin actions for discipline content (0020_discipline_content.sql).
@@ -34,10 +33,10 @@ async function requireAdmin() {
 // Every public surface a discipline appears on. The slug route is the one
 // that matters most; the rest carry counts, names or photos that change
 // with it.
-function revalidateDiscipline(slug: string | null) {
+function revalidateDiscipline(slug: string | null, professionSlug = "coaches") {
   revalidatePath("/");
-  revalidatePath("/coaches");
-  if (slug) revalidatePath(disciplinePath(slug));
+  revalidatePath(sectionPath(professionSlug));
+  if (slug) revalidatePath(termPath(professionSlug, slug));
   revalidatePath("/sitemap.xml");
   revalidatePath("/admin/disciplines");
   // The header menu and home chips read disciplines through the CMS cache.
@@ -52,6 +51,8 @@ const text = (fd: FormData, key: string, max = 20_000) =>
     .trim()
     .slice(0, max);
 
+const parentSlug = (row: unknown) => (row as { parent?: { slug: string } | null } | null)?.parent?.slug ?? "coaches";
+
 export type SaveState = { ok: boolean; message: string } | null;
 
 export async function saveDiscipline(termId: string, _prev: SaveState, formData: FormData): Promise<SaveState> {
@@ -60,7 +61,7 @@ export async function saveDiscipline(termId: string, _prev: SaveState, formData:
   const name = text(formData, "name", 80);
   if (!name) return { ok: false, message: "A name is required." };
 
-  const { data: before } = await supabase.from("terms").select("slug").eq("id", termId).single();
+  const { data: before } = await supabase.from("terms").select("slug, parent:terms!terms_parent_id_fkey(slug)").eq("id", termId).single();
 
   const { error } = await supabase
     .from("terms")
@@ -77,7 +78,7 @@ export async function saveDiscipline(termId: string, _prev: SaveState, formData:
     .eq("id", termId);
   if (error) return { ok: false, message: error.message };
 
-  revalidateDiscipline(before?.slug ?? null);
+  revalidateDiscipline(before?.slug ?? null, parentSlug(before));
   return { ok: true, message: "Saved." };
 }
 
@@ -85,6 +86,9 @@ export async function saveDiscipline(termId: string, _prev: SaveState, formData:
 // straight in its editor to fill in the rest.
 export async function createDiscipline(formData: FormData) {
   const supabase = await requireAdmin();
+  const professionId = text(formData, "profession_id", 60);
+  const { data: profession } = await supabase.from("terms").select("id, slug").eq("id", professionId).eq("kind", "profession").maybeSingle();
+  if (!profession) throw new Error("Pick a profession.");
   const name = text(formData, "name", 80);
   if (!name) throw new Error("A name is required.");
   const slug = slugify(name);
@@ -94,14 +98,13 @@ export async function createDiscipline(formData: FormData) {
 
   const { data, error } = await supabase
     .from("terms")
-    // A discipline here is a coaching discipline: its parent is the coaching
-    // profession. Horse care specialities get their own editor (stage 8).
-    .insert({ kind: "discipline", parent_id: await getCoachingId(supabase), slug, name, generates_pages: true })
+    // Disciplines and specialities are one kind; the parent is the profession.
+    .insert({ kind: "discipline", parent_id: profession.id, slug, name, generates_pages: true })
     .select("id")
     .single();
-  if (error) throw new Error(error.code === "23505" ? `A discipline with the URL /${slug} already exists.` : error.message);
+  if (error) throw new Error(error.code === "23505" ? `/${profession.slug}/${slug} already exists.` : error.message);
 
-  revalidateDiscipline(slug);
+  revalidateDiscipline(slug, profession.slug);
   redirect(`/admin/disciplines/${data.id}`);
 }
 
@@ -114,7 +117,7 @@ export async function uploadDisciplineImage(termId: string, formData: FormData) 
   if (!file || file.size === 0) throw new Error("No file provided.");
   if (!file.type.startsWith("image/")) throw new Error("That isn't an image.");
 
-  const { data: term, error: termError } = await supabase.from("terms").select("slug, image_path").eq("id", termId).single();
+  const { data: term, error: termError } = await supabase.from("terms").select("slug, image_path, parent:terms!terms_parent_id_fkey(slug)").eq("id", termId).single();
   if (termError) throw termError;
 
   const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
@@ -126,19 +129,57 @@ export async function uploadDisciplineImage(termId: string, formData: FormData) 
   if (error) throw error;
 
   if (term.image_path) await supabase.storage.from("term-images").remove([term.image_path]);
-  revalidateDiscipline(term.slug);
+  revalidateDiscipline(term.slug, parentSlug(term));
 }
 
 export async function removeDisciplineImage(termId: string) {
   const supabase = await requireAdmin();
-  const { data: term, error: termError } = await supabase.from("terms").select("slug, image_path").eq("id", termId).single();
+  const { data: term, error: termError } = await supabase.from("terms").select("slug, image_path, parent:terms!terms_parent_id_fkey(slug)").eq("id", termId).single();
   if (termError) throw termError;
   if (!term.image_path) return;
 
   const { error } = await supabase.from("terms").update({ image_path: null, updated_at: new Date().toISOString() }).eq("id", termId);
   if (error) throw error;
   await supabase.storage.from("term-images").remove([term.image_path]);
-  revalidateDiscipline(term.slug);
+  revalidateDiscipline(term.slug, parentSlug(term));
+}
+
+/**
+ * Featured (§10): coaching's featured disciplines are the Coaches menu and
+ * the home page chips, in featured order.
+ */
+export async function setFeatured(termId: string, featured: boolean) {
+  const supabase = await requireAdmin();
+  const { data: term } = await supabase.from("terms").select("parent_id").eq("id", termId).single();
+  const { data: last } = await supabase
+    .from("terms")
+    .select("featured_order")
+    .eq("parent_id", term?.parent_id ?? "")
+    .eq("featured", true)
+    .order("featured_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const { error } = await supabase
+    .from("terms")
+    .update({ featured, featured_order: featured ? (last?.featured_order ?? 0) + 1 : 0, updated_at: new Date().toISOString() })
+    .eq("id", termId);
+  if (error) throw error;
+  revalidateDiscipline(null);
+  revalidatePath("/", "layout");
+}
+
+export async function moveFeatured(termId: string, direction: "up" | "down") {
+  const supabase = await requireAdmin();
+  const { data: term } = await supabase.from("terms").select("parent_id").eq("id", termId).single();
+  const { data } = await supabase.from("terms").select("id").eq("parent_id", term?.parent_id ?? "").eq("featured", true).order("featured_order");
+  const order = (data ?? []).map((r) => r.id as string);
+  const i = order.indexOf(termId);
+  const j = direction === "up" ? i - 1 : i + 1;
+  if (i < 0 || j < 0 || j >= order.length) return;
+  [order[i], order[j]] = [order[j], order[i]];
+  for (const [n, id] of order.entries()) await supabase.from("terms").update({ featured_order: n + 1 }).eq("id", id);
+  revalidateDiscipline(null);
+  revalidatePath("/", "layout");
 }
 
 // Deactivating hides the discipline everywhere (pages, search, the
@@ -146,10 +187,10 @@ export async function removeDisciplineImage(termId: string) {
 // restores them. This is the "remove" an admin normally wants.
 export async function setDisciplineActive(termId: string, active: boolean) {
   const supabase = await requireAdmin();
-  const { data: term } = await supabase.from("terms").select("slug").eq("id", termId).single();
+  const { data: term } = await supabase.from("terms").select("slug, parent:terms!terms_parent_id_fkey(slug)").eq("id", termId).single();
   const { error } = await supabase.from("terms").update({ active, updated_at: new Date().toISOString() }).eq("id", termId);
   if (error) throw error;
-  revalidateDiscipline(term?.slug ?? null);
+  revalidateDiscipline(term?.slug ?? null, parentSlug(term));
 }
 
 // A real delete is only offered when nothing points at the row — no coach
@@ -160,7 +201,7 @@ export async function deleteDiscipline(termId: string) {
   const [{ count: coaches }, { count: clinics }, { data: term }] = await Promise.all([
     supabase.from("provider_terms").select("*", { count: "exact", head: true }).eq("term_id", termId),
     supabase.from("events").select("*", { count: "exact", head: true }).eq("term_id", termId),
-    supabase.from("terms").select("slug, image_path").eq("id", termId).single(),
+    supabase.from("terms").select("slug, image_path, parent:terms!terms_parent_id_fkey(slug)").eq("id", termId).single(),
   ]);
   if ((coaches ?? 0) > 0 || (clinics ?? 0) > 0) {
     throw new Error("Coaches or clinics still use this discipline — deactivate it instead.");
@@ -168,6 +209,6 @@ export async function deleteDiscipline(termId: string) {
   if (term?.image_path) await supabase.storage.from("term-images").remove([term.image_path]);
   const { error } = await supabase.from("terms").delete().eq("id", termId);
   if (error) throw error;
-  revalidateDiscipline(term?.slug ?? null);
+  revalidateDiscipline(term?.slug ?? null, parentSlug(term));
   redirect("/admin/disciplines");
 }

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { sendEmail } from "@/lib/email";
-import { getProfessions } from "@/lib/cms/read";
+import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
 import { getEventReachKm } from "@/lib/settings";
 import { absoluteUrl } from "@/lib/site-url";
 import { eventPath, profilePath } from "@/lib/page-paths";
@@ -24,9 +24,6 @@ export function unsubscribeLinks(kind: "alert" | "all", token: string) {
   const q = `${kind === "alert" ? "a" : "r"}=${token}`;
   return { page: absoluteUrl(`/unsubscribe?${q}`), oneClick: absoluteUrl(`/api/unsubscribe?${q}`) };
 }
-
-const footer = (page: string) =>
-  `\n\nYou're getting this because you set up an alert on Equine Professionals Australia. Change your alerts: ${absoluteUrl("/account")}\nStop this alert: ${page}`;
 
 const longDate = (iso: string) => new Date(iso).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
@@ -55,14 +52,25 @@ export async function notifyRidersOfEvent(service: Service, eventId: string) {
     console.error("riders_for_event failed", error);
     return { matched: 0, sent: 0 };
   }
-  const host = (event as unknown as { providers: { name: string } | null }).providers?.name;
+  const host = (event as unknown as { providers: { name: string } | null }).providers?.name ?? "";
+  const copy = await getContent("email.rider_event");
   let sent = 0;
   for (const m of (data ?? []) as Match[]) {
     const links = unsubscribeLinks("alert", m.unsubscribe_token);
+    const vars = {
+      event_title: event.title,
+      event_date: longDate(event.start_date),
+      event_place: event.location_text,
+      host,
+      event_url: absoluteUrl(eventPath(eventId)),
+      account_url: absoluteUrl("/account"),
+      unsubscribe_url: links.page,
+    };
+    const f = (t: string) => fillVariables(t, vars);
     const result = await sendEmail({
       to: m.email,
-      subject: `${event.title}, ${longDate(event.start_date)}`,
-      text: `${event.title}\n${longDate(event.start_date)} · ${event.location_text}${host ? `\nRun by ${host}.` : ""}\n\nThe details: ${absoluteUrl(eventPath(eventId))}${footer(links.page)}`,
+      subject: f(copy.subject),
+      text: `${f(copy.body)}\n\n${f(copy.footer)}`,
       unsubscribe: links.oneClick,
     });
     if (result === "failed") continue;
@@ -91,13 +99,25 @@ export async function notifyRidersOfProvider(service: Service, providerId: strin
     .sort((a, b) => a.sort_order - b.sort_order)[0]?.terms?.slug;
   const singular = (await getProfessions()).find((x) => x.slug === professionSlug)?.singular ?? "professional";
   const article = /^[aeiou]/i.test(singular) ? "an" : "a";
+  const copy = await getContent("email.rider_new_provider");
   let sent = 0;
   for (const m of data as Match[]) {
     const links = unsubscribeLinks("alert", m.unsubscribe_token);
+    const vars = {
+      name: p.name,
+      singular,
+      a_singular: `${article} ${singular}`,
+      place: `${p.suburb} ${p.state}`.trim(),
+      headline: p.headline ?? "",
+      profile_url: absoluteUrl(profilePath(p.slug)),
+      account_url: absoluteUrl("/account"),
+      unsubscribe_url: links.page,
+    };
+    const f = (t: string) => fillVariables(t, vars);
     const result = await sendEmail({
       to: m.email,
-      subject: `New near you: ${p.name}, ${singular}`,
-      text: `${p.name} has just listed as ${article} ${singular} in ${p.suburb} ${p.state}.${p.headline ? `\n\n"${p.headline}"` : ""}\n\nTheir profile: ${absoluteUrl(profilePath(p.slug))}${footer(links.page)}`,
+      subject: f(copy.subject),
+      text: [f(copy.body), p.headline ? f(copy.headline) : "", f(copy.profileLine), f(copy.footer)].filter(Boolean).join("\n\n"),
       unsubscribe: links.oneClick,
     });
     if (result === "failed") continue;
@@ -120,6 +140,7 @@ export async function sendRiderMonthly(service: Service, now = new Date()) {
   const since = new Date(now.getTime() - 31 * 86_400_000).toISOString();
   const professions = await getProfessions();
   const nameOf = (id: string | null) => professions.find((p) => p.id === id);
+  const copy = await getContent("email.rider_monthly");
 
   const { data: alertRows } = await service.from("rider_alerts").select("rider_id").is("unsubscribed_at", null);
   const riders = [...new Set((alertRows ?? []).map((r) => r.rider_id as string))];
@@ -149,11 +170,11 @@ export async function sendRiderMonthly(service: Service, now = new Date()) {
         if (!evs.length && !prs.length) return "";
         const lines = [DOOR_TITLE[door]];
         if (evs.length) {
-          lines.push("Coming up");
+          lines.push(copy.comingUp);
           for (const e of evs) lines.push(`- ${longDate(e.start_date)}: ${e.title}, with ${e.provider_name}, ${e.location_text}. ${absoluteUrl(eventPath(e.id))}`);
         }
         if (prs.length) {
-          lines.push("New near you");
+          lines.push(copy.newNearYou);
           for (const x of prs) lines.push(`- ${x.name}, ${nameOf(x.profession_id)?.singular ?? "professional"} in ${x.suburb} ${x.state}. ${absoluteUrl(profilePath(x.slug))}`);
         }
         return lines.join("\n");
@@ -165,10 +186,11 @@ export async function sendRiderMonthly(service: Service, now = new Date()) {
     }
     const links = unsubscribeLinks("all", profile.email_token as string);
     const first = String(profile.name ?? "").split(" ")[0] || "there";
+    const vars = { first_name: first, account_url: absoluteUrl("/account"), unsubscribe_url: links.page };
     const result = await sendEmail({
       to: profile.email as string,
-      subject: "This month near you",
-      text: `Hi ${first},\n\nHere's what's near you this month.\n\n${sections.join("\n\n")}\n\nYou get this once a month because you have alerts set up. Change them: ${absoluteUrl("/account")}\nStop every email from us: ${links.page}`,
+      subject: fillVariables(copy.subject, vars),
+      text: `${fillVariables(copy.intro, vars)}\n\n${sections.join("\n\n")}\n\n${fillVariables(copy.footer, vars)}`,
       unsubscribe: links.oneClick,
     });
     if (result === "failed") continue;

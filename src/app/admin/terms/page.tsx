@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { createTerm, renameTerm, changeTermSlug, toggleTermActive, toggleGeneratesPages } from "./actions";
+import Link from "next/link";
+import { changeLog } from "@/lib/admin";
+import { HistoryList } from "../history-list";
+import { createTerm, renameTerm, changeTermSlug, setTermProfession, toggleTermActive, toggleGeneratesPages } from "./actions";
 
 export const metadata = { title: "Terms" };
 
@@ -11,24 +14,34 @@ type TermRow = {
   name: string;
   generates_pages: boolean;
   active: boolean;
+  parent_id: string | null;
 };
 
 const KIND_LABELS: Record<TermRow["kind"], string> = {
-  discipline: "Disciplines",
+  discipline: "Disciplines and specialities",
   skill: "Skills",
-  attribute: "Attributes",
+  attribute: "Setup",
 };
 
-export default async function AdminTermsPage() {
+/**
+ * /admin/terms: the vocabulary, one profession at a time (?p=). Disciplines
+ * and specialities belong to their profession for good (it's in their
+ * address); skills and setup can belong to one profession or be shared by
+ * all, and move with the "Belongs to" control.
+ */
+export default async function AdminTermsPage({ searchParams }: { searchParams: Promise<{ p?: string }> }) {
+  const { p } = await searchParams;
   const supabase = await createClient();
   if (!supabase) return null;
 
-  const { data } = await supabase
-    .from("terms")
-    .select("id, kind, slug, name, generates_pages, active")
-    .order("kind")
-    .order("sort_order");
-  const terms = (data ?? []) as TermRow[];
+  const [{ data }, { data: profs }] = await Promise.all([
+    supabase.from("terms").select("id, kind, slug, name, generates_pages, active, parent_id").neq("kind", "profession").order("kind").order("sort_order"),
+    supabase.from("terms").select("id, slug, name").eq("kind", "profession").order("sort_order"),
+  ]);
+  const professions = profs ?? [];
+  const profession = professions.find((x) => x.slug === (p ?? "coaches")) ?? professions[0];
+  const all = (data ?? []) as TermRow[];
+  const terms = all.filter((t) => t.parent_id === profession?.id || (t.kind !== "discipline" && t.parent_id === null));
 
   const byName = (a: TermRow, b: TermRow) => a.name.localeCompare(b.name);
   const byKind: Record<TermRow["kind"], TermRow[]> = {
@@ -36,9 +49,22 @@ export default async function AdminTermsPage() {
     skill: terms.filter((t) => t.kind === "skill").sort(byName),
     attribute: terms.filter((t) => t.kind === "attribute").sort(byName),
   };
+  const history = await changeLog(supabase, { table: ["terms", "term_aliases"] });
 
   return (
     <div className="flex flex-col gap-10">
+      <nav aria-label="Profession" className="flex flex-wrap gap-1.5">
+        {professions.map((x) => (
+          <Link
+            key={x.id}
+            href={`/admin/terms?p=${x.slug}`}
+            aria-current={x.id === profession?.id ? "page" : undefined}
+            className={`rounded-[var(--radius-pill)] border px-3 py-1.5 text-[13px] ${x.id === profession?.id ? "border-accent bg-accent text-accent-fg" : "border-border text-fg hover:border-fg"}`}
+          >
+            {x.name}
+          </Link>
+        ))}
+      </nav>
       {(Object.keys(byKind) as TermRow["kind"][]).map((kind) => (
         <section key={kind}>
           <h2 className="font-display text-[26px] leading-none text-ink">{KIND_LABELS[kind]}</h2>
@@ -79,7 +105,19 @@ export default async function AdminTermsPage() {
                     </button>
                   </form>
                 </div>
-                <div className="flex shrink-0 items-center gap-3 text-sm">
+                <div className="flex shrink-0 flex-wrap items-center gap-3 text-sm">
+                  {kind !== "discipline" && (
+                    <form action={setTermProfession.bind(null, term.id)} className="flex items-center gap-1.5">
+                      <label className="sr-only" htmlFor={`belongs-${term.id}`}>Belongs to</label>
+                      <select id={`belongs-${term.id}`} name="profession_id" defaultValue={term.parent_id ?? ""} className="rounded-[10px] border border-border bg-bg px-2 py-1 text-xs text-fg">
+                        <option value="">Every profession</option>
+                        {professions.map((x) => (
+                          <option key={x.id} value={x.id}>{x.name}</option>
+                        ))}
+                      </select>
+                      <button type="submit" className="text-xs font-medium text-accent">Move</button>
+                    </form>
+                  )}
                   {kind === "discipline" && (
                     <span className="text-muted">
                       pages: <strong className="text-fg">{term.generates_pages ? "on" : "off"}</strong>
@@ -121,14 +159,25 @@ export default async function AdminTermsPage() {
               name="kind"
               className="w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-fg"
             >
-              <option value="discipline">Discipline</option>
+              <option value="discipline">Discipline or speciality</option>
               <option value="skill">Skill</option>
-              <option value="attribute">Attribute</option>
+              <option value="attribute">Setup</option>
+            </select>
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-fg">Belongs to</span>
+            <select name="profession_id" defaultValue={profession?.id ?? ""} className="w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-fg">
+              <option value="">Every profession (skills and setup only)</option>
+              {professions.map((x) => (
+                <option key={x.id} value={x.id}>{x.name}</option>
+              ))}
             </select>
           </label>
           <Button type="submit">Add</Button>
         </form>
       </section>
+
+      <HistoryList rows={history} />
     </div>
   );
 }

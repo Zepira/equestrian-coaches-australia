@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { changeLog } from "@/lib/admin";
+import { HistoryList } from "../history-list";
 import { addAlias, removeAlias } from "./actions";
 
 export const metadata = { title: "Aliases" };
@@ -11,9 +13,9 @@ export default async function AdminAliasesPage() {
   const [{ data: aliasRows }, { data: terms }] = await Promise.all([
     supabase
       .from("term_aliases")
-      .select("id, alias, source, is_primary, terms(name, kind)")
+      .select("id, alias, source, is_primary, terms(name, kind, parent:terms!terms_parent_id_fkey(name))")
       .order("alias"),
-    supabase.from("terms").select("id, name, kind").eq("active", true).order("kind").order("name"),
+    supabase.from("terms").select("id, name, kind, parent:terms!terms_parent_id_fkey(name)").eq("active", true).order("kind").order("name"),
   ]);
 
   const aliases = (aliasRows ?? []) as unknown as {
@@ -21,8 +23,10 @@ export default async function AdminAliasesPage() {
     alias: string;
     source: string;
     is_primary: boolean;
-    terms: { name: string; kind: string } | null;
+    terms: { name: string; kind: string; parent: { name: string } | null } | null;
   }[];
+  const termList = (terms ?? []) as unknown as { id: string; name: string; kind: string; parent: { name: string } | null }[];
+  const history = await changeLog(supabase, { table: "term_aliases" });
 
   return (
     <div className="flex flex-col gap-8">
@@ -42,7 +46,8 @@ export default async function AdminAliasesPage() {
             >
               <div className="min-w-0">
                 <span className="font-medium text-fg">{a.alias}</span>
-                <span className="text-muted"> → {a.terms?.name ?? "—"}</span>
+                <span className="text-muted"> → {a.terms?.name ?? "(no term)"}</span>
+                <span className="text-subtle"> · {a.terms?.kind === "profession" ? "profession" : (a.terms?.parent?.name ?? "every profession")}</span>
                 {a.is_primary && (
                   <span className="ml-2 rounded-full bg-accent-soft px-2 py-0.5 text-xs text-fg">
                     primary
@@ -72,9 +77,9 @@ export default async function AdminAliasesPage() {
               required
               className="w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-fg"
             >
-              {(terms ?? []).map((t) => (
+              {termList.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.name} ({t.kind})
+                  {t.name} ({t.kind === "profession" ? "profession" : `${t.kind === "attribute" ? "setup" : t.kind}, ${t.parent?.name ?? "every profession"}`})
                 </option>
               ))}
             </select>
@@ -91,6 +96,8 @@ export default async function AdminAliasesPage() {
           <Button type="submit">Add</Button>
         </form>
       </section>
+
+      <HistoryList rows={history} />
     </div>
   );
 }

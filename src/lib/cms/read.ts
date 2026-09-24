@@ -28,6 +28,7 @@ type Row = {
   name: string;
   blurb: string;
   sort_order: number;
+  image_path?: string | null;
   profession_details: Record<string, unknown> | null;
 };
 
@@ -75,6 +76,12 @@ function toProfession(r: Row): Profession | null {
     remoteAllowed: d.remote_allowed === true,
     sortOrder: r.sort_order,
     completeness: asCompleteness(d.completeness),
+    faq: asSteps(d.faq),
+    imagePath: r.image_path ?? null,
+    tierLabels:
+      d.tier_labels && typeof d.tier_labels === "object" && !Array.isArray(d.tier_labels)
+        ? Object.fromEntries(Object.entries(d.tier_labels as Record<string, unknown>).filter((e): e is [string, string] => typeof e[1] === "string" && e[1].trim() !== ""))
+        : {},
   };
 }
 
@@ -85,7 +92,7 @@ export const getProfessions = unstable_cache(
     if (!supabase) return FALLBACK_PROFESSIONS;
     const { data, error } = await supabase
       .from("terms")
-      .select("id, slug, name, blurb, sort_order, profession_details(*)")
+      .select("id, slug, name, blurb, sort_order, image_path, profession_details(*)")
       .eq("kind", "profession")
       .order("sort_order");
     if (error || !data?.length) return FALLBACK_PROFESSIONS;
@@ -136,7 +143,7 @@ export const getFeaturedDisciplines = unstable_cache(
  * keys, each the same kind of thing (text, list of text, list of numbers,
  * list of title/body items). Anything else and the page uses the default.
  */
-function sameShape(value: unknown, def: unknown): boolean {
+export function sameShape(value: unknown, def: unknown): boolean {
   if (typeof def === "string") return typeof value === "string";
   if (Array.isArray(def)) {
     if (!Array.isArray(value)) return false;
@@ -173,4 +180,28 @@ export async function getContent<K extends ContentKey>(key: K): Promise<ContentV
 /** "{listed_price}" and friends, filled in; unknown names are left as written. */
 export function fillVariables(text: string, vars: Record<string, string>): string {
   return text.replace(/\{([a-z_]+)\}/g, (m, name: string) => vars[name] ?? m);
+}
+
+// ── Area intros ─────────────────────────────────────────────────────────────
+
+const loadAreaIntros = unstable_cache(
+  async (): Promise<Record<string, string>> => {
+    const supabase = createPublicSupabase();
+    if (!supabase) return {};
+    const { data } = await supabase.from("area_intros").select("area_id, profession_id, body");
+    return Object.fromEntries((data ?? []).filter((r) => r.body).map((r) => [`${r.area_id}:${r.profession_id}`, r.body as string]));
+  },
+  ["cms-area-intros"],
+  { tags: [CMS_TAG], revalidate: CMS_REVALIDATE }
+);
+
+/**
+ * The hand-written intro for one profession's page about one place
+ * (Admin → Areas), as paragraphs, or none. Only the pages worth writing for
+ * have one; the rest show nothing rather than a template.
+ */
+export async function getAreaIntro(areaId: string, professionId: string | null): Promise<string[]> {
+  if (!professionId) return [];
+  const body = (await loadAreaIntros())[`${areaId}:${professionId}`] ?? "";
+  return body.split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
 }

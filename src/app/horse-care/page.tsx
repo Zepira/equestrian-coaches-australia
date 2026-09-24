@@ -22,6 +22,7 @@ import { horseCareOf, sectionHref } from "@/lib/professions";
 import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
 import { getPlans } from "@/lib/settings";
 import { featuredMockProfessionals, mockProfessionalCount, professionPhoto } from "@/lib/mock-professionals";
+import { termImagePublicUrl } from "@/lib/discipline-content";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -50,7 +51,7 @@ export default async function HorseCareHome() {
   const [titleFirst, ...titleRest] = pitch.title.split("\n");
   const total = mockProfessionalCount();
   const featured = featuredMockProfessionals(4);
-  const professions = horseCare.map((p) => ({ ...p, count: mockProfessionalCount(p.slug), photo: professionPhoto(p.slug, 600) }));
+  const professions = horseCare.map((p) => ({ ...p, count: mockProfessionalCount(p.slug), photo: termImagePublicUrl(p.imagePath) ?? professionPhoto(p.slug, 600) }));
 
   return (
     <>

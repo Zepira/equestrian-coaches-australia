@@ -31,6 +31,9 @@ import { areaPagePath, profilePath, termPath } from "@/lib/page-paths";
 import type { SectionTerm } from "@/lib/sections";
 import { professionPhoto, searchMockProfessionals } from "@/lib/mock-professionals";
 import { logImpressions } from "@/lib/coach-events";
+import { termImagePublicUrl } from "@/lib/discipline-content";
+import { RichText } from "@/components/rich-text";
+import { getAreaIntro } from "@/lib/cms/read";
 
 const RADIUS_KM = 100;
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -57,9 +60,11 @@ export async function ProfessionalListing({
   /** The profession's specialities, linked under the cards. */
   specialities?: SectionTerm[];
   /** Set on a place page (/farriers/in/[area]); the place is fixed, not typed. */
-  area?: { slug: string; name: string; state: string };
+  area?: { id?: string; slug: string; name: string; state: string };
 }) {
   const where = await place(area ? `${area.name} ${area.state}` : location);
+  // A hand-written intro on the profession's own page about a place (not its speciality pages).
+  const intro = area?.id && !speciality ? await getAreaIntro(area.id, profession?.id ?? null) : [];
   const horseCare = horseCareOf(await getProfessions());
   const point = where?.kind === "point" ? { lat: where.lat, long: where.long } : null;
   const filters = {
@@ -92,7 +97,7 @@ export async function ProfessionalListing({
   const noun = profession ? profession.name.toLowerCase() : "professionals";
   const placeName = where?.kind === "point" ? `${titleCase(where.suburb)} ${where.state}` : where?.kind === "state" ? where.state.name : null;
   const others = horseCare.filter((p) => p.slug !== profession?.slug);
-  const photo = profession ? professionPhoto(profession.slug, 1200) : professionPhoto("farriers", 1200, 1);
+  const photo = profession ? (termImagePublicUrl(profession.imagePath) ?? professionPhoto(profession.slug, 1200)) : professionPhoto("farriers", 1200, 1);
   const sectionSelf = profession ? sectionHref(profession) : "/horse-care/search";
   const termSelf = profession && speciality ? termPath(profession.slug, speciality.slug) : sectionSelf;
   // "Clear place" goes to the page without the place: the speciality page if there is one.
@@ -146,6 +151,8 @@ export async function ProfessionalListing({
                 <>
                   {profession.name} for <em className="text-accent">{speciality.name.toLowerCase()}</em>
                 </>
+              ) : profession && profession.heroHeadline && !area ? (
+                <RichText text={profession.heroHeadline} emClassName="text-accent" />
               ) : profession ? (
                 <em className="text-accent">{profession.name}</em>
               ) : (
@@ -164,12 +171,19 @@ export async function ProfessionalListing({
               className="fade-in mt-5 max-w-[46ch] text-[18px] leading-[1.45] text-ink wide:mt-7 wide:text-[22px] wide:leading-[1.35]"
               style={{ animationDelay: "0.3s" }}
             >
-              {profession ? profession.blurb : "Farriers, vets, dentists, bodyworkers and the rest, in one list."}
+              {profession ? (!speciality && !area && profession.heroLead) || profession.blurb : "Farriers, vets, dentists, bodyworkers and the rest, in one list."}
             </p>
             <p className="fade-in mt-4 text-[14px] text-subtle wide:text-[15px]" style={{ animationDelay: "0.45s" }}>
               {cards.length} {cards.length === 1 && profession ? profession.singular : noun}{" "}
               {placeName ? (where?.kind === "state" ? `in ${placeName}` : `covering ${placeName}`) : "listed across Australia"}
             </p>
+            {intro.length > 0 && (
+              <div className="mt-5 flex max-w-[60ch] flex-col gap-3 text-[16px] leading-[1.55] text-muted" data-area-intro>
+                {intro.map((para) => (
+                  <p key={para}>{para}</p>
+                ))}
+              </div>
+            )}
           </div>
           <figure className="fade-in mt-8 wide:mt-0" style={{ animationDelay: "0.25s" }}>
             <div className="relative aspect-[4/3] overflow-hidden rounded-[16px] bg-shade wide:aspect-[5/4] wide:rounded-[20px]">

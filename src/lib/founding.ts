@@ -1,8 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { FOUNDING_PRICE_ID, getStripe, isMockPayments } from "@/lib/stripe";
+import { getStripe, isMockPayments } from "@/lib/stripe";
 import { sendEmail } from "@/lib/email";
-import { addMonths, countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getPlans } from "@/lib/settings";
+import { addMonths, countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getPlans, getFoundingPrice, getStripePrices } from "@/lib/settings";
 import { absoluteUrl } from "@/lib/site-url";
+import { fillVariables, getContent } from "@/lib/cms/read";
 
 /**
  * The founding offer's billing (The Site as a CMS §09):
@@ -80,11 +81,12 @@ export async function startFoundingCard(service: Service, providerId: string, em
     });
     return session.url;
   }
-  if (!FOUNDING_PRICE_ID) throw new Error("No Stripe price set for the founding plan.");
+  const foundingPriceId = (await getStripePrices()).founding;
+  if (!foundingPriceId) throw new Error("No Stripe price set for the founding plan. Add it under Admin, Plans and prices.");
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer,
-    line_items: [{ price: FOUNDING_PRICE_ID, quantity: 1 }],
+    line_items: [{ price: foundingPriceId, quantity: 1 }],
     subscription_data: { trial_end: Math.floor(first.getTime() / 1000), metadata: { provider_id: providerId, founding: "true" } },
     success_url: `${back}${back.includes("?") ? "&" : "?"}card=saved`,
     cancel_url: `${back}${back.includes("?") ? "&" : "?"}card=cancelled`,
@@ -113,14 +115,15 @@ export async function activateFoundingMembers(service: Service, launchDate: Date
     .eq("founding", true)
     .eq("status", "card_saved");
   const stripe = isMockPayments ? null : getStripe();
-  const plans = await getPlans();
+  const [plans, foundingPrice, { founding: foundingPriceId }] = await Promise.all([getPlans(), getFoundingPrice(), getStripePrices()]);
+  const launchCopy = await getContent("email.founding_launch");
   let done = 0;
   for (const s of subs ?? []) {
     if (stripe) {
-      if (!FOUNDING_PRICE_ID || !s.stripe_customer_id) continue;
+      if (!foundingPriceId || !s.stripe_customer_id) continue;
       await stripe.subscriptions.create({
         customer: s.stripe_customer_id,
-        items: [{ price: FOUNDING_PRICE_ID }],
+        items: [{ price: foundingPriceId }],
         trial_end: Math.floor(first.getTime() / 1000),
         metadata: { provider_id: s.provider_id, founding: "true" },
       });
@@ -129,11 +132,16 @@ export async function activateFoundingMembers(service: Service, launchDate: Date
     const { error } = await service.from("billing_notices").insert({ subscription_id: s.id, kind: "launch_date" });
     if (!error) {
       for (const m of await memberEmails(service, s.provider_id)) {
-        await sendEmail({
-          to: m.email,
-          subject: `We've launched: your first charge is on ${formatLongDate(first)}`,
-          text: `Hi ${(m.name ?? "").split(" ")[0] || "there"},\n\nEquine Professionals Australia launched on ${formatLongDate(launchDate)}. As a founding member you're on ${plans.spotlight.name} for free until ${formatLongDate(first)}. From then it's ${plans.listed.name} at ${plans.listed.monthly} a month, and that price stays yours for as long as you stay.\n\nYou can change plan or cancel before then from your dashboard: ${absoluteUrl("/dashboard/billing")}\n\nWe'll remind you 30, 14 and 3 days before.`,
-        });
+        const vars = {
+          first_name: (m.name ?? "").split(" ")[0] || "there",
+          launch_date: formatLongDate(launchDate),
+          first_charge_date: formatLongDate(first),
+          spotlight: plans.spotlight.name,
+          listed: plans.listed.name,
+          listed_price: foundingPrice,
+          billing_url: absoluteUrl("/dashboard/billing"),
+        };
+        await sendEmail({ to: m.email, subject: fillVariables(launchCopy.subject, vars), text: fillVariables(launchCopy.body, vars) });
       }
     }
     done++;
@@ -148,7 +156,8 @@ const REMINDER_DAYS = [30, 14, 3];
  * mock mode the end of the trial (Stripe does that part for real).
  */
 export async function runFoundingJob(service: Service, now = new Date()): Promise<{ reminders: number; converted: number }> {
-  const plans = await getPlans();
+  const [plans, foundingPrice] = await Promise.all([getPlans(), getFoundingPrice()]);
+  const reminderCopy = await getContent("email.founding_reminder");
   const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   const { data: subs } = await service
     .from("subscriptions")
@@ -170,11 +179,15 @@ export async function runFoundingJob(service: Service, now = new Date()): Promis
     const { error } = await service.from("billing_notices").insert({ subscription_id: s.id, kind: `reminder_${days}` });
     if (error) continue; // already sent
     for (const m of await memberEmails(service, s.provider_id)) {
-      await sendEmail({
-        to: m.email,
-        subject: `Your first charge is in ${days} days`,
-        text: `Hi ${(m.name ?? "").split(" ")[0] || "there"},\n\nYour free founding period ends on ${formatLongDate(end)}. From then your plan is ${plans.listed.name} at ${plans.listed.monthly} a month, charged to the card you saved, and that price stays yours for as long as you stay.\n\nTo change plan or cancel before then: ${absoluteUrl("/dashboard/billing")}`,
-      });
+      const vars = {
+        first_name: (m.name ?? "").split(" ")[0] || "there",
+        days: String(days),
+        first_charge_date: formatLongDate(end),
+        listed: plans.listed.name,
+        listed_price: foundingPrice,
+        billing_url: absoluteUrl("/dashboard/billing"),
+      };
+      await sendEmail({ to: m.email, subject: fillVariables(reminderCopy.subject, vars), text: fillVariables(reminderCopy.body, vars) });
     }
     reminders++;
   }

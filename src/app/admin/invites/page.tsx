@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getProfessions } from "@/lib/cms/read";
 import { absoluteUrl } from "@/lib/site-url";
 import { profilePath } from "@/lib/page-paths";
-import { createInvite } from "./actions";
+import { createInvite, renewInvite } from "./actions";
 
 export const metadata = { title: "Invites" };
 
@@ -138,7 +138,14 @@ export default async function InvitesPage({ searchParams }: { searchParams: Prom
                       )}
                     </span>
                   </div>
-                  {!i.used_at && !expired && <input readOnly value={link} className="mt-2 w-full rounded-[8px] bg-shade px-2 py-1.5 font-mono text-xs text-fg" />}
+                  {!i.used_at && (
+                    <div className="mt-2 flex items-center gap-2">
+                      {!expired && <input readOnly value={link} aria-label={`Invite link for ${i.name || i.email}`} className="w-full rounded-[8px] bg-shade px-2 py-1.5 font-mono text-xs text-fg" />}
+                      <form action={renewInvite.bind(null, i.id)}>
+                        <button className="whitespace-nowrap text-xs font-medium text-accent">{expired ? "Renew for 30 days" : "Another 30 days"}</button>
+                      </form>
+                    </div>
+                  )}
                 </li>
               );
             })}

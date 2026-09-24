@@ -57,7 +57,7 @@ export async function CoachesHome() {
     <>
       <Hero
         eyebrow={hero.eyebrow}
-        words={profession.heroHeadline.split(" ")}
+        words={profession.heroHeadline.replace(/\*/g, "").split(" ")}
         cycle={hero.cycle}
         lead={profession.heroLead}
         leadShort={profession.heroLeadShort}

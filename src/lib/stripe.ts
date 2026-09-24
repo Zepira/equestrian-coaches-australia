@@ -16,20 +16,6 @@ export function getStripe(): Stripe | null {
   return new Stripe(process.env.STRIPE_SECRET_KEY!);
 }
 
-import type { Tier } from "@/lib/tiers";
-
-// Stripe Price IDs per plan (monthly). Yearly prices get their own IDs
-// once the settings table exists — see CLAUDE.md "Configuration over
-// hardcoding" for why display price and price ID must be stored as a pair.
-export const TIER_PRICE_IDS: Record<Tier, string | undefined> = {
-  listed: process.env.NEXT_PUBLIC_STRIPE_PRICE_LISTED,
-  spotlight: process.env.NEXT_PUBLIC_STRIPE_PRICE_SPOTLIGHT,
-  clinic: process.env.NEXT_PUBLIC_STRIPE_PRICE_CLINIC,
-};
-
-/**
- * The founding Listed price ($9.99, kept for as long as they stay), separate
- * from the open Listed price so a price rise for new members never touches
- * founding ones (The Site as a CMS §09).
- */
-export const FOUNDING_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRICE_FOUNDING;
+// Stripe Price IDs are stored beside the prices they charge, in the
+// stripe_prices setting (Admin → Plans and prices, checked against Stripe on
+// save). The NEXT_PUBLIC_STRIPE_PRICE_* env vars are only its defaults.

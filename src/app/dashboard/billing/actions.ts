@@ -1,13 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getStripe, isMockPayments, TIER_PRICE_IDS } from "@/lib/stripe";
+import { getStripe, isMockPayments } from "@/lib/stripe";
 import { requireProvider } from "@/lib/provider-session";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { isTier, type Tier } from "@/lib/tiers";
 import { SITE_URL } from "@/lib/site-url";
 import { syncVisibility } from "@/lib/provider-lifecycle";
 import { startFoundingCard } from "@/lib/founding";
+import { getStripePrices } from "@/lib/settings";
 
 /**
  * Billing writes go to `subscriptions` (one per provider, covering every
@@ -75,8 +76,8 @@ async function checkout(tier: Tier, from: "dashboard" | "onboarding") {
   const stripe = getStripe();
   if (!stripe) throw new Error("Stripe isn't connected yet.");
 
-  const priceId = TIER_PRICE_IDS[tier];
-  if (!priceId) throw new Error(`No Stripe price configured for tier "${tier}".`);
+  const priceId = (await getStripePrices())[tier].monthly;
+  if (!priceId) throw new Error(`No Stripe price set for the ${tier} plan. Add it under Admin, Plans and prices.`);
 
   const { data: sub } = await service.from("subscriptions").select("stripe_customer_id").eq("provider_id", providerId).maybeSingle();
   let customerId = sub?.stripe_customer_id as string | undefined;

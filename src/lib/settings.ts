@@ -9,6 +9,7 @@ import {
   type PlanCapability,
   type PlanInfo,
   type Plans,
+  type Tier,
 } from "@/lib/tiers";
 
 /**
@@ -55,6 +56,21 @@ export const DEFAULTS = {
   plan_capabilities: JSON.stringify(
     Object.fromEntries(TIERS.map((t) => [t, capabilityJson(DEFAULT_CAPABILITIES[t])]))
   ),
+  /** What a founding member pays once their free period ends, kept for as long as they stay (§09). */
+  founding_price: "$9.99",
+  /**
+   * The Stripe Price behind each display price, JSON: { listed: { monthly,
+   * yearly }, spotlight: …, clinic: …, founding }. Stored beside the display
+   * prices and checked against Stripe on save, so the site never shows one
+   * number and charges another. Defaults to the env vars used before admin
+   * could set them.
+   */
+  stripe_prices: JSON.stringify({
+    listed: { monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_LISTED ?? "", yearly: "" },
+    spotlight: { monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_SPOTLIGHT ?? "", yearly: "" },
+    clinic: { monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_CLINIC ?? "", yearly: "" },
+    founding: process.env.NEXT_PUBLIC_STRIPE_PRICE_FOUNDING ?? "",
+  }),
 } as const satisfies Record<string, string>;
 
 /** Keys that can be set once from admin and are then read-only there. */
@@ -215,6 +231,38 @@ export async function getPlans(): Promise<Plans> {
 export async function getPlanCapabilities(): Promise<PlanCapabilities> {
   const stored = parseJson(await getSetting("plan_capabilities")) as Record<string, unknown> | null;
   return Object.fromEntries(TIERS.map((t) => [t, readPlanCapability(stored?.[t], DEFAULT_CAPABILITIES[t]) ?? DEFAULT_CAPABILITIES[t]])) as PlanCapabilities;
+}
+
+/** The founding members' locked price, "$9.99". */
+export async function getFoundingPrice(): Promise<string> {
+  const v = (await getSetting("founding_price")).trim();
+  return PRICE.test(v) ? v : DEFAULTS.founding_price;
+}
+
+export type StripePrices = Record<Tier, { monthly: string; yearly: string }> & { founding: string };
+export const STRIPE_PRICE_ID = /^price_[A-Za-z0-9]+$/;
+
+/** A stored stripe_prices value, each ID either empty or shaped like a Stripe Price ID; null if malformed. */
+export function readStripePrices(v: unknown): StripePrices | null {
+  if (!v || typeof v !== "object") return null;
+  const o = v as Record<string, unknown>;
+  const id = (x: unknown) => (typeof x === "string" && (x === "" || STRIPE_PRICE_ID.test(x)) ? x : null);
+  const out: Partial<StripePrices> = {};
+  for (const t of TIERS) {
+    const p = o[t] as Record<string, unknown> | undefined;
+    const monthly = id(p?.monthly ?? "");
+    const yearly = id(p?.yearly ?? "");
+    if (monthly === null || yearly === null) return null;
+    out[t] = { monthly, yearly };
+  }
+  const founding = id(o.founding ?? "");
+  if (founding === null) return null;
+  return { ...(out as Record<Tier, { monthly: string; yearly: string }>), founding };
+}
+
+/** Stripe Price IDs for checkout and the webhook. */
+export async function getStripePrices(): Promise<StripePrices> {
+  return readStripePrices(parseJson(await getSetting("stripe_prices"))) ?? (readStripePrices(JSON.parse(DEFAULTS.stripe_prices)) as StripePrices);
 }
 
 /** Calendar months later, clamped to the month's last day (31 Aug + 6 = 28/29 Feb). */

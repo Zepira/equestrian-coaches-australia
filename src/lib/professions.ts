@@ -56,6 +56,12 @@ export type Profession = {
   remoteAllowed: boolean;
   sortOrder: number;
   completeness: CompletenessItem[];
+  /** Questions and answers for this profession's pitch page. */
+  faq: Step[];
+  /** The profession's own photo in the term-images bucket, when one's been uploaded (else the launch stock photo). */
+  imagePath?: string | null;
+  /** This profession's own name for a plan, when the shared one reads oddly ("Clinic" for a farrier). Keyed by tier. */
+  tierLabels: Record<string, string>;
 };
 
 const completeness = (termLabel: string, photoLabel: string): CompletenessItem[] => [
@@ -103,6 +109,8 @@ function horseCare(p: Pick<Profession, "slug" | "name" | "singular" | "plural" |
     remoteAllowed: false,
     sortOrder: 0,
     completeness: completeness("Specialities tagged", "A photo of you at work"),
+    faq: [],
+    tierLabels: {},
     ...p,
   };
 }
@@ -138,6 +146,8 @@ export const FALLBACK_PROFESSIONS: Profession[] = [
     remoteAllowed: true,
     sortOrder: 0,
     completeness: completeness("Disciplines tagged", "A photo of you coaching"),
+    faq: [],
+    tierLabels: {},
   },
   horseCare({ slug: "farriers", name: "Farriers", singular: "farrier", plural: "farriers", jobTitle: "Farrier", yearsLabel: "years shoeing", sortOrder: 1,
     blurb: "Trimming, shoeing and remedial work, on a cycle that suits your horse.",

@@ -57,6 +57,10 @@ export async function loadDashboard(): Promise<DashboardContext | null> {
     .filter((p): p is Profession => Boolean(p));
   if (professions.length === 0) professions.push(all.find((p) => p.slug === "coaches") ?? FALLBACK_PROFESSIONS[0]);
 
+  // A profession can call a plan something else ("Clinic" reads oddly for a farrier).
+  const labels = professions[0].tierLabels ?? {};
+  for (const t of Object.keys(plans) as Tier[]) if (labels[t]) plans[t] = { ...plans[t], name: labels[t] };
+
   const tierRaw: unknown = sub?.tier;
   const tier: Tier | null = isTier(tierRaw) ? tierRaw : null;
   const status = String(sub?.status ?? "inactive");

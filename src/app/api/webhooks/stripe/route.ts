@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
-import { FOUNDING_PRICE_ID, getStripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
+import { getStripePrices } from "@/lib/settings";
+import { TIERS, type Tier } from "@/lib/tiers";
 import { syncVisibility } from "@/lib/provider-lifecycle";
 import type Stripe from "stripe";
 
@@ -14,12 +16,17 @@ function serviceClient() {
   );
 }
 
-const TIER_BY_PRICE_ENV: Record<string, "listed" | "spotlight" | "clinic"> = {
-  [process.env.NEXT_PUBLIC_STRIPE_PRICE_LISTED ?? ""]: "listed",
-  [process.env.NEXT_PUBLIC_STRIPE_PRICE_SPOTLIGHT ?? ""]: "spotlight",
-  [process.env.NEXT_PUBLIC_STRIPE_PRICE_CLINIC ?? ""]: "clinic",
-  [FOUNDING_PRICE_ID ?? "-"]: "listed",
-};
+/** Stripe Price ID → plan, from the pairs set under Admin → Plans and prices. The founding price is Listed. */
+async function tierByPrice(): Promise<Record<string, Tier>> {
+  const prices = await getStripePrices();
+  const map: Record<string, Tier> = {};
+  for (const t of TIERS) {
+    if (prices[t].monthly) map[prices[t].monthly] = t;
+    if (prices[t].yearly) map[prices[t].yearly] = t;
+  }
+  if (prices.founding) map[prices.founding] = "listed";
+  return map;
+}
 
 function statusFromStripe(status: Stripe.Subscription.Status): "active" | "trialing" | "past_due" | "canceled" | "inactive" {
   if (status === "active") return "active";
@@ -39,7 +46,7 @@ async function syncSubscription(supabase: ReturnType<typeof serviceClient>, subs
   // A founding member is on Spotlight while their free period runs, then on
   // the founding Listed price it's billed at (The Site as a CMS §09).
   const founding = subscription.metadata?.founding === "true";
-  const tier = founding && status === "trialing" ? "spotlight" : priceId ? TIER_BY_PRICE_ENV[priceId] : undefined;
+  const tier = founding && status === "trialing" ? "spotlight" : priceId ? (await tierByPrice())[priceId] : undefined;
 
   await supabase.from("subscriptions").upsert(
     {

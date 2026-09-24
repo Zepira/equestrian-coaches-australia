@@ -3,7 +3,6 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { CMS_TAG } from "@/lib/cms/read";
 import { reservedSlugError } from "@/lib/reserved-slugs";
-import { getCoachingId } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
 
 function slugify(input: string) {
@@ -30,15 +29,18 @@ export async function createTerm(formData: FormData) {
   if (!name || !["discipline", "skill", "attribute"].includes(kind)) {
     throw new Error("A name and a valid kind are required.");
   }
+  // A discipline or speciality always belongs to one profession; a skill or
+  // setup can belong to one or be shared by all (no parent).
+  const professionId = String(formData.get("profession_id") ?? "") || null;
+  if (kind === "discipline" && !professionId) throw new Error("A discipline or speciality needs a profession.");
 
   const slug = slugify(name);
   const reserved = reservedSlugError(kind, slug);
   if (reserved) throw new Error(reserved);
 
-  // This screen edits coaching's vocabulary, so new terms belong to coaching.
   const { error } = await supabase.from("terms").insert({
     kind,
-    parent_id: await getCoachingId(supabase),
+    parent_id: professionId,
     slug,
     name,
     generates_pages: kind === "discipline",
@@ -104,6 +106,26 @@ export async function changeTermSlug(termId: string, formData: FormData) {
   const { error: updateError } = await supabase.from("terms").update({ slug: newSlug }).eq("id", termId);
   if (updateError) throw updateError;
 
+  revalidatePath("/admin/terms");
+  revalidateTag(CMS_TAG, { expire: 0 });
+}
+
+/**
+ * Which profession a skill or setup belongs to (§10), or none for shared.
+ * Disciplines and specialities don't move: their profession is in their
+ * address.
+ */
+export async function setTermProfession(termId: string, formData: FormData) {
+  const supabase = await requireAdmin();
+  const professionId = String(formData.get("profession_id") ?? "") || null;
+  const { data: term } = await supabase.from("terms").select("kind").eq("id", termId).single();
+  if (!term || term.kind === "discipline" || term.kind === "profession") throw new Error("Only skills and setup can move between professions.");
+  if (professionId) {
+    const { data: p } = await supabase.from("terms").select("id").eq("id", professionId).eq("kind", "profession").maybeSingle();
+    if (!p) throw new Error("Unknown profession.");
+  }
+  const { error } = await supabase.from("terms").update({ parent_id: professionId, updated_at: new Date().toISOString() }).eq("id", termId);
+  if (error) throw new Error(error.code === "23505" ? "That profession already has a term with this address." : error.message);
   revalidatePath("/admin/terms");
   revalidateTag(CMS_TAG, { expire: 0 });
 }

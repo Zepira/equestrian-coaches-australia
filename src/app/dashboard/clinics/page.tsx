@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { loadDashboard } from "@/lib/dashboard";
 import { getDisciplines } from "@/lib/supabase/queries";
 import { canListClinics, clinicLimit } from "@/lib/tiers";
-import { countWord, getPlanCapabilities, getPlans } from "@/lib/settings";
+import { countWord, getPlanCapabilities } from "@/lib/settings";
 import { createClinic, deleteClinic } from "./actions";
 import { eventPath } from "@/lib/page-paths";
 
@@ -26,7 +26,8 @@ export default async function ClinicsPage() {
   const Audience = `${profession.audienceNoun.charAt(0).toUpperCase()}${profession.audienceNoun.slice(1)}s`;
   const audience = `${profession.audienceNoun}s`;
   const allowed = canListClinics(tier, status);
-  const [caps, plans] = await Promise.all([getPlanCapabilities(), getPlans()]);
+  const caps = await getPlanCapabilities();
+  const plans = ctx.plans;
   const limit = clinicLimit(tier, caps);
   const disciplines = await getDisciplines(supabase);
   const today = new Date().toISOString().slice(0, 10);

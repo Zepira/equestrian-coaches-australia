@@ -39,3 +39,21 @@ export async function createInvite(formData: FormData) {
   revalidatePath("/admin/invites");
   redirect("/admin/invites?created=1");
 }
+
+/**
+ * Resend (§10): an unused invite gets another 30 days, so the same link
+ * works again. The link still goes out in your own message.
+ */
+export async function renewInvite(inviteId: string) {
+  const supabase = await createClient();
+  if (!supabase) throw new Error("Supabase isn't connected yet.");
+  const { data: isAdmin } = await supabase.rpc("is_admin");
+  if (!isAdmin) throw new Error("Not an admin.");
+  const { error } = await supabase
+    .from("invites")
+    .update({ expires_at: new Date(Date.now() + 30 * 86_400_000).toISOString() })
+    .eq("id", inviteId)
+    .is("used_at", null);
+  if (error) throw error;
+  revalidatePath("/admin/invites");
+}

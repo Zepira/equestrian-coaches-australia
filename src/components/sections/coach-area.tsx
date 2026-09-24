@@ -15,6 +15,7 @@ import type { Profession } from "@/lib/professions";
 import { pickFeatured } from "@/lib/featured";
 import { FeaturedBlock } from "@/components/featured-block";
 import { logImpressions } from "@/lib/coach-events";
+import { getAreaIntro } from "@/lib/cms/read";
 
 /**
  * /coaches/in/[area] and /coaches/[discipline]/in/[area]. The first catches
@@ -62,6 +63,8 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
   }
 
   const radiusKm = area.default_radius_km ?? 50;
+  // The hand-written intro for coaches in this place (Admin → Areas), on the all-disciplines page only.
+  const intro = discipline ? [] : await getAreaIntro(area.id, profession.id);
   // Remote coaches never appear on a place page (they'd undo the gate).
   const real = await searchCoaches(supabase, {
     disciplineIds: discipline ? [discipline.id] : undefined,
@@ -100,6 +103,13 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
       <p className="mt-2 max-w-xl text-muted">
         {discipline ? discipline.blurb : `Coaches across every discipline serving ${area.name} and nearby areas.`}
       </p>
+      {intro.length > 0 && (
+        <div className="mt-4 flex max-w-[60ch] flex-col gap-3 text-[16px] leading-[1.55] text-muted" data-area-intro>
+          {intro.map((para) => (
+            <p key={para}>{para}</p>
+          ))}
+        </div>
+      )}
 
       <div className="mt-6">
         <SearchBar

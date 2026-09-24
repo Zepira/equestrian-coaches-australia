@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyProvider, PROVIDER_PHOTOS } from "@/lib/supabase/queries";
 import { getProfessions } from "@/lib/cms/read";
 import { getSectionTerms } from "@/lib/sections";
-import { formatLongDate, getFirstChargeDate, getPlans, isReviewRequired } from "@/lib/settings";
+import { formatLongDate, getFirstChargeDate, getFoundingPrice, getPlans, isReviewRequired } from "@/lib/settings";
 import { chargeWording } from "@/lib/founding";
 import { isComplete, profileChecklist } from "@/lib/provider-lifecycle";
 import { isLiveStatus, TIERS } from "@/lib/tiers";
@@ -50,13 +50,14 @@ export default async function OnboardingPage({
   if (!provider) redirect("/dashboard");
   const providerId = provider.id;
 
-  const [all, { data: termRows }, { data: photos }, { data: sub }, checklist, plans, reviewRequired, firstCharge, charge] = await Promise.all([
+  const [all, { data: termRows }, { data: photos }, { data: sub }, checklist, plans, foundingPrice, reviewRequired, firstCharge, charge] = await Promise.all([
     getProfessions(),
     supabase.from("provider_terms").select("sort_order, term_id, terms(slug, kind, parent_id)").eq("provider_id", providerId).order("sort_order"),
     supabase.from("provider_photos").select("id, storage_path").eq("provider_id", providerId).order("sort_order"),
     supabase.from("subscriptions").select("tier, status, founding").eq("provider_id", providerId).maybeSingle(),
     profileChecklist(supabase, providerId),
     getPlans(),
+    getFoundingPrice(),
     isReviewRequired(),
     getFirstChargeDate(),
     chargeWording(),
@@ -255,7 +256,7 @@ export default async function OnboardingPage({
                 <p className="mt-3 text-[17px] leading-[1.5]">
                   You&apos;re one of our founding members, so you get {plans.spotlight.name} free until{" "}
                   {firstCharge ? formatLongDate(firstCharge) : "six months after we launch"}. After that it&apos;s{" "}
-                  {plans.listed.name} at {plans.listed.monthly} a month, and that price stays yours for as long as you stay.
+                  {plans.listed.name} at {foundingPrice} a month, and that price stays yours for as long as you stay.
                 </p>
                 {planLive ? (
                   <p className="mt-5 text-[15px] text-ink-fg/85">Your card is saved. {charge}</p>

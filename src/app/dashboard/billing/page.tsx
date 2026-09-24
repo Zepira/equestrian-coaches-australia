@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { loadDashboard } from "@/lib/dashboard";
 import { isMockPayments } from "@/lib/stripe";
 import { TIERS } from "@/lib/tiers";
-import { countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths } from "@/lib/settings";
+import { countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getFoundingPrice } from "@/lib/settings";
 import { startCheckout, changePlan, openBillingPortal, mockCancelSubscription, saveFoundingCardFromBilling } from "./actions";
 import { chargeWording } from "@/lib/founding";
 import { isLiveStatus } from "@/lib/tiers";
@@ -24,14 +24,14 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   // (card_saved before launch, trialing after), not only once paying.
   const active = isLiveStatus(status);
   const foundingNoCard = provider.cohort === "founding" && !active;
-  const [firstCharge, freeMonths, charge] = await Promise.all([getFirstChargeDate(), getFoundingFreeMonths(), chargeWording()]);
+  const [firstCharge, freeMonths, charge, foundingPrice] = await Promise.all([getFirstChargeDate(), getFoundingFreeMonths(), chargeWording(), getFoundingPrice()]);
   const nextCharge = active ? (isMockPayments ? "— (mock)" : "See portal") : "—";
   const billingLine = status === "card_saved"
     ? `Founding member: your card is saved. ${charge}`
     : active
     ? tier === "spotlight"
-      ? `Founding offer: ${plans.spotlight.name} free ${firstCharge ? `until ${formatLongDate(firstCharge)}` : `for ${countWord(freeMonths)} months after launch`}, then ${plans.listed.monthly} a month for as long as you stay, even after the price goes up for everyone else.`
-      : `${plans[tier!].monthly} a month. Your founding ${plans.listed.monthly} ${plans.listed.name} rate is kept for you if you come back down.`
+      ? `Founding offer: ${plans.spotlight.name} free ${firstCharge ? `until ${formatLongDate(firstCharge)}` : `for ${countWord(freeMonths)} months after launch`}, then ${foundingPrice} a month for as long as you stay, even after the price goes up for everyone else.`
+      : `${plans[tier!].monthly} a month. Your founding ${foundingPrice} ${plans.listed.name} rate is kept for you if you come back down.`
     : status === "past_due"
       ? "Your last payment didn't go through. Update your card to keep your listing live."
       : foundingNoCard

@@ -1,12 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { sendEmail } from "@/lib/email";
-import { getProfessions } from "@/lib/cms/read";
 import { getAreaPageMinProviders, getReviewAlertEmails } from "@/lib/settings";
 import { absoluteUrl } from "@/lib/site-url";
 import { profilePath, sectionPath, termPath } from "@/lib/page-paths";
 import { isLiveStatus } from "@/lib/tiers";
 import { notifyRidersOfProvider } from "@/lib/rider-email";
+import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
 
 /**
  * A provider's way from sign-up to live (The Site as a CMS §06.4–5):
@@ -122,11 +122,9 @@ export async function publish(service: SupabaseClient, providerId: string, revie
       `The ${s.professionSlug} page: ${absoluteUrl(sectionPath(s.professionSlug))}`,
       ...s.termSlugs.map((t) => absoluteUrl(termPath(s.professionSlug, t))),
     ];
-    await sendEmail({
-      to: await providerEmails(service, providerId),
-      subject: "Your profile is live",
-      text: `Hi ${s.name.split(" ")[0]},\n\nYour profile is live. You can be found here:\n\n${pages.join("\n")}\n\nand in search whenever someone looks near ${s.suburb}.\n\nEquine Professionals Australia`,
-    });
+    const copy = await getContent("email.live");
+    const vars = { first_name: s.name.split(" ")[0], pages: pages.join("\n"), suburb: s.suburb };
+    await sendEmail({ to: await providerEmails(service, providerId), subject: fillVariables(copy.subject, vars), text: fillVariables(copy.body, vars) });
   }
   revalidatePath(profilePath(s?.slug ?? ""));
   revalidatePath("/admin/review");
@@ -142,11 +140,9 @@ export async function requestChanges(service: SupabaseClient, providerId: string
   if (error) throw error;
   const s = await summary(service, providerId);
   if (s) {
-    await sendEmail({
-      to: await providerEmails(service, providerId),
-      subject: "A couple of changes before your profile goes live",
-      text: `Hi ${s.name.split(" ")[0]},\n\nWe had a look at your profile. Before it goes live:\n\n${note}\n\nMake the changes and send it again from here: ${absoluteUrl("/onboarding?step=preview")}\n\nEquine Professionals Australia`,
-    });
+    const copy = await getContent("email.changes");
+    const vars = { first_name: s.name.split(" ")[0], note, preview_url: absoluteUrl("/onboarding?step=preview") };
+    await sendEmail({ to: await providerEmails(service, providerId), subject: fillVariables(copy.subject, vars), text: fillVariables(copy.body, vars) });
   }
   revalidatePath("/admin/review");
 }
@@ -157,11 +153,35 @@ export async function requestChanges(service: SupabaseClient, providerId: string
  * without another review. A profile never reviewed is never published here.
  */
 export async function syncVisibility(service: SupabaseClient, providerId: string, planLive: boolean) {
-  const { data } = await service.from("providers").select("status, published_at").eq("id", providerId).single();
+  const { data } = await service.from("providers").select("status, published_at, hidden_by_admin").eq("id", providerId).single();
   if (!data) return;
-  const next = !planLive && data.status === "published" ? "hidden" : planLive && data.status === "hidden" && data.published_at ? "published" : null;
+  // An admin hide outlasts the plan: a returning subscription doesn't undo it.
+  const next =
+    !planLive && data.status === "published" ? "hidden" : planLive && data.status === "hidden" && data.published_at && !data.hidden_by_admin ? "published" : null;
   if (!next) return;
   await service.from("providers").update({ status: next, updated_at: new Date().toISOString() }).eq("id", providerId);
+}
+
+/**
+ * Admin hide (§10 Providers): off the site at once, and it stays off until an
+ * admin shows it again, whatever the plan does. Showing it again only
+ * republishes a profile that was reviewed and whose plan is live.
+ */
+export async function adminSetHidden(service: SupabaseClient, providerId: string, adminId: string, hidden: boolean) {
+  const { data } = await service.from("providers").select("slug, status, published_at").eq("id", providerId).single();
+  if (!data) return;
+  const now = new Date().toISOString();
+  let status = data.status as string;
+  if (hidden && status === "published") status = "hidden";
+  if (!hidden && status === "hidden" && data.published_at) {
+    const { data: sub } = await service.from("subscriptions").select("status").eq("provider_id", providerId).maybeSingle();
+    if (isLiveStatus(sub?.status)) status = "published";
+  }
+  const { error } = await service.from("providers").update({ hidden_by_admin: hidden, status, updated_at: now }).eq("id", providerId);
+  if (error) throw error;
+  await service.from("provider_changes").insert({ provider_id: providerId, field: hidden ? "hidden by admin" : "shown by admin", old_value: data.status, new_value: status, changed_by: adminId });
+  await service.rpc("recompute_indexable_pages", { p_min_providers: await getAreaPageMinProviders() });
+  revalidatePath(profilePath(data.slug));
 }
 
 /** Name and photo changes on a live profile, for admin's "recent changes" list. */

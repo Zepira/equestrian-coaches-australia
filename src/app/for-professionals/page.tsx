@@ -5,6 +5,7 @@ import { RichText } from "@/components/rich-text";
 import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
 import { horseCareOf } from "@/lib/professions";
 import { getPlans } from "@/lib/settings";
+import { Accordion } from "@/components/accordion";
 
 /**
  * /for-professionals (The Site as a CMS §06.1): the horse care door's
@@ -58,6 +59,15 @@ export default async function ForProfessionals({ searchParams }: { searchParams:
           </li>
         ))}
       </ul>
+
+      {selected && selected.faq.length > 0 && (
+        <section className="mt-12 max-w-[760px] wide:mt-16">
+          <h2 className="text-[30px] leading-none text-ink wide:text-[40px]">Questions {selected.plural} ask</h2>
+          <div className="mt-6">
+            <Accordion items={selected.faq.map((x) => ({ q: x.title, a: x.body }))} />
+          </div>
+        </section>
+      )}
 
       <p className="mt-10 max-w-[60ch] text-[15px] leading-[1.55] text-subtle">
         {fillVariables(lyb.plansLine, vars)}{" "}
