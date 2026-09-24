@@ -33,6 +33,13 @@ type Row = {
 
 const asSteps = (v: unknown) =>
   Array.isArray(v) ? v.filter((s): s is { title: string; body: string } => typeof s?.title === "string" && typeof s?.body === "string") : [];
+const COMPLETENESS_KEYS = ["photo", "bio", "terms", "location", "testimonials", "video"];
+const asCompleteness = (v: unknown): Profession["completeness"] =>
+  Array.isArray(v)
+    ? v
+        .filter((s) => COMPLETENESS_KEYS.includes(s?.key) && typeof s?.label === "string")
+        .map((s) => ({ key: s.key, label: s.label, weight: Number.isFinite(Number(s.weight)) && Number(s.weight) > 0 ? Number(s.weight) : 1 }))
+    : [];
 const asOptions = (v: unknown) =>
   Array.isArray(v) ? v.filter((s): s is { value: string; label: string } => typeof s?.value === "string" && typeof s?.label === "string") : [];
 
@@ -67,6 +74,7 @@ function toProfession(r: Row): Profession | null {
     eventsEnabled: d.events_enabled !== false,
     remoteAllowed: d.remote_allowed === true,
     sortOrder: r.sort_order,
+    completeness: asCompleteness(d.completeness),
   };
 }
 

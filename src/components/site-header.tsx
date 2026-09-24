@@ -244,7 +244,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
   const firstName = auth.name?.split(" ")[0] ?? null;
   const accountHref = auth.role === "provider" ? "/dashboard" : "/account";
   const isSearch = variant === "ink";
-  // Dashboard mode (canvas: Dashboards): "Coach dashboard" tagline, a
+  // Dashboard mode (canvas: Dashboards): "Your dashboard" tagline, a
   // "View public profile" pill and the coach's avatar + first name instead
   // of the public nav.
   const isDashboard = pathname.startsWith("/dashboard");
@@ -277,7 +277,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
           <Wordmark size={26} className="hidden md:block" />
           {isDashboard && (
             <span className="site-header__muted hidden text-[12px] font-medium uppercase tracking-[0.16em] lg:inline">
-              Coach dashboard
+              Your dashboard
             </span>
           )}
         </Link>

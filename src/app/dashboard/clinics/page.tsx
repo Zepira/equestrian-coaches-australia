@@ -22,6 +22,9 @@ export default async function ClinicsPage() {
   const ctx = await loadDashboard();
   if (!ctx) redirect("/login?next=/dashboard/clinics");
   const { supabase, providerId, tier, status } = ctx;
+  const profession = ctx.professions[0];
+  const Audience = `${profession.audienceNoun.charAt(0).toUpperCase()}${profession.audienceNoun.slice(1)}s`;
+  const audience = `${profession.audienceNoun}s`;
   const allowed = canListClinics(tier, status);
   const [caps, plans] = await Promise.all([getPlanCapabilities(), getPlans()]);
   const limit = clinicLimit(tier, caps);
@@ -37,10 +40,10 @@ export default async function ClinicsPage() {
   const upcoming = (clinics ?? []).filter((c) => c.start_date >= today);
   const atLimit = Number.isFinite(limit) && upcoming.length >= limit;
   const note = !allowed
-    ? "Clinics come with every paid plan — subscribe in Billing to list one. Riders in your area who follow your disciplines get an email when you post one."
+    ? `Events come with every paid plan: subscribe in Billing to list one. ${Audience} in your area who follow your ${profession.termNounPlural} get an email when you post one.`
     : tier && Number.isFinite(limit)
-      ? `${plans[tier].name} includes ${limit === 1 ? "one live clinic" : `${countWord(limit)} live clinics`} at a time. Riders in your area who follow your disciplines get an email when you post one.`
-      : "Every clinic gets its own page and an email to riders nearby who follow your disciplines.";
+      ? `${plans[tier].name} includes ${limit === 1 ? "one live clinic" : `${countWord(limit)} live clinics`} at a time. ${Audience} in your area who follow your ${profession.termNounPlural} get an email when you post one.`
+      : `Every clinic or event gets its own page and an email to ${audience} nearby who follow your ${profession.termNounPlural}.`;
 
   return (
     <div className="fade-in" style={{ animationDuration: "0.5s" }}>
@@ -77,7 +80,7 @@ export default async function ClinicsPage() {
                     </span>
                   )}
                   <span>
-                    <strong className="font-medium text-ink">{emailed.get(c.id) ?? 0}</strong> riders emailed
+                    <strong className="font-medium text-ink">{emailed.get(c.id) ?? 0}</strong> {audience} emailed
                   </span>
                 </div>
                 <div className="mt-2.5 flex gap-3 text-[13px] font-medium wide:mt-3 wide:gap-3.5 wide:text-[14px]">
@@ -153,7 +156,7 @@ export default async function ClinicsPage() {
           {tier ? plans[tier].name : "Your plan"} includes {limit === 1 ? "one live clinic" : `${countWord(limit)} live clinics`} at a time.{" "}
           <Link href="/dashboard/billing" className="font-medium text-accent">
             Move up to {plans.spotlight.name} or {plans.clinic.name}
-          </Link> for unlimited events — and back down after your clinic month.
+          </Link> for unlimited events, and back down afterwards.
         </p>
       ) : (
         <p className="mt-6 rounded-[14px] bg-shade p-4 text-[14px] leading-[1.5] text-muted">

@@ -21,7 +21,7 @@ import { PhoneReveal } from "@/components/phone-reveal";
 import { ProfessionGlyph, hasGlyph } from "@/components/profession-glyph";
 import { breadcrumbSchema, providerSchemas } from "@/lib/structured-data";
 import { horseCareResultsPattern, sectionHref } from "@/lib/professions";
-import { getProfession, getProfessions } from "@/lib/cms/read";
+import { fillVariables, getContent, getProfession, getProfessions } from "@/lib/cms/read";
 import { getMockProfessionalBySlug } from "@/lib/mock-professionals";
 import { profilePath, termPath } from "@/lib/page-paths";
 import { getSectionTerms } from "@/lib/sections";
@@ -49,6 +49,7 @@ export async function ProfessionalProfile({ slug }: { slug: string }) {
   if (!profession) notFound();
 
   const firstName = pro.name.split(" ")[0];
+  const mention = await getContent("mention");
   const [nameFirst, ...nameRest] = pro.name.split(" ");
   const contactId = `mock:${pro.slug}`;
   const singular = profession.singular.charAt(0).toUpperCase() + profession.singular.slice(1);
@@ -222,6 +223,7 @@ export async function ProfessionalProfile({ slug }: { slug: string }) {
               )}
             </div>
           )}
+          <p data-mention className="mt-4 border-t border-border pt-4 text-[13.5px] leading-[1.5] text-subtle">{fillVariables(mention.prompt, { first_name: firstName })}</p>
         </aside>
       </div>
 

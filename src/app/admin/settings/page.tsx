@@ -54,7 +54,7 @@ export default async function AdminSettingsPage({
   const plansJson = json("plans");
   const capsJson = json("plan_capabilities");
   const plans = TIERS.map((t) => ({ tier: t, ...(readPlanInfo(plansJson[t]) ?? DEFAULT_PLANS[t]) }));
-  const caps = TIERS.map((t) => ({ tier: t, ...(readPlanCapability(capsJson[t]) ?? DEFAULT_CAPABILITIES[t]) }));
+  const caps = TIERS.map((t) => ({ tier: t, ...(readPlanCapability(capsJson[t], DEFAULT_CAPABILITIES[t]) ?? DEFAULT_CAPABILITIES[t]) }));
 
   const notice = (key: SettingKey) => (
     <>
@@ -180,6 +180,7 @@ export default async function AdminSettingsPage({
               ["featured_min_providers", "Providers nearby before featured spots appear", "In a smaller area a featured spot isn't worth paying for, so none show."],
               ["featured_slots_per_area", "Featured spots per profession in one place", "Shown in a labelled block above the results, taking turns day to day. Never a place in the results themselves."],
               ["event_reach_km", "How far a Clinic plan's events are emailed, in km", "Other plans' events reach riders within each rider's own alert distance. Clinic events go this far."],
+              ["benchmark_min_providers", "Providers in a profession before benchmarks show", "A comparison needs enough people in it to mean something and to keep any one of them anonymous."],
             ] as const
           ).map(([key, title, help]) => (
             <div key={key}>
@@ -239,7 +240,7 @@ export default async function AdminSettingsPage({
       <section className="border-t border-border pt-6">
         <h2 className="font-display text-[26px] leading-none text-ink">What each plan includes</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
-          How many live events a plan can have at once (leave empty for no limit), whether it can add an intro video, and whether it takes turns in the featured spots.
+          How many live events a plan can have at once (leave empty for no limit), whether it can add an intro video, whether it takes turns in the featured spots, and whether the dashboard compares them with others in their profession.
         </p>
         {notice("plan_capabilities")}
         <form action={savePlanCapabilities} className="mt-4 flex flex-col gap-3">
@@ -257,6 +258,10 @@ export default async function AdminSettingsPage({
               <label className="flex items-center gap-2 pb-2.5 text-sm text-fg">
                 <input type="checkbox" name={`${c.tier}.featured`} defaultChecked={c.featured} />
                 Featured spot
+              </label>
+              <label className="flex items-center gap-2 pb-2.5 text-sm text-fg">
+                <input type="checkbox" name={`${c.tier}.benchmarks`} defaultChecked={c.benchmarks} />
+                Benchmarks
               </label>
             </div>
           ))}

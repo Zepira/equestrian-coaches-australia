@@ -19,6 +19,8 @@ export type Door = "coaches" | "horse_care";
 export type LaunchState = "draft" | "taking_signups" | "live";
 
 export type Step = { title: string; body: string };
+/** One item of the profile completeness score (profession_details.completeness). `key` is what the dashboard checks. */
+export type CompletenessItem = { key: "photo" | "bio" | "terms" | "location" | "testimonials" | "video"; label: string; weight: number };
 export type EnquiryOption = { value: string; label: string };
 
 export type Profession = {
@@ -53,7 +55,17 @@ export type Profession = {
   eventsEnabled: boolean;
   remoteAllowed: boolean;
   sortOrder: number;
+  completeness: CompletenessItem[];
 };
+
+const completeness = (termLabel: string, photoLabel: string): CompletenessItem[] => [
+  { key: "photo", label: photoLabel, weight: 1 },
+  { key: "bio", label: "Bio written", weight: 1 },
+  { key: "terms", label: termLabel, weight: 1 },
+  { key: "location", label: "Location set", weight: 1 },
+  { key: "testimonials", label: "Three testimonials", weight: 1 },
+  { key: "video", label: "Intro video", weight: 1 },
+];
 
 const COACH_STEPS: Step[] = [
   { title: "Tell us what you ride, and where", body: "Pick your discipline and your town. Every listing is a real coach, not an agency." },
@@ -90,6 +102,7 @@ function horseCare(p: Pick<Profession, "slug" | "name" | "singular" | "plural" |
     eventsEnabled: true,
     remoteAllowed: false,
     sortOrder: 0,
+    completeness: completeness("Specialities tagged", "A photo of you at work"),
     ...p,
   };
 }
@@ -124,6 +137,7 @@ export const FALLBACK_PROFESSIONS: Profession[] = [
     eventsEnabled: true,
     remoteAllowed: true,
     sortOrder: 0,
+    completeness: completeness("Disciplines tagged", "A photo of you coaching"),
   },
   horseCare({ slug: "farriers", name: "Farriers", singular: "farrier", plural: "farriers", jobTitle: "Farrier", yearsLabel: "years shoeing", sortOrder: 1,
     blurb: "Trimming, shoeing and remedial work, on a cycle that suits your horse.",

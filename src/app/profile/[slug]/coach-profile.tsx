@@ -18,7 +18,7 @@ import { PhoneReveal } from "@/components/phone-reveal";
 import { BackToResults } from "@/components/back-to-results";
 import { PageContext } from "@/components/page-context";
 import { disciplinePath, eventPath, profilePath, sectionPath, termPath } from "@/lib/page-paths";
-import { getProfession, getProfessions } from "@/lib/cms/read";
+import { fillVariables, getContent, getProfession, getProfessions } from "@/lib/cms/read";
 import { FALLBACK_PROFESSIONS, horseCareResultsPattern } from "@/lib/professions";
 import { createClient } from "@/lib/supabase/server";
 import { PROVIDER_PHOTOS, sortByName } from "@/lib/supabase/queries";
@@ -285,6 +285,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
   if (coach.id && !preview) await logView(coach.id); // real coaches only; deduped per visitor per day
   const profession = (await getProfession(coach.professionSlug ?? "coaches")) ?? FALLBACK_PROFESSIONS[0];
   const horseCare = profession.door === "horse_care";
+  const mention = await getContent("mention");
   // Coaching has students; everyone else has clients. Riders vs horse owners from the row.
   const who = horseCare ? "clients" : "students";
   const audiencePlural = `${profession.audienceNoun}s`;
@@ -553,7 +554,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
               <ContactForm coachId={enquiryId} coachName={coach.name} firstName={firstName} kind={horseCare ? "professional" : undefined} />
             ) : (
               <p className="rounded-[12px] bg-shade p-4 text-[14px] text-subtle">
-                {coach.takingStudents === "no" ? `${firstName} isn't taking new students right now.` : "This coach isn't taking enquiries through the site right now."}
+                {coach.takingStudents === "no" ? `${firstName} isn't taking new ${who} right now.` : `This ${profession.singular} isn't taking enquiries through the site right now.`}
               </p>
             )}
           </div>
@@ -564,6 +565,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
               {!coach.contact.hasPhone && <ContactLinks email={coach.contact.email} facebookUrl={coach.contact.facebookUrl} />}
             </div>
           )}
+          <p data-mention className="mt-4 border-t border-border pt-4 text-[13.5px] leading-[1.5] text-subtle">{fillVariables(mention.prompt, { first_name: firstName })}</p>
         </aside>
       </div>
 

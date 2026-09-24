@@ -3,7 +3,7 @@
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
-import { logReveal } from "@/lib/coach-events";
+import { logReveal, primaryProfessionOf } from "@/lib/coach-events";
 import { getMockProfessionalBySlug } from "@/lib/mock-professionals";
 import { getMockCoachBySlug } from "@/lib/mock-coaches";
 import { absoluteUrl } from "@/lib/site-url";
@@ -88,6 +88,7 @@ export async function sendCoachEnquiry(
     const service = createServiceClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
     const { error } = await service.from("enquiries").insert({
       provider_id: coachId,
+      profession_id: await primaryProfessionOf(coachId),
       rider_id: user?.id ?? null,
       rider_name: riderName,
       rider_contact: riderContact,

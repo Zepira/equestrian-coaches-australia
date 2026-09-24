@@ -8,14 +8,27 @@ const OPTIONS: { k: TakingStudents; label: string }[] = [
   { k: "waitlist", label: "Waitlist" },
   { k: "no", label: "Not now" },
 ];
-const NOTE: Record<TakingStudents, string> = {
-  yes: "Riders see a green “Taking new students” badge and the enquiry form.",
-  waitlist: "Riders see “Waitlist open” and can still enquire — we'll tell them to expect a wait.",
-  no: "Your profile stays live and findable, but the enquiry button reads “Not taking students right now”.",
-};
+/** What each choice shows on the profile, in the profession's words ("riders", "students"; "horse owners", "clients"). */
+const note = (k: TakingStudents, audience: string, who: string) =>
+  ({
+    yes: `${audience} see a green “Taking new ${who}” badge and the enquiry form.`,
+    waitlist: `${audience} see “Waitlist open” and can still enquire. We tell them to expect a wait.`,
+    no: `Your profile stays live and findable, but the enquiry button reads “Not taking ${who} right now”.`,
+  })[k];
 
 /** The three-way segmented control (canvas: "Taking new students?"). Optimistic, then persisted. */
-export function TakingStudentsControl({ value, compact = false }: { value: TakingStudents; compact?: boolean }) {
+export function TakingStudentsControl({
+  value,
+  compact = false,
+  audience = "Riders",
+  who = "students",
+}: {
+  value: TakingStudents;
+  compact?: boolean;
+  /** Capitalised plural audience noun, from the profession row. */
+  audience?: string;
+  who?: string;
+}) {
   const [current, setCurrent] = useState<TakingStudents>(value);
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +62,7 @@ export function TakingStudentsControl({ value, compact = false }: { value: Takin
 
   return (
     <div>
-      <div className="grid grid-cols-3 gap-1 rounded-[var(--radius-pill)] bg-shade p-1" role="radiogroup" aria-label="Taking new students?" data-pending={pending} onKeyDown={onKeyDown}>
+      <div className="grid grid-cols-3 gap-1 rounded-[var(--radius-pill)] bg-shade p-1" role="radiogroup" aria-label={`Taking new ${who}?`} data-pending={pending} onKeyDown={onKeyDown}>
         {OPTIONS.map((o) => (
           <button
             key={o.k}
@@ -64,7 +77,7 @@ export function TakingStudentsControl({ value, compact = false }: { value: Takin
           </button>
         ))}
       </div>
-      {!compact && <p className="mt-3 text-[13.5px] leading-[1.5] text-muted">{error ?? NOTE[current]}</p>}
+      {!compact && <p className="mt-3 text-[13.5px] leading-[1.5] text-muted">{error ?? note(current, audience, who)}</p>}
       {compact && error && <p className="mt-2 text-[13px] text-danger">{error}</p>}
     </div>
   );

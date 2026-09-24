@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { ensureProvider, type ProviderRow } from "@/lib/supabase/queries";
 import { isLiveStatus, isTier, type Plans, type Tier } from "@/lib/tiers";
 import { getPlans } from "@/lib/settings";
+import { getProfessions } from "@/lib/cms/read";
+import { FALLBACK_PROFESSIONS, type Profession } from "@/lib/professions";
 
 /**
  * Everything the dashboard shell needs on every /dashboard/* render: the
@@ -26,6 +28,8 @@ export type DashboardContext = {
   planLine: string;
   /** Every plan's name, prices and tagline, from settings. */
   plans: Plans;
+  /** The provider's professions, primary first (the dashboard's words and its per-section numbers). */
+  professions: Profession[];
   newEnquiries: number;
   provider: ProviderRow;
 };
@@ -41,11 +45,17 @@ export async function loadDashboard(): Promise<DashboardContext | null> {
   const { data: profile } = await supabase.from("profiles").select("name").eq("id", user.id).single();
   const name = profile?.name ?? "Coach";
   const provider = await ensureProvider(supabase, user.id, name);
-  const [{ count }, { data: sub }, plans] = await Promise.all([
+  const [{ count }, { data: sub }, plans, { data: professionRows }, all] = await Promise.all([
     supabase.from("enquiries").select("id", { count: "exact", head: true }).eq("provider_id", provider.id).eq("status", "new"),
     supabase.from("subscriptions").select("tier, status").eq("provider_id", provider.id).maybeSingle(),
     getPlans(),
+    supabase.from("provider_terms").select("sort_order, terms!inner(slug, kind)").eq("provider_id", provider.id).eq("terms.kind", "profession").order("sort_order"),
+    getProfessions(),
   ]);
+  const professions = (professionRows ?? [])
+    .map((r) => all.find((p) => p.slug === (r as unknown as { terms: { slug: string } }).terms.slug))
+    .filter((p): p is Profession => Boolean(p));
+  if (professions.length === 0) professions.push(all.find((p) => p.slug === "coaches") ?? FALLBACK_PROFESSIONS[0]);
 
   const tierRaw: unknown = sub?.tier;
   const tier: Tier | null = isTier(tierRaw) ? tierRaw : null;
@@ -53,7 +63,7 @@ export async function loadDashboard(): Promise<DashboardContext | null> {
   const planName = tier ? plans[tier].name : "No plan yet";
   const planLine = tier
     ? isLiveStatus(status)
-      ? `${plans[tier].monthly} a month · founding price locked in.`
+      ? `${plans[tier].monthly} a month${provider.cohort === "founding" ? " · founding price locked in" : ""}.`
       : status === "past_due"
         ? "Payment past due. Update your card in Billing."
         : "Subscription cancelled. Your listing is unpublished."
@@ -71,6 +81,7 @@ export async function loadDashboard(): Promise<DashboardContext | null> {
     planName,
     planLine,
     plans,
+    professions,
     newEnquiries: count ?? 0,
     provider,
   };

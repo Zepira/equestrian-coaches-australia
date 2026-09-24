@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 /**
  * Dashboard shell (canvas: Dashboards 1a/1b). Phones: the tab row sits
  * directly under the site header; desktop: a 200px rail beside the page.
- * The header itself switches into its dashboard mode ("Coach dashboard"
+ * The header itself switches into its dashboard mode ("Your dashboard"
  * tagline, "View public profile" pill + avatar) by route.
  */
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {

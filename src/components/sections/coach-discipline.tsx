@@ -16,6 +16,7 @@ import { absoluteUrl } from "@/lib/site-url";
 import { disciplinePath, profilePath } from "@/lib/page-paths";
 import { redirectMissingTerm } from "@/lib/sections";
 import type { Profession } from "@/lib/professions";
+import { logImpressions } from "@/lib/coach-events";
 
 /** The seed disciplines, for the term route's generateStaticParams. */
 export const SEED_DISCIPLINE_SLUGS = staticDisciplines.map((d) => d.slug);
@@ -56,9 +57,9 @@ export async function CoachDiscipline({ profession, slug }: { profession: Profes
   if (!discipline) return redirectMissingTerm(profession, slug);
 
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
-  const coaches = supabase
-    ? [...(await searchCoaches(supabase, { disciplineIds: [discipline.id] })), ...getMockCoachesByDiscipline(slug)]
-    : getCoachesByDiscipline(slug).map(toCoachCardData);
+  const real = supabase ? await searchCoaches(supabase, { disciplineIds: [discipline.id] }) : [];
+  await logImpressions(real.map((r) => ({ id: r.id, professionId: r.professionId })));
+  const coaches = supabase ? [...real, ...getMockCoachesByDiscipline(slug)] : getCoachesByDiscipline(slug).map(toCoachCardData);
 
   const image = disciplineImage(discipline, 1200);
   const paragraphs = descriptionParagraphs(discipline.description);

@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { loadDashboard } from "@/lib/dashboard";
-import { monthStats, twelveMonthViews, profileCompleteness } from "@/lib/coach-stats";
+import { monthStats, twelveMonthViews, profileCompleteness, professionBenchmark } from "@/lib/coach-stats";
+import { getBenchmarkMinProviders, getPlanCapabilities } from "@/lib/settings";
 import { TakingStudentsControl } from "./taking-students-control";
 import { StatusPill } from "./enquiry-status-button";
 import type { EnquiryStatus } from "./actions";
 import type { TakingStudents } from "./actions";
 import { startCheckout } from "./billing/actions";
-import { isTier } from "@/lib/tiers";
+import { hasVideo, isTier } from "@/lib/tiers";
 
 export const metadata = { title: "Dashboard" };
 
@@ -34,10 +35,14 @@ export default async function DashboardPage({
   const { tier: pendingTier, checkout, mock } = await searchParams;
   const ctx = await loadDashboard();
   if (!ctx) redirect("/login?next=/dashboard");
-  const { supabase, providerId, firstName, provider: coach } = ctx;
+  const { supabase, providerId, firstName, provider: coach, professions, tier } = ctx;
+  const profession = professions[0];
+  const audience = `${profession.audienceNoun}s`;
+  const clients = profession.door === "coaches" ? "students" : "clients";
   const now = new Date();
+  const caps = await getPlanCapabilities();
 
-  const [stats, trend, { data: enquiries }, { data: photos }, { data: terms }, { data: testimonials }, { data: clinics }] = await Promise.all([
+  const [stats, trend, { data: enquiries }, { data: photos }, { data: terms }, { data: testimonials }, { data: clinics }, sections, benchmark] = await Promise.all([
     monthStats(supabase, providerId, now),
     twelveMonthViews(supabase, providerId, now),
     supabase.from("enquiries").select("id, rider_name, want, message, status, created_at").eq("provider_id", providerId).order("created_at", { ascending: false }).limit(3),
@@ -45,35 +50,44 @@ export default async function DashboardPage({
     supabase.from("provider_terms").select("terms(kind)").eq("provider_id", providerId),
     supabase.from("testimonials").select("id").eq("provider_id", providerId),
     supabase.from("events").select("id, title, start_date, location_text, places_left").eq("provider_id", providerId).gte("start_date", now.toISOString().slice(0, 10)).order("start_date").limit(1),
+    // Someone in two sections sees what each did for them (§08.5).
+    professions.length > 1 ? Promise.all(professions.map(async (p) => ({ p, s: await monthStats(supabase, providerId, now, p.id) }))) : Promise.resolve([]),
+    // Benchmarks compare within a profession, on plans that include them.
+    tier && caps[tier].benchmarks && profession.id ? professionBenchmark(supabase, profession.id, now, await getBenchmarkMinProviders()) : Promise.resolve(null),
   ]);
-  const disciplineCount = (terms ?? []).filter((t) => (t as unknown as { terms: { kind: string } | null }).terms?.kind === "discipline").length;
-  const completeness = profileCompleteness({
-    hasPhoto: (photos ?? []).length > 0,
-    bio: String(coach.bio ?? ""),
-    disciplineCount,
-    hasLocation: Boolean(coach.lat),
-    testimonialCount: (testimonials ?? []).length,
-    hasVideo: Boolean(coach.video_url),
-  });
+  const termCount = (terms ?? []).filter((t) => (t as unknown as { terms: { kind: string } | null }).terms?.kind === "discipline").length;
+  const completeness = profileCompleteness(
+    {
+      hasPhoto: (photos ?? []).length > 0,
+      bio: String(coach.bio ?? ""),
+      termCount,
+      hasLocation: Boolean(coach.lat),
+      testimonialCount: (testimonials ?? []).length,
+      hasVideo: Boolean(coach.video_url),
+      videoAllowed: hasVideo(tier, ctx.status, caps),
+    },
+    profession.completeness
+  );
+  const wantLabel = (v: string) => profession.enquiryOptions.find((o) => o.value === v)?.label ?? v;
   const nextClinic = clinics?.[0] ?? null;
   const prevMonth = MONTH_FULL[(now.getMonth() + 11) % 12];
   const quiet = stats.views === 0 && stats.enquiries === 0 && stats.reveals === 0;
   const greeting = quiet ? `A quiet month, ${firstName}.` : `Good month, ${firstName}.`;
   const prevReveals = stats.reveals - stats.delta.reveals;
   const summary = quiet
-    ? "Nothing happened this month yet, and that's the honest number. The two things most likely to change it: add a photo and three testimonials, and share your EPA graphic in your local riders' group."
-    : `${stats.reveals} rider${stats.reveals === 1 ? "" : "s"} tapped to see your number, ${stats.delta.reveals >= 0 ? "up" : "down"} from ${prevReveals} in ${prevMonth}. ${stats.impressions} search${stats.impressions === 1 ? "" : "es"} on EPA listed you this month.`;
+    ? `Nothing happened this month yet, and that's the honest number. The two things most likely to change it: ${completeness.next ? `"${completeness.next.label}" on your profile checklist` : "keeping your profile up to date"}, and sharing your profile where your ${audience} already are.`
+    : `${stats.reveals} ${stats.reveals === 1 ? profession.audienceNoun : audience} tapped to see your number, ${stats.delta.reveals >= 0 ? "up" : "down"} from ${prevReveals} in ${prevMonth}. ${stats.impressions} search${stats.impressions === 1 ? "" : "es"} on the site listed you this month.`;
   const max = Math.max(1, ...trend.map((t) => t.views));
   const first = trend[0].views;
   const last = trend[trend.length - 1].views;
   const trendNote =
     last === 0 && first === 0
-      ? "Views build once your profile is complete and indexed — six to twelve months for Google traffic is normal for a new site."
+      ? "Views build once your profile is complete and indexed. Six to twelve months for Google traffic is normal for a new site."
       : last >= first
-        ? `Views have ${first === 0 ? "started arriving" : `risen from ${first} to ${last}`} over the year. Search impressions are the leading number — views and enquiries follow them by a month or two.`
-        : "Views dipped this month. Spring usually picks up — riders start searching for coaches when the ground firms up.";
+        ? `Views have ${first === 0 ? "started arriving" : `risen from ${first} to ${last}`} over the year. Appearing in search comes first; views and enquiries follow it by a month or two.`
+        : "Views dipped this month. Months vary, and appearing in search is the number to watch: views and enquiries follow it.";
   const tiles = [
-    { value: stats.impressions, label: "Appeared in search (on EPA)", d: delta(stats.delta.impressions) },
+    { value: stats.impressions, label: "Appeared in search (on the site)", d: delta(stats.delta.impressions) },
     { value: stats.views, label: "Profile views", d: delta(stats.delta.views) },
     { value: stats.reveals, label: "Tapped to call", d: delta(stats.delta.reveals) },
     { value: stats.enquiries, label: "Enquiries", d: delta(stats.delta.enquiries) },
@@ -130,7 +144,7 @@ export default async function DashboardPage({
           <div key={e.id} className="grid grid-cols-[1fr_auto] gap-2.5 border-t border-shade py-[13px] wide:grid-cols-[1fr_auto_auto] wide:items-center wide:gap-4 wide:py-3.5">
             <div className="min-w-0">
               <div className="text-[15px] font-medium text-fg">
-                {e.rider_name} <span className="font-normal text-subtle">· {e.want === "regular" ? "Regular lessons" : e.want === "one_off" ? "One-off" : "Clinic"}</span>
+                {e.rider_name} <span className="font-normal text-subtle">· {wantLabel(e.want)}</span>
               </div>
               <div className="mt-[3px] truncate text-[13px] leading-[1.4] text-muted wide:text-[13.5px]">{e.message}</div>
             </div>
@@ -138,7 +152,7 @@ export default async function DashboardPage({
             <StatusPill status={e.status as EnquiryStatus} className="self-start" />
           </div>
         ))}
-        {(enquiries ?? []).length === 0 && <p className="border-t border-shade pt-3 text-[14px] text-subtle">No enquiries yet — they land here the moment a rider sends one.</p>}
+        {(enquiries ?? []).length === 0 && <p className="border-t border-shade pt-3 text-[14px] text-subtle">No enquiries yet. They land here the moment someone sends one.</p>}
       </div>
     </div>
   );
@@ -195,12 +209,38 @@ export default async function DashboardPage({
           <p className="mt-2.5 text-[15px] leading-[1.5] text-muted wide:mt-3 wide:max-w-[60ch] wide:text-[16px]">{summary}</p>
         </div>
         <div className="hidden min-w-[300px] shrink-0 flex-col gap-2.5 rounded-[14px] border border-border bg-surface px-4 py-3.5 wide:flex">
-          <span className="font-display text-[18px] leading-none text-ink">Taking new students?</span>
-          <TakingStudentsControl value={(coach.availability as TakingStudents) ?? "yes"} compact />
+          <span className="font-display text-[18px] leading-none text-ink">Taking new {clients}?</span>
+          <TakingStudentsControl value={(coach.availability as TakingStudents) ?? "yes"} compact audience={`${audience.charAt(0).toUpperCase()}${audience.slice(1)}`} who={clients} />
         </div>
       </div>
 
       <div data-stats className="mt-5 grid grid-cols-2 gap-2 wide:mt-8 wide:grid-cols-4 wide:gap-3">{tiles.map(tile)}</div>
+      {sections.length > 1 && (
+        <div data-sections className="mt-3 overflow-hidden rounded-[14px] border border-border bg-surface text-[14px]">
+          <div className="grid grid-cols-[1fr_repeat(4,56px)] gap-2 border-b border-border bg-shade px-4 py-2 text-[12px] font-medium uppercase tracking-[0.08em] text-subtle wide:grid-cols-[1fr_repeat(4,96px)]">
+            <span>By section</span>
+            <span className="text-right">Search</span>
+            <span className="text-right">Views</span>
+            <span className="text-right">Calls</span>
+            <span className="text-right">Enquiries</span>
+          </div>
+          {sections.map(({ p, s }) => (
+            <div key={p.slug} data-section-row className="grid grid-cols-[1fr_repeat(4,56px)] gap-2 border-b border-shade px-4 py-2.5 last:border-0 wide:grid-cols-[1fr_repeat(4,96px)]">
+              <span className="text-fg">{p.name}</span>
+              <span className="text-right text-fg">{s.impressions}</span>
+              <span className="text-right text-fg">{s.views}</span>
+              <span className="text-right text-fg">{s.reveals}</span>
+              <span className="text-right text-fg">{s.enquiries}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {benchmark && (
+        <p data-benchmark className="mt-3 text-[14px] leading-[1.5] text-muted">
+          Compared with {benchmark.providers} {profession.plural} on the site, the middle one had {benchmark.views} profile view{benchmark.views === 1 ? "" : "s"} and{" "}
+          {benchmark.enquiries} enquir{benchmark.enquiries === 1 ? "y" : "ies"} last month.
+        </p>
+      )}
 
       {/* One set of cards; CSS grid `order` gives phones the canvas's stack
           (chart, taking-students, latest, completeness, plan) and desktop
@@ -209,11 +249,11 @@ export default async function DashboardPage({
         {chart}
         <div data-taking className="order-2 rounded-[16px] border border-border bg-surface p-[18px] wide:hidden">
           <div className="flex items-baseline justify-between">
-            <span className="font-display text-[22px] leading-none text-ink">Taking new students?</span>
+            <span className="font-display text-[22px] leading-none text-ink">Taking new {clients}?</span>
             <span className="text-[13px] text-subtle">Shown on your profile</span>
           </div>
           <div className="mt-3.5">
-            <TakingStudentsControl value={(coach.availability as TakingStudents) ?? "yes"} />
+            <TakingStudentsControl value={(coach.availability as TakingStudents) ?? "yes"} audience={`${audience.charAt(0).toUpperCase()}${audience.slice(1)}`} who={clients} />
           </div>
         </div>
         {latest}
@@ -238,7 +278,7 @@ export default async function DashboardPage({
         </div>
         <div data-next-clinic className="order-6 hidden rounded-[18px] border border-border bg-surface px-6 py-[22px] wide:order-4 wide:block">
           <div className="flex items-baseline justify-between">
-            <span className="font-display text-[24px] leading-none text-ink">Next clinic</span>
+            <span className="font-display text-[24px] leading-none text-ink">Next event</span>
             <Link href="/dashboard/clinics" className="text-[14px] font-medium text-accent">
               Manage →
             </Link>
@@ -260,7 +300,7 @@ export default async function DashboardPage({
               </div>
             </div>
           ) : (
-            <p className="mt-4 text-[14px] text-subtle">No upcoming clinic. List one and riders nearby who follow your disciplines get an email.</p>
+            <p className="mt-4 text-[14px] text-subtle">Nothing coming up. List a clinic or event and {audience} nearby who follow your {profession.termNounPlural} get an email.</p>
           )}
         </div>
       </div>

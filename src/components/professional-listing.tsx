@@ -30,6 +30,7 @@ import { getProfessions } from "@/lib/cms/read";
 import { areaPagePath, profilePath, termPath } from "@/lib/page-paths";
 import type { SectionTerm } from "@/lib/sections";
 import { professionPhoto, searchMockProfessionals } from "@/lib/mock-professionals";
+import { logImpressions } from "@/lib/coach-events";
 
 const RADIUS_KM = 100;
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -78,6 +79,7 @@ export async function ProfessionalListing({
     : [];
   const singularById = new Map(horseCare.map((p) => [p.id, p.singular]));
   const featured = await pickFeatured(supabase, real, { point: Boolean(point) });
+  await logImpressions(real.map((r) => ({ id: r.id, professionId: r.professionId })));
 
   // Mock data merge — see src/lib/mock-professionals.ts to remove.
   const cards: CoachCardData[] = [

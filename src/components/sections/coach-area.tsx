@@ -14,6 +14,7 @@ import { getArea, isAreaPageEligible, redirectMissingTerm } from "@/lib/sections
 import type { Profession } from "@/lib/professions";
 import { pickFeatured } from "@/lib/featured";
 import { FeaturedBlock } from "@/components/featured-block";
+import { logImpressions } from "@/lib/coach-events";
 
 /**
  * /coaches/in/[area] and /coaches/[discipline]/in/[area]. The first catches
@@ -70,6 +71,7 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
     includeRemote: false,
   });
   const featured = await pickFeatured(supabase, real, { point: true });
+  await logImpressions(real.map((r) => ({ id: r.id, professionId: r.professionId })));
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const coaches = [
     ...real,

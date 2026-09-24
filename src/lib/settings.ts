@@ -45,6 +45,8 @@ export const DEFAULTS = {
   featured_min_providers: "8",
   /** Featured slots per profession per place. */
   featured_slots_per_area: "3",
+  /** Fewest providers in a profession before the dashboard shows a benchmark (too few isn't a benchmark, or anonymous). */
+  benchmark_min_providers: "5",
   /** How far a Clinic-tier event is emailed to riders, in km (others reach each rider's own alert radius, §07.2). */
   event_reach_km: "250",
   /** Plan names, display prices and taglines, JSON (PlanInfo per tier). */
@@ -138,11 +140,13 @@ export const SETTING_RANGES = {
   featured_min_providers: [2, 50],
   featured_slots_per_area: [0, 10],
   event_reach_km: [25, 2000],
+  benchmark_min_providers: [3, 50],
 } as const satisfies Partial<Record<SettingKey, readonly [number, number]>>;
 
 export const getAreaPageMinProviders = () => intSetting("area_page_min_providers", ...SETTING_RANGES.area_page_min_providers);
 export const getFeaturedMinProviders = () => intSetting("featured_min_providers", ...SETTING_RANGES.featured_min_providers);
 export const getFeaturedSlotsPerArea = () => intSetting("featured_slots_per_area", ...SETTING_RANGES.featured_slots_per_area);
+export const getBenchmarkMinProviders = () => intSetting("benchmark_min_providers", ...SETTING_RANGES.benchmark_min_providers);
 export const getEventReachKm = () => intSetting("event_reach_km", ...SETTING_RANGES.event_reach_km);
 
 // ── Review ─────────────────────────────────────────────────────────────────
@@ -186,13 +190,19 @@ export function readPlanInfo(v: unknown): PlanInfo | null {
   return { name: o.name as string, monthly: o.monthly, yearly: o.yearly, tagline: o.tagline as string };
 }
 
-export function readPlanCapability(v: unknown): PlanCapability | null {
+/**
+ * A stored plan capability if every field present is valid, else null. A
+ * switch added after the row was saved (benchmarks, say) takes the tier's
+ * code default instead of throwing the whole row away.
+ */
+export function readPlanCapability(v: unknown, fallback: PlanCapability): PlanCapability | null {
   if (!v || typeof v !== "object") return null;
   const o = v as Record<string, unknown>;
-  const limit = o.event_limit;
+  const limit = "event_limit" in o ? o.event_limit : fallback.eventLimit;
   const limitOk = limit === null || (Number.isInteger(limit) && (limit as number) >= 0 && (limit as number) <= 100);
-  if (!limitOk || typeof o.video !== "boolean" || typeof o.featured !== "boolean") return null;
-  return { eventLimit: limit as number | null, video: o.video, featured: o.featured };
+  const flag = (k: "video" | "featured" | "benchmarks") => (k in o ? o[k] : fallback[k]);
+  if (!limitOk || [flag("video"), flag("featured"), flag("benchmarks")].some((x) => typeof x !== "boolean")) return null;
+  return { eventLimit: limit as number | null, video: flag("video") as boolean, featured: flag("featured") as boolean, benchmarks: flag("benchmarks") as boolean };
 }
 
 /** Names, prices and taglines per plan; a malformed tier falls back to its default. */
@@ -204,7 +214,7 @@ export async function getPlans(): Promise<Plans> {
 /** What each plan unlocks; a malformed tier falls back to its default. */
 export async function getPlanCapabilities(): Promise<PlanCapabilities> {
   const stored = parseJson(await getSetting("plan_capabilities")) as Record<string, unknown> | null;
-  return Object.fromEntries(TIERS.map((t) => [t, readPlanCapability(stored?.[t]) ?? DEFAULT_CAPABILITIES[t]])) as PlanCapabilities;
+  return Object.fromEntries(TIERS.map((t) => [t, readPlanCapability(stored?.[t], DEFAULT_CAPABILITIES[t]) ?? DEFAULT_CAPABILITIES[t]])) as PlanCapabilities;
 }
 
 /** Calendar months later, clamped to the month's last day (31 Aug + 6 = 28/29 Feb). */

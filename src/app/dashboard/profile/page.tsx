@@ -4,6 +4,8 @@ import { getPlanCapabilities } from "@/lib/settings";
 import { hasVideo } from "@/lib/tiers";
 import { ProfileForm } from "./profile-form";
 import { getSectionTerms } from "@/lib/sections";
+import { getProfession } from "@/lib/cms/read";
+import { FALLBACK_PROFESSIONS } from "@/lib/professions";
 
 export const metadata = { title: "Edit profile" };
 
@@ -53,6 +55,7 @@ export default async function ProfileEditPage() {
     .limit(1)
     .maybeSingle();
   const primary = (professionRow as unknown as { terms: { id: string; slug: string } } | null)?.terms;
+  const profession = (await getProfession(primary?.slug ?? "coaches")) ?? FALLBACK_PROFESSIONS[0];
   if (primary && primary.slug !== "coaches") {
     disciplines = await getSectionTerms(primary.id);
     skills = [];
@@ -94,6 +97,7 @@ export default async function ProfileEditPage() {
       testimonials={testimonials ?? []}
       coachSlug={provider.slug}
       videoAllowed={hasVideo(sub?.tier, sub?.status, await getPlanCapabilities())}
+      nouns={{ audience: profession.audienceNoun, years: profession.yearsLabel }}
     />
   );
 }

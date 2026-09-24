@@ -138,12 +138,14 @@ Found and fixed while writing this stage (would have broken at runtime, not at c
 
 ## 7. Proof (§08)
 
-- [ ] Every `provider_events` / `search_events` / `provider_month_stats` row carries profession_id; benchmarks compare within a profession.
-- [ ] Monthly numbers email (good month + zero month) as content blocks with profession nouns as variables.
-- [ ] Completeness score: items, weights and wording from `profession_details.completeness`; "one thing to do this month".
-- [ ] Mention prompt as a content block (first name + brand).
-- [ ] Dashboard: same tabs for all, labels from the profession row, stats split by section for two-profession providers.
-- [ ] SEO digest: URL groups from profession rows; zero-result searches split by profession.
+- [x] Every measurement carries the section it happened in. `src/lib/coach-events.ts` logs impressions with the profession of the listing they appeared on (a farrier who is also a bodyworker gets one row per section), views and reveals in the primary profession; enquiries carry `profession_id`. `0007_provider_proof.sql` adds `profession_id` to the dedupe index, `freeze_month_stats(month)` (one `provider_month_stats` row per provider per section), `emailed_at`, and `profession_benchmark()` (medians, only when at least `benchmark_min_providers` exist, new setting, 5, in admin). Benchmarks are a plan capability (`benchmarks`, Clinic by default, a checkbox in admin) and only ever compare within one profession.
+- [x] Monthly numbers email: `email.monthly` content block (subject, busy intro, quiet intro, outcome, searches, next step, share, sign-off) with counted variables that read right at one ("1 person", "12 searches") and the audience noun ("riders", "horse owners"). `src/lib/provider-email.ts`, `/api/cron/provider-monthly` (1st of the month, vercel.json). A quiet month gets the same email and says so; enquiries bring the outcome question; the top three things searched nearby (`local_search_terms()`); a line per section for two-profession providers. Once per provider per month.
+- [x] Completeness: items, weights and labels from `profession_details.completeness` (coaches: "Disciplines tagged", "A photo of you coaching"; horse care: "Specialities tagged", "A photo of you at work"), weighted score, video skipped when the plan has none, and the next gap named on the dashboard and in the email ("Next on your profile checklist").
+- [x] Mention prompt: `mention` content block, on every profile beside the contact panel ("let Ada know you found them on Equine Professionals Australia").
+- [x] Dashboard: same tabs for everyone ("Events", not "Clinics"); audience, clients/students, enquiry options and term nouns from the profession row across overview, enquiries, events, profile and the taking-new control; a per-section table for two-profession providers; the benchmark line on plans that have it. Header link reads "Your dashboard".
+- [x] SEO digest: URL groups from profession rows and zero-result searches by profession (done in stages 3 and 4).
+- [x] Check: 14/14 end to end with two throwaway providers (a farrier + bodyworker on Clinic, a quiet farrier) and five benchmark farriers: impressions in both sections, view and reveal in the primary, enquiry through the real form carries the profession, mention prompt, two section rows on the dashboard, benchmark within farriers only, farrier completeness wording, "clients" and "Events", the monthly cron freezing per section and emailing both (quiet one included, zero row recorded), and not twice. Logged email text read back for pluralisation. Everything deleted after. `tsc`, lint, build, nav 31/31, search suite ok.
+- [ ] Not done: emails are logged until Resend is set up. The benchmark needs five providers in a profession with last month's numbers, so it will stay hidden for a while after launch.
 
 ## 8. Admin (§10)
 

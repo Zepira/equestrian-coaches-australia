@@ -5,7 +5,6 @@ import type { EnquiryStatus } from "../actions";
 
 export const metadata = { title: "Enquiries" };
 
-const WANT: Record<string, string> = { regular: "Regular lessons", one_off: "One-off", clinic: "Clinic" };
 
 function when(iso: string) {
   const d = new Date(iso);
@@ -26,6 +25,9 @@ function when(iso: string) {
 export default async function EnquiriesPage() {
   const ctx = await loadDashboard();
   if (!ctx) redirect("/login?next=/dashboard/enquiries");
+  // "Regular lessons" for a coach, "Regular visits" for a farrier: the profession's own options.
+  const options = ctx.professions.flatMap((p) => p.enquiryOptions);
+  const want = (v: string) => options.find((o) => o.value === v)?.label ?? v;
   const { data: enquiries } = await ctx.supabase
     .from("enquiries")
     .select("id, rider_name, rider_contact, want, message, status, created_at")
@@ -39,7 +41,7 @@ export default async function EnquiriesPage() {
       <h1 className="text-[40px] leading-none -tracking-[0.02em] text-ink wide:text-[56px] wide:leading-[0.98] wide:-tracking-[0.025em]">Enquiries</h1>
       <p className="mt-2.5 text-[15px] leading-[1.5] text-muted wide:mt-3 wide:max-w-[60ch] wide:text-[16px]">
         <span className="wide:hidden">Tap</span>
-        <span className="hidden wide:inline">Click</span> a status to change it. Outcomes feed your monthly email, so mark the ones that turned into lessons.
+        <span className="hidden wide:inline">Click</span> a status to change it. Outcomes feed your monthly email, so mark the ones that turned into work.
       </p>
 
       {rows.length === 0 && <p className="mt-6 rounded-[14px] border border-dashed border-border p-6 text-center text-[14px] text-subtle">No enquiries yet.</p>}
@@ -53,7 +55,7 @@ export default async function EnquiriesPage() {
               <span className="text-[12.5px] text-subtle">{when(e.created_at)}</span>
             </div>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
-              <span className="rounded-[var(--radius-pill)] border border-border px-2.5 py-1 text-[12px] font-medium text-muted">{WANT[e.want] ?? e.want}</span>
+              <span className="rounded-[var(--radius-pill)] border border-border px-2.5 py-1 text-[12px] font-medium text-muted">{want(e.want)}</span>
               <span className="rounded-[var(--radius-pill)] border border-border px-2.5 py-1 text-[12px] font-medium text-muted">{e.rider_contact}</span>
             </div>
             <p className="mt-3 text-[14.5px] leading-[1.5] text-fg">{e.message}</p>
@@ -71,7 +73,7 @@ export default async function EnquiriesPage() {
       {rows.length > 0 && (
         <div className="mt-7 hidden overflow-hidden rounded-[18px] border border-border bg-surface wide:block" role="table" aria-label="Enquiries">
           <div className="grid grid-cols-[180px_1fr_140px_130px_150px] gap-4 bg-shade px-6 py-3 text-[11px] font-medium uppercase tracking-[0.14em] text-subtle" role="row">
-            <span role="columnheader">Rider</span>
+            <span role="columnheader">From</span>
             <span role="columnheader">Message</span>
             <span role="columnheader">Wants</span>
             <span role="columnheader">Received</span>
@@ -86,7 +88,7 @@ export default async function EnquiriesPage() {
                 </a>
               </div>
               <p role="cell" className="m-0 text-[14.5px] leading-[1.5] text-fg">{e.message}</p>
-              <span role="cell" className="text-[14px] text-muted">{WANT[e.want] ?? e.want}</span>
+              <span role="cell" className="text-[14px] text-muted">{want(e.want)}</span>
               <span role="cell" className="text-[13.5px] text-subtle">{when(e.created_at)}</span>
               <span role="cell" className="justify-self-start">
                 <EnquiryStatusButton id={e.id} status={e.status as EnquiryStatus} />

@@ -126,7 +126,7 @@ export default async function SearchPage({
 
     // provider_events.impression, one per real provider in the result set,
     // deduped per visitor per day (mock data is skipped by the logger).
-    await logImpressions(real.map((r) => r.id));
+    await logImpressions(real.map((r) => ({ id: r.id, professionId: r.professionId })));
 
     // search_events — logged regardless of hit/miss, the zero-result rows
     // are the interesting ones (supply gap vs vocabulary gap).

@@ -4,7 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isStripeConfigured } from "@/lib/stripe";
-import { TIERS, capabilityJson } from "@/lib/tiers";
+import { DEFAULT_CAPABILITIES, TIERS, capabilityJson } from "@/lib/tiers";
 import {
   LOCKED_ONCE_SET,
   SETTINGS_TAG,
@@ -88,6 +88,7 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
   featured_min_providers: wholeNumber("featured_min_providers"),
   featured_slots_per_area: wholeNumber("featured_slots_per_area"),
   event_reach_km: wholeNumber("event_reach_km"),
+  benchmark_min_providers: wholeNumber("benchmark_min_providers"),
   plans(raw) {
     const parsed = parseObject(raw);
     if (!parsed) return { error: "That isn't a valid set of plans." };
@@ -102,12 +103,12 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     const parsed = parseObject(raw);
     if (!parsed) return { error: "That isn't a valid set of plan features." };
     for (const t of TIERS) {
-      if (!readPlanCapability(parsed[t])) return { error: `Check ${t}: events is a whole number from 0 to 100, or blank for unlimited.` };
+      if (!readPlanCapability(parsed[t], DEFAULT_CAPABILITIES[t])) return { error: `Check ${t}: events is a whole number from 0 to 100, or blank for unlimited.` };
     }
     return {
       value: JSON.stringify(
         Object.fromEntries(TIERS.map((t) => {
-          return [t, capabilityJson(readPlanCapability(parsed[t])!)];
+          return [t, capabilityJson(readPlanCapability(parsed[t], DEFAULT_CAPABILITIES[t])!)];
         }))
       ),
     };
@@ -143,6 +144,7 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   featured_min_providers: ["/search"],
   featured_slots_per_area: ["/search"],
   event_reach_km: [],
+  benchmark_min_providers: ["/dashboard"],
   plans: ["/", "/coaches", "/horse-care", "/for-coaches", "/list-your-business", "/dashboard", "/dashboard/billing"],
   plan_capabilities: ["/dashboard", "/dashboard/clinics", "/dashboard/profile"],
 };
@@ -176,7 +178,7 @@ export async function savePlanCapabilities(formData: FormData) {
   const next = Object.fromEntries(
     TIERS.map((t) => {
       const raw = String(formData.get(`${t}.event_limit`) ?? "").trim();
-      return [t, { event_limit: raw === "" ? null : Number(raw), video: formData.get(`${t}.video`) === "on", featured: formData.get(`${t}.featured`) === "on" }];
+      return [t, { event_limit: raw === "" ? null : Number(raw), video: formData.get(`${t}.video`) === "on", featured: formData.get(`${t}.featured`) === "on", benchmarks: formData.get(`${t}.benchmarks`) === "on" }];
     })
   );
   await writeSetting("plan_capabilities", JSON.stringify(next));

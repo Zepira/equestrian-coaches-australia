@@ -156,7 +156,7 @@ function ContactRow({ label: text, value, name, showName, defaultShow, configure
  * skills, setup, qualifications, years and testimonials that sit further
  * down the same scroll.
  */
-export function ProfileForm({ configured, coach, disciplines, skills, attributes, selectedTermIds, photos, testimonials, coachSlug, videoAllowed = false }: { configured: boolean; coach: Coach; disciplines: Term[]; skills: Term[]; attributes: Term[]; selectedTermIds: string[]; photos: Photo[]; testimonials: Testimonial[]; coachSlug?: string | null; videoAllowed?: boolean }) {
+export function ProfileForm({ configured, coach, disciplines, skills, attributes, selectedTermIds, photos, testimonials, coachSlug, videoAllowed = false, nouns = { audience: "rider", years: "years coaching" } }: { configured: boolean; coach: Coach; disciplines: Term[]; skills: Term[]; attributes: Term[]; selectedTermIds: string[]; photos: Photo[]; testimonials: Testimonial[]; coachSlug?: string | null; videoAllowed?: boolean; nouns?: { audience: string; years: string } }) {
   const [suburb, setSuburb] = useState(coach?.suburb ?? "");
   const [state, setState] = useState(coach?.state ?? "");
   const [postcode, setPostcode] = useState(coach?.postcode ?? "");
@@ -169,7 +169,7 @@ export function ProfileForm({ configured, coach, disciplines, skills, attributes
         {coachSlug && (
           <a href={profilePath(coachSlug)} className="shrink-0 text-[14px] font-medium text-accent wide:text-[15px]">
             <span className="wide:hidden">Preview →</span>
-            <span className="hidden wide:inline">Preview as a rider →</span>
+            <span className="hidden wide:inline">Preview as {/^[aeiou]/i.test(nouns.audience) ? "an" : "a"} {nouns.audience} →</span>
           </a>
         )}
       </div>
@@ -231,12 +231,12 @@ export function ProfileForm({ configured, coach, disciplines, skills, attributes
             </div>
             <div className="grid grid-cols-2 gap-2.5 wide:gap-3">
               <label className="block">
-                <span className={label}>Years coaching</span>
+                <span className={label}>{nouns.years.charAt(0).toUpperCase() + nouns.years.slice(1)}</span>
                 <input name="years_experience" type="number" min={0} max={80} defaultValue={coach?.years_experience ?? ""} disabled={!configured} placeholder="7" className={input} />
               </label>
             </div>
 
-            <TermChips legend="Skills" hint="what you help riders fix" name="skill" terms={skills} selectedIds={selectedTermIds} configured={configured} />
+            <TermChips legend="Skills" hint={`what you help ${nouns.audience}s fix`} name="skill" terms={skills} selectedIds={selectedTermIds} configured={configured} />
             <TermChips legend="Setup" hint="what you offer" name="attribute" terms={attributes} selectedIds={selectedTermIds} configured={configured} />
 
             <label className="block">
@@ -245,11 +245,11 @@ export function ProfileForm({ configured, coach, disciplines, skills, attributes
             </label>
 
             <div className="rounded-[14px] border border-border bg-surface px-4 py-3.5 wide:px-5 wide:py-4" id="contact">
-              <span className={label}>Contact riders see</span>
+              <span className={label}>Contact {nouns.audience}s see</span>
               <div className="flex items-center justify-between gap-3 border-b border-shade py-3">
                 <div>
                   <div className="text-[14.5px] font-medium text-fg wide:text-[15px]">Enquiry form</div>
-                  <div className="text-[13px] text-subtle wide:text-[13.5px]">Riders message you through EPA</div>
+                  <div className="text-[13px] text-subtle wide:text-[13.5px]">{nouns.audience.charAt(0).toUpperCase() + nouns.audience.slice(1)}s message you through the site</div>
                 </div>
                 <Switch name="show_contact_form" defaultChecked={coach?.show_contact_form ?? true} disabled={!configured} label="Show the enquiry form on my profile" />
               </div>
@@ -286,8 +286,8 @@ export function ProfileForm({ configured, coach, disciplines, skills, attributes
             </div>
             <form action={addTestimonial} className="mt-3.5 flex flex-col gap-2.5 wide:flex-row wide:items-end">
               <label className="block flex-1">
-                <span className={label}>Rider</span>
-                <input name="author_name" type="text" disabled={!configured} placeholder="Adult rider, Bendigo" className={input} />
+                <span className={label}>{nouns.audience.charAt(0).toUpperCase() + nouns.audience.slice(1)}</span>
+                <input name="author_name" type="text" disabled={!configured} placeholder={`${nouns.audience.charAt(0).toUpperCase() + nouns.audience.slice(1)}, Bendigo`} className={input} />
               </label>
               <label className="block flex-[2]">
                 <span className={label}>Quote</span>

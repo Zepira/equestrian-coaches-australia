@@ -34,16 +34,36 @@ function service() {
   return createServiceClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 }
 
-async function log(kind: CoachEventKind, coachIds: string[]) {
-  if (!isSupabaseConfigured || coachIds.length === 0) return;
-  const real = coachIds.filter((id) => /^[0-9a-f-]{36}$/i.test(id)); // never mock:* sentinels
+/**
+ * Each provider's primary profession (lowest sort_order), for events logged
+ * without one: a profile view or a phone reveal belongs to the section the
+ * profile sits in (The Site as a CMS §08.1).
+ */
+async function primaryProfessions(ids: string[]) {
+  const { data } = await service()
+    .from("provider_terms")
+    .select("provider_id, sort_order, terms!inner(id, kind)")
+    .in("provider_id", ids)
+    .eq("terms.kind", "profession")
+    .order("sort_order");
+  const map = new Map<string, string>();
+  for (const r of data ?? []) if (!map.has(r.provider_id)) map.set(r.provider_id, (r as unknown as { terms: { id: string } }).terms.id);
+  return map;
+}
+
+/** One row per provider; profession_id says which section it happened in. */
+async function log(kind: CoachEventKind, rows: { id: string; professionId?: string | null }[]) {
+  if (!isSupabaseConfigured || rows.length === 0) return;
+  const real = rows.filter((r) => /^[0-9a-f-]{36}$/i.test(r.id)); // never mock:* sentinels
   if (real.length === 0) return;
   try {
     const hash = await visitorHash();
-    const rows = real.map((provider_id) => ({ provider_id, kind, visitor_hash: hash }));
-    // The partial unique index turns a same-day repeat into a no-op.
-    await service().from("provider_events").upsert(rows, {
-      onConflict: "provider_id,kind,visitor_hash,event_day",
+    const missing = real.filter((r) => !r.professionId).map((r) => r.id);
+    const primary = missing.length ? await primaryProfessions(missing) : new Map<string, string>();
+    const insert = real.map((r) => ({ provider_id: r.id, profession_id: r.professionId ?? primary.get(r.id) ?? null, kind, visitor_hash: hash }));
+    // The unique index turns a same-day repeat into a no-op.
+    await service().from("provider_events").upsert(insert, {
+      onConflict: "provider_id,kind,visitor_hash,event_day,profession_id",
       ignoreDuplicates: true,
     });
   } catch (err) {
@@ -51,9 +71,15 @@ async function log(kind: CoachEventKind, coachIds: string[]) {
   }
 }
 
-/** Every coach id a search result set contained — fire once per search. */
-export const logImpressions = (coachIds: string[]) => log("impression", coachIds);
-/** A profile page render. */
-export const logView = (coachId: string) => log("view", [coachId]);
+/** Every provider a result set contained, with the profession they matched on. Fire once per page. */
+export const logImpressions = (rows: { id: string; professionId?: string | null }[]) => log("impression", rows);
+/** A profile page render, counted in the profile's primary section. */
+export const logView = (providerId: string, professionId?: string | null) => log("view", [{ id: providerId, professionId }]);
 /** A click on "Show phone number". */
-export const logReveal = (coachId: string) => log("reveal", [coachId]);
+export const logReveal = (providerId: string) => log("reveal", [{ id: providerId }]);
+
+/** A provider's primary profession id, for rows like enquiries written elsewhere. */
+export async function primaryProfessionOf(providerId: string): Promise<string | null> {
+  if (!isSupabaseConfigured) return null;
+  return (await primaryProfessions([providerId])).get(providerId) ?? null;
+}
