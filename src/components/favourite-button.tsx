@@ -37,9 +37,9 @@ export function FavouriteButton({
       if (!user) return;
       const { data } = await supabase
         .from("favourites")
-        .select("coach_id")
+        .select("provider_id")
         .eq("rider_id", user.id)
-        .eq("coach_id", coachId)
+        .eq("provider_id", coachId)
         .maybeSingle();
       setFavourited(Boolean(data));
     });

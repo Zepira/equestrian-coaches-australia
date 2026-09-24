@@ -54,6 +54,7 @@ export async function updateSession(request: NextRequest) {
       .select("terms(slug)")
       .eq("kind", "discipline")
       .eq("old_slug", oldSlug)
+      .limit(1)
       .maybeSingle();
     const currentSlug = (history as unknown as { terms: { slug: string } | null } | null)?.terms?.slug;
     if (currentSlug && currentSlug !== oldSlug) {
@@ -78,7 +79,7 @@ export async function updateSession(request: NextRequest) {
       .select("role")
       .eq("id", user.id)
       .single();
-    if (profile?.role !== "coach") {
+    if (profile?.role !== "provider") {
       return NextResponse.redirect(new URL("/account", request.url));
     }
   }

@@ -11,18 +11,17 @@ function serviceClient() {
   );
 }
 
-// Matches a newly-created clinic against rider_preferences (discipline or
-// 100km radius — see matching_riders_for_clinic in
-// supabase/migrations/0006_notify_matching.sql), emails each match via
-// Resend, and logs every attempt to notifications_log so a rider is never
-// emailed twice about the same clinic (also doubles as an audit trail
-// while Resend isn't configured yet).
+// Matches a newly-created event against rider_alerts (profession, term and
+// alert radius: riders_for_event() in the baseline migration), emails each
+// match via Resend, and logs every attempt to notifications_log so a rider
+// is never emailed twice about the same event (also the audit trail while
+// Resend isn't configured). Clinic-tier reach (event_reach_km) is stage 6.
 export async function notifyRidersOfClinic(clinicId: string) {
   const supabase = serviceClient();
 
   const { data: clinic, error: clinicError } = await supabase
-    .from("clinics")
-    .select("title, start_date, location_text, coach_id, coach_profiles(slug)")
+    .from("events")
+    .select("title, start_date, location_text, provider_id, providers(slug)")
     .eq("id", clinicId)
     .single();
   if (clinicError || !clinic) {
@@ -30,8 +29,9 @@ export async function notifyRidersOfClinic(clinicId: string) {
     return { sent: 0, matched: 0 };
   }
 
-  const { data: matches, error: matchError } = await supabase.rpc("matching_riders_for_clinic", {
-    p_clinic_id: clinicId,
+  const { data: matches, error: matchError } = await supabase.rpc("riders_for_event", {
+    p_event_id: clinicId,
+    p_reach_km: null,
   });
   if (matchError) {
     console.error("notifyRidersOfClinic: matching failed", matchError);
@@ -39,8 +39,7 @@ export async function notifyRidersOfClinic(clinicId: string) {
   }
   if (!matches || matches.length === 0) return { sent: 0, matched: 0 };
 
-  const coachSlug = (clinic as unknown as { coach_profiles: { slug: string } | null }).coach_profiles
-    ?.slug;
+  const coachSlug = (clinic as unknown as { providers: { slug: string } | null }).providers?.slug;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const clinicDate = new Date(clinic.start_date).toLocaleDateString("en-AU", {
     day: "numeric",
@@ -51,7 +50,7 @@ export async function notifyRidersOfClinic(clinicId: string) {
   const resend = getResend();
   let sent = 0;
 
-  for (const match of matches as { rider_id: string; email: string }[]) {
+  for (const match of matches as { rider_id: string; email: string; alert_id: string | null }[]) {
     if (isResendConfigured && resend) {
       try {
         await resend.emails.send({
@@ -70,9 +69,12 @@ export async function notifyRidersOfClinic(clinicId: string) {
     }
     // Log regardless of whether Resend is configured — in mock/no-email
     // mode this is the visible record that matching worked.
-    await supabase
+    // One row per rider per event (a partial unique index, which upsert can't
+    // target): a duplicate means already logged, which is fine.
+    const { error: logError } = await supabase
       .from("notifications_log")
-      .upsert({ rider_id: match.rider_id, clinic_id: clinicId }, { onConflict: "rider_id,clinic_id" });
+      .insert({ rider_id: match.rider_id, kind: "event", event_id: clinicId, alert_id: match.alert_id });
+    if (logError && logError.code !== "23505") console.error("notifyRidersOfClinic: log failed", logError);
   }
 
   return { sent, matched: matches.length };

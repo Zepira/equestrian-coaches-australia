@@ -1,16 +1,21 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-import { ensureCoachProfile } from "@/lib/supabase/queries";
-import { isTier, TIER_META, type Tier } from "@/lib/tiers";
+import { ensureProvider, type ProviderRow } from "@/lib/supabase/queries";
+import { isLiveStatus, isTier, TIER_META, type Tier } from "@/lib/tiers";
 
 /**
  * Everything the dashboard shell needs on every /dashboard/* render: the
- * coach row (created lazily), their name, plan, and the new-enquiry count
- * for the tab badge. Pages fetch their own detail on top of this.
+ * provider this user edits (created if an older account has none), their
+ * name, plan (from subscriptions), and the new-enquiry count for the tab
+ * badge. Pages fetch their own detail on top of this.
+ *
+ * `providerId` is the profile's own id, not the user's: every provider
+ * table keys on it (The Site as a CMS §04 D).
  */
 export type DashboardContext = {
   supabase: SupabaseClient;
   userId: string;
+  providerId: string;
   name: string;
   firstName: string;
   slug: string;
@@ -19,7 +24,7 @@ export type DashboardContext = {
   planName: string;
   planLine: string;
   newEnquiries: number;
-  coach: Record<string, unknown>;
+  provider: ProviderRow;
 };
 
 export async function loadDashboard(): Promise<DashboardContext | null> {
@@ -32,36 +37,36 @@ export async function loadDashboard(): Promise<DashboardContext | null> {
 
   const { data: profile } = await supabase.from("profiles").select("name").eq("id", user.id).single();
   const name = profile?.name ?? "Coach";
-  const coach = await ensureCoachProfile(supabase, user.id, name);
-  const { count } = await supabase
-    .from("enquiries")
-    .select("id", { count: "exact", head: true })
-    .eq("coach_id", user.id)
-    .eq("status", "new");
+  const provider = await ensureProvider(supabase, user.id, name);
+  const [{ count }, { data: sub }] = await Promise.all([
+    supabase.from("enquiries").select("id", { count: "exact", head: true }).eq("provider_id", provider.id).eq("status", "new"),
+    supabase.from("subscriptions").select("tier, status").eq("provider_id", provider.id).maybeSingle(),
+  ]);
 
-  const tierRaw: unknown = coach.subscription_tier;
+  const tierRaw: unknown = sub?.tier;
   const tier: Tier | null = isTier(tierRaw) ? tierRaw : null;
-  const status = String(coach.subscription_status ?? "inactive");
+  const status = String(sub?.status ?? "inactive");
   const planName = tier ? TIER_META[tier].name : "No plan yet";
   const planLine = tier
-    ? status === "active"
+    ? isLiveStatus(status)
       ? `${TIER_META[tier].monthly} a month · founding price locked in.`
       : status === "past_due"
-        ? "Payment past due — update your card in Billing."
-        : "Subscription cancelled — your listing is unpublished."
+        ? "Payment past due. Update your card in Billing."
+        : "Subscription cancelled. Your listing is unpublished."
     : "Choose a plan to publish your profile.";
 
   return {
     supabase,
     userId: user.id,
-    name,
-    firstName: name.split(" ")[0],
-    slug: String(coach.slug),
+    providerId: provider.id,
+    name: provider.name || name,
+    firstName: (provider.name || name).split(" ")[0],
+    slug: provider.slug,
     tier,
     status,
     planName,
     planLine,
     newEnquiries: count ?? 0,
-    coach: coach as Record<string, unknown>,
+    provider,
   };
 }

@@ -51,7 +51,7 @@ function LoginForm() {
           .select("role")
           .eq("id", data.user.id)
           .single();
-        next = profile?.role === "coach" ? "/dashboard" : "/account";
+        next = profile?.role === "provider" ? "/dashboard" : "/account";
       }
 
       router.push(next);

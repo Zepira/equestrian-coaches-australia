@@ -34,17 +34,17 @@ export default async function DashboardPage({
   const { tier: pendingTier, checkout, mock } = await searchParams;
   const ctx = await loadDashboard();
   if (!ctx) redirect("/login?next=/dashboard");
-  const { supabase, userId, firstName, coach } = ctx;
+  const { supabase, providerId, firstName, provider: coach } = ctx;
   const now = new Date();
 
   const [stats, trend, { data: enquiries }, { data: photos }, { data: terms }, { data: testimonials }, { data: clinics }] = await Promise.all([
-    monthStats(supabase, userId, now),
-    twelveMonthViews(supabase, userId, now),
-    supabase.from("enquiries").select("id, rider_name, want, message, status, created_at").eq("coach_id", userId).order("created_at", { ascending: false }).limit(3),
-    supabase.from("coach_photos").select("id").eq("coach_id", userId).limit(1),
-    supabase.from("coach_terms").select("terms(kind)").eq("coach_id", userId),
-    supabase.from("testimonials").select("id").eq("coach_id", userId),
-    supabase.from("clinics").select("id, title, start_date, location_text, places_left").eq("coach_id", userId).gte("start_date", now.toISOString().slice(0, 10)).order("start_date").limit(1),
+    monthStats(supabase, providerId, now),
+    twelveMonthViews(supabase, providerId, now),
+    supabase.from("enquiries").select("id, rider_name, want, message, status, created_at").eq("provider_id", providerId).order("created_at", { ascending: false }).limit(3),
+    supabase.from("provider_photos").select("id").eq("provider_id", providerId).limit(1),
+    supabase.from("provider_terms").select("terms(kind)").eq("provider_id", providerId),
+    supabase.from("testimonials").select("id").eq("provider_id", providerId),
+    supabase.from("events").select("id, title, start_date, location_text, places_left").eq("provider_id", providerId).gte("start_date", now.toISOString().slice(0, 10)).order("start_date").limit(1),
   ]);
   const disciplineCount = (terms ?? []).filter((t) => (t as unknown as { terms: { kind: string } | null }).terms?.kind === "discipline").length;
   const completeness = profileCompleteness({
@@ -196,7 +196,7 @@ export default async function DashboardPage({
         </div>
         <div className="hidden min-w-[300px] shrink-0 flex-col gap-2.5 rounded-[14px] border border-border bg-surface px-4 py-3.5 wide:flex">
           <span className="font-display text-[18px] leading-none text-ink">Taking new students?</span>
-          <TakingStudentsControl value={(coach.taking_students as TakingStudents) ?? "yes"} compact />
+          <TakingStudentsControl value={(coach.availability as TakingStudents) ?? "yes"} compact />
         </div>
       </div>
 
@@ -213,7 +213,7 @@ export default async function DashboardPage({
             <span className="text-[13px] text-subtle">Shown on your profile</span>
           </div>
           <div className="mt-3.5">
-            <TakingStudentsControl value={(coach.taking_students as TakingStudents) ?? "yes"} />
+            <TakingStudentsControl value={(coach.availability as TakingStudents) ?? "yes"} />
           </div>
         </div>
         {latest}

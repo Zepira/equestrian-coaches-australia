@@ -1,6 +1,6 @@
 import { getDisciplineBySlug } from "@/lib/disciplines";
 
-// Sample data standing in for the `coach_profiles` table until Supabase is
+// Sample data standing in for the `providers` table until Supabase is
 // wired up (see build plan, phase 2). Shape mirrors the planned DB columns
 // so swapping this for a real query later is a like-for-like replacement.
 export type PlaceholderCoach = {

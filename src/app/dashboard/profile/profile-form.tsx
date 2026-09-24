@@ -1,5 +1,7 @@
 "use client";
 
+import { hasVideo } from "@/lib/tiers";
+
 import { useState } from "react";
 import { saveProfile, addTestimonial, deleteTestimonial } from "./actions";
 import { MediaUploadForm } from "./media-upload-form";
@@ -24,7 +26,7 @@ type Coach = {
   subscription_tier: string | null;
   video_url: string | null;
   travel_radius_km: number | null;
-  years_coaching: number | null;
+  years_experience: number | null;
 } | null;
 type Photo = { id: string; url: string; storage_path: string };
 type Testimonial = { id: string; author_name: string; quote: string };
@@ -158,7 +160,7 @@ export function ProfileForm({ configured, coach, disciplines, skills, attributes
   const [suburb, setSuburb] = useState(coach?.suburb ?? "");
   const [state, setState] = useState(coach?.state ?? "");
   const [postcode, setPostcode] = useState(coach?.postcode ?? "");
-  const videoActive = coach?.subscription_status === "active" && (coach?.subscription_tier === "spotlight" || coach?.subscription_tier === "clinic");
+  const videoActive = hasVideo(coach?.subscription_tier, coach?.subscription_status);
 
   return (
     <div className="fade-in" style={{ animationDuration: "0.5s" }}>
@@ -230,7 +232,7 @@ export function ProfileForm({ configured, coach, disciplines, skills, attributes
             <div className="grid grid-cols-2 gap-2.5 wide:gap-3">
               <label className="block">
                 <span className={label}>Years coaching</span>
-                <input name="years_coaching" type="number" min={0} max={80} defaultValue={coach?.years_coaching ?? ""} disabled={!configured} placeholder="7" className={input} />
+                <input name="years_experience" type="number" min={0} max={80} defaultValue={coach?.years_experience ?? ""} disabled={!configured} placeholder="7" className={input} />
               </label>
             </div>
 

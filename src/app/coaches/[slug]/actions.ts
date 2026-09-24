@@ -34,7 +34,7 @@ export async function sendCoachEnquiry(
   _prevState: EnquiryResult | null,
   formData: FormData
 ): Promise<EnquiryResult> {
-  const coachId = String(formData.get("coach_id") ?? "");
+  const coachId = String(formData.get("provider_id") ?? "");
   const riderName = String(formData.get("rider_name") ?? "").trim();
   const riderContact = String(formData.get("rider_contact") ?? formData.get("rider_email") ?? "").trim();
   const message = String(formData.get("message") ?? "").trim();
@@ -50,7 +50,7 @@ export async function sendCoachEnquiry(
     return { ok: false, message: "Enter an email address or an Australian mobile number." };
   }
 
-  // Mock/demo coaches (src/lib/mock-coaches.ts) have no coach_profiles row
+  // Mock/demo coaches (src/lib/mock-coaches.ts) have no providers row
   // — the form still works end-to-end for design review, it just logs.
   if (coachId.startsWith("mock:")) {
     const mockCoachName = String(formData.get("mock_coach_name") ?? "the coach");
@@ -65,20 +65,20 @@ export async function sendCoachEnquiry(
   }
 
   const { data: coach } = await supabase
-    .from("coach_profiles")
-    .select("contact_email, show_contact_form, taking_students, slug, profiles!coach_profiles_id_fkey(name)")
+    .from("providers")
+    .select("name, contact_email, show_contact_form, availability, slug")
     .eq("id", coachId)
-    .eq("published", true)
+    .eq("status", "published")
     .maybeSingle();
 
   if (!coach || !coach.show_contact_form) {
     return { ok: false, message: "This coach isn't taking enquiries through the site right now." };
   }
-  if (coach.taking_students === "no") {
+  if (coach.availability === "no") {
     return { ok: false, message: "This coach isn't taking new students right now." };
   }
 
-  const coachName = (coach as unknown as { profiles: { name: string } | null }).profiles?.name ?? "there";
+  const coachName = coach.name?.split(" ")[0] || "there";
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -86,7 +86,7 @@ export async function sendCoachEnquiry(
   try {
     const service = createServiceClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
     const { error } = await service.from("enquiries").insert({
-      coach_id: coachId,
+      provider_id: coachId,
       rider_id: user?.id ?? null,
       rider_name: riderName,
       rider_contact: riderContact,
@@ -143,10 +143,10 @@ export async function revealPhone(coachId: string): Promise<{ phone: string | nu
   const supabase = await createClient();
   if (!supabase) return { phone: null };
   const { data } = await supabase
-    .from("coach_profiles")
+    .from("providers")
     .select("contact_phone, show_contact_phone")
     .eq("id", coachId)
-    .eq("published", true)
+    .eq("status", "published")
     .maybeSingle();
   if (!data || !data.show_contact_phone || !data.contact_phone) return { phone: null };
   await logReveal(coachId);

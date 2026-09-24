@@ -54,18 +54,18 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
   const [{ data: profile }, disciplines, { data: prefs }, { data: favouriteRows }, { data: sentRows }, { data: nearbyRows }] = await Promise.all([
     supabase.from("profiles").select("name").eq("id", user.id).maybeSingle(),
     getDisciplines(supabase),
-    supabase.from("rider_preferences").select("suburb, postcode, followed_discipline_ids").eq("rider_id", user.id).maybeSingle(),
+    supabase.from("rider_alerts").select("suburb, postcode, term_ids").eq("rider_id", user.id).order("created_at").limit(1).maybeSingle(),
     supabase
       .from("favourites")
-      .select("coach_id, created_at, coach_profiles(slug, headline, suburb, state, lat, long, profiles!coach_profiles_id_fkey(name), coach_terms(sort_order, terms(name, kind)), coach_photos(storage_path, sort_order))")
+      .select("provider_id, created_at, providers(slug, name, headline, suburb, state, lat, long, provider_terms(sort_order, terms(name, kind)), provider_photos(storage_path, sort_order))")
       .eq("rider_id", user.id)
       .order("created_at", { ascending: false }),
-    supabase.from("enquiries").select("id, want, status, created_at, coach_profiles(profiles!coach_profiles_id_fkey(name))").eq("rider_id", user.id).order("created_at", { ascending: false }),
-    supabase.rpc("clinics_for_rider", { p_rider_id: user.id }),
+    supabase.from("enquiries").select("id, want, status, created_at, providers(name)").eq("rider_id", user.id).order("created_at", { ascending: false }),
+    supabase.rpc("events_for_rider", { p_rider_id: user.id }),
   ]);
 
   const firstName = (profile?.name ?? user.user_metadata?.name ?? "there").split(" ")[0];
-  const followedIds: string[] = prefs?.followed_discipline_ids ?? [];
+  const followedIds: string[] = prefs?.term_ids ?? [];
   const savedArea = prefs ? [prefs.suburb, prefs.postcode].filter(Boolean).join(" ") : "";
   const home = savedArea ? await resolveLocation(supabase, savedArea) : null;
   const area = home ? [titleCase(home.suburb), home.state, home.postcode].filter(Boolean).join(" ") : savedArea;
@@ -74,48 +74,48 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
     .map((row) => {
       const c = (
         row as unknown as {
-          coach_id: string;
-          coach_profiles: {
+          provider_id: string;
+          providers: {
             slug: string;
+            name: string;
             headline: string;
             suburb: string;
             state: string;
             lat: number | null;
             long: number | null;
-            profiles: { name: string } | null;
-            coach_terms: { sort_order: number; terms: { name: string; kind: string } | null }[];
-            coach_photos: { storage_path: string; sort_order: number }[];
+            provider_terms: { sort_order: number; terms: { name: string; kind: string } | null }[];
+            provider_photos: { storage_path: string; sort_order: number }[];
           } | null;
         }
-      ).coach_profiles;
+      ).providers;
       if (!c) return null;
       const km = home && c.lat != null && c.long != null ? Math.round(haversineKm(home.lat, home.long, c.lat, c.long)) : null;
-      const photo = [...(c.coach_photos ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0];
+      const photo = [...(c.provider_photos ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0];
       return {
-        coachId: row.coach_id,
+        coachId: row.provider_id,
         slug: c.slug,
-        name: c.profiles?.name ?? "Coach",
+        name: c.name || "Coach",
         headline: c.headline,
         where: `${c.suburb} ${c.state}${km != null ? ` · ${km} km` : ""}`,
-        tags: (c.coach_terms ?? [])
+        tags: (c.provider_terms ?? [])
           .filter((t) => t.terms?.kind === "discipline")
           .sort((a, b) => a.sort_order - b.sort_order)
           .map((t) => t.terms!.name)
           .slice(0, 2),
-        photoUrl: photo ? supabase.storage.from("coach-photos").getPublicUrl(photo.storage_path).data.publicUrl : null,
+        photoUrl: photo ? supabase.storage.from("provider-photos").getPublicUrl(photo.storage_path).data.publicUrl : null,
       };
     })
     .filter((f): f is Favourite => f !== null);
 
   const sent: Sent[] = (sentRows ?? []).map((r) => {
-    const row = r as unknown as { id: string; want: string; status: Sent["status"]; created_at: string; coach_profiles: { profiles: { name: string } | null } | null };
+    const row = r as unknown as { id: string; want: string; status: Sent["status"]; created_at: string; providers: { name: string } | null };
     const d = new Date(row.created_at);
-    return { id: row.id, coachName: row.coach_profiles?.profiles?.name ?? "Coach", want: WANT[row.want] ?? row.want, when: `${d.getDate()} ${MONTH_SHORT[d.getMonth()]}`, status: row.status };
+    return { id: row.id, coachName: row.providers?.name || "Coach", want: WANT[row.want] ?? row.want, when: `${d.getDate()} ${MONTH_SHORT[d.getMonth()]}`, status: row.status };
   });
 
-  const nearby: Nearby[] = ((nearbyRows ?? []) as { id: string; title: string; start_date: string; location_text: string; coach_name: string }[]).slice(0, 4).map((c) => {
+  const nearby: Nearby[] = ((nearbyRows ?? []) as { id: string; title: string; start_date: string; location_text: string; provider_name: string }[]).slice(0, 4).map((c) => {
     const d = new Date(c.start_date);
-    return { id: c.id, title: c.title, day: d.getDate(), mon: MONTH_SHORT[d.getMonth()], who: c.coach_name, where: c.location_text.split("·")[0].replace(/\s+(VIC|NSW|QLD|SA|WA|TAS|ACT|NT)\b.*$/, "").trim() };
+    return { id: c.id, title: c.title, day: d.getDate(), mon: MONTH_SHORT[d.getMonth()], who: c.provider_name, where: c.location_text.split("·")[0].replace(/\s+(VIC|NSW|QLD|SA|WA|TAS|ACT|NT)\b.*$/, "").trim() };
   });
 
   const h2 = "font-display text-[28px] leading-none text-ink wide:text-[32px]";

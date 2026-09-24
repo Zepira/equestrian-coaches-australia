@@ -5,7 +5,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/client";
 
 /**
  * The dashboard's numbers — "appeared in search", "profile views", "tapped
- * to call" — written server-side only (coach_events has no insert policy),
+ * to call" — written server-side only (provider_events has no insert policy),
  * never from the browser. Same degrade-gracefully shape as search-events:
  * a logging failure never breaks the page that triggered it.
  *
@@ -40,10 +40,10 @@ async function log(kind: CoachEventKind, coachIds: string[]) {
   if (real.length === 0) return;
   try {
     const hash = await visitorHash();
-    const rows = real.map((coach_id) => ({ coach_id, kind, visitor_hash: hash }));
+    const rows = real.map((provider_id) => ({ provider_id, kind, visitor_hash: hash }));
     // The partial unique index turns a same-day repeat into a no-op.
-    await service().from("coach_events").upsert(rows, {
-      onConflict: "coach_id,kind,visitor_hash,event_day",
+    await service().from("provider_events").upsert(rows, {
+      onConflict: "provider_id,kind,visitor_hash,event_day",
       ignoreDuplicates: true,
     });
   } catch (err) {

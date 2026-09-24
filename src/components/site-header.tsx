@@ -58,7 +58,7 @@ function useScrolled(threshold = 8) {
   return scrolled;
 }
 
-type AuthState = { loggedIn: boolean; role: "rider" | "coach" | null; name: string | null; coachSlug: string | null; avatarUrl: string | null; isAdmin: boolean };
+type AuthState = { loggedIn: boolean; role: "rider" | "provider" | null; name: string | null; coachSlug: string | null; avatarUrl: string | null; isAdmin: boolean };
 
 const SIGNED_OUT: AuthState = { loggedIn: false, role: null, name: null, coachSlug: null, avatarUrl: null, isAdmin: false };
 
@@ -76,16 +76,22 @@ function useAuthState(): AuthState {
         client.from("profiles").select("role, name").eq("id", userId).single(),
         client.rpc("is_admin"),
       ]);
-      const role = (data?.role as "rider" | "coach") ?? null;
+      const role = (data?.role as "rider" | "provider") ?? null;
       let coachSlug: string | null = null;
       let avatarUrl: string | null = null;
-      if (role === "coach") {
-        const [{ data: cp }, { data: photo }] = await Promise.all([
-          client.from("coach_profiles").select("slug").eq("id", userId).maybeSingle(),
-          client.from("coach_photos").select("storage_path").eq("coach_id", userId).order("sort_order").limit(1).maybeSingle(),
-        ]);
-        coachSlug = (cp?.slug as string | undefined) ?? null;
-        if (photo?.storage_path) avatarUrl = client.storage.from("coach-photos").getPublicUrl(photo.storage_path).data.publicUrl;
+      if (role === "provider") {
+        // The profile this user edits, through their membership.
+        const { data: member } = await client
+          .from("provider_members")
+          .select("providers(id, slug, provider_photos(storage_path, sort_order))")
+          .eq("user_id", userId)
+          .order("created_at")
+          .limit(1)
+          .maybeSingle();
+        const p = (member as unknown as { providers: { slug: string; provider_photos: { storage_path: string; sort_order: number }[] } | null } | null)?.providers;
+        coachSlug = p?.slug ?? null;
+        const photo = [...(p?.provider_photos ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0];
+        if (photo) avatarUrl = client.storage.from("provider-photos").getPublicUrl(photo.storage_path).data.publicUrl;
       }
       setState({ loggedIn: true, role, name: (data?.name as string | null) ?? null, coachSlug, avatarUrl, isAdmin: Boolean(isAdmin) });
     }
@@ -215,7 +221,7 @@ export function SiteHeader() {
   }, [door]);
 
   const firstName = auth.name?.split(" ")[0] ?? null;
-  const accountHref = auth.role === "coach" ? "/dashboard" : "/account";
+  const accountHref = auth.role === "provider" ? "/dashboard" : "/account";
   const isSearch = variant === "ink";
   // Dashboard mode (canvas: Dashboards): "Coach dashboard" tagline, a
   // "View public profile" pill and the coach's avatar + first name instead
@@ -326,7 +332,7 @@ export function SiteHeader() {
               )}
               <Link href={accountHref} className="site-header__link flex items-center gap-2.5">
                 <Avatar name={auth.name} />
-                {firstName ?? (auth.role === "coach" ? "Dashboard" : "My account")}
+                {firstName ?? (auth.role === "provider" ? "Dashboard" : "My account")}
               </Link>
               {!isAccount && (
                 <form action="/auth/sign-out" method="post">
@@ -478,7 +484,7 @@ export function SiteHeader() {
                     onClick={close}
                     className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
                   >
-                    {auth.role === "coach" ? "Dashboard" : "My account"}
+                    {auth.role === "provider" ? "Dashboard" : "My account"}
                   </Link>
                 </li>
                 <li>

@@ -70,19 +70,22 @@ export async function changeTermSlug(termId: string, formData: FormData) {
 
   const { data: term, error: fetchError } = await supabase
     .from("terms")
-    .select("slug, kind")
+    .select("slug, kind, parent_id")
     .eq("id", termId)
     .single();
   if (fetchError) throw fetchError;
   if (term.slug === newSlug) return;
 
-  // Upsert on (kind, old_slug) — if this exact slug was ever vacated before
-  // (rare, but possible after a rename-and-revert), the newest departure
-  // wins so the redirect always points at whoever holds the URL's meaning
-  // now, not a stale first-seen mapping.
+  // One row per (kind, parent, old slug). If this exact slug was vacated
+  // before (a rename-and-revert), the newest departure wins, so the
+  // redirect points at whoever holds the URL's meaning now. Delete then
+  // insert: the unique key includes an expression, which upsert can't name.
+  let clear = supabase.from("term_slug_history").delete().eq("kind", term.kind).eq("old_slug", term.slug);
+  clear = term.parent_id ? clear.eq("parent_id", term.parent_id) : clear.is("parent_id", null);
+  await clear;
   const { error: historyError } = await supabase
     .from("term_slug_history")
-    .upsert({ kind: term.kind, old_slug: term.slug, term_id: termId }, { onConflict: "kind,old_slug" });
+    .insert({ kind: term.kind, parent_id: term.parent_id, old_slug: term.slug, term_id: termId });
   if (historyError) throw historyError;
 
   const { error: updateError } = await supabase.from("terms").update({ slug: newSlug }).eq("id", termId);

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { DISCIPLINE_CONTENT_COLUMNS } from "@/lib/supabase/queries";
+import { getCoachingId, DISCIPLINE_CONTENT_COLUMNS } from "@/lib/supabase/queries";
 import { disciplineImage, type DisciplineContent } from "@/lib/discipline-content";
 import { createDiscipline } from "./actions";
 
@@ -18,8 +18,8 @@ export default async function AdminDisciplinesPage() {
   if (!supabase) return null;
 
   const [{ data }, { data: tagRows }] = await Promise.all([
-    supabase.from("terms").select(DISCIPLINE_CONTENT_COLUMNS).eq("kind", "discipline").order("name"),
-    supabase.from("coach_terms").select("term_id"),
+    supabase.from("terms").select(DISCIPLINE_CONTENT_COLUMNS).eq("kind", "discipline").eq("parent_id", (await getCoachingId(supabase)) ?? "").order("name"),
+    supabase.from("provider_terms").select("term_id"),
   ]);
   const rows = (data ?? []) as DisciplineContent[];
   const coachCount = new Map<string, number>();

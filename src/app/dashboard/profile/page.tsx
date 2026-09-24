@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getDisciplines, getSkills, getAttributes, ensureCoachProfile } from "@/lib/supabase/queries";
+import { getDisciplines, getSkills, getAttributes, ensureProvider, PROVIDER_PHOTOS } from "@/lib/supabase/queries";
 import { ProfileForm } from "./profile-form";
 
 export const metadata = { title: "Edit profile" };
@@ -36,25 +36,29 @@ export default async function ProfileEditPage() {
     .eq("id", user.id)
     .single();
 
-  const coach = await ensureCoachProfile(supabase, user.id, profile?.name ?? "Coach");
+  const provider = await ensureProvider(supabase, user.id, profile?.name ?? "Coach");
+  const providerId = provider.id;
 
-  const [{ data: selected }, { data: photos }, { data: testimonials }] = await Promise.all([
-    supabase.from("coach_terms").select("term_id").eq("coach_id", user.id),
+  const [{ data: selected }, { data: photos }, { data: testimonials }, { data: sub }] = await Promise.all([
+    supabase.from("provider_terms").select("term_id").eq("provider_id", providerId),
     supabase
-      .from("coach_photos")
+      .from("provider_photos")
       .select("id, storage_path, sort_order")
-      .eq("coach_id", user.id)
+      .eq("provider_id", providerId)
       .order("sort_order"),
     supabase
       .from("testimonials")
       .select("id, author_name, quote")
-      .eq("coach_id", user.id)
+      .eq("provider_id", providerId)
       .order("created_at", { ascending: false }),
+    supabase.from("subscriptions").select("tier, status").eq("provider_id", providerId).maybeSingle(),
   ]);
+  // The form still reads the plan off the profile object; it now comes from subscriptions.
+  const coach = { ...provider, subscription_tier: sub?.tier ?? null, subscription_status: sub?.status ?? "inactive" } as unknown as Parameters<typeof ProfileForm>[0]["coach"];
 
   const photosWithUrls = (photos ?? []).map((photo) => ({
     ...photo,
-    url: supabase.storage.from("coach-photos").getPublicUrl(photo.storage_path).data.publicUrl,
+    url: supabase.storage.from(PROVIDER_PHOTOS).getPublicUrl(photo.storage_path).data.publicUrl,
   }));
 
   return (
@@ -67,7 +71,7 @@ export default async function ProfileEditPage() {
       selectedTermIds={(selected ?? []).map((s) => s.term_id)}
       photos={photosWithUrls}
       testimonials={testimonials ?? []}
-      coachSlug={coach.slug}
+      coachSlug={provider.slug}
     />
   );
 }

@@ -230,7 +230,7 @@ export type MockCoach = {
   takingStudents: "yes" | "waitlist" | "no";
   travelRadiusKm: number | null;
   yearsCoaching: number;
-  /** Attribute name → one-line detail, matching coach_terms.detail. */
+  /** Attribute name → one-line detail, matching provider_terms.detail. */
   setupDetails: Record<string, string>;
   contact: {
     email: string | null;

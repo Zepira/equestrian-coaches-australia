@@ -54,7 +54,7 @@ export default async function DisciplineAreaPage({
     .from("indexable_pages")
     .select("eligible")
     .eq("area_id", area.id)
-    .eq("discipline_id", discipline.id)
+    .eq("term_id", discipline.id)
     .maybeSingle();
   if (!page?.eligible) redirect(`/disciplines/${slug}`);
 

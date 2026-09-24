@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getCoachingId } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -86,7 +87,9 @@ export async function createDiscipline(formData: FormData) {
 
   const { data, error } = await supabase
     .from("terms")
-    .insert({ kind: "discipline", slug, name, generates_pages: true })
+    // A discipline here is a coaching discipline: its parent is the coaching
+    // profession. Horse care specialities get their own editor (stage 8).
+    .insert({ kind: "discipline", parent_id: await getCoachingId(supabase), slug, name, generates_pages: true })
     .select("id")
     .single();
   if (error) throw new Error(error.code === "23505" ? `A discipline with the URL /${slug} already exists.` : error.message);
@@ -148,8 +151,8 @@ export async function setDisciplineActive(termId: string, active: boolean) {
 export async function deleteDiscipline(termId: string) {
   const supabase = await requireAdmin();
   const [{ count: coaches }, { count: clinics }, { data: term }] = await Promise.all([
-    supabase.from("coach_terms").select("*", { count: "exact", head: true }).eq("term_id", termId),
-    supabase.from("clinics").select("*", { count: "exact", head: true }).eq("discipline_id", termId),
+    supabase.from("provider_terms").select("*", { count: "exact", head: true }).eq("term_id", termId),
+    supabase.from("events").select("*", { count: "exact", head: true }).eq("term_id", termId),
     supabase.from("terms").select("slug, image_path").eq("id", termId).single(),
   ]);
   if ((coaches ?? 0) > 0 || (clinics ?? 0) > 0) {

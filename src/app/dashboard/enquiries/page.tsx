@@ -29,7 +29,7 @@ export default async function EnquiriesPage() {
   const { data: enquiries } = await ctx.supabase
     .from("enquiries")
     .select("id, rider_name, rider_contact, want, message, status, created_at")
-    .eq("coach_id", ctx.userId)
+    .eq("provider_id", ctx.providerId)
     .order("created_at", { ascending: false });
   const rows = enquiries ?? [];
   const replyHref = (contact: string) => (contact.includes("@") ? `mailto:${contact}` : `tel:${contact.replace(/\s+/g, "")}`);

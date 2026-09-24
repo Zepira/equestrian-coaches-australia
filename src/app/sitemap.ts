@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplineContent } from "@/lib/supabase/queries";
 import { horseCare, sectionHref } from "@/lib/professions";
+import { areaPagePath, providerPath } from "@/lib/page-paths";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -38,26 +39,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let coachRoutes: MetadataRoute.Sitemap = [];
   let areaRoutes: MetadataRoute.Sitemap = [];
   if (supabase) {
-    const { data } = await supabase.from("coach_profiles").select("slug").eq("published", true);
-    coachRoutes = (data ?? []).map((c) => ({
-      url: `${siteUrl}/coaches/${c.slug}`,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }));
+    // Published providers, at the address their primary profession gives
+    // them (src/lib/page-paths.ts).
+    const { data } = await supabase
+      .from("providers")
+      .select("slug, updated_at, provider_terms(sort_order, terms(slug, kind))")
+      .eq("status", "published");
+    coachRoutes = (data ?? []).map((p) => {
+      const primary = ((p as unknown as { provider_terms: { sort_order: number; terms: { slug: string; kind: string } | null }[] }).provider_terms ?? [])
+        .filter((t) => t.terms?.kind === "profession")
+        .sort((a, b) => a.sort_order - b.sort_order)[0]?.terms?.slug;
+      return {
+        url: `${siteUrl}${providerPath(p.slug, primary)}`,
+        lastModified: p.updated_at ? new Date(p.updated_at) : undefined,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      };
+    });
 
-    // Only pages the nightly indexable_pages recompute has cleared the
-    // 3-coach gate for (0012_indexable_pages.sql) — never every area, that's
-    // the doorway-page mistake the spec explicitly warns against.
+    // Only pages the nightly recompute has cleared the gate for, never every
+    // area: that's the doorway-page mistake the spec warns against. Rows
+    // with no route yet (horse care, before stage 3) are left out.
     const { data: pages } = await supabase
       .from("indexable_pages")
-      .select("slug, last_coach_change")
+      .select("last_change, profession:terms!indexable_pages_profession_id_fkey(slug), term:terms!indexable_pages_term_id_fkey(slug), areas(slug)")
       .eq("eligible", true);
-    areaRoutes = (pages ?? []).map((p) => ({
-      url: `${siteUrl}/${p.slug}`,
-      lastModified: p.last_coach_change ? new Date(p.last_coach_change) : undefined,
-      changeFrequency: "weekly" as const,
-      priority: 0.75,
-    }));
+    areaRoutes = (pages ?? []).flatMap((p) => {
+      const row = p as unknown as { last_change: string | null; profession: { slug: string } | null; term: { slug: string } | null; areas: { slug: string } | null };
+      if (!row.profession || !row.areas) return [];
+      const path = areaPagePath({ professionSlug: row.profession.slug, termSlug: row.term?.slug, areaSlug: row.areas.slug });
+      return path
+        ? [{ url: `${siteUrl}${path}`, lastModified: row.last_change ? new Date(row.last_change) : undefined, changeFrequency: "weekly" as const, priority: 0.75 }]
+        : [];
+    });
   }
 
   return [...staticRoutes, ...disciplineRoutes, ...coachRoutes, ...areaRoutes];

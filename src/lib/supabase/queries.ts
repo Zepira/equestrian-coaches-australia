@@ -2,10 +2,32 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { disciplines as staticDisciplines } from "@/lib/disciplines";
 import type { DisciplineContent } from "@/lib/discipline-content";
 import { parseState, type AuState } from "@/lib/au-states";
+import { createServiceSupabase } from "@/lib/supabase/service";
 
 const AU_STATES = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "ACT", "NT"];
 
 export type TermKind = "discipline" | "skill" | "attribute";
+
+/**
+ * A profession's term id, by slug (cached per server process: profession
+ * rows are created rarely and never change id). Every coaching read scopes
+ * to the "coaches" profession, because disciplines and horse care
+ * specialities are the same kind of term (The Site as a CMS §04 C).
+ */
+const professionIdCache = new Map<string, string>();
+export async function getProfessionId(supabase: SupabaseClient, slug: string): Promise<string | null> {
+  const cached = professionIdCache.get(slug);
+  if (cached) return cached;
+  const { data } = await supabase.from("terms").select("id").eq("kind", "profession").eq("slug", slug).maybeSingle();
+  const id = (data?.id as string | undefined) ?? null;
+  if (id) professionIdCache.set(slug, id);
+  return id;
+}
+
+/** The coaching profession's id: the parent of every discipline and coaching skill. */
+export function getCoachingId(supabase: SupabaseClient) {
+  return getProfessionId(supabase, "coaches");
+}
 
 // Skills and attributes are stored with sort_order 0, so whatever order the
 // database hands back is arbitrary — sort them for display. Disciplines are
@@ -26,12 +48,14 @@ export async function getTerms(supabase: SupabaseClient | null, kind: TermKind) 
   // Every kind lists alphabetically wherever the full set is shown — search
   // dropdowns, the profile editor, clinic forms, the admin screens. The
   // seeded sort_order is kept on the rows but no longer drives display.
-  const { data, error } = await supabase
-    .from("terms")
-    .select("id, slug, name, blurb")
-    .eq("kind", kind)
-    .eq("active", true)
-    .order("name");
+  // Coaching's own disciplines, skills and setup terms, plus the setup terms
+  // every profession shares (parent_id null).
+  const coachingId = await getCoachingId(supabase);
+  let query = supabase.from("terms").select("id, slug, name, blurb").eq("kind", kind).eq("active", true);
+  if (coachingId) {
+    query = kind === "discipline" ? query.eq("parent_id", coachingId) : query.or(`parent_id.is.null,parent_id.eq.${coachingId}`);
+  }
+  const { data, error } = await query.order("name");
 
   if (error || !data || data.length === 0) {
     return kind === "discipline" ? staticDisciplines.map((d) => ({ id: d.slug, ...d })) : [];
@@ -61,12 +85,10 @@ export const DISCIPLINE_CONTENT_COLUMNS =
 
 export async function getDisciplineContent(supabase: SupabaseClient | null): Promise<DisciplineContent[]> {
   if (!supabase) return staticDisciplines.map((d) => ({ id: d.slug, ...d }));
-  const { data, error } = await supabase
-    .from("terms")
-    .select(DISCIPLINE_CONTENT_COLUMNS)
-    .eq("kind", "discipline")
-    .eq("active", true)
-    .order("name");
+  const coachingId = await getCoachingId(supabase);
+  let query = supabase.from("terms").select(DISCIPLINE_CONTENT_COLUMNS).eq("kind", "discipline").eq("active", true);
+  if (coachingId) query = query.eq("parent_id", coachingId);
+  const { data, error } = await query.order("name");
   if (error || !data || data.length === 0) return staticDisciplines.map((d) => ({ id: d.slug, ...d }));
   return withAliases(supabase, data as DisciplineContent[]);
 }
@@ -86,12 +108,12 @@ export function getAttributes(supabase: SupabaseClient | null) {
 }
 
 // Suggested skills/attributes to offer once a coach picks a discipline
-// (term_suggestions, curated seed — see 0008_taxonomy_seed_and_migrate.sql).
+// (term_suggestions, curated seed, reseeded by scripts/db/rebuild.mjs).
 export async function getSuggestedTerms(supabase: SupabaseClient, disciplineId: string) {
   const { data } = await supabase
     .from("term_suggestions")
-    .select("term_id, terms(id, slug, name, kind)")
-    .eq("discipline_id", disciplineId)
+    .select("term_id, terms!term_suggestions_term_id_fkey(id, slug, name, kind)")
+    .eq("for_term_id", disciplineId)
     .order("sort_order");
   return (data ?? [])
     .map((r) => (r as unknown as { terms: { id: string; slug: string; name: string; kind: TermKind } | null }).terms)
@@ -111,8 +133,8 @@ export type ResolvedLocation = {
 // postcodes table (loaded via supabase/scripts/load-postcodes.mjs). Used by
 // both the search bar and the coach profile save action, so search and
 // listing use exactly the same notion of "where this is". Also carries
-// area_id (0009_areas.sql) so the profile save action can keep
-// coach_profiles.area_id current for the indexable_pages register.
+// area_id so the profile save action can keep providers.area_id current
+// for the indexable_pages register.
 export async function resolveLocation(
   supabase: SupabaseClient,
   query: string
@@ -159,7 +181,7 @@ export async function resolveLocation(
 /**
  * What a rider typed into the location field, resolved: a point (town or
  * postcode, from resolveLocation) or a whole state ("VIC", "Victoria") —
- * which searches by coach_profiles.state instead of a radius.
+ * which searches by providers.state instead of a radius.
  */
 export type SearchLocation =
   | ({ kind: "point" } & ResolvedLocation)
@@ -201,16 +223,18 @@ export type SearchFilters = {
   state?: string | null;
 };
 
-// Runs the nearby_coaches() RPC (phase 4, rewritten for multi-select in
-// phase 9 — OR within a kind, AND across kinds) then hydrates the thin
-// result rows with what CoachCard needs to render — name, disciplines, a
-// thumbnail — in a second batched query, preserving the RPC's
-// distance/match-count ordering.
+// Runs nearby_providers() scoped to the coaching profession (OR within a
+// kind, AND across kinds), then hydrates the thin result rows with what
+// CoachCard needs to render (disciplines, a thumbnail) in a second batched
+// query, preserving the RPC's distance/match-count ordering.
 export async function searchCoaches(
   supabase: SupabaseClient,
   { disciplineIds, skillIds, attributeIds, lat, long, radiusKm = 50, state }: SearchFilters
 ): Promise<CoachSearchResult[]> {
-  const { data: matches, error } = await supabase.rpc("nearby_coaches", {
+  const coachingId = await getCoachingId(supabase);
+  if (!coachingId) return [];
+  const { data: matches, error } = await supabase.rpc("nearby_providers", {
+    p_profession_ids: [coachingId],
     p_discipline_ids: disciplineIds?.length ? disciplineIds : null,
     p_skill_ids: skillIds?.length ? skillIds : null,
     p_attribute_ids: attributeIds?.length ? attributeIds : null,
@@ -223,49 +247,37 @@ export async function searchCoaches(
 
   const ids = matches.map((m: { id: string }) => m.id);
 
-  const [{ data: profileRows }, { data: disciplineRows }, { data: photoRows }, { data: coachRows }] = await Promise.all([
-    supabase.from("profiles").select("id, name").in("id", ids),
-    supabase
-      .from("coach_terms")
-      .select("coach_id, terms(name, kind)")
-      .in("coach_id", ids),
-    supabase
-      .from("coach_photos")
-      .select("coach_id, storage_path")
-      .in("coach_id", ids)
-      .order("sort_order"),
-    supabase.from("coach_profiles").select("id, lat, long, taking_students, travel_radius_km").in("id", ids),
+  const [{ data: termRows }, { data: photoRows }, { data: providerRows }] = await Promise.all([
+    supabase.from("provider_terms").select("provider_id, sort_order, terms(name, kind)").in("provider_id", ids).order("sort_order"),
+    supabase.from("provider_photos").select("provider_id, storage_path").in("provider_id", ids).order("sort_order"),
+    supabase.from("providers").select("id, lat, long, availability, travel_radius_km").in("id", ids),
   ]);
 
-  const coachById = new Map((coachRows ?? []).map((c) => [c.id as string, c]));
-  const nameById = new Map((profileRows ?? []).map((p) => [p.id, p.name as string]));
+  const coachById = new Map((providerRows ?? []).map((c) => [c.id as string, c]));
   const namesByKindAndCoach: Record<TermKind, Map<string, string[]>> = {
     discipline: new Map(),
     skill: new Map(),
     attribute: new Map(),
   };
-  for (const row of disciplineRows ?? []) {
-    const term = (row as unknown as { terms: { name: string; kind: TermKind } | null }).terms;
-    if (!term) continue;
+  for (const row of termRows ?? []) {
+    const term = (row as unknown as { terms: { name: string; kind: TermKind | "profession" } | null }).terms;
+    if (!term || term.kind === "profession") continue;
     const byCoach = namesByKindAndCoach[term.kind];
-    const list = byCoach.get(row.coach_id) ?? [];
+    const list = byCoach.get(row.provider_id) ?? [];
     list.push(term.name);
-    byCoach.set(row.coach_id, list);
+    byCoach.set(row.provider_id, list);
   }
   const photoById = new Map<string, string>();
   for (const row of photoRows ?? []) {
-    if (!photoById.has(row.coach_id)) {
-      photoById.set(
-        row.coach_id,
-        supabase.storage.from("coach-photos").getPublicUrl(row.storage_path).data.publicUrl
-      );
+    if (!photoById.has(row.provider_id)) {
+      photoById.set(row.provider_id, supabase.storage.from(PROVIDER_PHOTOS).getPublicUrl(row.storage_path).data.publicUrl);
     }
   }
 
-  return matches.map((m: { id: string; slug: string; headline: string; suburb: string; state: string; distance_km: number | null }) => ({
+  return matches.map((m: { id: string; slug: string; name: string; headline: string; suburb: string; state: string; distance_km: number | null }) => ({
     id: m.id,
     slug: m.slug,
-    name: nameById.get(m.id) ?? "Coach",
+    name: m.name || "Coach",
     headline: m.headline,
     suburb: m.suburb,
     state: m.state,
@@ -276,9 +288,51 @@ export async function searchCoaches(
     photoUrl: photoById.get(m.id) ?? null,
     lat: (coachById.get(m.id)?.lat as number | null) ?? null,
     long: (coachById.get(m.id)?.long as number | null) ?? null,
-    takingStudents: ((coachById.get(m.id)?.taking_students as "yes" | "waitlist" | "no" | undefined) ?? "yes"),
+    takingStudents: ((coachById.get(m.id)?.availability as "yes" | "waitlist" | "no" | undefined) ?? "yes"),
     travelRadiusKm: (coachById.get(m.id)?.travel_radius_km as number | null) ?? null,
   }));
+}
+
+/** Storage buckets for provider media (created by scripts/db/rebuild.mjs). */
+export const PROVIDER_PHOTOS = "provider-photos";
+export const PROVIDER_VIDEOS = "provider-videos";
+
+export type ProviderRow = Record<string, unknown> & { id: string; slug: string; name: string };
+
+/** The provider a signed-in user edits: the first one they're a member of. */
+export async function getMyProvider(supabase: SupabaseClient, userId: string): Promise<ProviderRow | null> {
+  const { data } = await supabase
+    .from("provider_members")
+    .select("providers(*)")
+    .eq("user_id", userId)
+    .order("created_at")
+    .limit(1)
+    .maybeSingle();
+  return ((data as unknown as { providers: ProviderRow | null } | null)?.providers ?? null);
+}
+
+/**
+ * A provider row for this user, creating it (with owner membership and the
+ * coaching profession) when there isn't one. New sign-ups get theirs from
+ * the signup trigger; this covers accounts that predate it. Creating needs
+ * the service role, since members can't insert providers under RLS.
+ */
+export async function ensureProvider(supabase: SupabaseClient, userId: string, name: string): Promise<ProviderRow> {
+  const existing = await getMyProvider(supabase, userId);
+  if (existing) return existing;
+
+  const service = createServiceSupabase();
+  if (!service) throw new Error("Creating a provider needs SUPABASE_SERVICE_ROLE_KEY.");
+  let slug = slugify(name) || "provider";
+  const { data: clash } = await service.from("providers").select("id").eq("slug", slug).maybeSingle();
+  if (clash) slug = `${slug}-${userId.replace(/-/g, "").slice(0, 6)}`;
+
+  const { data: created, error } = await service.from("providers").insert({ slug, name }).select("*").single();
+  if (error) throw error;
+  await service.from("provider_members").insert({ provider_id: created.id, user_id: userId, role: "owner" });
+  const coachingId = await getCoachingId(service);
+  if (coachingId) await service.from("provider_terms").insert({ provider_id: created.id, term_id: coachingId, sort_order: 0 });
+  return created as ProviderRow;
 }
 
 function slugify(input: string) {
@@ -289,36 +343,3 @@ function slugify(input: string) {
     .replace(/(^-|-$)/g, "");
 }
 
-// Coaches get a coach_profiles row lazily, on their first visit to the
-// dashboard, rather than at signup — keeps the signup form generic across
-// both roles.
-export async function ensureCoachProfile(
-  supabase: SupabaseClient,
-  userId: string,
-  name: string
-) {
-  const { data: existing } = await supabase
-    .from("coach_profiles")
-    .select("*")
-    .eq("id", userId)
-    .maybeSingle();
-
-  if (existing) return existing;
-
-  let slug = slugify(name) || "coach";
-  const { data: clash } = await supabase
-    .from("coach_profiles")
-    .select("id")
-    .eq("slug", slug)
-    .maybeSingle();
-  if (clash) slug = `${slug}-${userId.slice(0, 6)}`;
-
-  const { data: created, error } = await supabase
-    .from("coach_profiles")
-    .insert({ id: userId, slug })
-    .select("*")
-    .single();
-
-  if (error) throw error;
-  return created;
-}

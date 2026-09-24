@@ -81,7 +81,7 @@ export default async function SearchPage({
       // (state-wide or no location), so the order is at least predictable.
       .sort((x, y) => (origin ? (x.distanceKm ?? Infinity) - (y.distanceKm ?? Infinity) : x.name.localeCompare(y.name)));
 
-    // coach_events.impression — one per real coach in the result set,
+    // provider_events.impression, one per real coach in the result set,
     // deduped per visitor per day (mock coaches are skipped by the logger).
     await logImpressions(real.map((r) => r.id));
 

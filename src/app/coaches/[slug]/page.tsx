@@ -7,13 +7,12 @@ import { EnquirySheet } from "@/components/enquiry-sheet";
 import { PhoneReveal } from "@/components/phone-reveal";
 import { BackToResults } from "@/components/back-to-results";
 import { createClient } from "@/lib/supabase/server";
-import { sortByName } from "@/lib/supabase/queries";
+import { PROVIDER_PHOTOS, sortByName } from "@/lib/supabase/queries";
 import { getCoachBySlug, placeholderCoaches } from "@/lib/placeholder-coaches";
 import { getMockCoachBySlug, SKILL_NAMES, ATTRIBUTE_NAMES } from "@/lib/mock-coaches";
 import { getDisciplineBySlug } from "@/lib/disciplines";
 import { breadcrumbSchema, coachPersonSchema } from "@/lib/structured-data";
 import { logView } from "@/lib/coach-events";
-import { canListClinics } from "@/lib/tiers";
 
 export function generateStaticParams() {
   return placeholderCoaches.map((c) => ({ slug: c.slug }));
@@ -64,42 +63,40 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
   if (!supabase) return null;
 
   const { data: coach } = await supabase
-    .from("coach_profiles")
+    .from("providers")
     .select(
-      "id, headline, bio, suburb, state, lat, long, qualifications, subscription_tier, video_url, published, taking_students, travel_radius_km, years_coaching, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form, profiles!coach_profiles_id_fkey(name)"
+      "id, name, headline, bio, suburb, state, lat, long, qualifications, video_url, availability, travel_radius_km, years_experience, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form"
     )
     .eq("slug", slug)
-    .eq("published", true)
+    .eq("status", "published")
     .maybeSingle();
   if (!coach) return null;
 
   const [{ data: disciplineRows }, { data: testimonialRows }, { data: clinicRows }, { data: photoRows }] =
     await Promise.all([
       supabase
-        .from("coach_terms")
+        .from("provider_terms")
         .select("detail, terms(slug, name, kind)")
-        .eq("coach_id", coach.id),
-      supabase.from("testimonials").select("quote, author_name").eq("coach_id", coach.id),
+        .eq("provider_id", coach.id),
+      supabase.from("testimonials").select("quote, author_name").eq("provider_id", coach.id),
       supabase
-        .from("clinics")
+        .from("events")
         .select("id, title, start_date, location_text, places_left")
-        .eq("coach_id", coach.id)
+        .eq("provider_id", coach.id)
         .order("start_date"),
       supabase
-        .from("coach_photos")
+        .from("provider_photos")
         .select("storage_path")
-        .eq("coach_id", coach.id)
+        .eq("provider_id", coach.id)
         .order("sort_order")
         .limit(1),
     ]);
-
-  const profileName = (coach as unknown as { profiles: { name: string } | null }).profiles?.name;
 
   return {
     id: coach.id,
     contactId: coach.id,
     slug,
-    name: profileName ?? "Coach",
+    name: coach.name || "Coach",
     suburb: coach.suburb,
     state: coach.state,
     lat: coach.lat,
@@ -132,13 +129,15 @@ async function getCoachFromDb(slug: string): Promise<CoachView | null> {
       placesLeft: (c as { places_left?: number | null }).places_left ?? null,
     })),
     photoUrl: photoRows?.[0]
-      ? supabase.storage.from("coach-photos").getPublicUrl(photoRows[0].storage_path).data.publicUrl
+      ? supabase.storage.from(PROVIDER_PHOTOS).getPublicUrl(photoRows[0].storage_path).data.publicUrl
       : null,
     videoUrl: coach.video_url,
-    canListClinics: canListClinics(coach.subscription_tier, "active"),
-    takingStudents: (coach.taking_students as CoachView["takingStudents"]) ?? "yes",
+    // The plan was checked when each event was created (and by RLS), and
+    // plans aren't public, so any event on file shows.
+    canListClinics: (clinicRows ?? []).length > 0,
+    takingStudents: (coach.availability as CoachView["takingStudents"]) ?? "yes",
     travelRadiusKm: coach.travel_radius_km ?? null,
-    yearsCoaching: coach.years_coaching ?? null,
+    yearsCoaching: coach.years_experience ?? null,
     setupDetails: Object.fromEntries(
       (disciplineRows ?? [])
         .map((r) => r as unknown as { detail: string | null; terms: { name: string; kind: string } | null })

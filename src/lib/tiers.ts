@@ -16,14 +16,24 @@ export function isTier(v: unknown): v is Tier {
   return v === "listed" || v === "spotlight" || v === "clinic";
 }
 
-/** Any active paid plan may list clinics; Listed is capped at one live event. */
+/**
+ * Subscription statuses that count as on a plan: a founding member whose
+ * card is saved or who is in their free period is as subscribed as one
+ * who is paying (the subscription_status enum, baseline migration).
+ */
+export const LIVE_PLAN_STATUSES = ["card_saved", "trialing", "active"] as const;
+export function isLiveStatus(status: string | null | undefined) {
+  return (LIVE_PLAN_STATUSES as readonly string[]).includes(status ?? "");
+}
+
+/** Any live paid plan may list events; Listed is capped at one live event. */
 export function canListClinics(tier: string | null | undefined, status: string | null | undefined) {
-  return status === "active" && isTier(tier);
+  return isLiveStatus(status) && isTier(tier);
 }
 export function clinicLimit(tier: string | null | undefined): number {
   return tier === "listed" ? 1 : Number.POSITIVE_INFINITY;
 }
 /** Intro video is a Spotlight/Clinic perk. */
 export function hasVideo(tier: string | null | undefined, status: string | null | undefined) {
-  return status === "active" && (tier === "spotlight" || tier === "clinic");
+  return isLiveStatus(status) && (tier === "spotlight" || tier === "clinic");
 }

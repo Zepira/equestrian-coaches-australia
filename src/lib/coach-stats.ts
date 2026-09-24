@@ -19,7 +19,7 @@ const addMonths = (d: Date, n: number) => new Date(Date.UTC(d.getUTCFullYear(), 
 
 async function countBetween(
   supabase: SupabaseClient,
-  table: "coach_events" | "enquiries",
+  table: "provider_events" | "enquiries",
   coachId: string,
   from: Date,
   to: Date,
@@ -28,7 +28,7 @@ async function countBetween(
   let q = supabase
     .from(table)
     .select("id", { count: "exact", head: true })
-    .eq("coach_id", coachId)
+    .eq("provider_id", coachId)
     .gte("created_at", from.toISOString())
     .lt("created_at", to.toISOString());
   if (kind) q = q.eq("kind", kind);
@@ -41,13 +41,13 @@ export async function monthStats(supabase: SupabaseClient, coachId: string, now 
   const nextStart = addMonths(thisStart, 1);
   const prevStart = addMonths(thisStart, -1);
   const [impressions, views, reveals, enquiries, pImp, pViews, pRev, pEnq] = await Promise.all([
-    countBetween(supabase, "coach_events", coachId, thisStart, nextStart, "impression"),
-    countBetween(supabase, "coach_events", coachId, thisStart, nextStart, "view"),
-    countBetween(supabase, "coach_events", coachId, thisStart, nextStart, "reveal"),
+    countBetween(supabase, "provider_events", coachId, thisStart, nextStart, "impression"),
+    countBetween(supabase, "provider_events", coachId, thisStart, nextStart, "view"),
+    countBetween(supabase, "provider_events", coachId, thisStart, nextStart, "reveal"),
     countBetween(supabase, "enquiries", coachId, thisStart, nextStart),
-    countBetween(supabase, "coach_events", coachId, prevStart, thisStart, "impression"),
-    countBetween(supabase, "coach_events", coachId, prevStart, thisStart, "view"),
-    countBetween(supabase, "coach_events", coachId, prevStart, thisStart, "reveal"),
+    countBetween(supabase, "provider_events", coachId, prevStart, thisStart, "impression"),
+    countBetween(supabase, "provider_events", coachId, prevStart, thisStart, "view"),
+    countBetween(supabase, "provider_events", coachId, prevStart, thisStart, "reveal"),
     countBetween(supabase, "enquiries", coachId, prevStart, thisStart),
   ]);
   return {
@@ -70,9 +70,9 @@ export async function twelveMonthViews(supabase: SupabaseClient, coachId: string
   const thisStart = startOfMonth(now);
   const from = addMonths(thisStart, -11);
   const { data } = await supabase
-    .from("coach_events")
+    .from("provider_events")
     .select("created_at")
-    .eq("coach_id", coachId)
+    .eq("provider_id", coachId)
     .eq("kind", "view")
     .gte("created_at", from.toISOString());
   const buckets = Array.from({ length: 12 }, (_, i) => {

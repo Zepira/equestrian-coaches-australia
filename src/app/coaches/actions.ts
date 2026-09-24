@@ -17,9 +17,9 @@ export async function toggleFavourite(coachId: string): Promise<{ favourited: bo
 
   const { data: existing } = await supabase
     .from("favourites")
-    .select("coach_id")
+    .select("provider_id")
     .eq("rider_id", user.id)
-    .eq("coach_id", coachId)
+    .eq("provider_id", coachId)
     .maybeSingle();
 
   if (existing) {
@@ -27,12 +27,12 @@ export async function toggleFavourite(coachId: string): Promise<{ favourited: bo
       .from("favourites")
       .delete()
       .eq("rider_id", user.id)
-      .eq("coach_id", coachId);
+      .eq("provider_id", coachId);
     if (error) throw error;
     return { favourited: false };
   }
 
-  const { error } = await supabase.from("favourites").insert({ rider_id: user.id, coach_id: coachId });
+  const { error } = await supabase.from("favourites").insert({ rider_id: user.id, provider_id: coachId });
   if (error) throw error;
   return { favourited: true };
 }

@@ -17,41 +17,51 @@ Working list for **The Site as a CMS** (`content/handbook/cms-model.html`, revis
 
 ## 1. Clean baseline (§03, §04)
 
-Schema, one new baseline migration replacing `0001`–`0023`:
+**Status 24 Sep:** schema, seed and code are written and build clean. **The wipe has not run yet**: the Claude Code permission check blocked `scripts/db/rebuild.mjs` (it deletes stored files and drops `public`). Alana runs it, or allows it. Until it runs, the code expects tables the database doesn't have yet, so the dev site shows empty listings and errors on sign-in pages.
 
-- [ ] Types: `term_kind` (discipline, skill, attribute, profession); `user_role` (rider, provider); `provider_status` (draft, in_review, published, hidden, changes_requested); tier (listed, spotlight, clinic); event and analytics kinds; `area_kind`; `indexable_page_type` (profession_area, profession_term_area); `taking_students`; `enquiry_status`.
-- [ ] Accounts: `profiles` (role rider or provider), `admin_users`, `is_admin()`, the signup trigger (role from metadata, provider allowed).
-- [ ] Places: `postcodes`, `areas` (with lat/long, intro, per-profession intro if §10 needs it).
-- [ ] Taxonomy: `terms` (+ `parent_id`, `featured`, `featured_order`, content columns from 0020), `term_aliases`, `term_suggestions`, `term_slug_history`, `profession_details`.
-- [ ] `profession_details` columns: door, glyph_key, sort_order, launch_state; singular, plural, short, term_noun(+plural), audience_noun, years_label, job_title; hero headline / lead / short lead, one-liner, steps (json), faq (json), pitch; enquiry_options (json), events_enabled, remote_allowed, tier_labels (json), completeness (json). JSON shapes validated on save (zod).
-- [ ] Reserved slug check on profession slugs (code list mirrored as a DB check constraint, §05.4).
-- [ ] Providers: `providers` (own id; name, slug, headline, bio, suburb/state/postcode, location + lat/long, area_id, travel_radius_km, remote, business_name, status, reviewed_by/at/note, cohort, acquisition_source, invite_id, organisation_id nullable, taking_students, years, qualifications, contact fields + show toggles, video), `provider_members` (user_id, provider_id, role), `provider_terms` (sort_order, detail), `provider_photos`, `testimonials`, `subscriptions` (billing_owner, stripe ids, tier, status, founding flag/price), `invites` (token, email, name, profession, prefill, created_by, cohort, source, expires_at, used_at).
-- [ ] RLS by membership everywhere ("is a member of this provider"), never "id = auth.uid()". Public reads gated on `status = 'published'`.
-- [ ] Activity: `events` (was clinics; any profession; capacity, places_left), `enquiries` (`want` as text), `favourites` (rider to provider), `rider_alerts` (place, radius, door or professions, terms, kinds wanted, consent source + timestamp, unsubscribed_at), `notifications_log`.
-- [ ] Measurement: `provider_events` (impression, view, reveal, enquiry; profession_id; bot/self-view excluded on write), `search_events` (+ profession_id), `provider_month_stats` (frozen monthly), `gsc_daily`.
-- [ ] Pages: `indexable_pages` (+ profession_id), `recompute_indexable_pages()` counting per profession.
-- [ ] Content: `settings`, `settings_history`, `content_blocks`, `content_history` (history via triggers, same pattern as 0023).
-- [ ] Functions: `nearby_providers()`, `riders_for_event()`, `events_for_rider()`, `nearest_postcode()`.
-- [ ] Storage buckets: `provider-photos`, `provider-videos`, `term-images` (policies keyed on membership, not uid).
-- [ ] Enquiry retention: contact details deleted after 24 months (scheduled job).
+Schema, `supabase/migrations/0001_baseline.sql` (old `0001`–`0023` moved to `supabase/migrations/archive-pre-cms/`):
 
-Seed and reload:
+- [x] Types, including `profession`, `provider`, `provider_status`, `door`, `launch_state`, `availability`, `card_saved`/`trialing` plan statuses. All in their `create type`, nothing out of band.
+- [x] Accounts: `profiles` (rider or provider), `admin_users`, `is_admin()`; signup trigger creates the provider row, owner membership and profession row for providers (accepts old `role=coach` links).
+- [x] Places: `postcodes` (with lat/long), `areas`.
+- [x] Taxonomy: `terms` (+ `parent_id`, `featured`, `featured_order`), aliases, suggestions (`for_term_id`), slug history (scoped by parent), `profession_details` (every field in §04 B; JSON validated in the app, stage 8).
+- [x] Reserved profession slugs: DB check constraint + `src/lib/reserved-slugs.ts`.
+- [x] Providers: `providers` (own id; status, review fields, cohort, acquisition_source, invite_id, organisation_id), `provider_members`, `provider_terms`, `provider_photos`, `testimonials`, `subscriptions` (service-role writes only), `invites`. RLS by membership (`is_provider_member()`); public reads on `status = 'published'`.
+- [x] Activity: `events`, `enquiries` (`want` text), `favourites`, `rider_alerts`, `notifications_log`.
+- [x] Measurement: `provider_events`, `search_events` (+ profession), `provider_month_stats`, `gsc_daily`.
+- [x] Pages: `indexable_pages` stores ids only; `src/lib/page-paths.ts` builds the URL (so stage 3 is a code change). `recompute_indexable_pages(p_min_providers)` counts per profession.
+- [x] Content: `settings` + history, `content_blocks` + history (triggers).
+- [x] Functions: `nearby_providers()`, `riders_for_event()`, `events_for_rider()`, `nearest_postcode()`, `provider_is_subscribed()`, `slugify()`.
+- [x] Storage policies for `provider-photos`, `provider-videos`, `term-images`; old coach bucket policies dropped by name.
+- [ ] Enquiry retention (contact details deleted after 24 months): needs a scheduled job; do with the stage 7 crons.
 
-- [ ] Wipe the database (drop and recreate `public`, clear storage buckets). Run the baseline.
-- [ ] Reload postcodes and areas (`supabase/scripts/load-postcodes.mjs`, areas build).
-- [ ] Seed the nine professions + `profession_details` from today's code (`professions.ts`, hero copy, glyph keys) so nothing on screen changes.
-- [ ] Seed disciplines (parent = Riding coaches), skills, attributes, aliases, suggestions (from 0008), plus each profession's specialities and aliases (from `mock-professionals.ts` SPECIALITIES; shoer, blacksmith, barefoot trimmer, hoof trimmer, equine dentist).
-- [ ] Seed settings: launch_date (empty), founding_free_months (6), founding_join_by, review_required (true), review_alert_emails, event_reach_km (250), gate numbers (min providers per page 3, featured min 8, featured slots 3), limits, tier prices + Stripe price IDs.
-- [ ] Seed `content_blocks` with today's page copy.
-- [ ] Re-grant the two admins; both re-sign up.
+Seed and reload, `scripts/db/rebuild.mjs --yes-wipe` (after `export-keepers.mjs`), seed content in `supabase/seed/professions.mjs`:
+
+- [ ] **Run it.** Blocked by the permission check; see status above.
+- [x] Written: wipe `public`, run baseline, empty and delete `coach-*` buckets, create `provider-*` buckets.
+- [x] Written: reload postcodes (reads the CSV itself) and areas.
+- [x] Written: nine professions + `profession_details` from today's code; disciplines, skills, attributes, aliases, suggestions from the export with ids kept (disciplines and skills under Riding coaches; four setup terms shared, plus "Mobile service" and "After-hours service"); horse care specialities and profession aliases; featured disciplines.
+- [x] Written: settings (`launch_date` empty, `founding_free_months` 6, `founding_join_by` empty). Other settings get seeded when their accessor exists (review switch, alert emails, event reach, gates: stages 5–8).
+- [ ] `content_blocks` seed: moved to stage 2, where each block's shape and reader are defined.
+- [x] Written: accounts kept (logins survive; Kim's `gnail.com` account deleted), profiles rebuilt (coach becomes provider), both admins re-granted, Alana's `alana-l` rebuilt as a published founding provider with its terms, photo (re-uploaded to `provider-photos`) and plan. Nobody needs to sign up again.
 
 Code renamed to match:
 
-- [ ] `src/`: coach→provider wherever it means provider (queries, actions, types, dashboard, events lib, stats lib, structured data, sitemap, SEO digest, notifications). Coach stays where it means a riding coach.
-- [ ] `ensureCoachProfile` → provider row + owner membership created at sign-up (§06.2).
-- [ ] Middleware: `/dashboard` gate on role provider; slug-history redirects for professions and specialities, not only `/disciplines/`.
-- [ ] Smoke scripts and parity/behaviour suites updated to the new names.
-- [x] Founding settings (done in stage 0): `launch_date` (locks once set, enforced server-side), `founding_free_months`, `founding_join_by`; accessors `getLaunchDate`, `getFoundingFreeMonths`, `getFirstChargeDate`, `getFoundingJoinBy`, `isFoundingOpen`; admin screen; `/for-coaches` and billing copy read them. The old `founding_offer_ends` row is orphaned and goes with the wipe.
+- [x] `src/`: tables, columns, buckets, RPCs, role checks. Coach stays where it means a riding coach (view models like `takingStudents`, `CoachCard`, `/coaches` routes).
+- [x] `ensureCoachProfile` → `ensureProvider` / `getMyProvider` (`queries.ts`) and `requireProvider()` (`src/lib/provider-session.ts`); dashboard context carries `providerId` (the profile's id, not the user's).
+- [x] Coaching reads scoped to the coaching profession (`getCoachingId`), so farrier specialities never appear in coach menus. Profile save keeps profession rows when it replaces terms.
+- [x] Billing and the Stripe webhook write `subscriptions` with the service role; a live plan still publishes until stage 5's review queue.
+- [x] Middleware: `/dashboard` gated on role provider; slug history lookup tolerates the parent-scoped key.
+- [x] Founding settings (done in stage 0): `launch_date` (locks once set, enforced server-side), `founding_free_months`, `founding_join_by`; accessors, admin screen, `/for-coaches` and billing copy.
+- [ ] Smoke scripts (`scripts/smoke/*.mjs`) and the design-reference suites still insert into the old tables. Update them after the rebuild runs, against the real schema.
+- [ ] After the rebuild: route walk, sign in as Alana and Kim, dashboard, profile save (check the profession row survives), mock checkout, enquiry, favourites, account alert, admin disciplines.
+
+Found and fixed while writing this stage (would have broken at runtime, not at compile time):
+
+- `saveProfile` deleted every `provider_terms` row, which now includes the profession: saving the form would have removed a provider from their own profession.
+- Upserts can't target expression or partial unique indexes: `provider_events` dedupe (index changed to plain columns), `notifications_log` (insert, ignore duplicates), `term_slug_history` (delete then insert).
+- `events` has two foreign keys to `terms`, so the bare `terms(...)` embed on the event page would have been ambiguous; named explicitly.
+- Known and carried over, not fixed: the SEO digest's 90-day prune list can never fill, because the nightly recompute recreates every row (needs a `first_eligible_at`).
 
 ## 2. Read from rows (§02, §05.5)
 

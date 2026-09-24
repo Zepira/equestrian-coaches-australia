@@ -12,9 +12,14 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const role = searchParams.get("role") === "coach" ? "coach" : "rider";
+  // ?role=coach (older links) and ?role=provider both make a provider account;
+  // the signup trigger creates the provider row and records the profession.
+  // The full profession-aware sign-up is CMS build stage 5.
+  const roleParam = searchParams.get("role");
+  const role = roleParam === "coach" || roleParam === "provider" ? "provider" : "rider";
+  const profession = searchParams.get("profession") ?? "coaches";
   const tier = searchParams.get("tier"); // carried through to Stripe Checkout once payments ship (phase 5)
-  const isCoach = role === "coach";
+  const isCoach = role === "provider";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -45,7 +50,7 @@ function SignupForm() {
         email,
         password,
         options: {
-          data: { role, name },
+          data: { role, name, profession },
           emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });

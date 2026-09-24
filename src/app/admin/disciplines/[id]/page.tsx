@@ -15,8 +15,8 @@ export default async function AdminDisciplineEditPage({ params }: { params: Prom
 
   const [{ data }, { count: coaches }, { count: clinics }] = await Promise.all([
     supabase.from("terms").select(DISCIPLINE_CONTENT_COLUMNS).eq("id", id).eq("kind", "discipline").maybeSingle(),
-    supabase.from("coach_terms").select("*", { count: "exact", head: true }).eq("term_id", id),
-    supabase.from("clinics").select("*", { count: "exact", head: true }).eq("discipline_id", id),
+    supabase.from("provider_terms").select("*", { count: "exact", head: true }).eq("term_id", id),
+    supabase.from("events").select("*", { count: "exact", head: true }).eq("term_id", id),
   ]);
   if (!data) notFound();
   const discipline = data as DisciplineContent;

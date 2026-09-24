@@ -105,7 +105,7 @@ export type ClinicSchemaInput = {
 // carousel isn't worth it) — Google still indexes the schema, it just
 // won't be carousel-eligible without offers. `location` is a bare Place
 // with the coach's own location_text as both name and address since
-// clinics aren't geocoded (see CLAUDE.md — only coach_profiles resolve to
+// clinics aren't geocoded (see CLAUDE.md — only providers resolve to
 // lat/long today).
 export function clinicEventSchema(clinic: ClinicSchemaInput) {
   return {

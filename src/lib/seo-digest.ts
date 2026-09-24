@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { areaPagePath } from "@/lib/page-paths";
 import { isGscConfigured, pagePerformance, queryPerformance, type GscRow } from "@/lib/search-console";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -127,17 +128,25 @@ async function pruneCandidates(supabase: SupabaseClient, rows: GscRow[]): Promis
   const seenUrls = new Set(rows.map((r) => urlPattern(r.keys[0]) + "|" + r.keys[0].replace(siteUrl, "")));
   const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
+  // Known gap, carried over: recompute_indexable_pages() recreates every
+  // row nightly, so computed_at is never 90 days old and this list stays
+  // empty. Needs a first_eligible_at that survives the recompute.
   const { data: pages } = await supabase
     .from("indexable_pages")
-    .select("slug, computed_at")
+    .select("computed_at, profession:terms!indexable_pages_profession_id_fkey(slug), term:terms!indexable_pages_term_id_fkey(slug), areas(slug)")
     .eq("eligible", true)
     .lt("computed_at", ninetyDaysAgo);
 
-  const candidates = (pages ?? []).filter((p) => !seenUrls.has(`/${p.slug}|/${p.slug}`));
+  const paths = (pages ?? []).flatMap((p) => {
+    const row = p as unknown as { profession: { slug: string } | null; term: { slug: string } | null; areas: { slug: string } | null };
+    const path = row.profession && row.areas ? areaPagePath({ professionSlug: row.profession.slug, termSlug: row.term?.slug, areaSlug: row.areas.slug }) : null;
+    return path ? [path] : [];
+  });
+  const candidates = paths.filter((path) => !seenUrls.has(`${path}|${path}`));
 
   return {
     title: "Prune candidates (eligible 90+ days, zero GSC impressions)",
-    lines: candidates.length > 0 ? candidates.map((p) => `  - /${p.slug}`) : ["None — either too new to judge, or all earning impressions."],
+    lines: candidates.length > 0 ? candidates.map((path) => `  - ${path}`) : ["None: either too new to judge, or all earning impressions."],
   };
 }
 

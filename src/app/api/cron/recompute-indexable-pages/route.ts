@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const { error } = await supabase.rpc("recompute_indexable_pages");
+  const { error } = await supabase.rpc("recompute_indexable_pages", { p_min_providers: 3 });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const { count: eligibleCount } = await supabase

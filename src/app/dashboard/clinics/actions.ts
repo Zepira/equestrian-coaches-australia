@@ -2,40 +2,30 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireProvider } from "@/lib/provider-session";
+import { getCoachingId } from "@/lib/supabase/queries";
 import { notifyRidersOfClinic } from "@/lib/notifications";
 import { canListClinics, clinicLimit } from "@/lib/tiers";
 
 async function requireClinicsTierCoach() {
-  const supabase = await createClient();
-  if (!supabase) throw new Error("Supabase isn't connected yet.");
+  const { supabase, providerId } = await requireProvider();
+  const { data: sub } = await supabase.from("subscriptions").select("tier, status").eq("provider_id", providerId).maybeSingle();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not signed in.");
-
-  const { data: coach } = await supabase
-    .from("coach_profiles")
-    .select("subscription_tier, subscription_status")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  // App-level check for a friendly error — the RLS policy on `clinics`
-  // enforces "active paid plan" at the DB level regardless. Listed is
-  // capped at one live event (CLAUDE.md tiers); the cap is app-level.
-  if (!canListClinics(coach?.subscription_tier, coach?.subscription_status)) {
-    throw new Error("Clinics are available on every paid plan — subscribe in Billing to list one.");
+  // App-level check for a friendly error; the RLS policy on `events` enforces
+  // "live paid plan" at the DB level regardless. Listed is capped at one live
+  // event (CLAUDE.md tiers); the cap is app-level.
+  if (!canListClinics(sub?.tier, sub?.status)) {
+    throw new Error("Clinics are available on every paid plan. Subscribe in Billing to list one.");
   }
 
-  return { supabase, userId: user.id, limit: clinicLimit(coach?.subscription_tier) };
+  return { supabase, providerId, limit: clinicLimit(sub?.tier) };
 }
 
 function readClinicFields(formData: FormData) {
   return {
     title: String(formData.get("title") ?? "").trim(),
     description: String(formData.get("description") ?? "").trim(),
-    discipline_id: String(formData.get("discipline_id") ?? "") || null,
+    term_id: String(formData.get("discipline_id") ?? "") || null,
     location_text: String(formData.get("location_text") ?? "").trim(),
     start_date: String(formData.get("start_date") ?? ""),
     end_date: String(formData.get("end_date") ?? "") || null,
@@ -48,23 +38,25 @@ function readClinicFields(formData: FormData) {
 }
 
 export async function createClinic(formData: FormData) {
-  const { supabase, userId, limit } = await requireClinicsTierCoach();
+  const { supabase, providerId, limit } = await requireClinicsTierCoach();
   if (Number.isFinite(limit)) {
     const { count } = await supabase
-      .from("clinics")
+      .from("events")
       .select("id", { count: "exact", head: true })
-      .eq("coach_id", userId)
+      .eq("provider_id", providerId)
       .gte("start_date", new Date().toISOString().slice(0, 10));
     if ((count ?? 0) >= limit) {
-      throw new Error(`Listed includes ${limit} live clinic at a time — move up to Spotlight or Clinic for more.`);
+      throw new Error(`Listed includes ${limit} live clinic at a time. Move up to Spotlight or Clinic for more.`);
     }
   }
   const fields = readClinicFields(formData);
   if (!fields.title || !fields.start_date) throw new Error("Title and start date are required.");
 
   const { data: clinic, error } = await supabase
-    .from("clinics")
-    .insert({ coach_id: userId, ...fields })
+    .from("events")
+    // Events from the coach dashboard are coaching events; the profession is
+    // what rider alerts match on.
+    .insert({ provider_id: providerId, profession_id: await getCoachingId(supabase), ...fields })
     .select("id")
     .single();
   if (error) throw error;
@@ -80,15 +72,15 @@ export async function createClinic(formData: FormData) {
 }
 
 export async function updateClinic(clinicId: string, formData: FormData) {
-  const { supabase, userId } = await requireClinicsTierCoach();
+  const { supabase, providerId } = await requireClinicsTierCoach();
   const fields = readClinicFields(formData);
   if (!fields.title || !fields.start_date) throw new Error("Title and start date are required.");
 
   const { error } = await supabase
-    .from("clinics")
+    .from("events")
     .update(fields)
     .eq("id", clinicId)
-    .eq("coach_id", userId);
+    .eq("provider_id", providerId);
   if (error) throw error;
 
   revalidatePath("/dashboard/clinics");
@@ -96,9 +88,9 @@ export async function updateClinic(clinicId: string, formData: FormData) {
 }
 
 export async function deleteClinic(clinicId: string) {
-  const { supabase, userId } = await requireClinicsTierCoach();
+  const { supabase, providerId } = await requireClinicsTierCoach();
 
-  const { error } = await supabase.from("clinics").delete().eq("id", clinicId).eq("coach_id", userId);
+  const { error } = await supabase.from("events").delete().eq("id", clinicId).eq("provider_id", providerId);
   if (error) throw error;
 
   revalidatePath("/dashboard/clinics");

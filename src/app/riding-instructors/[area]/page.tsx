@@ -3,7 +3,7 @@ import { SearchBar } from "@/components/search-bar";
 import { CoachResultCard } from "@/components/coach-result-card";
 import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
-import { getAttributes, getDisciplines, getSkills, searchCoaches } from "@/lib/supabase/queries";
+import { getAttributes, getCoachingId, getDisciplines, getSkills, searchCoaches } from "@/lib/supabase/queries";
 import { searchMockCoaches } from "@/lib/mock-coaches";
 import { breadcrumbSchema, itemListSchema } from "@/lib/structured-data";
 import { toTermOption } from "@/lib/term-options";
@@ -47,7 +47,8 @@ export default async function RidingInstructorsAreaPage({ params }: { params: Pr
     .from("indexable_pages")
     .select("eligible")
     .eq("area_id", area.id)
-    .is("discipline_id", null)
+    .eq("profession_id", (await getCoachingId(supabase)) ?? "")
+    .is("term_id", null)
     .maybeSingle();
   if (!page?.eligible) redirect(`/search?location=${encodeURIComponent(`${area.name} ${area.state}`)}`);
 

@@ -1,60 +1,73 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { getStripe, isMockPayments, TIER_PRICE_IDS } from "@/lib/stripe";
-import { ensureCoachProfile } from "@/lib/supabase/queries";
+import { requireProvider } from "@/lib/provider-session";
+import { createServiceSupabase } from "@/lib/supabase/service";
 import { isTier, type Tier } from "@/lib/tiers";
 
-async function requireCoach() {
-  const supabase = await createClient();
-  if (!supabase) throw new Error("Supabase isn't connected yet.");
-
+/**
+ * Billing writes go to `subscriptions` (one per provider, covering every
+ * profession they have) with the service role: members can read their plan
+ * but never write it, so nobody can grant themselves a tier.
+ *
+ * Until the review queue exists (CMS build stage 5), an active plan also
+ * publishes the profile, as it always has. Stage 5 moves publishing to
+ * review and leaves billing to billing.
+ */
+async function requireBilling() {
+  const session = await requireProvider();
+  const service = createServiceSupabase();
+  if (!service) throw new Error("Billing needs SUPABASE_SERVICE_ROLE_KEY.");
   const {
     data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not signed in.");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("name")
-    .eq("id", user.id)
-    .single();
-
-  // Coaches only get a coach_profiles row lazily (see ensureCoachProfile) —
-  // a coach can reach billing before ever visiting /dashboard/profile, so
-  // guarantee the row exists here too. Without this, the updates below
-  // silently affect zero rows (no error) and "subscribing" does nothing.
-  await ensureCoachProfile(supabase, user.id, profile?.name ?? "Coach");
-
-  return { supabase, userId: user.id, email: user.email ?? undefined };
+  } = await session.supabase.auth.getUser();
+  return { ...session, service, email: user?.email ?? undefined };
 }
 
-// Creates (or reuses) a Stripe customer for this coach, starts a Checkout
-// session for the chosen tier, and sends them there. Publishing the
-// profile happens in the webhook once payment actually succeeds — never
-// here, so a user can't grant themselves a free listing by hitting cancel.
+async function saveSubscription(
+  service: NonNullable<ReturnType<typeof createServiceSupabase>>,
+  providerId: string,
+  fields: Record<string, unknown>
+) {
+  const { error } = await service
+    .from("subscriptions")
+    .upsert({ provider_id: providerId, ...fields, updated_at: new Date().toISOString() }, { onConflict: "provider_id" });
+  if (error) throw error;
+}
+
+async function setPublished(service: NonNullable<ReturnType<typeof createServiceSupabase>>, providerId: string, published: boolean) {
+  const { error } = await service
+    .from("providers")
+    .update({
+      status: published ? "published" : "draft",
+      ...(published ? { published_at: new Date().toISOString() } : {}),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", providerId);
+  if (error) throw error;
+}
+
+// Creates (or reuses) a Stripe customer for this provider, starts a Checkout
+// session for the chosen tier, and sends them there. Publishing happens in
+// the webhook once payment actually succeeds, never here, so a user can't
+// grant themselves a free listing by hitting cancel.
 export async function startCheckout(tier: Tier) {
   if (!isTier(tier)) throw new Error("Unknown plan.");
-  const { supabase, userId, email } = await requireCoach();
+  const { service, providerId, email } = await requireBilling();
 
-  // No Stripe account exists yet (business/ownership structure still being
-  // decided — see CLAUDE.md). Mock mode writes the same DB fields the real
-  // webhook would, so every other feature (publish gating, clinics tier
-  // gating, search) can be built and tested against a real "subscribed"
-  // coach today, and swaps to real billing the moment Stripe keys land.
+  // No Stripe account yet (see CLAUDE.md, Payments). Mock mode writes the
+  // same rows the real webhook would, so everything downstream (publish
+  // gating, event tier gating, search) works against a real "subscribed"
+  // provider today and swaps to real billing when Stripe keys land.
   if (isMockPayments) {
-    await supabase
-      .from("coach_profiles")
-      .update({
-        stripe_customer_id: `mock_${userId.slice(0, 8)}`,
-        stripe_subscription_id: `mock_sub_${Date.now()}`,
-        subscription_tier: tier,
-        subscription_status: "active",
-        published: true,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", userId);
+    await saveSubscription(service, providerId, {
+      tier,
+      status: "active",
+      stripe_customer_id: `mock_${providerId.slice(0, 8)}`,
+      stripe_subscription_id: `mock_sub_${Date.now()}`,
+    });
+    await setPublished(service, providerId, true);
     redirect("/dashboard?checkout=success&mock=1");
   }
 
@@ -64,17 +77,12 @@ export async function startCheckout(tier: Tier) {
   const priceId = TIER_PRICE_IDS[tier];
   if (!priceId) throw new Error(`No Stripe price configured for tier "${tier}".`);
 
-  const { data: coach } = await supabase
-    .from("coach_profiles")
-    .select("stripe_customer_id")
-    .eq("id", userId)
-    .maybeSingle();
-
-  let customerId = coach?.stripe_customer_id;
+  const { data: sub } = await service.from("subscriptions").select("stripe_customer_id").eq("provider_id", providerId).maybeSingle();
+  let customerId = sub?.stripe_customer_id as string | undefined;
   if (!customerId) {
-    const customer = await stripe.customers.create({ email, metadata: { coach_id: userId } });
+    const customer = await stripe.customers.create({ email, metadata: { provider_id: providerId } });
     customerId = customer.id;
-    await supabase.from("coach_profiles").update({ stripe_customer_id: customerId }).eq("id", userId);
+    await saveSubscription(service, providerId, { stripe_customer_id: customerId });
   }
 
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -84,73 +92,61 @@ export async function startCheckout(tier: Tier) {
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${origin}/dashboard?checkout=success`,
     cancel_url: `${origin}/dashboard/billing?checkout=cancelled`,
-    metadata: { coach_id: userId, tier },
-    subscription_data: { metadata: { coach_id: userId, tier } },
+    metadata: { provider_id: providerId, tier },
+    subscription_data: { metadata: { provider_id: providerId, tier } },
   });
 
   if (!session.url) throw new Error("Stripe did not return a Checkout URL.");
   redirect(session.url);
 }
 
-// Sends an already-subscribed coach to Stripe's hosted Customer Portal —
-// plan changes, cancellation and payment-method updates are all handled
-// there, so none of it needs hand-building.
+// Sends a subscribed provider to Stripe's hosted Customer Portal: plan
+// changes, cancellation and card updates, none of it hand-built.
 export async function openBillingPortal() {
-  const { supabase, userId } = await requireCoach();
+  const { service, providerId } = await requireBilling();
 
   if (isMockPayments) {
-    // No portal to send them to — mock cancel happens in-app instead
-    // (see mockCancelSubscription below).
+    // No portal in mock mode; cancel happens in-app (mockCancelSubscription).
     redirect("/dashboard/billing?mock=1");
   }
 
   const stripe = getStripe();
   if (!stripe) throw new Error("Stripe isn't connected yet.");
 
-  const { data: coach } = await supabase
-    .from("coach_profiles")
-    .select("stripe_customer_id")
-    .eq("id", userId)
-    .maybeSingle();
-  if (!coach?.stripe_customer_id) throw new Error("No Stripe customer on file yet.");
+  const { data: sub } = await service.from("subscriptions").select("stripe_customer_id").eq("provider_id", providerId).maybeSingle();
+  if (!sub?.stripe_customer_id) throw new Error("No Stripe customer on file yet.");
 
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const session = await stripe.billingPortal.sessions.create({
-    customer: coach.stripe_customer_id,
+    customer: sub.stripe_customer_id as string,
     return_url: `${origin}/dashboard/billing`,
   });
 
   redirect(session.url);
 }
 
-// Change plan, both directions, any time (CLAUDE.md: a coach goes up to
-// Clinic for their clinic month and back down after). In mock mode the
-// tier flips in the DB; with real Stripe the Customer Portal handles the
-// proration, so we send them there.
+// Change plan, both directions, any time (a coach goes up to Clinic for
+// their clinic month and back down after). Mock mode flips the tier; with
+// real Stripe the Customer Portal handles the proration.
 export async function changePlan(tier: Tier) {
   if (!isTier(tier)) throw new Error("Unknown plan.");
-  const { supabase, userId } = await requireCoach();
+  const { service, providerId } = await requireBilling();
   if (isMockPayments) {
-    await supabase
-      .from("coach_profiles")
-      .update({ subscription_tier: tier, subscription_status: "active", published: true, updated_at: new Date().toISOString() })
-      .eq("id", userId);
+    await saveSubscription(service, providerId, { tier, status: "active" });
+    await setPublished(service, providerId, true);
     redirect("/dashboard/billing?changed=1");
   }
   await openBillingPortal();
 }
 
-// Mock-mode-only stand-in for what Stripe's Customer Portal would do —
-// lets the cancel path (unpublish, clinics tier gating) be tested before
-// there's a real subscription to cancel.
+// Mock-mode stand-in for the Customer Portal's cancel, so the cancel path
+// (unpublish, event gating) can be tested before there's a real subscription.
 export async function mockCancelSubscription() {
-  const { supabase, userId } = await requireCoach();
+  const { service, providerId } = await requireBilling();
   if (!isMockPayments) throw new Error("Not in mock mode.");
 
-  await supabase
-    .from("coach_profiles")
-    .update({ subscription_status: "canceled", published: false })
-    .eq("id", userId);
+  await saveSubscription(service, providerId, { status: "canceled" });
+  await setPublished(service, providerId, false);
 
   redirect("/dashboard/billing");
 }

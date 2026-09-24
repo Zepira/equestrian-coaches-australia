@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
   const disciplineIds = disciplines.filter((t) => disciplineSlugs.includes(t.slug)).map((t) => t.id);
 
-  // A state-wide search counts by coach_profiles.state; a point counts the
+  // A state-wide search counts by providers.state; a point counts the
   // default 50 km radius, same as /search's first render.
   const where =
     resolved.kind === "state"

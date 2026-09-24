@@ -12,9 +12,9 @@ async function getClinic(id: string) {
   if (!supabase) return null;
 
   const { data } = await supabase
-    .from("clinics")
+    .from("events")
     .select(
-      "title, description, location_text, start_date, end_date, capacity, places_left, terms(slug, name), coach_profiles(id, slug, suburb, state, headline, show_contact_form, taking_students, published, profiles!coach_profiles_id_fkey(name), coach_photos(storage_path, sort_order))"
+      "title, description, location_text, start_date, end_date, capacity, places_left, terms!events_term_id_fkey(slug, name), providers(id, slug, name, suburb, state, headline, show_contact_form, availability, status, provider_photos(storage_path, sort_order))"
     )
     .eq("id", id)
     .maybeSingle();
@@ -46,24 +46,24 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
   const discipline = (clinic as unknown as { terms: { slug: string; name: string } | null }).terms;
   const coach = (
     clinic as unknown as {
-      coach_profiles: {
+      providers: {
         id: string;
         slug: string;
+        name: string;
         suburb: string;
         state: string;
         headline: string;
         show_contact_form: boolean;
-        taking_students: string | null;
-        published: boolean;
-        profiles: { name: string } | null;
-        coach_photos: { storage_path: string; sort_order: number }[];
+        availability: string | null;
+        status: string;
+        provider_photos: { storage_path: string; sort_order: number }[];
       } | null;
     }
-  ).coach_profiles;
-  const coachName = coach?.profiles?.name ?? "Coach";
-  const photo = coach ? [...(coach.coach_photos ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0] : null;
-  const photoUrl = photo && supabase ? supabase.storage.from("coach-photos").getPublicUrl(photo.storage_path).data.publicUrl : null;
-  const canAsk = Boolean(coach && coach.published && coach.show_contact_form && coach.taking_students !== "no");
+  ).providers;
+  const coachName = coach?.name || "Coach";
+  const photo = coach ? [...(coach.provider_photos ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0] : null;
+  const photoUrl = photo && supabase ? supabase.storage.from("provider-photos").getPublicUrl(photo.storage_path).data.publicUrl : null;
+  const canAsk = Boolean(coach && coach.status === "published" && coach.show_contact_form && coach.availability !== "no");
   const start = new Date(clinic.start_date);
   const when = clinic.end_date && clinic.end_date !== clinic.start_date ? `${longDate(clinic.start_date)} – ${longDate(clinic.end_date)}` : longDate(clinic.start_date);
   const places = clinic.places_left ?? clinic.capacity ?? null;

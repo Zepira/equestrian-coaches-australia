@@ -55,7 +55,7 @@ export function ContactForm({
 
   return (
     <form action={formAction} className="flex flex-col gap-2.5">
-      <input type="hidden" name="coach_id" value={coachId} />
+      <input type="hidden" name="provider_id" value={coachId} />
       <input type="hidden" name="want" value={want} />
       {coachName && <input type="hidden" name="mock_coach_name" value={coachName} />}
       <label className="block">

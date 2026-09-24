@@ -63,7 +63,7 @@ export default function ResetPasswordPage() {
       let next = "/account";
       if (user) {
         const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-        next = profile?.role === "coach" ? "/dashboard" : "/account";
+        next = profile?.role === "provider" ? "/dashboard" : "/account";
       }
 
       setDone(true);

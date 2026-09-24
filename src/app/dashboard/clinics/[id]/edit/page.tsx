@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { inputClass, labelClass } from "@/components/ui/field";
 import { createClient } from "@/lib/supabase/server";
-import { getDisciplines } from "@/lib/supabase/queries";
+import { getDisciplines, getMyProvider } from "@/lib/supabase/queries";
 import { updateClinic } from "../../actions";
 
 export const metadata = { title: "Edit clinic" };
@@ -16,13 +16,15 @@ export default async function EditClinicPage({ params }: { params: Promise<{ id:
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) notFound();
+  const provider = await getMyProvider(supabase, user.id);
+  if (!provider) notFound();
 
   const [{ data: clinic }, disciplines] = await Promise.all([
     supabase
-      .from("clinics")
-      .select("title, description, discipline_id, location_text, start_date, end_date")
+      .from("events")
+      .select("title, description, discipline_id:term_id, location_text, start_date, end_date")
       .eq("id", id)
-      .eq("coach_id", user.id)
+      .eq("provider_id", provider.id)
       .maybeSingle(),
     getDisciplines(supabase),
   ]);

@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const { data: clinics, error } = await supabase
-    .from("clinics")
+    .from("events")
     .select("id")
     .gte("created_at", sevenDaysAgo);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

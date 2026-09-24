@@ -19,14 +19,14 @@ const label = "mb-1.5 block text-[12px] font-medium uppercase tracking-[0.12em] 
 export default async function ClinicsPage() {
   const ctx = await loadDashboard();
   if (!ctx) redirect("/login?next=/dashboard/clinics");
-  const { supabase, userId, tier, status } = ctx;
+  const { supabase, providerId, tier, status } = ctx;
   const allowed = canListClinics(tier, status);
   const limit = clinicLimit(tier);
   const disciplines = await getDisciplines(supabase);
   const today = new Date().toISOString().slice(0, 10);
 
   const [{ data: clinics }, { data: notified }] = await Promise.all([
-    supabase.from("clinics").select("id, title, start_date, location_text, places_left").eq("coach_id", userId).order("start_date"),
+    supabase.from("events").select("id, title, start_date, location_text, places_left").eq("provider_id", providerId).order("start_date"),
     supabase.from("notifications_log").select("clinic_id"),
   ]);
   const emailed = new Map<string, number>();
