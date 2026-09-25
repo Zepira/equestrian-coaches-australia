@@ -186,6 +186,32 @@ export const CONTENT_DEFAULTS = {
   // Each one's variables are listed in src/lib/cms/registry.ts (EMAILS),
   // which is also where the admin screen gets the sample values for its
   // "send me a test" button.
+  /**
+   * The coming soon page, which is the whole public site until SITE_LAUNCHED
+   * is true (src/lib/launch.ts). Deliberately plain: no counts, no promises
+   * about when, nothing that stops being true.
+   */
+  "coming_soon": {
+    eyebrow: "Coming soon",
+    title: "The people your *horse* needs, near you.",
+    lead: "A place to find riding coaches and horse care professionals near where you keep your horse. Free for riders and horse owners.",
+    formTitle: "Hear when it opens",
+    roleLabel: "I'm a",
+    roleRider: "Rider or horse owner",
+    roleCoach: "Riding coach",
+    roleHorseCare: "Horse care professional",
+    professionLabel: "What do you do?",
+    professionAny: "Something else, or not sure yet",
+    emailLabel: "Email",
+    consent: "Email me when the site opens.",
+    privacy: "That's the only thing we'll use your address for, and every email we send has an unsubscribe link.",
+    button: "Join the list",
+    success: "You're on the list. There's a confirmation on its way to your inbox.",
+  },
+  "email.waitlist": {
+    subject: "You're on the list",
+    body: "Thanks for putting your name down. We'll email you when Equine Professionals Australia opens.\n\nThat's the only reason we'll write. If you'd rather we didn't, or you didn't sign up for this, you can take yourself off the list here: {unsubscribe_url}\n\nEquine Professionals Australia",
+  },
   "email.enquiry": {
     subject: "New enquiry from {rider_name} via Equine Professionals Australia",
     body: "Hi {first_name},\n\n{rider_name} sent you an enquiry through your Equine Professionals Australia profile.\n\nLooking for: {want}\nContact: {rider_contact}\n\n\"{message}\"\n\nMark it replied or booked in your dashboard: {dashboard_url}",

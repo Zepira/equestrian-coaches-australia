@@ -21,6 +21,14 @@ export type PageEntry = {
 
 export const PAGES: PageEntry[] = [
   { slug: "home", name: "Home page", href: "/", keys: ["home.hero", "home.principles"], revalidate: ["/"] },
+  {
+    slug: "coming-soon",
+    name: "Coming soon page",
+    href: "/",
+    keys: ["coming_soon"],
+    revalidate: ["/"],
+    note: "The whole public site until launch. Shown at / while SITE_LAUNCHED is off, so editing it after launch changes nothing a visitor sees.",
+  },
   { slug: "coaches", name: "Coaches door", href: "/coaches", keys: ["door.coaches.hero"], revalidate: ["/coaches"] },
   {
     slug: "horse-care",
@@ -116,6 +124,13 @@ const RIDER_ALERT_VARS = [
 ];
 
 export const EMAILS: EmailEntry[] = [
+  {
+    key: "email.waitlist",
+    name: "Waitlist confirmation",
+    to: "Anyone who signs up on the coming soon page",
+    when: "Straight after they join the list, before launch.",
+    vars: [v("unsubscribe_url", "Takes them off the waitlist", "https://equineprofessionals.com.au/unsubscribe?w=test")],
+  },
   {
     key: "email.enquiry",
     name: "New enquiry",

@@ -122,7 +122,7 @@ export async function sendProviderMonthly(service: Service, now = new Date()) {
     if (quiet) parts.push(f(copy.share));
     parts.push(f(copy.signOff));
 
-    const result = await sendEmail({ to: emails, subject: f(copy.subject), text: parts.join("\n\n") });
+    const result = await sendEmail({ to: emails, subject: f(copy.subject), text: parts.join("\n\n"), campaign: true });
     if (result === "failed") continue;
     if (result === "sent") sent++;
     await service.from("provider_month_stats").update({ emailed_at: new Date().toISOString() }).eq("provider_id", p.id).eq("month", month);

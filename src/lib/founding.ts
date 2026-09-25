@@ -141,7 +141,7 @@ export async function activateFoundingMembers(service: Service, launchDate: Date
           listed_price: foundingPrice,
           billing_url: absoluteUrl("/dashboard/billing"),
         };
-        await sendEmail({ to: m.email, subject: fillVariables(launchCopy.subject, vars), text: fillVariables(launchCopy.body, vars) });
+        await sendEmail({ to: m.email, subject: fillVariables(launchCopy.subject, vars), text: fillVariables(launchCopy.body, vars), campaign: true });
       }
     }
     done++;
@@ -187,7 +187,7 @@ export async function runFoundingJob(service: Service, now = new Date()): Promis
         listed_price: foundingPrice,
         billing_url: absoluteUrl("/dashboard/billing"),
       };
-      await sendEmail({ to: m.email, subject: fillVariables(reminderCopy.subject, vars), text: fillVariables(reminderCopy.body, vars) });
+      await sendEmail({ to: m.email, subject: fillVariables(reminderCopy.subject, vars), text: fillVariables(reminderCopy.body, vars), campaign: true });
     }
     reminders++;
   }

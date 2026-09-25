@@ -15,6 +15,7 @@ const GROUPS: { name: string; tabs: { href: string; label: string }[] }[] = [
       { href: "/admin/providers", label: "Providers" },
       { href: "/admin/invites", label: "Invites" },
       { href: "/admin/riders", label: "Riders" },
+      { href: "/admin/waitlist", label: "Waitlist" },
     ],
   },
   {

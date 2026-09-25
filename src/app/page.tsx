@@ -27,6 +27,9 @@ import { getPlans } from "@/lib/settings";
 import { getSamples, professionalCount } from "@/lib/samples";
 import { ProfessionGlyph, hasGlyph } from "@/components/profession-glyph";
 import { disciplinePath } from "@/lib/page-paths";
+import { headers } from "next/headers";
+import { ComingSoon } from "@/components/coming-soon";
+import { SITE_LAUNCHED, isPublicHost } from "@/lib/launch";
 
 // Overrides the root layout's cream themeColor (src/app/layout.tsx): the
 // hero, not the cream header, is this route's own top edge.
@@ -37,14 +40,41 @@ export const viewport: Viewport = {
   themeColor: "#14281f",
 };
 
-export const metadata: Metadata = {
-  description:
-    "Find riding coaches, farriers, vets, dentists and the rest of your horse's team across Australia, by what you need and where you are. Free for riders and owners.",
-};
+const LAUNCHED_DESCRIPTION =
+  "Find riding coaches, farriers, vets, dentists and the rest of your horse's team across Australia, by what you need and where you are. Free for riders and owners.";
+
+/**
+ * Before launch this route is the coming soon page, so its title and
+ * description describe that instead of a site nobody can reach yet. Same
+ * short-circuit as the root layout: the host is only read while
+ * SITE_LAUNCHED is off, so the launched page stays static.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  if (!SITE_LAUNCHED && isPublicHost((await headers()).get("host"))) {
+    return {
+      // Spelled out rather than left to the root layout's title template: a
+      // page in the same segment as that layout gets `default`, not the
+      // template, so a bare "Coming soon" is what a tab and a search result
+      // would show.
+      title: "Equine Professionals Australia: coming soon",
+      description:
+        "A place to find riding coaches and horse care professionals near where you keep your horse. Put your name down to hear when it opens.",
+      alternates: { canonical: "/" },
+    };
+  }
+  return { description: LAUNCHED_DESCRIPTION };
+}
 
 const eyebrow = "text-[12px] font-medium uppercase tracking-[0.18em] text-accent wide:tracking-[0.2em]";
 
 export default async function Home() {
+  // Before launch the public host has one page and this is it. Gated hosts
+  // (the test site, previews) always get the real home page, which is the
+  // point of having them.
+  if (!SITE_LAUNCHED && isPublicHost((await headers()).get("host"))) {
+    return <ComingSoon />;
+  }
+
   const supabase = await createClient();
   const [skills, attributes, disciplines, professions, featured, plans, hero, principles] = await Promise.all([
     getSkills(supabase),

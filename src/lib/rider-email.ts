@@ -20,8 +20,9 @@ type Service = SupabaseClient;
 type Match = { rider_id: string; email: string; alert_id: string | null; unsubscribe_token: string };
 
 /** The page link for the email body, and the one-click endpoint for the header. */
-export function unsubscribeLinks(kind: "alert" | "all", token: string) {
-  const q = `${kind === "alert" ? "a" : "r"}=${token}`;
+export function unsubscribeLinks(kind: "alert" | "all" | "waitlist", token: string) {
+  const param = kind === "alert" ? "a" : kind === "all" ? "r" : "w";
+  const q = `${param}=${token}`;
   return { page: absoluteUrl(`/unsubscribe?${q}`), oneClick: absoluteUrl(`/api/unsubscribe?${q}`) };
 }
 
@@ -192,6 +193,7 @@ export async function sendRiderMonthly(service: Service, now = new Date()) {
       subject: fillVariables(copy.subject, vars),
       text: `${fillVariables(copy.intro, vars)}\n\n${sections.join("\n\n")}\n\n${fillVariables(copy.footer, vars)}`,
       unsubscribe: links.oneClick,
+      campaign: true,
     });
     if (result === "failed") continue;
     if (result === "sent") sent++;
@@ -201,9 +203,18 @@ export async function sendRiderMonthly(service: Service, now = new Date()) {
 }
 
 /** One-click unsubscribe, honoured at once. An alert token stops that alert; a rider token stops all of them. */
-export async function unsubscribe(service: Service, { alert, rider }: { alert?: string; rider?: string }): Promise<"alert" | "all" | "unknown"> {
+export async function unsubscribe(
+  service: Service,
+  { alert, rider, waitlist }: { alert?: string; rider?: string; waitlist?: string }
+): Promise<"alert" | "all" | "waitlist" | "unknown"> {
   const token = /^[a-f0-9]{32,80}$/;
   const now = new Date().toISOString();
+  // The coming soon page's waitlist (src/lib/waitlist.ts). Same one-click
+  // route and page as the rider alerts, a different table.
+  if (waitlist && token.test(waitlist)) {
+    const { data } = await service.from("waitlist").update({ unsubscribed_at: now }).eq("unsubscribe_token", waitlist).select("id");
+    return data?.length ? "waitlist" : "unknown";
+  }
   if (alert && token.test(alert)) {
     const { data } = await service.from("rider_alerts").update({ unsubscribed_at: now, updated_at: now }).eq("unsubscribe_token", alert).select("id");
     return data?.length ? "alert" : "unknown";

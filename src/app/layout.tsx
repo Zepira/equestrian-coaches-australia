@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Hanken_Grotesk, Instrument_Serif } from "next/font/google";
 import Script from "next/script";
+import { headers } from "next/headers";
 import { horseCareOf, horseCarePrefixes, sectionHref } from "@/lib/professions";
 import { getContent, getFeaturedDisciplines, getProfessions } from "@/lib/cms/read";
+import { SITE_LAUNCHED, isPublicHost } from "@/lib/launch";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -75,6 +77,17 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Before launch the public host serves one page, the coming soon page, and
+  // it gets no header or footer: a nav full of links to an unlaunched site is
+  // exactly what the proxy is there to stop, and hiding it in CSS would still
+  // put every link in the HTML for a crawler to follow.
+  //
+  // The host is only read while SITE_LAUNCHED is off, and && short-circuits,
+  // so headers() is never called once the site has launched and the layout
+  // goes back to being static. The cost lands on the one page that has no
+  // traffic yet, and disappears on launch day.
+  const comingSoon = !SITE_LAUNCHED && isPublicHost((await headers()).get("host"));
+
   // The CMS reads are cached and cookie-free, so the layout stays static.
   const [professions, featured, footer] = await Promise.all([
     getProfessions(),
@@ -152,12 +165,12 @@ if (${JSON.stringify(prefixes)}.some(function (p) { return location.pathname ===
         >
           Skip to content
         </a>
-        <SiteHeader {...header} />
-        <Parallax />
+        {!comingSoon && <SiteHeader {...header} />}
+        {!comingSoon && <Parallax />}
         <main id="main-content" className="flex-1">
           {children}
         </main>
-        <SiteFooter tagline={footer.tagline} />
+        {!comingSoon && <SiteFooter tagline={footer.tagline} />}
       </body>
     </html>
   );

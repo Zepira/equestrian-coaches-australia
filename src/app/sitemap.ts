@@ -1,12 +1,23 @@
 import type { MetadataRoute } from "next";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplineContent } from "@/lib/supabase/queries";
 import { getProfessions } from "@/lib/cms/read";
 import { areaPagePath, disciplinePath, profilePath, sectionPath } from "@/lib/page-paths";
 import { SITE_URL as siteUrl } from "@/lib/site-url";
 import { isLegalApproved } from "@/lib/settings";
+import { isGatedHost, showsFullSite } from "@/lib/launch";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Before launch the home page is the only page there is, and a test host has
+  // no business advertising anything at all. Reading the host makes this a
+  // dynamic route, which is what lets one deployment answer differently per
+  // host (src/lib/launch.ts).
+  const host = (await headers()).get("host");
+  if (isGatedHost(host) || !showsFullSite(host)) {
+    return [{ url: siteUrl, changeFrequency: "daily", priority: 1 }];
+  }
+
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
     { url: `${siteUrl}/search`, changeFrequency: "daily", priority: 0.9 },

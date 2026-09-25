@@ -1271,3 +1271,14 @@ html[data-overlay-route="true"] {
     transition: none !important;
   }
 }
+
+/* The coming soon page's "what do you do?" picker (src/components/waitlist-form.tsx).
+   Only a horse care professional needs it, and the reveal is a CSS :has() on
+   the checked radio rather than React state so it still works with JavaScript
+   off, the way the rest of that form does. */
+.waitlist-profession {
+  display: none;
+}
+form:has(#role-horse-care:checked) .waitlist-profession {
+  display: block;
+}
