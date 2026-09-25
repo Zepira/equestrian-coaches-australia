@@ -235,7 +235,7 @@ export async function sendEnquiryFollowups(service: Service, now = new Date()) {
       enquiry_date: new Date(e.created_at as string).toLocaleDateString("en-AU", { day: "numeric", month: "long", timeZone: "Australia/Melbourne" }),
       answer_url: absoluteUrl(`/enquiry/${f.token}`),
     };
-    await sendEmail({ to: email, subject: fillVariables(copy.subject, vars), text: fillVariables(copy.body, vars) });
+    await sendEmail({ to: email, subject: fillVariables(copy.subject, vars), text: fillVariables(copy.body, vars), campaign: true });
     sent++;
   }
   return { sent, skipped };

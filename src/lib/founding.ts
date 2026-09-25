@@ -224,7 +224,7 @@ async function remindYearlyRenewals(service: Service, today: Date, plans: Awaite
         price: plan?.yearly ?? "",
         billing_url: absoluteUrl("/dashboard/billing"),
       };
-      await sendEmail({ to: m.email, subject: fillVariables(copy.subject, vars), text: fillVariables(copy.body, vars) });
+      await sendEmail({ to: m.email, subject: fillVariables(copy.subject, vars), text: fillVariables(copy.body, vars), campaign: true });
     }
     sent++;
   }

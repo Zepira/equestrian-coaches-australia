@@ -324,6 +324,9 @@ export async function runSequences(service: Service, now = new Date()) {
       to: email,
       subject: fillVariables(copy.subject, all),
       text: `${fillVariables(copy.body, all)}\n\n--\n${fillVariables(footer.body, all)}`,
+      // Scheduled bulk email: silent until CRON_EMAILS_ENABLED is on, so the
+      // test deployment can run the whole sequence without mailing anyone.
+      campaign: true,
     });
     await service.from("sequence_sends").insert({ run_id: run.id, position: step.position, result: sent.result, resend_id: sent.id });
     tally.sent++;
