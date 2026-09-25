@@ -4,7 +4,7 @@ import Script from "next/script";
 import { headers } from "next/headers";
 import { horseCareOf, horseCarePrefixes, sectionHref } from "@/lib/professions";
 import { getContent, getFeaturedDisciplines, getProfessions } from "@/lib/cms/read";
-import { SITE_LAUNCHED, isPublicHost } from "@/lib/launch";
+import { SITE_LAUNCHED, showsComingSoon } from "@/lib/launch";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -86,7 +86,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // so headers() is never called once the site has launched and the layout
   // goes back to being static. The cost lands on the one page that has no
   // traffic yet, and disappears on launch day.
-  const comingSoon = !SITE_LAUNCHED && isPublicHost((await headers()).get("host"));
+  const comingSoon = !SITE_LAUNCHED && showsComingSoon((await headers()).get("host"));
 
   // The CMS reads are cached and cookie-free, so the layout stays static.
   const [professions, featured, footer] = await Promise.all([

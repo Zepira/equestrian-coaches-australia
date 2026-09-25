@@ -29,7 +29,7 @@ import { ProfessionGlyph, hasGlyph } from "@/components/profession-glyph";
 import { disciplinePath } from "@/lib/page-paths";
 import { headers } from "next/headers";
 import { ComingSoon } from "@/components/coming-soon";
-import { SITE_LAUNCHED, isPublicHost } from "@/lib/launch";
+import { SITE_LAUNCHED, showsComingSoon } from "@/lib/launch";
 
 // Overrides the root layout's cream themeColor (src/app/layout.tsx): the
 // hero, not the cream header, is this route's own top edge.
@@ -50,7 +50,7 @@ const LAUNCHED_DESCRIPTION =
  * SITE_LAUNCHED is off, so the launched page stays static.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  if (!SITE_LAUNCHED && isPublicHost((await headers()).get("host"))) {
+  if (!SITE_LAUNCHED && showsComingSoon((await headers()).get("host"))) {
     return {
       // Spelled out rather than left to the root layout's title template: a
       // page in the same segment as that layout gets `default`, not the
@@ -71,7 +71,7 @@ export default async function Home() {
   // Before launch the public host has one page and this is it. Gated hosts
   // (the test site, previews) always get the real home page, which is the
   // point of having them.
-  if (!SITE_LAUNCHED && isPublicHost((await headers()).get("host"))) {
+  if (!SITE_LAUNCHED && showsComingSoon((await headers()).get("host"))) {
     return <ComingSoon />;
   }
 

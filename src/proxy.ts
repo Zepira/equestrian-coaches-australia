@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
-import { PUBLIC_HOST, isGatedHost, normaliseHost, showsFullSite } from "@/lib/launch";
+import { PUBLIC_HOST, isGatedHost, normaliseHost, showsComingSoon } from "@/lib/launch";
 
 /**
  * Three jobs, in this order, before the Supabase session refresh that used to
@@ -114,7 +114,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // 3. The public host before launch: the coming soon page, and nothing else.
-  if (!showsFullSite(host) && !isPreLaunchPath(path)) {
+  if (showsComingSoon(host) && !isPreLaunchPath(path)) {
     // An API nobody should be calling yet says so honestly instead of
     // answering with a page.
     if (path.startsWith("/api/")) {

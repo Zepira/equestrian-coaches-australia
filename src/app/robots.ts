@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { headers } from "next/headers";
 import { SITE_URL } from "@/lib/site-url";
-import { isGatedHost, showsFullSite } from "@/lib/launch";
+import { isGatedHost, showsComingSoon } from "@/lib/launch";
 
 /**
  * Three answers, one per kind of host (src/lib/launch.ts).
@@ -23,7 +23,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
 
   // The public host before launch: the coming soon page is worth indexing, so
   // that searching the business's name finds it. Nothing else exists yet.
-  if (!showsFullSite(host)) {
+  if (showsComingSoon(host)) {
     return {
       rules: [{ userAgent: "*", allow: "/$", disallow: "/" }],
       sitemap: `${SITE_URL}/sitemap.xml`,

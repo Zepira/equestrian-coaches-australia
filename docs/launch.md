@@ -114,6 +114,18 @@ confirmation email are editable in admin rather than falling back to code:
 node --experimental-strip-types scripts/db/seed-content.mjs
 ```
 
+## Working on it locally
+
+`npm run dev` with an empty `.env` shows the **real site**, not the coming soon
+page, and asks for no password. That is deliberate: the launch gate applies to
+real hosts, and a developer who sees the coming soon page at `/` reasonably
+concludes the home page is broken. To preview the coming soon page locally,
+point `PUBLIC_HOST` at localhost:
+
+```
+PUBLIC_HOST=localhost SITE_LAUNCHED=false npm run dev
+```
+
 ## Checking it
 
 With a production build running locally:
@@ -136,6 +148,8 @@ differing by host. Two more runs cover the rest:
 node scripts/launch/host-gate.mjs --mode nopassword
 # started with SITE_LAUNCHED=true
 node scripts/launch/host-gate.mjs --mode launched
+# started with no environment at all
+node scripts/launch/host-gate.mjs --mode dev
 ```
 
 The waitlist has its own script, which drives the real form in a browser:

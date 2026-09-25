@@ -6,7 +6,7 @@ import { getProfessions } from "@/lib/cms/read";
 import { areaPagePath, disciplinePath, profilePath, sectionPath } from "@/lib/page-paths";
 import { SITE_URL as siteUrl } from "@/lib/site-url";
 import { isLegalApproved } from "@/lib/settings";
-import { isGatedHost, showsFullSite } from "@/lib/launch";
+import { isGatedHost, showsComingSoon } from "@/lib/launch";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Before launch the home page is the only page there is, and a test host has
@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // dynamic route, which is what lets one deployment answer differently per
   // host (src/lib/launch.ts).
   const host = (await headers()).get("host");
-  if (isGatedHost(host) || !showsFullSite(host)) {
+  if (isGatedHost(host) || showsComingSoon(host)) {
     return [{ url: siteUrl, changeFrequency: "daily", priority: 1 }];
   }
 

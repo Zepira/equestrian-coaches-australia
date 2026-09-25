@@ -14,6 +14,8 @@
 //   --mode prelaunch   (default) SITE_LAUNCHED=false, password set
 //   --mode nopassword  SITE_LAUNCHED=false, TEST_AUTH_* unset
 //   --mode launched    SITE_LAUNCHED=true
+//   --mode dev         started with no environment at all, the way a
+//                      developer or a local agent runs it
 import { request } from "node:http";
 
 const args = process.argv.slice(2);
@@ -157,6 +159,19 @@ if (mode === "launched") {
   row(test.status === 401, "the test host still asks for a password after launch", `status ${test.status}`);
   const authed = await get("/", { host: TEST_HOST, auth: `${user}:${password}` });
   row(noindex(authed), "and is still noindex");
+}
+
+if (mode === "dev") {
+  // A developer with an empty .env must get the site, not the coming soon
+  // page: that was a real bug, found by running the server with no
+  // environment rather than by reading the code.
+  const home = await get("/", { host: "localhost" });
+  row(home.status === 200 && !home.body.includes(COMING_SOON), "localhost with no environment serves the real site", `status ${home.status}`);
+  row(home.body.includes("<footer"), "with its header and footer");
+  const other = await get("/coaches", { host: "localhost" });
+  row(other.status === 200 && !other.body.includes(COMING_SOON), "and every other page too", `status ${other.status}`);
+  const robots = await get("/robots.txt", { host: "localhost" });
+  row(!robots.body.includes("Allow: /$"), "robots.txt is the normal one");
 }
 
 console.log(`\n${failed === 0 ? "all checks passed" : `${failed} check(s) failed`}`);

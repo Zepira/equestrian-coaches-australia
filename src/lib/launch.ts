@@ -66,11 +66,19 @@ export function isGatedHost(host: string | null | undefined): boolean {
 }
 
 /**
- * Whether the visitor may see the site itself, as opposed to the coming soon
- * page. Gated hosts always may — showing a test site a coming soon page would
- * defeat its purpose — so this is only ever false on the public host.
+ * Whether this request gets the coming soon page instead of the site.
+ *
+ * Only ever true on the public host: showing a test host a coming soon page
+ * would defeat the point of having one.
+ *
+ * Local development is deliberately excluded, so `npm run dev` with no
+ * environment set shows the real site rather than the coming soon page. To
+ * preview that page locally, point PUBLIC_HOST at localhost, which is what the
+ * check below reads. Without this a developer with an empty .env sees the
+ * coming soon page at "/" and reasonably concludes the home page is broken.
  */
-export function showsFullSite(host: string | null | undefined): boolean {
-  if (host && isLocalHost(host)) return true;
-  return isGatedHost(host) || SITE_LAUNCHED;
+export function showsComingSoon(host: string | null | undefined): boolean {
+  if (SITE_LAUNCHED) return false;
+  if (host && isLocalHost(host)) return PUBLIC_HOST !== "" && isLocalHost(PUBLIC_HOST);
+  return isPublicHost(host);
 }
