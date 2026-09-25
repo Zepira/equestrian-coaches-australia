@@ -223,9 +223,11 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
   // the notch; on overlay routes that has to be ink, see globals.css.
   useEffect(() => {
     // A coach profile opens with a full-bleed photo on phones, so the notch
-    // strip is dark there too.
-    document.documentElement.dataset.overlayRoute = String(variant === "overlay" || Boolean(coachProfile));
-  }, [variant, coachProfile]);
+    // strip is dark there too. Only a real profile: a 404 under /profile/
+    // has the path but no photograph, and no PageContext marker.
+    const profile = Boolean(coachProfile) && Boolean(document.querySelector("[data-page-context]"));
+    document.documentElement.dataset.overlayRoute = String(variant === "overlay" || profile);
+  }, [variant, coachProfile, pathname]);
 
   // <html data-door> — the Horse care door's steel accent (globals.css).
   // The inline script in layout.tsx covers the first paint; this keeps it
@@ -285,7 +287,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
           <BackToResults
             label="Back to results"
             fromPage
-            className="site-header__muted -ml-2 mr-auto hidden text-[14px] font-medium md:inline"
+            className="site-header__muted site-header__profile-only -ml-2 mr-auto hidden text-[14px] font-medium md:inline"
           />
         )}
 
