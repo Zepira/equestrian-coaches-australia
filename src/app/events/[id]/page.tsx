@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { breadcrumbSchema, clinicEventSchema } from "@/lib/structured-data";
 import { SubscribeCard } from "@/components/subscribe-card";
 import { getProfession } from "@/lib/cms/read";
+import { ShareButton } from "@/components/share-button";
 
 const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -28,7 +29,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const clinic = await getClinic(id);
   if (!clinic) return { title: "Clinic not found" };
-  return { title: clinic.title, description: `${clinic.title} — ${clinic.location_text}.` };
+  return {
+    title: clinic.title,
+    description: `${clinic.title}, ${clinic.location_text}.`,
+    openGraph: { images: [{ url: `/api/og/event/${id}`, width: 1200, height: 630 }] },
+  };
 }
 
 const longDate = (iso: string) => new Date(iso).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
@@ -170,7 +175,7 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
             </>
           ) : (
             <p className="mt-2 text-[14px] leading-[1.5] text-muted">
-              {coach ? `${coachName.split(" ")[0]} isn't taking enquiries through EPA right now — their profile has the other ways to reach them.` : "This coach's profile is no longer listed."}
+              {coach ? `${coachName.split(" ")[0]} isn't taking enquiries through the site right now. Their profile has the other ways to reach them.` : "This coach's profile is no longer listed."}
               {coach && (
                 <>
                   {" "}
@@ -183,7 +188,10 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
           )}
         </aside>
       </div>
-      <div className="mt-12 max-w-[720px]">
+      <p className="mt-8 text-[14.5px]">
+        <ShareButton path={eventPath(id)} title={clinic.title} />
+      </p>
+      <div className="mt-8 max-w-[720px]">
         <SubscribeCard
           heading={`Hear about events like this${coach?.suburb ? ` near ${coach.suburb}` : ""}`}
           what="an event comes up"

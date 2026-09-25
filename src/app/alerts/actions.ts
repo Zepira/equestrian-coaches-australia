@@ -28,8 +28,10 @@ export type SubscribeResult = { ok: boolean; message: string } | null;
 type AlertFields = {
   suburb: string;
   postcode: string;
-  lat: number;
-  long: number;
+  lat: number | null;
+  long: number | null;
+  /** A follow alert: one professional's events, no place (M4). */
+  provider_id?: string | null;
   radius_km: number;
   door: string | null;
   profession_ids: string[];
@@ -70,12 +72,30 @@ async function alertFrom(fd: FormData): Promise<{ alert: AlertFields; place: str
   };
 }
 
+/** "Get my clinic dates by email": one published professional's events, anywhere (M4). */
+async function followFrom(providerId: string): Promise<{ alert: AlertFields; place: string } | { error: string }> {
+  const service = createServiceSupabase();
+  if (!service) return { error: "Alerts aren't connected yet." };
+  const { data: p } = await service.from("providers").select("id, name").eq("id", providerId).eq("status", "published").maybeSingle();
+  if (!p) return { error: "That profile isn't taking followers right now." };
+  return {
+    place: p.name as string,
+    alert: { suburb: "", postcode: "", lat: null, long: null, radius_km: 50, door: null, profession_ids: [], term_ids: [], wants_events: true, wants_new_providers: false, provider_id: p.id as string },
+  };
+}
+
 async function makeAlert(riderId: string, a: AlertFields, source: string) {
   const service = createServiceSupabase()!;
   const { lat, long, ...rest } = a;
   const { error } = await service
     .from("rider_alerts")
-    .insert({ rider_id: riderId, ...rest, location: `SRID=4326;POINT(${long} ${lat})`, consent_source: source.slice(0, 40), consented_at: new Date().toISOString() });
+    .insert({
+      rider_id: riderId,
+      ...rest,
+      location: lat != null && long != null ? `SRID=4326;POINT(${long} ${lat})` : null,
+      consent_source: source.slice(0, 40),
+      consented_at: new Date().toISOString(),
+    });
   if (error) throw error;
 }
 
@@ -84,7 +104,7 @@ export async function subscribeToAlerts(_prev: SubscribeResult, fd: FormData): P
   if (String(fd.get("website") ?? "")) return { ok: true, message: "Check your inbox." };
   const service = createServiceSupabase();
   if (!service) return { ok: false, message: "Alerts aren't connected yet." };
-  const built = await alertFrom(fd);
+  const built = UUID.test(String(fd.get("provider_id") ?? "")) ? await followFrom(String(fd.get("provider_id"))) : await alertFrom(fd);
   if ("error" in built) return { ok: false, message: built.error };
   const source = String(fd.get("source") ?? "card").slice(0, 40);
   const alertsWording = String(fd.get("alerts_wording") ?? "");
@@ -100,7 +120,7 @@ export async function subscribeToAlerts(_prev: SubscribeResult, fd: FormData): P
     const from = await ip();
     if (!status.rider_alerts) await recordConsent(service, { contactId: contact.id, purpose: "rider_alerts", action: "grant", type: "express", wordingId: alertsWording || null, source: `card:${source}`, ip: from });
     if (newsWording && !status.rider_news) await recordConsent(service, { contactId: contact.id, purpose: "rider_news", action: "grant", type: "express", wordingId: newsWording, source: `card:${source}`, ip: from });
-    return { ok: true, message: `Done. We'll email you when ${what} near ${built.place}. Change it from your account.` };
+    return { ok: true, message: built.alert.provider_id ? `Done. We'll email you when ${built.place} lists an event. Change it from your account.` : `Done. We'll email you when ${what} near ${built.place}. Change it from your account.` };
   }
 
   const email = String(fd.get("email") ?? "").trim().toLowerCase();
@@ -126,7 +146,9 @@ export async function subscribeToAlerts(_prev: SubscribeResult, fd: FormData): P
   if (error || !pending) return { ok: false, message: "Something went wrong. Try again in a minute." };
 
   const copy = await getContent("email.alert_confirm");
-  const vars = { what, place: built.place, confirm_url: absoluteUrl(`/alerts/confirm?t=${pending.token}`) };
+  const vars = built.alert.provider_id
+    ? { what: `${built.place} lists a clinic or event`, place: "", confirm_url: absoluteUrl(`/alerts/confirm?t=${pending.token}`) }
+    : { what: `${what} near ${built.place}`, place: built.place, confirm_url: absoluteUrl(`/alerts/confirm?t=${pending.token}`) };
   await sendEmail({ to: email, subject: fillVariables(copy.subject, vars), text: fillVariables(copy.body, vars) });
   return { ok: true, message: `Nearly done. We've emailed ${email} a link: press it to start the alert.` };
 }

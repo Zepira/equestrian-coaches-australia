@@ -290,9 +290,21 @@ EMAILS.push(
     to: "Someone who asked for an alert without an account",
     when: "They ask for an alert from a subscribe card. Nothing else is sent until they confirm.",
     vars: [
-      v("what", "What they asked to hear about", "a new farrier starts"),
-      v("place", "Where", "Kyneton VIC"),
+      v("what", "What they asked to hear about, with the place", "a new farrier starts near Kyneton VIC"),
+      v("place", "Where, on its own (empty for a follow)", "Kyneton VIC"),
       v("confirm_url", "The button that starts the alert", "https://equineprofessionals.com.au/alerts/confirm?t=test"),
+    ],
+  },
+  {
+    key: "email.launch",
+    name: "We've launched",
+    class: "commercial",
+    to: "Everyone who asked to hear when the site opened",
+    when: "Once, when you press the button on the Audience screen. Each address gets it once, however often the button is pressed.",
+    vars: [
+      v("coaches_url", "The coaches section", "https://equineprofessionals.com.au/coaches"),
+      v("horse_care_url", "The horse care section", "https://equineprofessionals.com.au/horse-care"),
+      v("search_url", "The search page, where they can set up an alert", "https://equineprofessionals.com.au/search"),
     ],
   },
   {

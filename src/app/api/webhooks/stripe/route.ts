@@ -5,6 +5,7 @@ import { getStripePrices } from "@/lib/settings";
 import { TIERS, type Tier } from "@/lib/tiers";
 import { syncVisibility } from "@/lib/provider-lifecycle";
 import type Stripe from "stripe";
+import { recordPromoUse, rewardOnFirstPayment } from "@/lib/referrals";
 
 // Uses the service-role key: Stripe calls this with no user session, and
 // subscriptions are written only by the service role (members can read
@@ -75,6 +76,7 @@ async function syncSubscription(supabase: ReturnType<typeof serviceClient>, subs
   // Review publishes; the plan only hides a reviewed profile when it lapses
   // and brings it back when it resumes.
   await syncVisibility(supabase, providerId, live);
+  if (live) await recordPromoUse(supabase, providerId);
 }
 
 export async function POST(request: Request) {
@@ -124,6 +126,17 @@ export async function POST(request: Request) {
     case "customer.subscription.updated":
     case "customer.subscription.created": {
       await syncSubscription(supabase, event.data.object as Stripe.Subscription);
+      break;
+    }
+    // A paid invoice: the first one from a referred colleague earns their referrer a month (M6).
+    case "invoice.paid": {
+      const invoice = event.data.object as Stripe.Invoice & { subscription?: string | { id: string } | null };
+      const subId = typeof invoice.subscription === "string" ? invoice.subscription : invoice.subscription?.id;
+      if (invoice.amount_paid > 0 && subId) {
+        const subscription = await stripe.subscriptions.retrieve(subId);
+        const providerId = subscription.metadata?.provider_id;
+        if (providerId) await rewardOnFirstPayment(supabase, providerId, stripe);
+      }
       break;
     }
     case "customer.subscription.deleted": {

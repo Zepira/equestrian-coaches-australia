@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { whoNames } from "@/lib/admin";
 import { PURPOSES, PURPOSE_LABELS, type Purpose } from "@/lib/audience";
-import { addWording, deleteContact, stopContact, unblockContact } from "./actions";
+import { addWording, deleteContact, sendLaunchEmail, stopContact, unblockContact } from "./actions";
 
 export const metadata = { title: "Audience" };
 
@@ -23,11 +23,12 @@ export default async function AdminAudiencePage({ searchParams }: { searchParams
   const service = createServiceSupabase();
   if (!supabase || !service) return null;
 
-  const [{ count: contacts }, { data: statuses }, { data: blocks }, { data: wordings }] = await Promise.all([
+  const [{ count: contacts }, { data: statuses }, { data: blocks }, { data: wordings }, { count: launchSent }] = await Promise.all([
     service.from("contacts").select("id", { count: "exact", head: true }),
     service.from("consent_status").select("purpose, action"),
     service.from("suppressions").select("reason"),
     supabase.from("consent_wordings").select("id, purpose, version, body, created_at, created_by").order("purpose").order("version", { ascending: false }),
+    service.from("email_sends").select("contact_id", { count: "exact", head: true }).eq("key", "launch"),
   ]);
   const granted = (p: Purpose) => (statuses ?? []).filter((s) => s.purpose === p && s.action === "grant").length;
   const blockCount = (r: string) => (blocks ?? []).filter((b) => b.reason === r).length;
@@ -75,6 +76,16 @@ export default async function AdminAudiencePage({ searchParams }: { searchParams
           Not emailed: {blockCount("unsubscribe_all")} stopped everything, {blockCount("bounce")} bounced, {blockCount("complaint")} marked us as spam, {blockCount("admin")} blocked by you.
         </div>
       </div>
+
+      <section className="rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-launch>
+        <h3 className="font-display text-[20px] leading-none text-ink">The launch email</h3>
+        <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
+          {granted("waitlist")} {granted("waitlist") === 1 ? "person has" : "people have"} asked to hear when the site opens; {launchSent ?? 0} {launchSent === 1 ? "has" : "have"} been sent it. Each address gets it once, so pressing again only reaches people who asked since. The words are under Emails.
+        </p>
+        <form action={sendLaunchEmail} className="mt-3">
+          <Button type="submit" disabled={granted("waitlist") <= (launchSent ?? 0)}>Send the launch email</Button>
+        </form>
+      </section>
 
       <section>
         <form className="flex gap-2" role="search">

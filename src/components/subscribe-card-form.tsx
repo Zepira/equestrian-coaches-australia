@@ -13,6 +13,8 @@ export type SubscribeCardProps = {
   professionId?: string | null;
   door?: "coaches" | "horse_care" | null;
   termId?: string | null;
+  /** Follow one professional's events instead of a place (M4). */
+  providerId?: string | null;
   /** "Kyneton VIC" when the page already knows the place; otherwise the card asks. */
   place?: string | null;
   /** Where on the site it was, for the consent record ("area-page", "empty-search"). */
@@ -54,13 +56,14 @@ export function SubscribeCardForm(p: SubscribeCardProps) {
           <input type="hidden" name="source" value={p.source} />
           {p.professionId && <input type="hidden" name="profession_id" value={p.professionId} />}
           {p.termId && <input type="hidden" name="term_id" value={p.termId} />}
+          {p.providerId && <input type="hidden" name="provider_id" value={p.providerId} />}
           {p.door && <input type="hidden" name="door" value={p.door} />}
           {p.wordings.alerts && <input type="hidden" name="alerts_wording" value={p.wordings.alerts.id} />}
           {p.wordings.news && <input type="hidden" name="news_wording" value={p.wordings.news.id} />}
           {/* A field people can't see; bots fill it in. */}
           <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="absolute left-[-9999px] h-px w-px" />
           <div className="grid gap-3 sm:grid-cols-2">
-            {p.place ? (
+            {p.providerId ? null : p.place ? (
               <input type="hidden" name="place" value={p.place} />
             ) : (
               <label className="block">
@@ -69,7 +72,7 @@ export function SubscribeCardForm(p: SubscribeCardProps) {
               </label>
             )}
             {!signedIn && (
-              <label className={`block ${p.place ? "sm:col-span-2" : ""}`}>
+              <label className={`block ${p.place || p.providerId ? "sm:col-span-2" : ""}`}>
                 <span className="sr-only">Email</span>
                 <input name="email" type="email" required autoComplete="email" placeholder="Your email" className={input} />
               </label>

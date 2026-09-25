@@ -227,7 +227,12 @@ export const CONTENT_DEFAULTS = {
   },
   "email.alert_confirm": {
     subject: "Confirm your alert",
-    body: "Someone, hopefully you, asked us to email this address when {what} near {place}.\n\nTo start the alert, confirm here: {confirm_url}\n\nIf it wasn't you, ignore this email and we won't send anything else.",
+    body: "Someone, hopefully you, asked us to email this address when {what}.\n\nTo start the alert, confirm here: {confirm_url}\n\nIf it wasn't you, ignore this email and we won't send anything else.",
+  },
+  // Once, to everyone who asked to hear when the site opened (The Marketing Engine §09).
+  "email.launch": {
+    subject: "Equine Professionals Australia is open",
+    body: "You asked us to tell you when the site opened. It's open.\n\nFind a coach: {coaches_url}\nFind a farrier, vet, physio or anyone else your horse needs: {horse_care_url}\n\nSearch near where your horse lives and you can ask us, with the results, to email you when someone new starts nearby: {search_url}\n\nIt's free for riders and horse owners, and it always will be.",
   },
   "email.renewal_reminder": {
     subject: "Your {plan} plan renews on {renewal_date}",

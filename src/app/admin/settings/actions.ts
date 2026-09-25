@@ -78,6 +78,13 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     if (v !== "true" && v !== "false") return { error: "Choose on or off." };
     return { value: v };
   },
+  referral_reward_months: wholeNumber("referral_reward_months"),
+  referral_cap_per_year: wholeNumber("referral_cap_per_year"),
+  referral_coupon_id(raw) {
+    const v = raw.trim();
+    if (v && !/^[A-Za-z0-9_-]{2,60}$/.test(v)) return { error: "A Stripe coupon ID is letters, numbers, - and _." };
+    return { value: v };
+  },
   business_abn(raw) {
     const d = raw.replace(/\s/g, "");
     if (d === "") return { value: "" };
@@ -176,6 +183,9 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   show_sample_listings: ["/", "/coaches", "/horse-care", "/search"],
   legal_approved: ["/terms", "/privacy", "/sitemap.xml"],
   business_abn: [],
+  referral_reward_months: [],
+  referral_cap_per_year: [],
+  referral_coupon_id: [],
   slide_in_enabled: [],
   slide_in_delay_seconds: [],
   slide_in_every_days: [],
@@ -195,7 +205,7 @@ export async function saveSetting(formData: FormData) {
   const key = String(formData.get("key") ?? "") as SettingKey;
   // Some settings are edited from another tab (the slide-in's, on On the site); go back there.
   const back = String(formData.get("back") ?? "");
-  await writeSetting(key, String(formData.get("value") ?? ""), back === "/admin/on-site" ? back : "/admin/settings");
+  await writeSetting(key, String(formData.get("value") ?? ""), back === "/admin/on-site" || back === "/admin/codes" ? back : "/admin/settings");
 }
 
 /** "$24.95" → 2495. */

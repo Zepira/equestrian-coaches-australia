@@ -30,7 +30,10 @@ export function SignupForm({
   invite,
   touch,
   news,
+  codes = { referral: "", promo: "" },
 }: {
+  /** Codes from the link they came in on, checked by the sign-up trigger. */
+  codes?: { referral: string; promo: string };
   /** Where they came from, as JSON strings for the sign-up trigger (or "null"). */
   touch: { first: string; last: string };
   /** The provider_news consent wording, shown beside an unticked box. */
@@ -84,6 +87,8 @@ export function SignupForm({
                 invite: invite?.usable ? invite.token : "",
                 touch_first: touch.first,
                 touch_last: touch.last,
+                referral: codes.referral,
+                promo: codes.promo,
                 // Marketing consent is its own box, unticked (Spam Act): the id of the words they saw.
                 news_wording: wantsNews && news ? news.id : "",
               }

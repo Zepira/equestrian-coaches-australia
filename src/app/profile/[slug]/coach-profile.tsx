@@ -30,6 +30,7 @@ import { getDisciplineBySlug } from "@/lib/disciplines";
 import { breadcrumbSchema, providerSchemas } from "@/lib/structured-data";
 import { logView } from "@/lib/coach-events";
 import { getSamples } from "@/lib/samples";
+import { ShareButton } from "@/components/share-button";
 
 type CoachView = {
   id: string | null;
@@ -276,6 +277,8 @@ export async function coachMetadata(slug: string): Promise<Metadata> {
     title: coach.name,
     description: `${coach.headline} ${coach.suburb} ${coach.state}.`,
     alternates: { canonical: profilePath(coach.slug) },
+    // The share image (M4), for real profiles; samples keep the site's own.
+    ...(real ? { openGraph: { images: [{ url: `/api/og/profile/${coach.slug}`, width: 1200, height: 630 }] } } : {}),
     // Sample profiles are for looking around before launch, never for search engines.
     ...(real ? {} : { robots: { index: false, follow: false } }),
   };
@@ -563,11 +566,19 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                 </Link>
               </section>
             )}
+            {coach.id && profession.eventsEnabled && (
+              <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[14.5px]" data-follow-link>
+                <Link href={`${profilePath(coach.slug)}/follow`} className="font-medium text-accent underline-offset-2 hover:underline">
+                  Get {firstName}&rsquo;s {horseCare ? "event" : "clinic"} dates by email
+                </Link>
+                <ShareButton path={profilePath(coach.slug)} title={`${coach.name} on Equine Professionals Australia`} />
+              </p>
+            )}
 
             <section className="wide:hidden">
               <h2 className="mt-9 text-[30px] leading-none text-ink">Get in touch</h2>
               <p className="mt-2 text-[15px] leading-[1.5] text-muted">
-                {firstName} usually replies within a day. You deal with {firstName} direct — EPA never takes a cut.
+                {firstName} usually replies within a day. You deal with {firstName} direct, and we never take a cut.
               </p>
               {coach.contactId && (
                 <PhoneReveal contactId={coach.contactId} hasPhone={coach.contact.hasPhone} className="mt-3.5 w-full py-3.5" />

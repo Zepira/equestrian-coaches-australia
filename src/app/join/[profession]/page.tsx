@@ -8,7 +8,7 @@ import { getProfession } from "@/lib/cms/read";
  * the link teaches the site's shape and still records where the sign-up
  * came from. A profession in draft is open to invites only.
  */
-const CARRY = ["plan", "tier", "ref", "utm_source", "utm_medium", "utm_campaign", "invite"] as const;
+const CARRY = ["plan", "tier", "ref", "utm_source", "utm_medium", "utm_campaign", "invite", "referral", "promo"] as const;
 
 export default async function JoinPage({
   params,

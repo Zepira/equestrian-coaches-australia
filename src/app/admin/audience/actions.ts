@@ -4,8 +4,11 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { formText, requireAdmin } from "@/lib/admin";
 import { createServiceSupabase } from "@/lib/supabase/service";
-import { PURPOSES, stopEverything, suppress, type Purpose } from "@/lib/audience";
-import { CMS_TAG } from "@/lib/cms/read";
+import { canSend, PURPOSES, stopEverything, suppress, type Purpose } from "@/lib/audience";
+import { sendEmail } from "@/lib/email";
+import { sectionPath } from "@/lib/page-paths";
+import { absoluteUrl } from "@/lib/site-url";
+import { CMS_TAG, fillVariables, getContent } from "@/lib/cms/read";
 
 /**
  * The Audience screen's actions (The Marketing Engine M1). Consent rows are
@@ -69,4 +72,36 @@ export async function addWording(fd: FormData) {
   revalidateTag(CMS_TAG, { expire: 0 });
   revalidatePath("/", "layout");
   redirect(`/admin/audience?done=${encodeURIComponent(`Saved as version ${(last?.version ?? 0) + 1}. Forms show it now; earlier consents keep the words they agreed to.`)}`);
+}
+
+/**
+ * The launch email (The Marketing Engine §09): once to every address with
+ * waitlist consent. email_sends holds one row per address, so pressing the
+ * button again only reaches people who agreed since.
+ */
+export async function sendLaunchEmail() {
+  await requireAdmin();
+  const service = createServiceSupabase()!;
+  const { data: rows } = await service.from("consent_status").select("contact_id").eq("purpose", "waitlist").eq("action", "grant");
+  const ids = (rows ?? []).map((r) => r.contact_id as string);
+  const { data: already } = ids.length ? await service.from("email_sends").select("contact_id").eq("key", "launch").in("contact_id", ids) : { data: [] };
+  const done = new Set((already ?? []).map((r) => r.contact_id as string));
+  const todo = ids.filter((id) => !done.has(id));
+  const { data: contacts } = todo.length ? await service.from("contacts").select("id, email").in("id", todo) : { data: [] };
+  const copy = await getContent("email.launch");
+  const vars = { coaches_url: absoluteUrl(sectionPath("coaches")), horse_care_url: absoluteUrl("/horse-care"), search_url: absoluteUrl("/search") };
+  let sent = 0;
+  let skipped = 0;
+  for (const c of contacts ?? []) {
+    const check = await canSend(service, c.email, "waitlist");
+    if (!check.ok || !check.token) {
+      skipped++;
+      continue;
+    }
+    const result = await sendEmail({ to: c.email, subject: fillVariables(copy.subject, vars), text: fillVariables(copy.body, vars), commercial: { token: check.token, purpose: "waitlist" } });
+    await service.from("email_sends").insert({ contact_id: c.id, key: "launch", result });
+    if (result !== "failed") sent++;
+  }
+  revalidatePath("/admin/audience");
+  redirect(`/admin/audience?done=${encodeURIComponent(`Sent to ${sent}.${skipped ? ` ${skipped} skipped: they've since stopped emails.` : ""}${done.size ? ` ${done.size} had it already.` : ""}`)}`);
 }

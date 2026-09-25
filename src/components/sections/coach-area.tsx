@@ -36,11 +36,13 @@ export async function coachAreaMetadata(areaSlug: string, disciplineSlug?: strin
   const area = await getArea(areaSlug);
   if (!supabase || !area) return { title: "Riding instructors" };
   const canonical = absoluteUrl(areaPagePath({ professionSlug: "coaches", termSlug: disciplineSlug, areaSlug }));
+  const openGraph = { images: [{ url: `/api/og/area?p=coaches&a=${areaSlug}`, width: 1200, height: 630 }] };
   if (!disciplineSlug) {
     return {
       title: `Riding instructors in ${area.name}, ${area.state}`,
       description: `Find riding instructors and coaches in ${area.name}, ${area.state}: search by discipline, from dressage to Western to liberty.`,
       alternates: { canonical },
+      openGraph,
     };
   }
   const discipline = (await getDisciplines(supabase)).find((d) => d.slug === disciplineSlug);
@@ -49,6 +51,7 @@ export async function coachAreaMetadata(areaSlug: string, disciplineSlug?: strin
     title: `${discipline.name} coaches in ${area.name}, ${area.state}`,
     description: `Find ${discipline.name.toLowerCase()} coaches in ${area.name}, ${area.state}, Australia.`,
     alternates: { canonical },
+    openGraph,
   };
 }
 

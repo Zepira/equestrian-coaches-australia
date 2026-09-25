@@ -15,6 +15,9 @@ type Params = {
   invite?: string;
   ref?: string;
   utm_source?: string;
+  /** A colleague's referral code, and a promo code a link carried (M6). */
+  referral?: string;
+  promo?: string;
   utm_medium?: string;
   utm_campaign?: string;
 };
@@ -57,6 +60,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
 
   return (
     <SignupForm
+      codes={{ referral: (sp.referral ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 24), promo: (sp.promo ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 24) }}
       touch={{ first: JSON.stringify(parseTouch(touch.first) ?? null), last: JSON.stringify(parseTouch(touch.last) ?? null) }}
       news={news ? { id: news.id, body: news.body } : null}
       professional={professional}

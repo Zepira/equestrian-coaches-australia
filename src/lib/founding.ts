@@ -4,6 +4,7 @@ import { sendEmail } from "@/lib/email";
 import { addMonths, countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getPlans, getFoundingPrice, getStripePrices } from "@/lib/settings";
 import { absoluteUrl } from "@/lib/site-url";
 import { fillVariables, getContent } from "@/lib/cms/read";
+import { rewardOnFirstPayment } from "@/lib/referrals";
 
 /**
  * The founding offer's billing (The Site as a CMS §09):
@@ -172,6 +173,7 @@ export async function runFoundingJob(service: Service, now = new Date()): Promis
     const days = Math.round((Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()) - today.getTime()) / 86_400_000);
     if (isMockPayments && days <= 0) {
       await service.from("subscriptions").update({ status: "active", tier: "listed", updated_at: now.toISOString() }).eq("id", s.id);
+      await rewardOnFirstPayment(service, s.provider_id as string, null);
       converted++;
       continue;
     }

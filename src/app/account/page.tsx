@@ -60,6 +60,8 @@ type AlertRow = {
   wants_events: boolean;
   wants_new_providers: boolean;
   unsubscribed_at: string | null;
+  provider_id: string | null;
+  providers: { name: string; slug: string } | null;
 };
 
 export default async function AccountPage({
@@ -78,7 +80,7 @@ export default async function AccountPage({
     getProfessions(),
     supabase
       .from("rider_alerts")
-      .select("id, suburb, postcode, radius_km, door, profession_ids, term_ids, wants_events, wants_new_providers, unsubscribed_at")
+      .select("id, suburb, postcode, radius_km, door, profession_ids, term_ids, wants_events, wants_new_providers, unsubscribed_at, provider_id, providers(name, slug)")
       .eq("rider_id", user.id)
       .order("created_at"),
     supabase
@@ -91,7 +93,7 @@ export default async function AccountPage({
   ]);
 
   const firstName = (profile?.name ?? user.user_metadata?.name ?? "there").split(" ")[0];
-  const alerts = (alertRows ?? []) as AlertRow[];
+  const alerts = (alertRows ?? []) as unknown as AlertRow[];
   // Distances to saved profiles are measured from the first live alert's place.
   const firstAlert = alerts.find((a) => !a.unsubscribed_at) ?? alerts[0];
   const savedArea = firstAlert ? [firstAlert.suburb, firstAlert.postcode].filter(Boolean).join(" ") : "";
@@ -112,6 +114,8 @@ export default async function AccountPage({
       }))
   );
   const describe = (a: AlertRow) => {
+    // A follow alert: one professional's events, wherever they are (M4).
+    if (a.provider_id) return { who: `${a.providers?.name ?? "A professional"}'s clinics and events`, where: "Wherever they are", what: "their events" };
     const prof = professions.find((p) => a.profession_ids.includes(p.id));
     const who = prof ? prof.name : a.door === "horse_care" ? "All horse care" : a.door === "coaches" ? "Riding coaches" : "Everyone";
     const terms = prof ? prof.terms.filter((t) => a.term_ids.includes(t.id)).map((t) => t.name) : [];
@@ -338,10 +342,12 @@ export default async function AccountPage({
                           Delete
                         </button>
                       </form>
-                      <details className="w-full [&[open]>summary]:mb-3">
-                        <summary className="cursor-pointer font-medium text-accent">Change</summary>
-                        <AlertForm professions={professions} defaults={toDefaults(a)} submitLabel="Save changes" consent={consent} />
-                      </details>
+                      {!a.provider_id && (
+                        <details className="w-full [&[open]>summary]:mb-3">
+                          <summary className="cursor-pointer font-medium text-accent">Change</summary>
+                          <AlertForm professions={professions} defaults={toDefaults(a)} submitLabel="Save changes" consent={consent} />
+                        </details>
+                      )}
                     </div>
                   </li>
                 );
