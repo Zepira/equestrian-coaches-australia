@@ -48,3 +48,6 @@ next-env.d.ts
 
 # MapLibre worker copied from node_modules by scripts/copy-maplibre-worker.mjs (predev/prebuild)
 /public/vendor/
+
+# Private working files (partnership agreement drafts, the signed PDF): the repo is public.
+/Claude outputs/
