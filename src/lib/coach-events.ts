@@ -17,7 +17,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/client";
  */
 export type CoachEventKind = "impression" | "view" | "reveal";
 
-async function visitorHash() {
+export async function visitorHash() {
   try {
     const h = await headers();
     const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "local";

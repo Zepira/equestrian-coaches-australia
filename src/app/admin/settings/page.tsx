@@ -118,6 +118,22 @@ export default async function AdminSettingsPage({
         </div>
       </section>
 
+      <section className="border-t border-border pt-6" data-abn>
+        <h2 className="font-display text-[26px] leading-none text-ink">ABN</h2>
+        <p className="mt-1 max-w-[62ch] text-sm text-muted">
+          Goes in the footer of every marketing email, as the law asks. Empty until the partnership is registered.
+        </p>
+        {notice("business_abn")}
+        <form action={saveSetting} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+          <input type="hidden" name="key" value="business_abn" />
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-fg">ABN</span>
+            <input name="value" defaultValue={stored("business_abn")} inputMode="numeric" placeholder="11 digits" className={input} />
+          </label>
+          <Button type="submit">Save</Button>
+        </form>
+      </section>
+
       <section className="border-t border-border pt-6" data-legal>
         <h2 className="font-display text-[26px] leading-none text-ink">Terms and privacy</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">

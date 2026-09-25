@@ -78,9 +78,36 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     if (v !== "true" && v !== "false") return { error: "Choose on or off." };
     return { value: v };
   },
+  referral_reward_months: wholeNumber("referral_reward_months"),
+  referral_cap_per_year: wholeNumber("referral_cap_per_year"),
+  referral_coupon_id(raw) {
+    const v = raw.trim();
+    if (v && !/^[A-Za-z0-9_-]{2,60}$/.test(v)) return { error: "A Stripe coupon ID is letters, numbers, - and _." };
+    return { value: v };
+  },
+  business_abn(raw) {
+    const d = raw.replace(/\s/g, "");
+    if (d === "") return { value: "" };
+    if (!/^\d{11}$/.test(d)) return { error: "An ABN is 11 digits." };
+    return { value: d };
+  },
+  slide_in_enabled(raw) {
+    const v = raw.trim();
+    if (v !== "true" && v !== "false") return { error: "Choose on or off." };
+    return { value: v };
+  },
+  slide_in_delay_seconds: wholeNumber("slide_in_delay_seconds"),
+  slide_in_every_days: wholeNumber("slide_in_every_days"),
   legal_approved(raw) {
     const v = raw.trim();
     if (v !== "true" && v !== "false") return { error: "Choose approved or draft." };
+    return { value: v };
+  },
+  enquiry_followup_days: wholeNumber("enquiry_followup_days"),
+  onboarding_complete_pct: wholeNumber("onboarding_complete_pct"),
+  reviews_hold_all(raw) {
+    const v = raw.trim();
+    if (v !== "true" && v !== "false") return { error: "Choose hold every review or only flagged ones." };
     return { value: v };
   },
   show_sample_listings(raw) {
@@ -162,6 +189,16 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   review_required: [],
   show_sample_listings: ["/", "/coaches", "/horse-care", "/search"],
   legal_approved: ["/terms", "/privacy", "/sitemap.xml"],
+  business_abn: [],
+  referral_reward_months: [],
+  enquiry_followup_days: [],
+  onboarding_complete_pct: [],
+  reviews_hold_all: [],
+  referral_cap_per_year: [],
+  referral_coupon_id: [],
+  slide_in_enabled: [],
+  slide_in_delay_seconds: [],
+  slide_in_every_days: [],
   review_alert_emails: [],
   area_page_min_providers: ["/sitemap.xml"],
   featured_min_providers: ["/search"],
@@ -176,7 +213,9 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
 
 export async function saveSetting(formData: FormData) {
   const key = String(formData.get("key") ?? "") as SettingKey;
-  await writeSetting(key, String(formData.get("value") ?? ""));
+  // Some settings are edited from another tab (the slide-in's, on On the site); go back there.
+  const back = String(formData.get("back") ?? "");
+  await writeSetting(key, String(formData.get("value") ?? ""), back === "/admin/on-site" || back === "/admin/codes" || back === "/admin/reviews" || back === "/admin/sequences" || back === "/admin/campaigns" ? back : "/admin/settings");
 }
 
 /** "$24.95" → 2495. */
@@ -320,6 +359,6 @@ async function writeSetting(key: SettingKey, raw: string, page = "/admin/setting
   revalidatePath(page);
   for (const path of SHOWN_ON[key]) revalidatePath(path);
   // Samples appear on every listing and profile page.
-  if (key === "show_sample_listings") revalidatePath("/", "layout");
+  if (key === "show_sample_listings" || key.startsWith("slide_in_")) revalidatePath("/", "layout");
   redirect(`${page}?saved=${key}`);
 }

@@ -163,12 +163,13 @@ try {
       `insert into public.profession_details
         (term_id, door, glyph_key, launch_state, singular, plural, short_name, term_noun, term_noun_plural,
          audience_noun, years_label, job_title, hero_headline, hero_lead, hero_lead_short, steps,
-         enquiry_options, completeness, events_enabled, remote_allowed)
-       values ($1, $2, $3, 'live', $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, true, $18)`,
+         enquiry_options, completeness, events_enabled, remote_allowed, protected_titles)
+       values ($1, $2, $3, 'live', $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, true, $18, $19)`,
       [
         t.id, p.door, p.glyph_key, p.singular, p.plural, p.short_name ?? null, p.term_noun, p.term_noun_plural,
         p.audience_noun, p.years_label, p.job_title, p.hero_headline ?? "", p.hero_lead ?? p.blurb, p.hero_lead_short ?? "",
         JSON.stringify(p.steps), JSON.stringify(p.enquiry_options), JSON.stringify(p.completeness), p.remote_allowed,
+        p.protected_titles ?? [],
       ]
     );
   }

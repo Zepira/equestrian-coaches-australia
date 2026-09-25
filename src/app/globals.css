@@ -1146,12 +1146,18 @@ html[data-overlay-route="true"] {
   background: var(--color-ink-fg);
   color: var(--color-ink);
 }
-/* Coach profile: phones get the page's own bar over the photograph. */
-.site-header[data-coach-profile="true"] {
+/* Coach profile: phones get the page's own bar over the photograph. Keyed on
+   the profile's PageContext marker as well as the path, because a 404 under
+   /profile/ has the path but no profile: it needs the ordinary header, or a
+   phone gets a page with no navigation at all. */
+html:has([data-page-context]) .site-header[data-coach-profile="true"] {
+  display: none;
+}
+html:not(:has([data-page-context])) .site-header__profile-only {
   display: none;
 }
 @media (min-width: 768px) {
-  .site-header[data-coach-profile="true"] {
+  html:has([data-page-context]) .site-header[data-coach-profile="true"] {
     display: block;
     --hdr-bg: rgb(246 241 231 / 0.86);
   }

@@ -6,6 +6,9 @@ import { createClient } from "@supabase/supabase-js";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { resolveLocation } from "@/lib/supabase/queries";
 import { titleCase } from "@/lib/text";
+import { headers } from "next/headers";
+import { consentStatus, ensureContact, recordConsent } from "@/lib/audience";
+import { createServiceSupabase } from "@/lib/supabase/service";
 
 export async function removeFavourite(coachId: string) {
   const supabase = await createServerClient();
@@ -27,6 +30,31 @@ export async function removeFavourite(coachId: string) {
 }
 
 const RADII = [25, 50, 100, 200];
+
+/**
+ * The consent record for an alert (The Marketing Engine M1): a new alert is
+ * an express request for alert emails, under the words the form showed; the
+ * round-up is its own unticked box. Written with the service role, since
+ * consents are admin-read and insert-only.
+ */
+async function recordAlertConsent(userId: string, formData: FormData, source: string) {
+  const service = createServiceSupabase();
+  if (!service) return;
+  const { data: profile } = await service.from("profiles").select("email").eq("id", userId).single();
+  if (!profile?.email) return;
+  const contact = await ensureContact(service, profile.email as string, { profileId: userId });
+  const status = await consentStatus(service, contact.id);
+  const h = await headers();
+  const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
+  const alertsWording = String(formData.get("alerts_wording") ?? "") || null;
+  const newsWording = String(formData.get("news_wording") ?? "") || null;
+  if (!status.rider_alerts && source !== "edit") {
+    await recordConsent(service, { contactId: contact.id, purpose: "rider_alerts", action: "grant", type: "express", wordingId: alertsWording, source: `alert:${source}`, ip });
+  }
+  if (newsWording && !status.rider_news) {
+    await recordConsent(service, { contactId: contact.id, purpose: "rider_news", action: "grant", type: "express", wordingId: newsWording, source: `alert:${source}`, ip });
+  }
+}
 
 async function requireRider() {
   const supabase = await createServerClient();
@@ -95,6 +123,7 @@ export async function saveAlert(formData: FormData) {
         consented_at: now,
       });
   if (error) throw error;
+  await recordAlertConsent(userId, formData, id ? "edit" : String(formData.get("source") ?? "") === "search" ? "search" : "account");
   revalidatePath("/account");
   redirect("/account?saved=1#alerts");
 }
@@ -116,6 +145,13 @@ export async function setAlertActive(id: string, active: boolean) {
     .eq("id", id)
     .eq("rider_id", userId);
   if (error) throw error;
+  if (active) {
+    const fd = new FormData();
+    const service = createServiceSupabase();
+    const w = service ? await service.from("consent_wordings").select("id").eq("purpose", "rider_alerts").order("version", { ascending: false }).limit(1).maybeSingle() : null;
+    if (w?.data) fd.set("alerts_wording", w.data.id as string);
+    await recordAlertConsent(userId, fd, "resume");
+  }
   revalidatePath("/account");
 }
 

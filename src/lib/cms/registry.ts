@@ -17,6 +17,8 @@ export type PageEntry = {
   /** Routes to revalidate on save: a path, or [path, "page" | "layout"] for a dynamic route. */
   revalidate: (string | [string, "page" | "layout"])[];
   note?: string;
+  /** Edited on Admin → On the site rather than the Pages list. */
+  onSite?: boolean;
 };
 
 export const PAGES: PageEntry[] = [
@@ -58,6 +60,19 @@ export const PAGES: PageEntry[] = [
   },
   { slug: "profiles", name: "Every profile", href: "/search", keys: ["mention"], revalidate: [["/profile/[slug]", "page"]] },
   { slug: "footer", name: "Footer", href: "/", keys: ["footer"], revalidate: [["/", "layout"]] },
+  { slug: "announcement", name: "Announcement bar", href: "/", keys: ["site.announcement"], revalidate: [["/", "layout"]], onSite: true },
+  { slug: "slide-in", name: "Slide-in", href: "/", keys: ["site.slide_in"], revalidate: [["/", "layout"]], onSite: true },
+  { slug: "how-we-list", name: "How the list is ordered", href: "/how-we-list", keys: ["how_we_list"], revalidate: ["/how-we-list"] },
+  { slug: "review-policy", name: "Review policy", href: "/review-policy", keys: ["review_policy"], revalidate: ["/review-policy"], note: "What gets a review taken down is the list the Reviews screen offers. Change one, change both: ask for the screen to match." },
+  { slug: "guides", name: "Guides pages", href: "/guides", keys: ["guides.words"], revalidate: ["/guides", ["/guides/[slug]", "page"]], note: "The guides themselves are on Admin → Guides. {plural} is a profession, like farriers." },
+  {
+    slug: "reviews",
+    name: "Review pages",
+    href: "/review-policy",
+    keys: ["reviews.words"],
+    revalidate: [["/review/[slug]", "page"], ["/enquiry/[token]", "page"], "/review/confirm"],
+    note: "{name} is the professional, {audience_plural} is riders or horse owners.",
+  },
   {
     slug: "terms",
     name: "Terms of service",
@@ -94,10 +109,24 @@ export const BLOCK_NAMES: Partial<Record<ContentKey, string>> = {
   "about.record": "For the record, and we're new",
   "about.cta": "Last panel",
   mention: "The line under the contact details",
+  "site.announcement": "Announcement bar",
+  "site.slide_in": "Slide-in",
+  how_we_list: "How the list is ordered",
+  review_policy: "Review policy",
+  "reviews.words": "Review form and follow-up",
+  "guides.words": "Guides pages",
   "legal.terms": "Terms of service",
   "legal.privacy": "Privacy policy",
   footer: "Tagline",
 };
+
+/** Fields a block may leave empty (everything else must have words in it). */
+export const OPTIONAL_FIELDS: Partial<Record<ContentKey, string[]>> = {
+  "site.announcement": ["message", "linkLabel", "linkHref", "starts", "ends"],
+};
+
+/** Words a factual email mustn't contain: any promotion makes it commercial (§05.2). Checked with variables taken out. */
+export const PROMOTIONAL = /\b(upgrade|spotlight|clinic plan|refer|referral|free month|discount|% off|what's new|new on the site|sponsor(ed)?|special offer|don't miss)\b/i;
 
 /** Help for fields whose name doesn't explain itself. Keyed by field name, used for every block. */
 export const FIELD_HINTS: Record<string, string> = {
@@ -111,10 +140,24 @@ export const FIELD_HINTS: Record<string, string> = {
   facts: "Short label, then the fact.",
   sections: "A heading, then its text. A blank line starts a new paragraph.",
   updated: "The date line under the title.",
+  starts: "First day it shows, YYYY-MM-DD. Empty: from now.",
+  ends: "Last day it shows, YYYY-MM-DD. Empty: until you clear the message.",
+  audience: "everyone, logged_out, riders, coaches or horse_care.",
+  message: "Empty turns the bar off.",
+  linkHref: "Where the link goes: /coaches, or a full https:// address.",
 };
 
 export type EmailVar = { name: string; what: string; sample: string };
-export type EmailEntry = { key: ContentKey; name: string; to: string; when: string; vars: EmailVar[] };
+/**
+ * factual: about the person's own account or something they asked for (an
+ * enquiry, their bill, confirming an alert). commercial: anything that
+ * promotes, including alerts about other people's services (The Marketing
+ * Engine §05.2). A commercial email only goes with consent, and carries the
+ * footer and one-click unsubscribe; a factual one mustn't promote anything,
+ * which the save checks.
+ */
+export type EmailClass = "factual" | "commercial";
+export type EmailEntry = { key: ContentKey; name: string; to: string; when: string; class: EmailClass; vars: EmailVar[] };
 
 const v = (name: string, what: string, sample: string): EmailVar => ({ name, what, sample });
 
@@ -123,17 +166,45 @@ const RIDER_ALERT_VARS = [
   v("unsubscribe_url", "One click stops this alert", "https://equineprofessionals.com.au/unsubscribe?a=test"),
 ];
 
+const SEQ_PRO_VARS = [
+  v("first_name", "Their first name", "Jane"),
+  v("audience_plural", "riders or horse owners", "riders"),
+  v("onboarding_url", "Where they left off", "https://equineprofessionals.com.au/onboarding"),
+  v("contact_email", "Our address", "hello@equineprofessionals.au"),
+];
+const SEQ_ONBOARDING_VARS = [
+  v("first_name", "Their first name", "Jane"),
+  v("audience_plural", "riders or horse owners", "riders"),
+  v("pct", "How complete the profile is", "60"),
+  v("next_item", "The most useful thing left to do", "A photo of you coaching"),
+  v("profile_edit_url", "Their profile editor", "https://equineprofessionals.com.au/dashboard/profile"),
+  v("promote_url", "The Promote tab", "https://equineprofessionals.com.au/dashboard/promote"),
+  v("reviews_url", "Their reviews and review link", "https://equineprofessionals.com.au/dashboard/reviews"),
+  v("dashboard_url", "Their dashboard", "https://equineprofessionals.com.au/dashboard"),
+  v("views", "Profile views, counted", "34 profile views"),
+  v("reveals", "Taps to call, counted", "3 taps to call"),
+  v("enquiries", "Enquiries, counted", "1 enquiry"),
+];
+const SEQ_RIDER_VARS = [
+  v("first_name", "Their first name", "Sam"),
+  v("account_url", "Their account", "https://equineprofessionals.com.au/account"),
+  v("alerts_url", "Their alerts", "https://equineprofessionals.com.au/account#alerts"),
+];
+
 export const EMAILS: EmailEntry[] = [
   {
     key: "email.waitlist",
     name: "Waitlist confirmation",
     to: "Anyone who signs up on the coming soon page",
     when: "Straight after they join the list, before launch.",
+    // Confirms something they just did and promotes nothing.
+    class: "factual",
     vars: [v("unsubscribe_url", "Takes them off the waitlist", "https://equineprofessionals.com.au/unsubscribe?w=test")],
   },
   {
     key: "email.enquiry",
     name: "New enquiry",
+    class: "factual",
     to: "The professional",
     when: "Someone sends the form on their profile.",
     vars: [
@@ -148,6 +219,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.live",
     name: "Profile is live",
+    class: "factual",
     to: "The professional",
     when: "Their profile is published, by review or straight away.",
     vars: [
@@ -159,6 +231,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.changes",
     name: "Changes asked for",
+    class: "factual",
     to: "The professional",
     when: "A reviewer asks for changes before publishing.",
     vars: [
@@ -170,6 +243,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.rider_event",
     name: "Event near you",
+    class: "commercial",
     to: "Riders and horse owners with a matching alert",
     when: "A professional lists an event that matches their alert.",
     vars: [
@@ -184,6 +258,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.rider_new_provider",
     name: "Someone new near you",
+    class: "commercial",
     to: "Riders and horse owners with a matching alert",
     when: "A matching professional's profile goes live near them. The headline line only shows when they have one.",
     vars: [
@@ -199,6 +274,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.rider_monthly",
     name: "Monthly round-up",
+    class: "commercial",
     to: "Riders and horse owners with alerts",
     when: "The 1st of the month, when there's something near them. The events and new people are listed by the site between the intro and the footer.",
     vars: [
@@ -210,6 +286,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.monthly",
     name: "Monthly numbers",
+    class: "commercial",
     to: "Every published professional",
     when: "The 1st of the month, about the month before. The quiet intro is used when nobody viewed, tapped or enquired. The site adds a line per profession, the searches list and the checklist step when they apply.",
     vars: [
@@ -230,6 +307,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.founding_launch",
     name: "Launch day, founding members",
+    class: "factual",
     to: "Founding members with a saved card",
     when: "Once, when the launch date is locked in Settings.",
     vars: [
@@ -245,6 +323,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.founding_reminder",
     name: "First charge reminder",
+    class: "factual",
     to: "Founding members in their free period",
     when: "30, 14 and 3 days before the first charge.",
     vars: [
@@ -257,6 +336,150 @@ export const EMAILS: EmailEntry[] = [
     ],
   },
 ];
+
+EMAILS.push(
+  {
+    key: "email.alert_confirm",
+    name: "Confirm an alert",
+    class: "factual",
+    to: "Someone who asked for an alert without an account",
+    when: "They ask for an alert from a subscribe card. Nothing else is sent until they confirm.",
+    vars: [
+      v("what", "What they asked to hear about, with the place", "a new farrier starts near Kyneton VIC"),
+      v("place", "Where, on its own (empty for a follow)", "Kyneton VIC"),
+      v("confirm_url", "The button that starts the alert", "https://equineprofessionals.com.au/alerts/confirm?t=test"),
+    ],
+  },
+  {
+    key: "email.seq.unfinished_signup.1",
+    name: "Unfinished sign-up, 1",
+    class: "factual",
+    to: "A professional with a draft profile",
+    when: "A day after they signed up without sending the profile in (Admin → Sequences).",
+    vars: SEQ_PRO_VARS,
+  },
+  {
+    key: "email.seq.unfinished_signup.2",
+    name: "Unfinished sign-up, 2",
+    class: "factual",
+    to: "A professional with a draft profile",
+    when: "Days after the first, while it's still a draft.",
+    vars: SEQ_PRO_VARS,
+  },
+  {
+    key: "email.seq.unfinished_signup.3",
+    name: "Unfinished sign-up, 3",
+    class: "factual",
+    to: "A professional with a draft profile",
+    when: "The last one, while it's still a draft.",
+    vars: SEQ_PRO_VARS,
+  },
+  { key: "email.seq.onboarding.1", name: "New profile, 1: finish it", class: "factual", to: "A newly published professional", when: "Days after going live, unless the profile is already complete enough.", vars: SEQ_ONBOARDING_VARS },
+  { key: "email.seq.onboarding.2", name: "New profile, 2: share it", class: "factual", to: "A newly published professional", when: "The next step of the same sequence.", vars: SEQ_ONBOARDING_VARS },
+  { key: "email.seq.onboarding.3", name: "New profile, 3: reviews", class: "factual", to: "A newly published professional", when: "The next step of the same sequence.", vars: SEQ_ONBOARDING_VARS },
+  { key: "email.seq.onboarding.4", name: "New profile, 4: first numbers", class: "factual", to: "A newly published professional", when: "The last step, about two weeks in.", vars: SEQ_ONBOARDING_VARS },
+  {
+    key: "email.seq.first_win.1",
+    name: "First enquiry",
+    class: "factual",
+    to: "A professional",
+    when: "Their first enquiry, or the first time someone taps to see their number.",
+    vars: [
+      v("first_name", "Their first name", "Jane"),
+      v("what_happened", "What happened, as a sentence start", "Someone sent you an enquiry"),
+      v("enquiries_url", "Their enquiries", "https://equineprofessionals.com.au/dashboard/enquiries"),
+    ],
+  },
+  { key: "email.seq.rider_welcome.1", name: "Rider welcome, 1", class: "factual", to: "A new rider or horse owner", when: "Soon after they make an account, unless they already have an alert.", vars: SEQ_RIDER_VARS },
+  { key: "email.seq.rider_welcome.2", name: "Rider welcome, 2", class: "factual", to: "A new rider or horse owner", when: "Days later, while they still have no alert.", vars: SEQ_RIDER_VARS },
+  { key: "email.seq.rider_welcome.3", name: "Rider welcome, 3", class: "factual", to: "A new rider or horse owner", when: "The last one, while they still have no alert.", vars: SEQ_RIDER_VARS },
+  {
+    key: "email.guide_download",
+    name: "A guide's download",
+    class: "factual",
+    to: "Someone who asked for a guide's file",
+    when: "Straight after they ask for it on the guide.",
+    vars: [
+      v("download_title", "What the file is", "horse care calendar"),
+      v("download_url", "The file", "https://equineprofessionals.com.au/storage/calendar.pdf"),
+      v("guide_title", "The guide it came with", "Getting your horse's feet through winter"),
+      v("guide_url", "The guide", "https://equineprofessionals.com.au/guides/winter-feet"),
+    ],
+  },
+  {
+    key: "email.sequence_footer",
+    name: "Sequence email footer",
+    class: "factual",
+    to: "Everyone in a sequence",
+    when: "Added to the end of every sequence email.",
+    vars: [v("stop_url", "Stops the rest of this sequence", "https://equineprofessionals.com.au/email-preferences/sequence?t=test")],
+  },
+  {
+    key: "email.enquiry_followup",
+    name: "Did you book?",
+    class: "factual",
+    to: "Someone who sent an enquiry by email",
+    when: "Once, a set number of days after the enquiry (Admin → Reviews). Not if they've already answered or reviewed.",
+    vars: [
+      v("rider_first", "Their first name", "Sam"),
+      v("name", "The professional", "Jane Smith"),
+      v("enquiry_date", "When they enquired", "3 October"),
+      v("answer_url", "The page with the yes and no buttons", "https://equineprofessionals.com.au/enquiry/test"),
+    ],
+  },
+  {
+    key: "email.review_confirm",
+    name: "Confirm a review",
+    class: "factual",
+    to: "Someone who wrote a review from a professional's link",
+    when: "Straight after they send it. The review isn't posted until they press the link.",
+    vars: [
+      v("name", "The professional", "Jane Smith"),
+      v("confirm_url", "The confirm page", "https://equineprofessionals.com.au/review/confirm?t=test"),
+    ],
+  },
+  {
+    key: "email.review_published",
+    name: "New review",
+    class: "factual",
+    to: "The professional",
+    when: "A review of them goes up.",
+    vars: [
+      v("first_name", "Their first name", "Jane"),
+      v("author", "Who wrote it, as shown", "Sam R."),
+      v("rating", "Stars, 1 to 5", "5"),
+      v("review", "What they wrote", "Patient and clear. My mare loads first time now."),
+      v("reviews_url", "Their reviews page", "https://equineprofessionals.com.au/dashboard/reviews"),
+      v("policy_url", "The review policy", "https://equineprofessionals.com.au/review-policy"),
+    ],
+  },
+  {
+    key: "email.launch",
+    name: "We've launched",
+    class: "commercial",
+    to: "Everyone who asked to hear when the site opened",
+    when: "Once, when you press the button on the Audience screen. Each address gets it once, however often the button is pressed.",
+    vars: [
+      v("coaches_url", "The coaches section", "https://equineprofessionals.com.au/coaches"),
+      v("horse_care_url", "The horse care section", "https://equineprofessionals.com.au/horse-care"),
+      v("search_url", "The search page, where they can set up an alert", "https://equineprofessionals.com.au/search"),
+    ],
+  },
+  {
+    key: "email.renewal_reminder",
+    name: "Yearly renewal reminder",
+    class: "factual",
+    to: "Professionals on a yearly plan",
+    when: "30 days before a yearly plan renews.",
+    vars: [
+      v("first_name", "Their first name", "Jane"),
+      v("plan", "Their plan", "Spotlight"),
+      v("renewal_date", "When it renews", "1 May 2027"),
+      v("price", "What it costs", "$249"),
+      v("billing_url", "Their billing page", "https://equineprofessionals.com.au/dashboard/billing"),
+    ],
+  }
+);
 
 export const emailBySlug = (slug: string) => EMAILS.find((e) => e.key === `email.${slug}`);
 export const pageBySlug = (slug: string) => PAGES.find((p) => p.slug === slug);

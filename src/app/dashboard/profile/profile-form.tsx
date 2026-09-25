@@ -156,7 +156,7 @@ function ContactRow({ label: text, value, name, showName, defaultShow, configure
  * skills, setup, qualifications, years and testimonials that sit further
  * down the same scroll.
  */
-export function ProfileForm({ configured, coach, disciplines, skills, attributes, selectedTermIds, photos, testimonials, coachSlug, videoAllowed = false, nouns = { audience: "rider", years: "years coaching" } }: { configured: boolean; coach: Coach; disciplines: Term[]; skills: Term[]; attributes: Term[]; selectedTermIds: string[]; photos: Photo[]; testimonials: Testimonial[]; coachSlug?: string | null; videoAllowed?: boolean; nouns?: { audience: string; years: string } }) {
+export function ProfileForm({ error, registration = null, configured, coach, disciplines, skills, attributes, selectedTermIds, photos, testimonials, coachSlug, videoAllowed = false, nouns = { audience: "rider", years: "years coaching" } }: { error?: string; registration?: { number: string; checkedAt: string | null } | null; configured: boolean; coach: Coach; disciplines: Term[]; skills: Term[]; attributes: Term[]; selectedTermIds: string[]; photos: Photo[]; testimonials: Testimonial[]; coachSlug?: string | null; videoAllowed?: boolean; nouns?: { audience: string; years: string } }) {
   const [suburb, setSuburb] = useState(coach?.suburb ?? "");
   const [state, setState] = useState(coach?.state ?? "");
   const [postcode, setPostcode] = useState(coach?.postcode ?? "");
@@ -181,6 +181,11 @@ export function ProfileForm({ configured, coach, disciplines, skills, attributes
         </div>
 
         <div className="mt-[22px] flex flex-col gap-3.5 wide:mt-0 wide:gap-4">
+          {error && (
+            <p role="alert" className="mb-4 rounded-[12px] border border-danger/30 bg-danger/10 px-4 py-3 text-[14px] leading-[1.5] text-danger" data-profile-error>
+              {error}
+            </p>
+          )}
           <form action={saveProfile} className="flex flex-col gap-3.5 wide:gap-4" id="profile-form">
             <label className="block" id="headline">
               <span className={label}>Headline</span>
@@ -243,6 +248,18 @@ export function ProfileForm({ configured, coach, disciplines, skills, attributes
               <span className={label}>Qualifications <span className="normal-case tracking-normal text-subtle">· one per line, shown as supplied by you</span></span>
               <textarea name="qualifications" defaultValue={coach?.qualifications?.join("\n")} disabled={!configured} placeholder={"EA Level 1 Coach (Dressage)\nWorking with Children Check · First aid current"} className={`${input} h-[96px] resize-none leading-[1.45]`} />
             </label>
+
+            {registration && (
+              <label className="block" id="registration">
+                <span className={label}>
+                  Registration number{" "}
+                  <span className="normal-case tracking-normal text-subtle">
+                    · {registration.checkedAt ? `checked against the public register on ${new Date(registration.checkedAt).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}` : "we check it against the public register before your profile can use a protected title"}
+                  </span>
+                </span>
+                <input name="registration_number" defaultValue={registration.number} disabled={!configured} placeholder="e.g. PHY0001234567" className={input} />
+              </label>
+            )}
 
             <div className="rounded-[14px] border border-border bg-surface px-4 py-3.5 wide:px-5 wide:py-4" id="contact">
               <span className={label}>Contact {nouns.audience}s see</span>

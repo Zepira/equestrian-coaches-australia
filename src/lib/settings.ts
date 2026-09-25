@@ -67,6 +67,30 @@ export const DEFAULTS = {
    * then both pages say they're a draft and stay out of search results.
    */
   legal_approved: "false",
+  /** The partnership's ABN, for the footer of every commercial email (Spam Act). Empty until registered. */
+  business_abn: "",
+  /** The gentle slide-in offering area alerts (The Marketing Engine M3): off until someone turns it on. */
+  slide_in_enabled: "false",
+  /** Seconds on a page before it slides in. */
+  slide_in_delay_seconds: "25",
+  /** Days before the same visitor sees it again. */
+  slide_in_every_days: "14",
+  /** How complete (out of 100) a new profile must be for the "New profile" emails to stop (M7). */
+  onboarding_complete_pct: "90",
+  /** Days after an enquiry before we ask the rider "Did you end up booking?" (M5). */
+  enquiry_followup_days: "21",
+  /**
+   * "true": every review waits for a person before it shows. "false": a review
+   * that passes the duplicate checks goes up once the reviewer confirms their
+   * email, and only flagged ones wait (M5).
+   */
+  reviews_hold_all: "true",
+  /** Free months a referrer earns when a colleague they referred first pays (M6). */
+  referral_reward_months: "1",
+  /** The most referral rewards one professional can earn in a year. */
+  referral_cap_per_year: "12",
+  /** The Stripe coupon that gives a referred colleague their first month free. Empty until Stripe exists. */
+  referral_coupon_id: "",
   /** What a founding member pays once their free period ends, kept for as long as they stay (§09). */
   founding_price: "$9.99",
   /**
@@ -163,6 +187,12 @@ async function intSetting(key: SettingKey, min: number, max: number): Promise<nu
 }
 
 export const SETTING_RANGES = {
+  enquiry_followup_days: [7, 90],
+  onboarding_complete_pct: [50, 100],
+  referral_reward_months: [1, 3],
+  referral_cap_per_year: [0, 24],
+  slide_in_delay_seconds: [5, 300],
+  slide_in_every_days: [1, 180],
   area_page_min_providers: [1, 20],
   featured_min_providers: [2, 50],
   featured_slots_per_area: [0, 10],
@@ -177,6 +207,29 @@ export const getBenchmarkMinProviders = () => intSetting("benchmark_min_provider
 export const getEventReachKm = () => intSetting("event_reach_km", ...SETTING_RANGES.event_reach_km);
 
 // ── Review ─────────────────────────────────────────────────────────────────
+
+export const getSlideInDelaySeconds = () => intSetting("slide_in_delay_seconds", ...SETTING_RANGES.slide_in_delay_seconds);
+export const getSlideInEveryDays = () => intSetting("slide_in_every_days", ...SETTING_RANGES.slide_in_every_days);
+export async function isSlideInEnabled(): Promise<boolean> {
+  return (await getSetting("slide_in_enabled")) === "true";
+}
+/** The ABN, digits in groups ("12 345 678 901"), or "" before it's registered. */
+export async function getBusinessAbn(): Promise<string> {
+  const d = (await getSetting("business_abn")).replace(/\D/g, "");
+  return d.length === 11 ? `${d.slice(0, 2)} ${d.slice(2, 5)} ${d.slice(5, 8)} ${d.slice(8)}` : "";
+}
+
+export const getReferralRewardMonths = () => intSetting("referral_reward_months", ...SETTING_RANGES.referral_reward_months);
+export const getReferralCapPerYear = () => intSetting("referral_cap_per_year", ...SETTING_RANGES.referral_cap_per_year);
+export async function getReferralCouponId(): Promise<string> {
+  return (await getSetting("referral_coupon_id")).trim();
+}
+
+export const getOnboardingCompletePct = () => intSetting("onboarding_complete_pct", ...SETTING_RANGES.onboarding_complete_pct);
+export const getEnquiryFollowupDays = () => intSetting("enquiry_followup_days", ...SETTING_RANGES.enquiry_followup_days);
+export async function holdAllReviews(): Promise<boolean> {
+  return (await getSetting("reviews_hold_all")) !== "false";
+}
 
 export async function isLegalApproved(): Promise<boolean> {
   return (await getSetting("legal_approved")) === "true";

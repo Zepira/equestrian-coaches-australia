@@ -29,7 +29,7 @@ export default async function AdminPagesPage() {
         </p>
       </div>
       <ul className="grid gap-2 sm:grid-cols-2">
-        {PAGES.map((p) => (
+        {PAGES.filter((p) => !p.onSite).map((p) => (
           <li key={p.slug}>
             <Link href={`/admin/pages/${p.slug}`} className="flex h-full flex-col rounded-[14px] border border-border bg-surface p-4 hover:border-accent">
               <span className="font-display text-[20px] leading-none text-ink">{p.name}</span>

@@ -57,7 +57,7 @@ try {
     ($1,'Megan Hartley','megan@example.com','regular','Adult returning rider, 12yo TB gelding who rushes in canter.','new', now() - interval '2 days'),
     ($1,'Cara Nguyen','0400 222 333','regular','My daughter is 11 and wants to move up from Preliminary.','new', now() - interval '5 days'),
     ($1,'Josh Whitfield','josh@example.com','one_off','Test-riding session before the Kyneton comp?','replied', now() - interval '8 days')`, [coachId]);
-  const [{ id: clinicId }] = await q(`insert into clinics (coach_id, title, discipline_id, location_text, start_date, capacity, places_left) values ($1,'Test Riding Day — Preliminary to Elementary',$2,'Strathfieldsaye VIC', current_date + 30, 12, 6) returning id`, [coachId, dressageId]);
+  await q(`insert into clinics (coach_id, title, discipline_id, location_text, start_date, capacity, places_left) values ($1,'Test Riding Day — Preliminary to Elementary',$2,'Strathfieldsaye VIC', current_date + 30, 12, 6)`, [coachId, dressageId]);
 
   browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });

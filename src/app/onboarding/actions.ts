@@ -1,5 +1,6 @@
 "use server";
 
+import { protectedTitleProblem } from "@/lib/protected-titles";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireProvider } from "@/lib/provider-session";
@@ -108,14 +109,20 @@ export async function saveYou(fd: FormData): Promise<SaveResult> {
   const { supabase, providerId, userId, provider } = await requireProvider();
   const name = text(fd, "name", 80);
   if (!name) return { ok: false, message: "Your name can't be empty." };
+  const headline = text(fd, "headline", 120);
+  const bio = text(fd, "bio", 3000);
+  const qualifications = text(fd, "qualifications", 2000).split("\n").map((q) => q.trim()).filter(Boolean);
+  // A protected title needs a checked registration (src/lib/protected-titles.ts).
+  const titleProblem = await protectedTitleProblem(supabase, providerId, [headline, bio, ...qualifications].join("\n"));
+  if (titleProblem) return { ok: false, message: titleProblem.replace(" below", " on your dashboard's profile page") };
   if (name !== provider.name) await logChange(supabase, providerId, userId, "name", provider.name, name);
   const { error } = await supabase
     .from("providers")
     .update({
       name,
-      headline: text(fd, "headline", 120),
-      bio: text(fd, "bio", 3000),
-      qualifications: text(fd, "qualifications", 2000).split("\n").map((q) => q.trim()).filter(Boolean),
+      headline,
+      bio,
+      qualifications,
       years_experience: wholeNumber(fd, "years_experience", 80),
       updated_at: new Date().toISOString(),
     })

@@ -9,6 +9,9 @@ import type { EnquiryStatus } from "./actions";
 import type { TakingStudents } from "./actions";
 import { startCheckout } from "./billing/actions";
 import { hasVideo, isTier } from "@/lib/tiers";
+import { optInToNumbers } from "./actions";
+import { consentStatus, currentWording } from "@/lib/audience";
+import { createServiceSupabase } from "@/lib/supabase/service";
 
 export const metadata = { title: "Dashboard" };
 
@@ -36,6 +39,14 @@ export default async function DashboardPage({
   const ctx = await loadDashboard();
   if (!ctx) redirect("/login?next=/dashboard");
   const { supabase, providerId, firstName, provider: coach, professions, tier } = ctx;
+  // Offer the monthly numbers email to anyone who hasn't agreed to it (M1).
+  const numbersOptIn = await (async () => {
+    const service = createServiceSupabase();
+    if (!service) return null;
+    const { data: contact } = await service.from("contacts").select("id").eq("profile_id", ctx.userId).maybeSingle();
+    if (contact && (await consentStatus(service, contact.id as string)).provider_news) return null;
+    return currentWording(service, "provider_news");
+  })();
   const profession = professions[0];
   const audience = `${profession.audienceNoun}s`;
   const clients = profession.door === "coaches" ? "students" : "clients";
@@ -240,6 +251,14 @@ export default async function DashboardPage({
           Compared with {benchmark.providers} {profession.plural} on the site, the middle one had {benchmark.views} profile view{benchmark.views === 1 ? "" : "s"} and{" "}
           {benchmark.enquiries} enquir{benchmark.enquiries === 1 ? "y" : "ies"} last month.
         </p>
+      )}
+
+      {numbersOptIn && (
+        <form action={optInToNumbers} className="mt-4 flex flex-col gap-2 rounded-[14px] border border-border bg-surface p-4 wide:flex-row wide:items-center wide:justify-between" data-numbers-optin>
+          <input type="hidden" name="wording" value={numbersOptIn.id} />
+          <p className="text-[14px] leading-[1.5] text-fg">{numbersOptIn.body}</p>
+          <button className="shrink-0 rounded-[var(--radius-pill)] bg-ink px-4 py-2 text-[14px] font-medium text-ink-fg">Yes, email me</button>
+        </form>
       )}
 
       {/* One set of cards; CSS grid `order` gives phones the canvas's stack

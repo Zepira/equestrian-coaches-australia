@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     title: `${profession.name} in ${area.name}, ${area.state}`,
     description: `${profession.name} covering ${area.name}, ${area.state}. Free for horse owners.`,
     alternates: { canonical: absoluteUrl(areaPagePath({ professionSlug: profession.slug, areaSlug })) },
+    openGraph: { images: [{ url: `/api/og/area?p=${profession.slug}&a=${areaSlug}`, width: 1200, height: 630 }] },
   };
 }
 

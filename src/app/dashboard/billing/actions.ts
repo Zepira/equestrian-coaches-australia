@@ -9,6 +9,7 @@ import { SITE_URL } from "@/lib/site-url";
 import { syncVisibility } from "@/lib/provider-lifecycle";
 import { startFoundingCard } from "@/lib/founding";
 import { getStripePrices } from "@/lib/settings";
+import { checkoutDiscounts, recordPromoUse, rewardOnFirstPayment } from "@/lib/referrals";
 
 /**
  * Billing writes go to `subscriptions` (one per provider, covering every
@@ -70,6 +71,9 @@ async function checkout(tier: Tier, from: "dashboard" | "onboarding") {
       stripe_subscription_id: `mock_sub_${Date.now()}`,
     });
     await syncVisibility(service, providerId, true);
+    // In mock payments the plan starting stands in for the first payment (M6).
+    await recordPromoUse(service, providerId);
+    await rewardOnFirstPayment(service, providerId, null);
     redirect(`${done}&mock=1`);
   }
 
@@ -77,6 +81,7 @@ async function checkout(tier: Tier, from: "dashboard" | "onboarding") {
   if (!stripe) throw new Error("Stripe isn't connected yet.");
 
   const priceId = (await getStripePrices())[tier].monthly;
+  const discounts = await checkoutDiscounts(service, providerId);
   if (!priceId) throw new Error(`No Stripe price set for the ${tier} plan. Add it under Admin, Plans and prices.`);
 
   const { data: sub } = await service.from("subscriptions").select("stripe_customer_id").eq("provider_id", providerId).maybeSingle();
@@ -92,6 +97,8 @@ async function checkout(tier: Tier, from: "dashboard" | "onboarding") {
     mode: "subscription",
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
+    // A referral's free month or a partner's promo code; otherwise they can type one.
+    ...(discounts ? { discounts } : { allow_promotion_codes: true }),
     success_url: `${origin}${done}`,
     cancel_url: `${origin}${back}`,
     metadata: { provider_id: providerId, tier },

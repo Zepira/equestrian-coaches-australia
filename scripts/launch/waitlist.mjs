@@ -2,7 +2,7 @@
 // src/components/waitlist-form.tsx).
 //
 // The browser half needs only a running server. The database half runs as well
-// when .env has Supabase credentials and 0010_waitlist.sql has been applied:
+// when .env has Supabase credentials and 0014_waitlist.sql has been applied:
 // it signs up through the real form, reads the row straight back, and deletes
 // it after. Without credentials it says so and the browser half still runs,
 // because a form that posts and answers is worth proving on its own.

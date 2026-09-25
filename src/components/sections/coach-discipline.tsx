@@ -18,6 +18,9 @@ import { redirectMissingTerm } from "@/lib/sections";
 import type { Profession } from "@/lib/professions";
 import { logImpressions } from "@/lib/coach-events";
 import { getSamples } from "@/lib/samples";
+import { SubscribeCard } from "@/components/subscribe-card";
+import { ReferLink } from "@/components/refer-link";
+import { HowWeListLink } from "@/components/how-we-list-link";
 
 /** The seed disciplines, for the term route's generateStaticParams. */
 export const SEED_DISCIPLINE_SLUGS = staticDisciplines.map((d) => d.slug);
@@ -158,18 +161,28 @@ export async function CoachDiscipline({ profession, slug }: { profession: Profes
           )}
         </div>
         {coaches.length > 0 ? (
-          <CoachListMap coaches={coaches} />
+          <>
+            <CoachListMap coaches={coaches} />
+            <HowWeListLink className="mt-4 inline-block" />
+          </>
         ) : (
           <div className="mt-6 rounded-[16px] bg-shade px-6 py-8 wide:px-9 wide:py-10">
             <p className="max-w-[54ch] text-[16px] leading-[1.55] text-muted">
-              Nobody teaching {lower} has listed yet — that means we haven&rsquo;t reached them, not that they don&rsquo;t exist. If you know one,{" "}
-              <a href={`mailto:hello@equineprofessionals.au?subject=${encodeURIComponent(`A ${lower} coach you should know about`)}`} className="border-b border-current text-accent hover:text-accent-hover">
-                tell us
-              </a>
-              .
+              Nobody teaching {lower} has listed yet. That means we haven&rsquo;t reached them, not that they don&rsquo;t exist.
             </p>
           </div>
         )}
+        <div className="mt-10 grid gap-4 wide:grid-cols-2">
+          <SubscribeCard
+            heading={`Hear when a new ${lower} coach starts near you`}
+            what={`a new ${lower} coach starts`}
+            professionId={profession.id}
+            door="coaches"
+            termId={discipline.id}
+            source={coaches.length === 0 ? "empty-search" : "discipline-page"}
+          />
+          {coaches.length === 0 && <ReferLink singular={`${lower} coach`} slug="coaches" />}
+        </div>
       </Reveal>
 
       {/* ── Other disciplines ────────────────────────────────────────── */}

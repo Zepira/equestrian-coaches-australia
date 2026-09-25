@@ -55,6 +55,8 @@ export type ProviderSchemaInput = {
   /** From the primary profession's row (profession_details.job_title). */
   jobTitle: string;
   businessName?: string | null;
+  /** Published rider reviews (M5). Testimonials never go in here. */
+  reviews?: { count: number; average: number | null; items: { author: string; rating: number; body: string; date: string }[] } | null;
 };
 
 /**
@@ -71,18 +73,37 @@ export function providerSchemas(p: ProviderSchemaInput) {
   const address = { "@type": "PostalAddress", addressLocality: p.suburb, addressRegion: p.state, addressCountry: "AU" };
   const geo = p.lat != null && p.long != null ? { geo: { "@type": "GeoCoordinates", latitude: p.lat, longitude: p.long } } : {};
   const knows = [...p.disciplineNames, ...(p.skillNames ?? [])];
-  const business = p.businessName?.trim()
+  // Riders' reviews of them, as a third party (Google's review snippet rules):
+  // a rating and the reviews themselves. They belong on a business, since
+  // schema.org gives a Person no rating, so a reviewed sole trader gets a
+  // ProfessionalService under their own name.
+  const rated = p.reviews && p.reviews.count > 0 && p.reviews.average != null;
+  const rating = rated
     ? {
-        "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        "@id": `${url}#business`,
-        name: p.businessName.trim(),
-        url,
-        address,
-        ...geo,
-        ...(p.photoUrl ? { image: p.photoUrl } : {}),
+        aggregateRating: { "@type": "AggregateRating", ratingValue: p.reviews!.average, reviewCount: p.reviews!.count, bestRating: 5, worstRating: 1 },
+        review: p.reviews!.items.slice(0, 10).map((r) => ({
+          "@type": "Review",
+          author: { "@type": "Person", name: r.author },
+          datePublished: r.date.slice(0, 10),
+          reviewBody: r.body,
+          reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+        })),
       }
-    : null;
+    : {};
+  const business =
+    p.businessName?.trim() || rated
+      ? {
+          "@context": "https://schema.org",
+          "@type": p.businessName?.trim() ? "LocalBusiness" : "ProfessionalService",
+          "@id": `${url}#business`,
+          name: p.businessName?.trim() || p.name,
+          url,
+          address,
+          ...geo,
+          ...(p.photoUrl ? { image: p.photoUrl } : {}),
+          ...rating,
+        }
+      : null;
   const person = {
     "@context": "https://schema.org",
     "@type": "Person",

@@ -17,6 +17,8 @@ import { FeaturedBlock } from "@/components/featured-block";
 import { logImpressions } from "@/lib/coach-events";
 import { getAreaIntro } from "@/lib/cms/read";
 import { getSamples } from "@/lib/samples";
+import { SubscribeCard } from "@/components/subscribe-card";
+import { HowWeListLink } from "@/components/how-we-list-link";
 
 /**
  * /coaches/in/[area] and /coaches/[discipline]/in/[area]. The first catches
@@ -34,11 +36,13 @@ export async function coachAreaMetadata(areaSlug: string, disciplineSlug?: strin
   const area = await getArea(areaSlug);
   if (!supabase || !area) return { title: "Riding instructors" };
   const canonical = absoluteUrl(areaPagePath({ professionSlug: "coaches", termSlug: disciplineSlug, areaSlug }));
+  const openGraph = { images: [{ url: `/api/og/area?p=coaches&a=${areaSlug}`, width: 1200, height: 630 }] };
   if (!disciplineSlug) {
     return {
       title: `Riding instructors in ${area.name}, ${area.state}`,
       description: `Find riding instructors and coaches in ${area.name}, ${area.state}: search by discipline, from dressage to Western to liberty.`,
       alternates: { canonical },
+      openGraph,
     };
   }
   const discipline = (await getDisciplines(supabase)).find((d) => d.slug === disciplineSlug);
@@ -47,6 +51,7 @@ export async function coachAreaMetadata(areaSlug: string, disciplineSlug?: strin
     title: `${discipline.name} coaches in ${area.name}, ${area.state}`,
     description: `Find ${discipline.name.toLowerCase()} coaches in ${area.name}, ${area.state}, Australia.`,
     alternates: { canonical },
+    openGraph,
   };
 }
 
@@ -125,7 +130,7 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
 
       <p className="mt-6 text-sm text-muted">
         {coaches.length} {noun}
-        {coaches.length === 1 ? "" : "es"} in {area.name}
+        {coaches.length === 1 ? "" : "es"} in {area.name} · <HowWeListLink />
       </p>
 
       <FeaturedBlock providers={featured} searchTown={area.name} className="mt-4" />
@@ -134,6 +139,18 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
         {coaches.map((coach) => (
           <CoachResultCard key={coach.slug} coach={coach} />
         ))}
+      </div>
+
+      <div className="mt-10 max-w-[720px]">
+        <SubscribeCard
+          heading={`Hear when a new ${discipline ? `${discipline.name.toLowerCase()} ` : ""}coach starts near ${area.name}`}
+          what={`a new ${discipline ? `${discipline.name.toLowerCase()} ` : ""}coach starts`}
+          professionId={profession.id}
+          door="coaches"
+          termId={discipline?.id ?? null}
+          place={`${area.name} ${area.state}`}
+          source="area-page"
+        />
       </div>
     </div>
   );

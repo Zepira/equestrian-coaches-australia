@@ -18,6 +18,7 @@ function urlPattern(url: string): string {
   if (!first) return "/";
   if (first === "profile" && second) return "/profile/[slug]";
   if (first === "events" && second) return "/events/[id]";
+  if (first === "guides" && second) return "/guides/[slug]";
   if (isReservedSlug(first) || !second) return path;
   if (second === "in") return `/${first}/in/[area]`;
   if (third === "in" && fourth) return `/${first}/[term]/in/[area]`;

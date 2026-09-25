@@ -5,7 +5,7 @@ import { isTier } from "@/lib/tiers";
 import { whoNames } from "@/lib/admin";
 import { profilePath } from "@/lib/page-paths";
 import { HistoryList } from "../history-list";
-import { setProviderHidden } from "./actions";
+import { setProviderHidden, setRegistrationChecked } from "./actions";
 
 export const metadata = { title: "Providers" };
 
@@ -20,6 +20,9 @@ type Row = {
   acquisition_source: string | null;
   hidden_by_admin: boolean;
   created_at: string;
+  registration_number: string;
+  registration_checked_at: string | null;
+  specialist_checked: boolean;
   provider_terms: { sort_order: number; terms: { slug: string; name: string; kind: string } | null }[];
   subscriptions: { tier: string | null; status: string } | { tier: string | null; status: string }[] | null;
 };
@@ -47,7 +50,7 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
 
   let query = supabase
     .from("providers")
-    .select("id, slug, name, suburb, state, status, cohort, acquisition_source, hidden_by_admin, created_at, provider_terms(sort_order, terms(slug, name, kind)), subscriptions(tier, status)")
+    .select("id, slug, name, suburb, state, status, cohort, acquisition_source, hidden_by_admin, created_at, registration_number, registration_checked_at, specialist_checked, provider_terms(sort_order, terms(slug, name, kind)), subscriptions(tier, status)")
     .order("created_at", { ascending: false })
     .limit(300);
   if (q.trim()) query = query.or(`name.ilike.%${q.trim().replace(/[%,()]/g, "")}%,slug.ilike.%${q.trim().replace(/[%,()]/g, "")}%`);
@@ -130,6 +133,15 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
                   <span>From {r.acquisition_source || "the site"}</span>
                   <span>Joined {day(r.created_at)}</span>
                 </div>
+                {r.registration_number && (
+                  <form action={setRegistrationChecked.bind(null, r.id)} className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-fg" data-registration>
+                    <span>Registration {r.registration_number}</span>
+                    <label className="flex items-center gap-1.5"><input type="checkbox" name="checked" defaultChecked={Boolean(r.registration_checked_at)} /> Checked on the public register</label>
+                    <label className="flex items-center gap-1.5"><input type="checkbox" name="specialist" defaultChecked={r.specialist_checked} /> Specialist registration</label>
+                    <button className="font-medium text-accent">Save</button>
+                    {r.registration_checked_at && <span className="text-subtle">checked {day(r.registration_checked_at)}</span>}
+                  </form>
+                )}
               </div>
               <div className="flex shrink-0 items-center gap-3 text-[14px]">
                 <Link href={`${profilePath(r.slug)}${r.status === "published" ? "" : "?preview=1"}`} target="_blank" className="text-subtle hover:text-fg">View</Link>

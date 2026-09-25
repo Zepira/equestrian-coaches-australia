@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { PUBLIC_HOST, isGatedHost, normaliseHost, showsComingSoon } from "@/lib/launch";
+import { FIRST_TOUCH, setTouchCookies, touchFromParams } from "@/lib/touch";
 
 /**
  * Three jobs, in this order, before the Supabase session refresh that used to
@@ -74,6 +75,18 @@ function hasValidCredentials(request: NextRequest, user: string, password: strin
   return decoded.slice(0, split) === user && decoded.slice(split + 1) === password;
 }
 
+/**
+ * The Supabase session refresh, plus where the visitor came from: any address
+ * with utm_source or ref records it (The Marketing Engine M2); /go/ links do
+ * the same in their own route.
+ */
+async function serveSite(request: NextRequest): Promise<NextResponse> {
+  const response = await updateSession(request);
+  const touch = request.nextUrl.pathname.startsWith("/go/") ? null : touchFromParams(request.nextUrl.searchParams);
+  if (touch) setTouchCookies(response, touch, request.cookies.has(FIRST_TOUCH));
+  return response;
+}
+
 export async function proxy(request: NextRequest) {
   const host = normaliseHost(request.headers.get("host") ?? "");
   const path = request.nextUrl.pathname;
@@ -110,7 +123,7 @@ export async function proxy(request: NextRequest) {
       }
       if (!hasValidCredentials(request, user, password)) return unauthorised();
     }
-    return markNoindex(await updateSession(request));
+    return markNoindex(await serveSite(request));
   }
 
   // 3. The public host before launch: the coming soon page, and nothing else.
@@ -130,7 +143,7 @@ export async function proxy(request: NextRequest) {
     return markNoindex(NextResponse.rewrite(comingSoon));
   }
 
-  return updateSession(request);
+  return serveSite(request);
 }
 
 export const config = {

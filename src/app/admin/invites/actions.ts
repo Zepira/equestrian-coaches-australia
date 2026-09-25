@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isEmail } from "@/lib/settings";
+import { createServiceSupabase } from "@/lib/supabase/service";
+import { currentWording, ensureContact, recordConsent } from "@/lib/audience";
 
 /**
  * Invites (The Site as a CMS §06.6). Kim enters who and what they do,
@@ -24,6 +26,16 @@ export async function createInvite(formData: FormData) {
   const get = (k: string, max = 120) => String(formData.get(k) ?? "").trim().slice(0, max);
   const email = get("email").toLowerCase();
   if (!isEmail(email)) redirect(`/admin/invites?error=${encodeURIComponent("That email address doesn't look right.")}`);
+  // An invite goes to a published business address, with a record of where
+  // it was found (Spam Act, inferred consent), and never to someone who asked
+  // us to stop (The Marketing Engine §05.5).
+  const foundAt = get("address_source_url", 300);
+  if (!/^https?:\/\//.test(foundAt)) redirect(`/admin/invites?error=${encodeURIComponent("Paste the page where their business email is published (their website or business page).")}`);
+  const service = createServiceSupabase();
+  if (service) {
+    const { data: blocked } = await service.from("suppressions").select("reason").eq("email", email).limit(1);
+    if (blocked?.length) redirect(`/admin/invites?error=${encodeURIComponent("That address is on our do-not-email list, so we can't invite it.")}`);
+  }
   const prefill = Object.fromEntries(
     (["headline", "suburb", "state", "business_name"] as const).map((k) => [k, get(k)]).filter(([, v]) => v)
   );
@@ -34,7 +46,14 @@ export async function createInvite(formData: FormData) {
     prefill,
     source: get("source", 40) || "invite",
     created_by: user?.id ?? null,
+    address_source_url: foundAt,
+    address_found_on: new Date().toISOString().slice(0, 10),
   });
+  if (!error && service) {
+    const contact = await ensureContact(service, email);
+    const wording = await currentWording(service, "invite");
+    await recordConsent(service, { contactId: contact.id, purpose: "invite", action: "grant", type: "published_address", wordingId: wording?.id, source: `invite: ${foundAt}`.slice(0, 300), createdBy: user?.id ?? null });
+  }
   if (error) redirect(`/admin/invites?error=${encodeURIComponent(error.message)}`);
   revalidatePath("/admin/invites");
   redirect("/admin/invites?created=1");

@@ -1,6 +1,9 @@
 import { getProfessions } from "@/lib/cms/read";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { SignupForm, type SignupInvite } from "./signup-form";
+import { cookies } from "next/headers";
+import { currentWording } from "@/lib/audience";
+import { FIRST_TOUCH, LAST_TOUCH, parseTouch } from "@/lib/touch";
 
 export const metadata = { title: "Sign up", robots: { index: false, follow: true } };
 
@@ -12,6 +15,9 @@ type Params = {
   invite?: string;
   ref?: string;
   utm_source?: string;
+  /** A colleague's referral code, and a promo code a link carried (M6). */
+  referral?: string;
+  promo?: string;
   utm_medium?: string;
   utm_campaign?: string;
 };
@@ -45,8 +51,18 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
     .map(([k, v]) => `${k}=${String(v).slice(0, 80)}`)
     .join(";");
 
+  // Where they came from (the site's own cookies, The Marketing Engine M2)
+  // and the words of the news box, whose id goes with the sign-up if ticked.
+  const jar = await cookies();
+  const touch = { first: jar.get(FIRST_TOUCH)?.value ?? "", last: jar.get(LAST_TOUCH)?.value ?? "" };
+  const service = createServiceSupabase();
+  const news = professional && service ? await currentWording(service, "provider_news") : null;
+
   return (
     <SignupForm
+      codes={{ referral: (sp.referral ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 24), promo: (sp.promo ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 24) }}
+      touch={{ first: JSON.stringify(parseTouch(touch.first) ?? null), last: JSON.stringify(parseTouch(touch.last) ?? null) }}
+      news={news ? { id: news.id, body: news.body } : null}
       professional={professional}
       professions={professions}
       defaultProfession={invite?.profession ?? (professions.some((p) => p.slug === sp.profession) ? sp.profession! : "coaches")}

@@ -79,5 +79,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  return [...staticRoutes, ...disciplineRoutes, ...coachRoutes, ...areaRoutes];
+  // Published guides (M9), with the real date they last changed.
+  const db = await createClient();
+  const { data: guides } = db ? await db.from("guides").select("slug, updated_at").eq("status", "published") : { data: [] };
+  const guideRoutes: MetadataRoute.Sitemap = [
+    ...((guides ?? []).length ? [{ url: `${siteUrl}/guides`, changeFrequency: "weekly" as const, priority: 0.6 }] : []),
+    ...(guides ?? []).map((g) => ({ url: `${siteUrl}/guides/${g.slug}`, lastModified: new Date(g.updated_at as string), changeFrequency: "monthly" as const, priority: 0.6 })),
+  ];
+
+  return [...staticRoutes, ...disciplineRoutes, ...coachRoutes, ...areaRoutes, ...guideRoutes];
 }

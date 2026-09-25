@@ -36,6 +36,19 @@ const GROUPS: { name: string; tabs: { href: string; label: string }[] }[] = [
     ],
   },
   {
+    name: "Grow",
+    tabs: [
+      { href: "/admin/audience", label: "Audience" },
+      { href: "/admin/links", label: "Links and sources" },
+      { href: "/admin/on-site", label: "On the site" },
+      { href: "/admin/codes", label: "Codes and referrals" },
+      { href: "/admin/reviews", label: "Reviews" },
+      { href: "/admin/sequences", label: "Sequences" },
+      { href: "/admin/campaigns", label: "Campaigns" },
+      { href: "/admin/guides", label: "Guides" },
+    ],
+  },
+  {
     name: "Charges",
     tabs: [
       { href: "/admin/plans", label: "Plans and prices" },

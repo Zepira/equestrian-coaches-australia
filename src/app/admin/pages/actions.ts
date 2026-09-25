@@ -3,7 +3,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { CMS_TAG, fillVariables, sameShape } from "@/lib/cms/read";
 import { CONTENT_DEFAULTS, type ContentKey } from "@/lib/cms/content-defaults";
-import { emailBySlug, pageBySlug } from "@/lib/cms/registry";
+import { emailBySlug, OPTIONAL_FIELDS, pageBySlug, PROMOTIONAL } from "@/lib/cms/registry";
 import { requireAdmin } from "@/lib/admin";
 import { sendEmail } from "@/lib/email";
 import type { SaveResult } from "../content-editor";
@@ -26,13 +26,24 @@ function clean(v: Json): Json {
   return v;
 }
 
+/** "2026-11-01" and a day that exists (not 2026-99-01 or 2026-02-30). */
+function realDate(s: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(`${s}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
 /** The first problem with a block, in words, or null. */
 function problem(key: ContentKey, value: Json): string | null {
   const def = CONTENT_DEFAULTS[key] as Record<string, unknown>;
   if (!sameShape(value, def)) return "Something in it isn't the right kind of thing. Reload and try again.";
   const v = value as Record<string, unknown>;
+  const optional = OPTIONAL_FIELDS[key] ?? [];
   for (const [field, x] of Object.entries(v)) {
-    if (typeof x === "string" && !x) return `"${field}" is empty.`;
+    if (typeof x === "string" && !x && !optional.includes(field)) return `"${field}" is empty.`;
+    if ((field === "starts" || field === "ends") && typeof x === "string" && x && !realDate(x)) return `Write "${field}" as a real date, like 2026-11-01.`;
+    if (field === "audience" && !["everyone", "logged_out", "riders", "coaches", "horse_care"].includes(String(x))) return "Audience is one of: everyone, logged_out, riders, coaches, horse_care.";
+    if (field === "linkHref" && typeof x === "string" && x && !/^(\/|https:\/\/)/.test(x)) return "The link starts with / or https://.";
     if (Array.isArray(x)) {
       if (x.some((i) => typeof i === "string" && !i)) return `"${field}" has an empty line. Remove it or fill it in.`;
       if (x.some((i) => i && typeof i === "object" && !(i as { title: string }).title)) return `An item in "${field}" has no heading.`;
@@ -116,6 +127,13 @@ function checkEmail(slug: string, fd: FormData): { key: ContentKey; value: Recor
   if (p) return { error: p };
   const unknown = unknownVariables(slug, value);
   if (unknown.length) return { error: `The site can't fill ${unknown.map((n) => `{${n}}`).join(", ")}. Use one of the variables listed.` };
+  // A factual email that promotes anything becomes commercial in law, and
+  // would go to people who never agreed to marketing.
+  if (email!.class === "factual") {
+    const words = Object.values(value).filter((x): x is string => typeof x === "string").join(" ").replace(/\{[a-z_]+\}/g, "");
+    const hit = words.match(PROMOTIONAL);
+    if (hit) return { error: `"${hit[0]}" is promotional, and this email is factual: it goes to everyone it concerns, consent or not. Take it out.` };
+  }
   return { key: email.key, value };
 }
 
@@ -145,7 +163,7 @@ export async function sendTestEmail(slug: string, _prev: SaveResult, fd: FormDat
   const { subject, ...rest } = checked.value as { subject: string } & Record<string, string>;
   const result = await sendEmail({
     to,
-    subject: `[Test] ${f(subject)}`,
+    subject: `[Test] ${subject ? f(subject) : emailBySlug(slug)?.name ?? slug}`,
     text: Object.values(rest).map(f).join("\n\n"),
   });
   if (result === "failed") return { ok: false, message: "It didn't send. Try again in a minute." };

@@ -1,4 +1,7 @@
 import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
+import { commercialFooter, oneClickUrl, type Purpose } from "@/lib/audience";
+import { getBusinessAbn } from "@/lib/settings";
+import { createServiceSupabase } from "@/lib/supabase/service";
 
 /**
  * Whether the scheduled bulk emails actually go out: the monthly rider
@@ -20,14 +23,7 @@ export const CRON_EMAILS_ENABLED = process.env.CRON_EMAILS_ENABLED === "true";
  * sign-up, review and billing flows are testable before a key exists.
  * Never throws: a failed email must not undo the save that triggered it.
  */
-export async function sendEmail({
-  to,
-  subject,
-  text,
-  replyTo,
-  unsubscribe,
-  campaign,
-}: {
+type SendArgs = {
   to: string | string[];
   subject: string;
   text: string;
@@ -36,20 +32,47 @@ export async function sendEmail({
   unsubscribe?: string;
   /** One of the scheduled bulk emails, so CRON_EMAILS_ENABLED decides whether it sends. */
   campaign?: boolean;
-}): Promise<"sent" | "logged" | "failed"> {
-  const recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);
-  if (recipients.length === 0) return "logged";
+  /**
+   * A commercial email (The Marketing Engine §05.2): the recipient's contact
+   * token and the purpose they agreed to. Adds who we are, how to reach us and
+   * how to stop, and a one-click header when the caller didn't give its own.
+   * The caller has already checked canSend().
+   */
+  commercial?: { token: string; purpose: Purpose };
+};
+
+export async function sendEmail(args: SendArgs): Promise<"sent" | "logged" | "failed"> {
+  return (await sendEmailWithId(args)).result;
+}
+
+/** The same, also returning Resend's id for the message, so its webhook events can be matched to the send. */
+export async function sendEmailWithId({ to, subject, text, replyTo, unsubscribe, campaign, commercial }: SendArgs): Promise<{ result: "sent" | "logged" | "failed"; id: string | null }> {
+  let recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);
+  if (recipients.length === 0) return { result: "logged", id: null };
   if (campaign && !CRON_EMAILS_ENABLED) {
     console.log(`email (not sent, CRON_EMAILS_ENABLED is off) to ${recipients.join(", ")}: ${subject}\n${text}`);
-    return "logged";
+    return { result: "logged", id: null };
+  }
+  // Nothing goes to an address that bounced (suppressions); a commercial
+  // email's consent check happened before this, in canSend().
+  const service = createServiceSupabase();
+  if (service && recipients.length) {
+    const { data: bounced } = await service.from("suppressions").select("email").eq("reason", "bounce").in("email", recipients.map((r) => r.toLowerCase()));
+    const skip = new Set((bounced ?? []).map((b) => b.email as string));
+    recipients = recipients.filter((r) => !skip.has(r.toLowerCase()));
+  }
+  if (recipients.length === 0) return { result: "logged", id: null };
+  if (commercial) {
+    text = `${text}\n\n--\n${commercialFooter(commercial.token, await getBusinessAbn())}`;
+    unsubscribe = unsubscribe ?? oneClickUrl(commercial.token, commercial.purpose);
   }
   const resend = getResend();
   if (!isResendConfigured || !resend) {
     console.log(`email (not sent, Resend not configured) to ${recipients.join(", ")}: ${subject}\n${text}`);
-    return "logged";
+    return { result: "logged", id: null };
   }
   try {
-    await resend.emails.send({
+    const { data } = await resend.emails.send({
       from: NOTIFICATIONS_FROM,
       to: recipients,
       subject,
@@ -57,9 +80,9 @@ export async function sendEmail({
       ...(replyTo ? { replyTo } : {}),
       ...(unsubscribe ? { headers: { "List-Unsubscribe": `<${unsubscribe}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } } : {}),
     });
-    return "sent";
+    return { result: "sent", id: data?.id ?? null };
   } catch (err) {
     console.error("sendEmail failed", subject, err);
-    return "failed";
+    return { result: "failed", id: null };
   }
 }

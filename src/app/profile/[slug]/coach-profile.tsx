@@ -30,6 +30,10 @@ import { getDisciplineBySlug } from "@/lib/disciplines";
 import { breadcrumbSchema, providerSchemas } from "@/lib/structured-data";
 import { logView } from "@/lib/coach-events";
 import { getSamples } from "@/lib/samples";
+import { ShareButton } from "@/components/share-button";
+import { ProfileReviews } from "@/components/profile-reviews";
+import { getReviewSummary } from "@/lib/reviews";
+import { createServiceSupabase } from "@/lib/supabase/service";
 
 type CoachView = {
   id: string | null;
@@ -55,6 +59,8 @@ type CoachView = {
   skillNames: string[];
   attributeNames: string[];
   qualifications: string[];
+  /** Set only once an admin has checked it against the public register. */
+  registration?: { number: string; checkedAt: string } | null;
   testimonials: { quote: string; author: string }[];
   clinics: { id: string | null; title: string; date: string; location: string; placesLeft: number | null }[];
   photoUrl: string | null;
@@ -83,7 +89,7 @@ async function getCoachFromDb(slug: string, preview = false): Promise<CoachView 
   const { data: coach } = await supabase
     .from("providers")
     .select(
-      "id, name, business_name, headline, bio, suburb, state, lat, long, qualifications, video_url, availability, travel_radius_km, years_experience, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form"
+      "id, name, business_name, headline, bio, suburb, state, lat, long, qualifications, video_url, availability, travel_radius_km, years_experience, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form, registration_number, registration_checked_at"
     )
     .eq("slug", slug)
     // A preview drops the published filter and leaves the rest to RLS, which
@@ -151,6 +157,7 @@ async function getCoachFromDb(slug: string, preview = false): Promise<CoachView 
         .map((t) => t.name)
     ),
     qualifications: coach.qualifications ?? [],
+    registration: coach.registration_checked_at && coach.registration_number ? { number: coach.registration_number, checkedAt: coach.registration_checked_at } : null,
     testimonials: (testimonialRows ?? []).map((t) => ({ quote: t.quote, author: t.author_name })),
     clinics: (clinicRows ?? []).map((c) => ({
       id: c.id,
@@ -206,6 +213,7 @@ function getCoachFromMock(slug: string): CoachView | null {
     skillNames: sortByName(coach.skillSlugs.map((s) => SKILL_NAMES[s] ?? s)),
     attributeNames: sortByName(coach.attributeSlugs.map((s) => ATTRIBUTE_NAMES[s] ?? s)),
     qualifications: coach.qualifications,
+    registration: null,
     testimonials: [],
     clinics: [],
     photoUrl: coach.photoUrl,
@@ -245,6 +253,7 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
     skillNames: [],
     attributeNames: [],
     qualifications: coach.qualifications,
+    registration: null,
     testimonials: coach.testimonials,
     clinics: coach.clinics.map((c) => ({ ...c, id: null, placesLeft: null })),
     photoUrl: null,
@@ -271,9 +280,30 @@ export async function coachMetadata(slug: string): Promise<Metadata> {
     title: coach.name,
     description: `${coach.headline} ${coach.suburb} ${coach.state}.`,
     alternates: { canonical: profilePath(coach.slug) },
+    // The share image (M4), for real profiles; samples keep the site's own.
+    ...(real ? { openGraph: { images: [{ url: `/api/og/profile/${coach.slug}`, width: 1200, height: 630 }] } } : {}),
     // Sample profiles are for looking around before launch, never for search engines.
     ...(real ? {} : { robots: { index: false, follow: false } }),
   };
+}
+
+/**
+ * Under the qualifications: they're shown as the professional supplied them
+ * (the terms say so), apart from a registration an admin has checked against
+ * the public register, which says when.
+ */
+function QualificationsNote({ coach }: { coach: CoachView }) {
+  return (
+    <div className="mt-3 flex flex-col gap-1.5 text-[13px] leading-[1.45] text-subtle" data-qualifications-note>
+      {coach.registration && (
+        <p className="text-fg">
+          Registration {coach.registration.number}, checked against the public register on{" "}
+          {new Date(coach.registration.checkedAt).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}.
+        </p>
+      )}
+      {coach.qualifications.length > 0 && <p>Qualifications are shown as {coach.name.split(" ")[0]} supplied them. We haven&rsquo;t checked them.</p>}
+    </div>
+  );
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -295,6 +325,9 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
   const profession = (await getProfession(coach.professionSlug ?? "coaches")) ?? FALLBACK_PROFESSIONS[0];
   const horseCare = profession.door === "horse_care";
   const mention = await getContent("mention");
+  // Riders' reviews (M5): real, published providers only, never in a preview.
+  const reviewService = coach.id && !preview ? createServiceSupabase() : null;
+  const reviewSummary = reviewService && coach.id ? await getReviewSummary(reviewService, coach.id) : null;
   // Coaching has students; everyone else has clients. Riders vs horse owners from the row.
   const who = horseCare ? "clients" : "students";
   const audiencePlural = `${profession.audienceNoun}s`;
@@ -350,6 +383,11 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
             skillNames: coach.skillNames,
             jobTitle: profession.jobTitle,
             businessName: coach.businessName,
+            reviews: reviewSummary && {
+              count: reviewSummary.count,
+              average: reviewSummary.average,
+              items: reviewSummary.reviews.map((r) => ({ author: r.author, rating: r.rating, body: r.body, date: r.date })),
+            },
           }),
           breadcrumbSchema([
             { name: "Home", url: "/" },
@@ -444,7 +482,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                     </div>
                   </section>
                 )}
-                {coach.qualifications.length > 0 && (
+                {(coach.qualifications.length > 0 || coach.registration) && (
                   <section className="hidden wide:block">
                     <h2 className="mt-8 text-[32px] leading-none text-ink">Qualifications</h2>
                     <ul className="mt-3 flex flex-col gap-2 text-[15px] text-muted">
@@ -455,6 +493,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                         </li>
                       ))}
                     </ul>
+                    <QualificationsNote coach={coach} />
                   </section>
                 )}
               </div>
@@ -474,7 +513,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                 )}
               </div>
             </div>
-            {coach.qualifications.length > 0 && (
+            {(coach.qualifications.length > 0 || coach.registration) && (
               <section className="wide:hidden">
                 <h2 className="mt-8 text-[30px] leading-none text-ink">Qualifications</h2>
                 <ul className="mt-3 flex flex-col gap-2 text-[15px] text-muted">
@@ -485,6 +524,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                     </li>
                   ))}
                 </ul>
+                <QualificationsNote coach={coach} />
               </section>
             )}
           </div>
@@ -497,6 +537,8 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                 <h2 className="mt-2.5 text-[34px] leading-none wide:text-[40px]">
                   What {audiencePlural} <em className="text-peach">say</em>
                 </h2>
+                {/* Chosen and added by the professional, not collected or checked by us (ACCC; The Marketing Engine §05.7). */}
+                <p className="mt-2 text-[13px] text-ink-fg/65" data-testimonial-label>Provided by the business</p>
               </div>
               <div className="hs mt-[22px] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[18px] pb-9 wide:mt-6 wide:grid wide:grid-cols-3 wide:gap-3.5 wide:overflow-visible wide:px-0 wide:pb-0">
                 {coach.testimonials.map((t) => (
@@ -509,6 +551,8 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
               </div>
             </section>
           )}
+
+          {reviewSummary && <ProfileReviews summary={reviewSummary} firstName={firstName} slug={coach.slug} audiencePlural={audiencePlural} />}
 
           {/* ── next clinic + get in touch (phones) — 120px bottom room for
                  the sticky enquiry bar ───────────────────────────────── */}
@@ -535,11 +579,19 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                 </Link>
               </section>
             )}
+            {coach.id && profession.eventsEnabled && (
+              <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[14.5px]" data-follow-link>
+                <Link href={`${profilePath(coach.slug)}/follow`} className="font-medium text-accent underline-offset-2 hover:underline">
+                  Get {firstName}&rsquo;s {horseCare ? "event" : "clinic"} dates by email
+                </Link>
+                <ShareButton path={profilePath(coach.slug)} title={`${coach.name} on Equine Professionals Australia`} />
+              </p>
+            )}
 
             <section className="wide:hidden">
               <h2 className="mt-9 text-[30px] leading-none text-ink">Get in touch</h2>
               <p className="mt-2 text-[15px] leading-[1.5] text-muted">
-                {firstName} usually replies within a day. You deal with {firstName} direct — EPA never takes a cut.
+                {firstName} usually replies within a day. You deal with {firstName} direct, and we never take a cut.
               </p>
               {coach.contactId && (
                 <PhoneReveal contactId={coach.contactId} hasPhone={coach.contact.hasPhone} className="mt-3.5 w-full py-3.5" />

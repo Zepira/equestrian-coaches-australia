@@ -6,7 +6,7 @@ import { sendEmail } from "@/lib/email";
 import { unsubscribeLinks } from "@/lib/rider-email";
 
 /**
- * The coming soon page's waitlist (supabase/migrations/0010_waitlist.sql).
+ * The coming soon page's waitlist (supabase/migrations/0014_waitlist.sql).
  *
  * The table has no insert policy for anyone, so every write comes through
  * here under the service role. That makes this file the only place the rules

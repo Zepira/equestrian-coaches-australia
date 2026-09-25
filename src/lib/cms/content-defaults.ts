@@ -251,6 +251,162 @@ export const CONTENT_DEFAULTS = {
     subject: "Your first charge is in {days} days",
     body: "Hi {first_name},\n\nYour free founding period ends on {first_charge_date}. From then your plan is {listed} at {listed_price} a month, charged to the card you saved, and that price stays yours for as long as you stay.\n\nTo change plan or cancel before then: {billing_url}",
   },
+  "email.alert_confirm": {
+    subject: "Confirm your alert",
+    body: "Someone, hopefully you, asked us to email this address when {what}.\n\nTo start the alert, confirm here: {confirm_url}\n\nIf it wasn't you, ignore this email and we won't send anything else.",
+  },
+  // ── Sequences (The Marketing Engine M7). Each step is one block; the
+  // delays and switches are on Admin → Sequences. All are factual: about the
+  // person's own account, promoting nothing, and every one ends with the
+  // email.sequence_footer line so a single click stops the rest.
+  "email.seq.unfinished_signup.1": {
+    subject: "Your profile is nearly there",
+    body: "Hi {first_name},\n\nYou started a profile on Equine Professionals Australia but haven't sent it in yet. It picks up where you left off: {onboarding_url}\n\nIf something got in the way, write to us at {contact_email} and tell us what.",
+  },
+  "email.seq.unfinished_signup.2": {
+    subject: "Your draft profile",
+    body: "Hi {first_name},\n\nYour profile is saved as a draft. Nobody can see it until you send it in, and one of us looks at every profile before it goes live.\n\nCarry on here: {onboarding_url}",
+  },
+  "email.seq.unfinished_signup.3": {
+    subject: "Last reminder about your draft",
+    body: "Hi {first_name},\n\nThis is the last email we'll send about your draft profile. It stays there whenever you want to finish it: {onboarding_url}\n\nIf you've decided against listing, you don't need to do anything.",
+  },
+  "email.seq.onboarding.1": {
+    subject: "Your profile is {pct}% complete",
+    body: "Hi {first_name},\n\nYour profile is live and {pct}% complete. The thing that would help most next: {next_item}.\n\nPeople choose from what they can see, so a clear photo and a proper bio make a real difference. Edit your profile: {profile_edit_url}",
+  },
+  "email.seq.onboarding.2": {
+    subject: "Where to put your profile link",
+    body: "Hi {first_name},\n\nMost people who find you will come from your own link: in your Facebook posts, your email signature, a poster in the tack room.\n\nThe Promote tab has all of those ready, each with its own link so you can see what works: {promote_url}",
+  },
+  "email.seq.onboarding.3": {
+    subject: "Ask your {audience_plural} for a review",
+    body: "Hi {first_name},\n\nMost {audience_plural} read reviews before they get in touch. Send your review link to people you've worked with recently and ask them how it went: {reviews_url}\n\nEvery genuine review goes on your profile, and you can reply to each one.",
+  },
+  "email.seq.onboarding.4": {
+    subject: "Your first two weeks",
+    body: "Hi {first_name},\n\nSince your profile went live: {views}, {reveals} and {enquiries}.\n\nYou'll get these numbers every month from now on. The full picture is on your dashboard: {dashboard_url}",
+  },
+  "email.seq.first_win.1": {
+    subject: "{what_happened}",
+    body: "Hi {first_name},\n\n{what_happened} through your profile on Equine Professionals Australia.\n\nEnquiries wait for you in your dashboard, where you can mark each one as replied or booked: {enquiries_url}",
+  },
+  "email.seq.rider_welcome.1": {
+    subject: "Your account on Equine Professionals Australia",
+    body: "Hi {first_name},\n\nYour account is set up. Here's what it keeps for you.\n\nAnyone you save with the heart on their profile, so you can come back to them.\nAlerts, so we can email you when someone starts near you.\nThe enquiries you send, so you can see who you've contacted.\n\nYour account: {account_url}",
+  },
+  "email.seq.rider_welcome.2": {
+    subject: "Hear when someone starts near you",
+    body: "Hi {first_name},\n\nTell us where your horse lives and we'll email you when a coach, farrier or anyone else starts nearby. You choose who you want to hear about and how far away.\n\nSet it up here: {alerts_url}",
+  },
+  "email.seq.rider_welcome.3": {
+    subject: "Following someone's clinic dates",
+    body: "Hi {first_name},\n\nIf there's someone whose clinics or events you'd go to, open their profile and choose \"Get their clinic dates by email\". We'll tell you when they list one, wherever it is.\n\nYour account: {account_url}",
+  },
+  // The file someone asked for on a guide (M9). Factual: it's what they asked for.
+  "email.guide_download": {
+    subject: "{download_title}",
+    body: "Here's the {download_title} you asked for: {download_url}\n\nIt came with our guide \"{guide_title}\": {guide_url}",
+  },
+  // The last line of every sequence email.
+  "email.sequence_footer": {
+    body: "Don't want these emails? One click stops them: {stop_url}",
+  },
+  // "Did you end up booking?", a set number of days after an enquiry (M5). Factual: about their own enquiry, promotes nothing.
+  "email.enquiry_followup": {
+    subject: "Did you end up booking {name}?",
+    body: "Hi {rider_first},\n\nOn {enquiry_date} you sent {name} an enquiry through Equine Professionals Australia. Did you end up booking them? One tap tells us: {answer_url}\n\nIf you did, you can leave a short review on the same page. We'll only ask once.",
+  },
+  // To someone who wrote a review from a professional's link: proves the address is theirs.
+  "email.review_confirm": {
+    subject: "Confirm your review of {name}",
+    body: "Thanks for reviewing {name}. To post it, confirm this is your email address: {confirm_url}\n\nIf you didn't write a review, ignore this email and nothing will be posted.",
+  },
+  // To the professional when a review of them goes up.
+  "email.review_published": {
+    subject: "New review on your profile",
+    body: "Hi {first_name},\n\n{author} reviewed you: {rating} out of 5.\n\n\"{review}\"\n\nYou can post one public reply under it from your dashboard: {reviews_url}\n\nWe don't take reviews down on request. If you think this one breaks our review policy, the policy says how to report it: {policy_url}",
+  },
+  // Once, to everyone who asked to hear when the site opened (The Marketing Engine §09).
+  "email.launch": {
+    subject: "Equine Professionals Australia is open",
+    body: "You asked us to tell you when the site opened. It's open.\n\nFind a coach: {coaches_url}\nFind a farrier, vet, physio or anyone else your horse needs: {horse_care_url}\n\nSearch near where your horse lives and you can ask us, with the results, to email you when someone new starts nearby: {search_url}\n\nIt's free for riders and horse owners, and it always will be.",
+  },
+  "email.renewal_reminder": {
+    subject: "Your {plan} plan renews on {renewal_date}",
+    body: "Hi {first_name},\n\nYour yearly {plan} plan renews on {renewal_date}, for {price}, charged to the card you have with us.\n\nTo change plan or cancel before then: {billing_url}",
+  },
+  // A thin line across the top of every page (The Marketing Engine M3).
+  // Empty message: no bar. Dates are YYYY-MM-DD; empty means no limit.
+  // audience: everyone, logged_out, riders, coaches or horse_care.
+  "site.announcement": {
+    message: "",
+    linkLabel: "",
+    linkHref: "",
+    starts: "",
+    ends: "",
+    audience: "everyone",
+  },
+  // The gentle slide-in offering alerts, when it's switched on in Settings.
+  "site.slide_in": {
+    title: "Hear when someone good starts near you",
+    body: "Tell us where your horse lives and we'll email you when a coach, farrier or other professional joins nearby. Nothing else.",
+  },
+  // /guides and each guide's page (M9). {plural} is a profession's plural, like "farriers".
+  "guides.words": {
+    indexTitle: "Guides",
+    indexIntro: "Practical reading for riders and horse owners, written with the professionals who do the work.",
+    related: "Find {plural} near you",
+    relatedAny: "Find someone near you",
+    downloadHeading: "Get the {download_title} by email",
+    downloadLead: "We'll send you a link to the file straight away.",
+    downloadSent: "Sent. Look in your inbox for the {download_title}.",
+    coauthor: "Written with {name}",
+  },
+  // The review form, the confirm page and the "did you book?" page (M5).
+  // {name} is the professional; {audience_plural} is "riders" or "horse owners".
+  "reviews.words": {
+    heading: "How was your experience with {name}?",
+    intro: "Tell other {audience_plural} what it was like. Your review goes on {name}'s profile with your first name and the first letter of your surname. We never show your email address.",
+    declaration: "I've used {name}'s services. I'm not {name}, and I'm not related to them, working for them or competing with them. Nobody offered me anything for writing this.",
+    sent: "Nearly done. We've emailed you a link: press it and your review is posted.",
+    confirmedLive: "Thanks. Your review is on {name}'s profile now.",
+    confirmedHeld: "Thanks. Your review will show on {name}'s profile once we've read it.",
+    question: "Did you end up booking {name}?",
+    yes: "Yes, I booked",
+    no: "No",
+    talking: "Still sorting it out",
+    thanksNo: "Thanks for letting us know. That helps {name} see how their enquiries go.",
+    thanksTalking: "Thanks. Good luck with it.",
+  },
+  // /review-policy, linked from every review (The Marketing Engine §05.7, the ACCC's guidance for review platforms).
+  review_policy: {
+    title: "Our review policy",
+    intro: "How reviews get onto profiles, what we take down, and what we never take down.",
+    sections: [
+      { title: "Who can write one", body: "Anyone who has used the professional. There are two ways in: a link the professional sends to their clients, or our email a few weeks after you enquire through the site. You confirm your email address before a review goes up, and each person can review a professional once." },
+      { title: "We publish the bad ones too", body: "Every genuine review goes up, whatever the rating. A professional can't have a review removed because they don't like it, and paying us changes nothing: not which reviews show, not their order, not the average. Which plan they're on makes no difference." },
+      { title: "What we take down", body: "A review comes down only if it's fake, written by someone with a conflict of interest (the professional, their family, their staff or a competitor), abusive, defamatory, off topic, or shares someone's personal details. We log every decision with its reason. Nothing else is a reason." },
+      { title: "Nobody edits a review", body: "We don't change the words in a review, and neither can the professional. They can post one public reply under it." },
+      { title: "How we check", body: "We look for the same person reviewing twice, several reviews from one device, and text copied from another review. A review that trips one of these waits for a person to read it before it shows." },
+      { title: "The label on a review", body: "\"Enquired through Equine Professionals Australia\" means the reviewer sent an enquiry through the site and later told us they booked. It doesn't mean we saw the lesson or visit happen. We never label a review as verified." },
+      { title: "Testimonials are different", body: "Some profiles also show quotes the professional added themselves. Those are marked \"Provided by the business\" and don't count toward the rating." },
+      { title: "Nothing in return", body: "We don't offer anything for writing a review, and professionals mustn't either. If you think a review was written in return for something, report it." },
+      { title: "Report a review", body: "Every review has a \"Report this review\" link. Tell us which of the rules above you think it breaks. We read every report and log what we decided." },
+    ] as Items,
+  },
+  // /how-we-list, linked from every results list (The Marketing Engine §05.8).
+  "how_we_list": {
+    title: "How the list is ordered",
+    intro: "What decides where someone appears when you search, and what doesn't.",
+    sections: [
+      { title: "Nearest first", body: "When you search near a place, people based closest to it come first. Someone based further away who travels to your area comes after the people based in it, and their card says they travel to you." },
+      { title: "Then by how well they match", body: "If you pick disciplines, specialities or setup, people who match more of what you picked come before people who match less, at the same distance." },
+      { title: "Featured spots are labelled", body: "Some plans include a turn in a featured spot. Featured people sit in their own labelled block above the list, never inside it, take turns day to day, and don't show at all in areas with only a few professionals. Paying never moves anyone up or down the list itself." },
+      { title: "What never changes the order", body: "Which plan someone is on, how long they've been listed, and anything they pay us. We don't take a commission on lessons or visits, so we have no reason to push anyone." },
+      { title: "Who's on the list", body: "Everyone listed signed up themselves and finished their profile, and we looked at it before it went live. We don't check qualifications or registration unless a profile says so, and we don't recommend anyone." },
+    ] as Items,
+  },
   // ── Legal ───────────────────────────────────────────────────────────────
   // /terms and /privacy. A first draft for the solicitor (The Site as a CMS
   // §12), written from how the site actually works on 25 Sep 2026. Square
@@ -285,8 +441,9 @@ export const CONTENT_DEFAULTS = {
       { title: "If you're looking for help", body: "To search, you don't need an account and we don't ask who you are.\n\nIf you make an account we keep your name and email address, the professionals you save, and any alerts you set up: the suburb or postcode, how far to look, and what you follow.\n\nWhen you send an enquiry, your name, how to contact you and your message go to that professional, and we keep a copy so you can both see where it's up to." },
       { title: "If you list with us", body: "We keep what you put on your profile: your name, business name, where you're based and how far you travel, what you do, qualifications, registration numbers and insurance details you choose to add, photos, video, testimonials and events. Your email address and phone number are only shown if you switch them on.\n\nWe also keep your account email, your plan and its payment history, and the enquiries sent to you. Stripe handles your card; we never see the full number." },
       { title: "What we count", body: "We count how often each profile appears in search, is opened, has its number revealed and gets an enquiry, so professionals can see their numbers. To count each visitor once a day we use a scrambled code made from the visitor's connection details. We don't store the connection details themselves.\n\nWe also record what people search for and how many results they got, without who searched, so we can see what the site is missing." },
-      { title: "Cookies", body: "A cookie keeps you signed in. Your browser also remembers small preferences, like whether you hid the map. We don't use advertising cookies or trackers." },
-      { title: "Emails", body: "Alert emails only go to people who set up an alert, and every one has a link that stops it straight away. Professionals get emails about their account, including a monthly summary of their numbers." },
+      { title: "Cookies", body: "A cookie keeps you signed in. If you arrive through one of our links (a poster, a partner's page, a post), two cookies remember which one, for 90 days, so we can tell which ways of reaching people work. Your browser also remembers small preferences, like whether you hid the map. We don't use advertising cookies, tracking pixels or anyone else's trackers." },
+      { title: "Emails", body: "We only send marketing, including alerts and round-ups, to people who agreed to it, and we keep a record of each agreement: what you agreed to, the exact words you saw, where and when. Every marketing email says who we are and has a link to change what you get or stop everything, straight away. Emails about your own account, like an enquiry sent to you or a bill, keep coming while the account is open. If an email to you bounces or is marked as spam, we stop emailing that address." },
+      { title: "Decisions made automatically", body: "Some things the site decides on its own. Search results are ordered by distance and by how well someone matches what you searched for; how that works is on our \"How the list is ordered\" page. A professional's profile is hidden automatically when their plan lapses, and comes back when it's paid again. A person looks at every new profile before it goes live. No decision about you is made from your personal details beyond where you are and what you searched for." },
       { title: "Who helps us run the site", body: "The details above are stored with Supabase, whose servers are in Japan. The site is hosted by Vercel, payments go through Stripe and email is sent through Resend. Some of these companies handle data outside Australia. They use it only to provide their service to us. [For the solicitor: the overseas disclosure wording.]" },
       { title: "How long we keep it", body: "For as long as your account is open. When an account is deleted, its profile, alerts, saved profiles and enquiries go with it. We may keep billing records for as long as tax law requires." },
       { title: "Seeing, changing or deleting your details", body: "You can change most of your details yourself from your account or dashboard. To see everything we hold about you, correct it, or have it deleted, email {contact_email}. We'll reply within 30 days." },

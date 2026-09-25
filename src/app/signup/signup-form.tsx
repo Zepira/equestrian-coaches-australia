@@ -28,7 +28,16 @@ export function SignupForm({
   plan,
   source,
   invite,
+  touch,
+  news,
+  codes = { referral: "", promo: "" },
 }: {
+  /** Codes from the link they came in on, checked by the sign-up trigger. */
+  codes?: { referral: string; promo: string };
+  /** Where they came from, as JSON strings for the sign-up trigger (or "null"). */
+  touch: { first: string; last: string };
+  /** The provider_news consent wording, shown beside an unticked box. */
+  news: { id: string; body: string } | null;
   professional: boolean;
   professions: ProfessionOption[];
   defaultProfession: string;
@@ -44,6 +53,7 @@ export function SignupForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [checkEmail, setCheckEmail] = useState(false);
+  const [wantsNews, setWantsNews] = useState(false);
   const picked = professions.find((p) => p.slug === profession) ?? professions[0];
   const article = /^[aeiou]/i.test(picked?.singular ?? "") ? "an" : "a";
 
@@ -68,8 +78,21 @@ export function SignupForm({
         password,
         options: {
           data: professional
-            ? { role: "provider", name, profession, plan, source, invite: invite?.usable ? invite.token : "" }
-            : { role: "rider", name },
+            ? {
+                role: "provider",
+                name,
+                profession,
+                plan,
+                source,
+                invite: invite?.usable ? invite.token : "",
+                touch_first: touch.first,
+                touch_last: touch.last,
+                referral: codes.referral,
+                promo: codes.promo,
+                // Marketing consent is its own box, unticked (Spam Act): the id of the words they saw.
+                news_wording: wantsNews && news ? news.id : "",
+              }
+            : { role: "rider", name, touch_first: touch.first, touch_last: touch.last },
           emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
@@ -194,6 +217,13 @@ export function SignupForm({
           <span className={labelClass}>Password</span>
           <PasswordInput value={password} onChange={setPassword} minLength={8} required />
         </label>
+
+        {professional && news && (
+          <label className="flex gap-2.5 text-[14px] leading-[1.45] text-fg">
+            <input type="checkbox" checked={wantsNews} onChange={(e) => setWantsNews(e.target.checked)} className="mt-0.5 accent-accent" />
+            <span>{news.body}</span>
+          </label>
+        )}
 
         {error && (
           <p role="alert" className="text-[13.5px] text-accent">

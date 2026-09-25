@@ -15,7 +15,10 @@ export function TermImagePanel({
   note,
   upload,
   remove,
+  placeholderLabel = "Stock placeholder",
 }: {
+  /** The badge on the picture when nothing's been uploaded; empty for none. */
+  placeholderLabel?: string;
   src: string;
   uploaded: boolean;
   note: string;
@@ -57,7 +60,7 @@ export function TermImagePanel({
       <div className="relative aspect-[4/3] overflow-hidden rounded-[12px] bg-shade">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={src} alt="" className="block h-full w-full object-cover" />
-        {!uploaded && <span className="absolute bottom-2 left-2 rounded-[var(--radius-pill)] bg-ink-deep/82 px-2.5 py-1 text-[11px] font-medium text-ink-fg">Stock placeholder</span>}
+        {!uploaded && placeholderLabel && <span className="absolute bottom-2 left-2 rounded-[var(--radius-pill)] bg-ink-deep/82 px-2.5 py-1 text-[11px] font-medium text-ink-fg">{placeholderLabel}</span>}
       </div>
       <p className="text-[13px] leading-[1.45] text-muted">{note}</p>
       <input ref={inputRef} type="file" accept="image/*" className="hidden" disabled={busy} onChange={onPick} />

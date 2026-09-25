@@ -104,7 +104,7 @@ points at the test site. Nothing there links to the production domain.
 
 ```
 npm install --no-save pg
-node scripts/db/run-migration.mjs supabase/migrations/0010_waitlist.sql
+node scripts/db/run-migration.mjs supabase/migrations/0014_waitlist.sql
 ```
 
 Then seed the two new content blocks, so the coming soon page and its
@@ -178,7 +178,7 @@ dashboard (API → Reload schema) or run `notify pgrst, 'reload schema';`.
    `node scripts/db/rebuild.mjs --yes-wipe`, then `seed-content.mjs`. Do this
    **before** anything below. It drops the `public` schema, the waitlist with
    it, so export the list first from Admin → Waitlist → Download CSV.
-2. The rebuild runs every numbered migration after the baseline, `0010_waitlist`
+2. The rebuild runs every numbered migration after the baseline, `0014_waitlist`
    included, so the table comes back. Its **rows do not**: `rebuild.mjs` only
    restores accounts, admins and providers, so the CSV from step 1 is the only
    copy of the list.

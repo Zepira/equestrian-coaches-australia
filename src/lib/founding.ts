@@ -4,6 +4,7 @@ import { sendEmail } from "@/lib/email";
 import { addMonths, countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getPlans, getFoundingPrice, getStripePrices } from "@/lib/settings";
 import { absoluteUrl } from "@/lib/site-url";
 import { fillVariables, getContent } from "@/lib/cms/read";
+import { rewardOnFirstPayment } from "@/lib/referrals";
 
 /**
  * The founding offer's billing (The Site as a CMS §09):
@@ -155,7 +156,7 @@ const REMINDER_DAYS = [30, 14, 3];
  * The daily job: reminders before a founding member's first charge, and in
  * mock mode the end of the trial (Stripe does that part for real).
  */
-export async function runFoundingJob(service: Service, now = new Date()): Promise<{ reminders: number; converted: number }> {
+export async function runFoundingJob(service: Service, now = new Date()): Promise<{ reminders: number; converted: number; renewals: number }> {
   const [plans, foundingPrice] = await Promise.all([getPlans(), getFoundingPrice()]);
   const reminderCopy = await getContent("email.founding_reminder");
   const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -172,6 +173,7 @@ export async function runFoundingJob(service: Service, now = new Date()): Promis
     const days = Math.round((Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()) - today.getTime()) / 86_400_000);
     if (isMockPayments && days <= 0) {
       await service.from("subscriptions").update({ status: "active", tier: "listed", updated_at: now.toISOString() }).eq("id", s.id);
+      await rewardOnFirstPayment(service, s.provider_id as string, null);
       converted++;
       continue;
     }
@@ -191,5 +193,40 @@ export async function runFoundingJob(service: Service, now = new Date()): Promis
     }
     reminders++;
   }
-  return { reminders, converted };
+  // Yearly plans: a reminder 30 days before each renewal, once per period
+  // (The Marketing Engine §05.9; the 2027 unfair trading rules expect it).
+  const renewals = await remindYearlyRenewals(service, today, plans);
+  return { reminders, converted, renewals };
+}
+
+async function remindYearlyRenewals(service: Service, today: Date, plans: Awaited<ReturnType<typeof getPlans>>): Promise<number> {
+  const from = new Date(today.getTime() + 30 * 86_400_000);
+  const to = new Date(from.getTime() + 86_400_000);
+  const { data: subs } = await service
+    .from("subscriptions")
+    .select("id, provider_id, tier, current_period_end")
+    .eq("billing_interval", "year")
+    .eq("status", "active")
+    .gte("current_period_end", from.toISOString())
+    .lt("current_period_end", to.toISOString());
+  const copy = await getContent("email.renewal_reminder");
+  let sent = 0;
+  for (const s of subs ?? []) {
+    const end = new Date(s.current_period_end as string);
+    const { error } = await service.from("billing_notices").insert({ subscription_id: s.id, kind: `renewal_${end.toISOString().slice(0, 10)}` });
+    if (error) continue; // already told about this renewal
+    const plan = plans[s.tier as keyof typeof plans];
+    for (const m of await memberEmails(service, s.provider_id)) {
+      const vars = {
+        first_name: (m.name ?? "").split(" ")[0] || "there",
+        plan: plan?.name ?? "your",
+        renewal_date: formatLongDate(end),
+        price: plan?.yearly ?? "",
+        billing_url: absoluteUrl("/dashboard/billing"),
+      };
+      await sendEmail({ to: m.email, subject: fillVariables(copy.subject, vars), text: fillVariables(copy.body, vars) });
+    }
+    sent++;
+  }
+  return sent;
 }

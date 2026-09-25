@@ -79,6 +79,13 @@ export default async function InvitesPage({ searchParams }: { searchParams: Prom
             <span className="mb-1 block text-sm font-medium text-fg">Who&apos;s inviting</span>
             <input name="source" defaultValue={me?.name?.split(" ")[0] ?? ""} className={input} />
           </label>
+          <label className="block sm:col-span-2">
+            <span className="mb-1 block text-sm font-medium text-fg">Where their business email is published</span>
+            <input name="address_source_url" type="url" required placeholder="https://their-website.com.au/contact" className={input} />
+            <span className="mt-1 block text-[12.5px] text-subtle">
+              The law lets us invite someone without asking first only when their business address is published and nothing there says no marketing. Their website or business page, not a personal post.
+            </span>
+          </label>
           <p className="text-sm text-muted sm:col-span-2">Optional: start their profile with what you already know. They can change all of it.</p>
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-fg">One line about what they do</span>

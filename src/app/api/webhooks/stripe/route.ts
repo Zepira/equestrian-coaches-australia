@@ -5,6 +5,7 @@ import { getStripePrices } from "@/lib/settings";
 import { TIERS, type Tier } from "@/lib/tiers";
 import { syncVisibility } from "@/lib/provider-lifecycle";
 import type Stripe from "stripe";
+import { recordPromoUse, rewardOnFirstPayment } from "@/lib/referrals";
 
 // Uses the service-role key: Stripe calls this with no user session, and
 // subscriptions are written only by the service role (members can read
@@ -26,6 +27,13 @@ async function tierByPrice(): Promise<Record<string, Tier>> {
   }
   if (prices.founding) map[prices.founding] = "listed";
   return map;
+}
+
+/** When the current period ends: on the item in newer Stripe API versions, on the subscription in older ones. */
+function periodEnd(subscription: Stripe.Subscription): string | null {
+  const item = subscription.items.data[0] as unknown as { current_period_end?: number } | undefined;
+  const ts = item?.current_period_end ?? (subscription as unknown as { current_period_end?: number }).current_period_end;
+  return ts ? new Date(ts * 1000).toISOString() : null;
 }
 
 function statusFromStripe(status: Stripe.Subscription.Status): "active" | "trialing" | "past_due" | "canceled" | "inactive" {
@@ -54,6 +62,9 @@ async function syncSubscription(supabase: ReturnType<typeof serviceClient>, subs
       stripe_subscription_id: subscription.id,
       stripe_customer_id: typeof subscription.customer === "string" ? subscription.customer : subscription.customer.id,
       stripe_price_id: priceId ?? null,
+      // For the yearly renewal reminder (The Marketing Engine §05.9).
+      billing_interval: (subscription.items.data[0]?.price?.recurring?.interval as string | undefined) === "year" ? "year" : "month",
+      current_period_end: periodEnd(subscription),
       tier: tier ?? null,
       status,
       ...(founding ? { founding: true } : {}),
@@ -65,6 +76,7 @@ async function syncSubscription(supabase: ReturnType<typeof serviceClient>, subs
   // Review publishes; the plan only hides a reviewed profile when it lapses
   // and brings it back when it resumes.
   await syncVisibility(supabase, providerId, live);
+  if (live) await recordPromoUse(supabase, providerId);
 }
 
 export async function POST(request: Request) {
@@ -114,6 +126,17 @@ export async function POST(request: Request) {
     case "customer.subscription.updated":
     case "customer.subscription.created": {
       await syncSubscription(supabase, event.data.object as Stripe.Subscription);
+      break;
+    }
+    // A paid invoice: the first one from a referred colleague earns their referrer a month (M6).
+    case "invoice.paid": {
+      const invoice = event.data.object as Stripe.Invoice & { subscription?: string | { id: string } | null };
+      const subId = typeof invoice.subscription === "string" ? invoice.subscription : invoice.subscription?.id;
+      if (invoice.amount_paid > 0 && subId) {
+        const subscription = await stripe.subscriptions.retrieve(subId);
+        const providerId = subscription.metadata?.provider_id;
+        if (providerId) await rewardOnFirstPayment(supabase, providerId, stripe);
+      }
       break;
     }
     case "customer.subscription.deleted": {
