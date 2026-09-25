@@ -328,7 +328,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
           )}
           {!parentNav &&
             !isSearch &&
-            NAV.filter((l) => !coachProfile || l.label !== "Disciplines").map((l) => {
+            NAV.map((l) => {
               const current = pathname === l.href || (l.match ? pathname.startsWith(l.match) : false);
               return (
                 <Link
