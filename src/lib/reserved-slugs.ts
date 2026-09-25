@@ -4,7 +4,7 @@
  * called "search" or "about" would take over an existing page.
  *
  * Mirrors the `terms_profession_slug_not_reserved` check in
- * supabase/migrations/0010_marketing_foundations.sql (first set in the baseline). Change both together: this list
+ * supabase/migrations/0012_reviews.sql (first set in the baseline). Change both together: this list
  * gives the admin form a friendly error, the constraint makes it impossible.
  * Every top-level route and public file belongs here.
  */
@@ -13,7 +13,7 @@ export const RESERVED_SLUGS = [
   "for-coaches", "for-professionals", "forgot-password", "horse-care", "icon.png", "apple-icon.png", "join",
   "list-your-business", "login", "profile", "reset-password", "riding-instructors", "robots.txt", "search",
   "signup", "sitemap.xml", "brand", "hero", "vendor", "_next", "onboarding", "unsubscribe", "terms", "privacy",
-  "go", "p", "email-preferences", "alerts", "how-we-list", "guides",
+  "go", "p", "email-preferences", "alerts", "how-we-list", "guides", "review", "reviews", "review-policy", "enquiry",
 ] as const;
 
 export function isReservedSlug(slug: string) {

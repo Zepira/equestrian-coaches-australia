@@ -75,6 +75,14 @@ export const DEFAULTS = {
   slide_in_delay_seconds: "25",
   /** Days before the same visitor sees it again. */
   slide_in_every_days: "14",
+  /** Days after an enquiry before we ask the rider "Did you end up booking?" (M5). */
+  enquiry_followup_days: "21",
+  /**
+   * "true": every review waits for a person before it shows. "false": a review
+   * that passes the duplicate checks goes up once the reviewer confirms their
+   * email, and only flagged ones wait (M5).
+   */
+  reviews_hold_all: "true",
   /** Free months a referrer earns when a colleague they referred first pays (M6). */
   referral_reward_months: "1",
   /** The most referral rewards one professional can earn in a year. */
@@ -177,6 +185,7 @@ async function intSetting(key: SettingKey, min: number, max: number): Promise<nu
 }
 
 export const SETTING_RANGES = {
+  enquiry_followup_days: [7, 90],
   referral_reward_months: [1, 3],
   referral_cap_per_year: [0, 24],
   slide_in_delay_seconds: [5, 300],
@@ -211,6 +220,11 @@ export const getReferralRewardMonths = () => intSetting("referral_reward_months"
 export const getReferralCapPerYear = () => intSetting("referral_cap_per_year", ...SETTING_RANGES.referral_cap_per_year);
 export async function getReferralCouponId(): Promise<string> {
   return (await getSetting("referral_coupon_id")).trim();
+}
+
+export const getEnquiryFollowupDays = () => intSetting("enquiry_followup_days", ...SETTING_RANGES.enquiry_followup_days);
+export async function holdAllReviews(): Promise<boolean> {
+  return (await getSetting("reviews_hold_all")) !== "false";
 }
 
 export async function isLegalApproved(): Promise<boolean> {

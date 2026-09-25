@@ -31,6 +31,9 @@ import { breadcrumbSchema, providerSchemas } from "@/lib/structured-data";
 import { logView } from "@/lib/coach-events";
 import { getSamples } from "@/lib/samples";
 import { ShareButton } from "@/components/share-button";
+import { ProfileReviews } from "@/components/profile-reviews";
+import { getReviewSummary } from "@/lib/reviews";
+import { createServiceSupabase } from "@/lib/supabase/service";
 
 type CoachView = {
   id: string | null;
@@ -322,6 +325,9 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
   const profession = (await getProfession(coach.professionSlug ?? "coaches")) ?? FALLBACK_PROFESSIONS[0];
   const horseCare = profession.door === "horse_care";
   const mention = await getContent("mention");
+  // Riders' reviews (M5): real, published providers only, never in a preview.
+  const reviewService = coach.id && !preview ? createServiceSupabase() : null;
+  const reviewSummary = reviewService && coach.id ? await getReviewSummary(reviewService, coach.id) : null;
   // Coaching has students; everyone else has clients. Riders vs horse owners from the row.
   const who = horseCare ? "clients" : "students";
   const audiencePlural = `${profession.audienceNoun}s`;
@@ -377,6 +383,11 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
             skillNames: coach.skillNames,
             jobTitle: profession.jobTitle,
             businessName: coach.businessName,
+            reviews: reviewSummary && {
+              count: reviewSummary.count,
+              average: reviewSummary.average,
+              items: reviewSummary.reviews.map((r) => ({ author: r.author, rating: r.rating, body: r.body, date: r.date })),
+            },
           }),
           breadcrumbSchema([
             { name: "Home", url: "/" },
@@ -540,6 +551,8 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
               </div>
             </section>
           )}
+
+          {reviewSummary && <ProfileReviews summary={reviewSummary} firstName={firstName} slug={coach.slug} audiencePlural={audiencePlural} />}
 
           {/* ── next clinic + get in touch (phones) — 120px bottom room for
                  the sticky enquiry bar ───────────────────────────────── */}

@@ -13,6 +13,7 @@ export const KIT = [
   { kind: "badge", label: "Website badge", to: (slug: string) => profilePath(slug) },
   { kind: "signature", label: "Email signature", to: (slug: string) => profilePath(slug) },
   { kind: "follow", label: "Follow link", to: (slug: string) => `${profilePath(slug)}/follow` },
+  { kind: "review", label: "Review link", to: (slug: string) => `/review/${slug}` },
 ] as const;
 export type KitKind = (typeof KIT)[number]["kind"];
 

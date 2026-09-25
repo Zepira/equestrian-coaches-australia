@@ -229,6 +229,21 @@ export const CONTENT_DEFAULTS = {
     subject: "Confirm your alert",
     body: "Someone, hopefully you, asked us to email this address when {what}.\n\nTo start the alert, confirm here: {confirm_url}\n\nIf it wasn't you, ignore this email and we won't send anything else.",
   },
+  // "Did you end up booking?", a set number of days after an enquiry (M5). Factual: about their own enquiry, promotes nothing.
+  "email.enquiry_followup": {
+    subject: "Did you end up booking {name}?",
+    body: "Hi {rider_first},\n\nOn {enquiry_date} you sent {name} an enquiry through Equine Professionals Australia. Did you end up booking them? One tap tells us: {answer_url}\n\nIf you did, you can leave a short review on the same page. We'll only ask once.",
+  },
+  // To someone who wrote a review from a professional's link: proves the address is theirs.
+  "email.review_confirm": {
+    subject: "Confirm your review of {name}",
+    body: "Thanks for reviewing {name}. To post it, confirm this is your email address: {confirm_url}\n\nIf you didn't write a review, ignore this email and nothing will be posted.",
+  },
+  // To the professional when a review of them goes up.
+  "email.review_published": {
+    subject: "New review on your profile",
+    body: "Hi {first_name},\n\n{author} reviewed you: {rating} out of 5.\n\n\"{review}\"\n\nYou can post one public reply under it from your dashboard: {reviews_url}\n\nWe don't take reviews down on request. If you think this one breaks our review policy, the policy says how to report it: {policy_url}",
+  },
   // Once, to everyone who asked to hear when the site opened (The Marketing Engine §09).
   "email.launch": {
     subject: "Equine Professionals Australia is open",
@@ -253,6 +268,38 @@ export const CONTENT_DEFAULTS = {
   "site.slide_in": {
     title: "Hear when someone good starts near you",
     body: "Tell us where your horse lives and we'll email you when a coach, farrier or other professional joins nearby. Nothing else.",
+  },
+  // The review form, the confirm page and the "did you book?" page (M5).
+  // {name} is the professional; {audience_plural} is "riders" or "horse owners".
+  "reviews.words": {
+    heading: "How was your experience with {name}?",
+    intro: "Tell other {audience_plural} what it was like. Your review goes on {name}'s profile with your first name and the first letter of your surname. We never show your email address.",
+    declaration: "I've used {name}'s services. I'm not {name}, and I'm not related to them, working for them or competing with them. Nobody offered me anything for writing this.",
+    sent: "Nearly done. We've emailed you a link: press it and your review is posted.",
+    confirmedLive: "Thanks. Your review is on {name}'s profile now.",
+    confirmedHeld: "Thanks. Your review will show on {name}'s profile once we've read it.",
+    question: "Did you end up booking {name}?",
+    yes: "Yes, I booked",
+    no: "No",
+    talking: "Still sorting it out",
+    thanksNo: "Thanks for letting us know. That helps {name} see how their enquiries go.",
+    thanksTalking: "Thanks. Good luck with it.",
+  },
+  // /review-policy, linked from every review (The Marketing Engine §05.7, the ACCC's guidance for review platforms).
+  review_policy: {
+    title: "Our review policy",
+    intro: "How reviews get onto profiles, what we take down, and what we never take down.",
+    sections: [
+      { title: "Who can write one", body: "Anyone who has used the professional. There are two ways in: a link the professional sends to their clients, or our email a few weeks after you enquire through the site. You confirm your email address before a review goes up, and each person can review a professional once." },
+      { title: "We publish the bad ones too", body: "Every genuine review goes up, whatever the rating. A professional can't have a review removed because they don't like it, and paying us changes nothing: not which reviews show, not their order, not the average. Which plan they're on makes no difference." },
+      { title: "What we take down", body: "A review comes down only if it's fake, written by someone with a conflict of interest (the professional, their family, their staff or a competitor), abusive, defamatory, off topic, or shares someone's personal details. We log every decision with its reason. Nothing else is a reason." },
+      { title: "Nobody edits a review", body: "We don't change the words in a review, and neither can the professional. They can post one public reply under it." },
+      { title: "How we check", body: "We look for the same person reviewing twice, several reviews from one device, and text copied from another review. A review that trips one of these waits for a person to read it before it shows." },
+      { title: "The label on a review", body: "\"Enquired through Equine Professionals Australia\" means the reviewer sent an enquiry through the site and later told us they booked. It doesn't mean we saw the lesson or visit happen. We never label a review as verified." },
+      { title: "Testimonials are different", body: "Some profiles also show quotes the professional added themselves. Those are marked \"Provided by the business\" and don't count toward the rating." },
+      { title: "Nothing in return", body: "We don't offer anything for writing a review, and professionals mustn't either. If you think a review was written in return for something, report it." },
+      { title: "Report a review", body: "Every review has a \"Report this review\" link. Tell us which of the rules above you think it breaks. We read every report and log what we decided." },
+    ] as Items,
   },
   // /how-we-list, linked from every results list (The Marketing Engine §05.8).
   "how_we_list": {
