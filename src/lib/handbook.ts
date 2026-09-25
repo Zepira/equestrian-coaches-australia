@@ -46,6 +46,16 @@ export type HandbookDoc = {
 
 export const HANDBOOK_DOCS: HandbookDoc[] = [
   {
+    slug: "marketing-engine",
+    file: "marketing-engine.html",
+    title: "The Marketing Engine",
+    kicker: "Build plan",
+    summary:
+      "What marketing the business runs, what WordPress plugins would have given us, which services to pay for, what Australian law makes the software do, and the eleven marketing tools to build into the site and admin, in order.",
+    audience: "Both",
+    updated: "2026-09-25",
+  },
+  {
     slug: "cms-model",
     file: "cms-model.html",
     title: "The Site as a CMS",

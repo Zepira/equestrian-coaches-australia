@@ -1,0 +1,773 @@
+<title>The Marketing Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --navy:#E7DAC6; --navy-2:#DDCFB6;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8; --claret-hi:#DE8B6C;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7; --band-accent:#1F3A2E;
+  --bar-good:#00794F; --bar-bad:#C0492A;
+  --pick:#9C4229; --pick-bg:#F7F0E1;
+  --code-bg:#FBF7EC; --code-ink:#33312B; --code-key:#1F3A2E; --code-com:#87816F;
+  --on-navy:#22201C; --on-navy-2:#4A4842; --on-navy-3:#5E5A50;
+  --navy-rule:#D3C1A4;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --wrap:1060px; --measure:70ch;
+  --ribbon:polygon(0 0,100% 0,100% 100%,0 100%);
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.7rem,8vw,5.2rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.8rem,4.3vw,2.8rem); line-height:1.03}
+h3{font-size:1.24rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+h4{font-family:var(--body); font-size:.72rem; font-weight:800; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 10px}
+
+code{font-family:var(--mono); font-size:.86em; background:var(--code-bg); color:var(--code-ink);
+  padding:1px 5px; border-radius:2px}
+pre{font-family:var(--mono); font-size:.8rem; line-height:1.6; background:var(--code-bg); color:var(--code-ink);
+  padding:18px 20px; margin:20px 0; overflow-x:auto; border:1px solid var(--line-strong)}
+pre code{background:none; padding:0; font-size:1em}
+pre .k{color:var(--code-key); font-weight:600}
+pre .c{color:var(--code-com); font-style:italic}
+
+.chip{display:inline-block; font-size:.66rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+.band{background:var(--navy); color:var(--on-navy); border-bottom:1px solid var(--line-strong)}
+.masthead{padding:64px 0 68px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:42px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--on-navy-2)}
+.masthead h1{margin-bottom:28px}
+.masthead .lede{font-size:1.14rem; line-height:1.5; color:var(--on-navy-2); max-width:58ch; margin:0}
+.mast-meta{margin-top:38px; padding-top:18px; border-top:1px solid var(--navy-rule);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.75rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--on-navy-3)}
+
+main.wrap{padding-top:70px}
+section{margin-bottom:80px}
+.sec-head{margin-bottom:28px}
+.sec-num{display:block; font-family:var(--display); font-size:.96rem; font-weight:600;
+  letter-spacing:.06em; color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+
+/* kind cards */
+.kinds{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:30px 0}
+.kind{border:1px solid var(--line-strong); background:var(--surface); padding:20px 20px 22px}
+.kind h3{margin:12px 0 8px}
+.kind p{margin:0 0 .7em; font-size:.9rem; line-height:1.5; color:var(--ink-2)}
+.kind p:last-child{margin-bottom:0}
+.kind .ex{font-family:var(--mono); font-size:.76rem; color:var(--ink-3); line-height:1.7}
+@media(max-width:800px){.kinds{grid-template-columns:1fr}}
+
+/* loop */
+.loop{border:1px solid var(--line-strong); background:var(--surface); margin:30px 0}
+.loop-head{padding:20px 22px 4px}
+.loop-head h3{margin-bottom:6px}
+.loop-head p{margin:0; font-size:.88rem; color:var(--ink-3)}
+.loop-steps{display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line);
+  border-top:1px solid var(--line-strong); margin-top:18px}
+.lstep{background:var(--surface); padding:18px 16px 20px}
+.lstep .n{font-family:var(--display); font-size:1.7rem; font-weight:500; color:var(--brass); line-height:1; display:block; margin-bottom:8px}
+.lstep b{display:block; font-size:.9rem; margin-bottom:5px}
+.lstep span{font-size:.82rem; line-height:1.45; color:var(--ink-2)}
+.loop-foot{padding:14px 22px; border-top:1px solid var(--line-strong); background:var(--surface-2);
+  font-size:.84rem; color:var(--ink-2)}
+.loop-foot b{color:var(--ink)}
+@media(max-width:860px){.loop-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.loop-steps{grid-template-columns:1fr}}
+
+/* tables */
+figure{margin:30px 0; border:1px solid var(--line-strong); background:var(--surface); overflow:hidden}
+figcaption{padding:14px 22px; border-top:1px solid var(--line-strong); font-size:.85rem;
+  line-height:1.5; color:var(--ink-2); background:var(--surface-2)}
+figcaption b{font-weight:700; color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:620px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.32rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:12px 22px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.5}
+thead th{font-size:.66rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px; white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code{font-size:.8rem; white-space:nowrap}
+td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
+
+/* steps */
+.steps{margin:28px 0 0}
+.step{display:grid; grid-template-columns:58px 1fr; gap:0 22px; padding:26px 0; border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.smark{font-family:var(--display); font-size:2rem; font-weight:500; letter-spacing:-.025em; color:var(--brass); line-height:1}
+.sbody h3{margin-bottom:9px}
+.sbody p,.sbody ul{max-width:64ch}
+.sbody > :last-child{margin-bottom:0}
+@media(max-width:620px){.step{grid-template-columns:1fr; gap:10px}}
+
+/* callouts */
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:18px 22px; margin:24px 0}
+.note{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:18px 22px; margin:24px 0}
+.flag p,.note p{margin:0; max-width:64ch; font-size:.94rem}
+.flag p + p,.note p + p{margin-top:.65em}
+.flag .chip,.note .chip{margin-bottom:11px}
+.flag ul,.note ul{margin:.6em 0 0; font-size:.94rem; max-width:64ch}
+
+/* vocabulary */
+.vocab{border:1px solid var(--line-strong); background:var(--surface); margin:24px 0}
+.vrow{display:grid; grid-template-columns:190px 1fr; gap:0 22px; padding:15px 22px; border-top:1px solid var(--line)}
+.vrow:first-of-type{border-top:0}
+.vname{font-weight:700; font-size:.95rem}
+.vname small{display:block; font-family:var(--mono); font-size:.72rem; font-weight:400; color:var(--ink-3); margin-top:3px}
+.vals{font-family:var(--mono); font-size:.79rem; line-height:1.85; color:var(--ink-2)}
+.vhead{padding:20px 22px 16px; background:var(--surface-2); border-bottom:1px solid var(--line-strong)}
+.vhead h3{margin-bottom:6px}
+.vhead p{margin:0; font-size:.88rem; color:var(--ink-2); max-width:66ch}
+@media(max-width:700px){.vrow{grid-template-columns:1fr; gap:6px}}
+
+.foot{border-top:1px solid var(--line-strong); padding:44px 0 52px; font-size:.8rem; line-height:1.75; color:var(--on-navy-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--on-navy-3); margin-bottom:10px}
+.foot p{max-width:80ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){
+  th,td,caption,figcaption,.vrow,.vhead,.loop-head,.loop-foot{padding-left:16px;padding-right:16px}
+  pre{padding:14px 16px}
+}
+.sbody{min-width:0}
+.sbody .tablewrap{margin-left:0;margin-right:0}
+</style>
+
+<div class="band">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="mast-top">
+        <span class="mast-mark">Handbook</span>
+        <span class="mast-org">Equine Professionals Australia</span>
+      </div>
+      <h1>The marketing engine</h1>
+      <p class="lede">What marketing this business will actually run, what a WordPress site would have got from plugins, which outside services are worth paying for, what Australian law makes the software do, and the marketing tools we build into the site and the admin to support all of it, in the order to build them.</p>
+      <div class="mast-meta">
+        <span>Research and build plan, revision 1</span>
+        <span>25 September 2026</span>
+        <span>Builds on The Site as a CMS</span>
+        <span>Open decisions, section 11</span>
+      </div>
+    </header>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>The short version</h2></div>
+  <div class="col">
+    <p><strong>We don't need a WordPress-style marketing suite. We need about ten small tools, and most of them run on their own once built.</strong> The market is a few thousand professionals and a rider list we hope reaches the low thousands in year one. Nobody in Australian equestrian buys Meta ads, and two founders on a few hours a week can't run campaigns by hand every week. So the marketing that works here is the kind the site does by itself: emails that go out when something happens, tools that let professionals promote themselves (and us with them), and pages that turn a visitor into someone on the list.</p>
+    <p>Most of the hard parts already exist. The site has rider alerts, the monthly numbers email, the rider round-up, tracked invite links, the SEO digest, featured slots and an admin that edits every email. What's missing is on the email marketing side: a proper consent record, one list of everyone we're allowed to email, a way to send one-off campaigns to a chosen group, sequences that stop when they've done their job, and the share tools for professionals.</p>
+    <p><strong>What we buy:</strong> almost nothing. Resend already sends our email and is cheap to grow on. Stripe already does promo codes. The one real new cost is <strong>Vercel Pro at about A$30 a month</strong>, which we need anyway: Vercel's free Hobby plan is for non-commercial use only, and this is a business. By the end of year one, at around 5,000 people on the list, the whole marketing stack is about <strong>A$125 a month</strong>.</p>
+    <p><strong>What we build, in order:</strong> the consent and list foundations before launch (the law makes these non-negotiable), then the professional share kit, review requests and referrals in the first month, then campaigns, sequences and guides by month three, and the founding-offer conversion campaign well before the first founding members are due to pay.</p>
+  </div>
+  <div class="note">
+    <span class="chip">Found along the way</span>
+    <p><strong>"Physiotherapist" and "chiropractor" are protected titles</strong> under the national health practitioner law, and using them for animal work without registration may breach that law. Our profession names are "Physiotherapists" and "Chiropractors". That needs fixing before launch whatever happens to marketing (section 06). Also: <strong>EquiDirectory</strong> already lists 917 riding coaches and 844 horse care services, and Equestrian Australia runs a free Coach Finder. Both are competitors the marketing plan should name.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>The marketing this business runs</h2></div>
+  <div class="col">
+    <p>About seventy marketing activities were checked against how hipages, Airtasker, Thumbtack, Yelp, Rover, Care.com, Checkatrade, Houzz, Zocdoc, ClassPass, Easy Weddings and the equestrian directories actually grow. Each was rated for this business: a small market, a few hours a week, no paid social, growth through Kim's network. They sort into four groups.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Build once, then it runs by itself (the site does the work)</caption>
+      <thead><tr><th>Activity</th><th>Who it reaches</th><th>Why it fits</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Professional share kit</strong>: a share image for Facebook and Instagram, a QR poster for the stable noticeboard, a review card, a "Find me on" badge, an email signature</td><td>Each professional's own clients</td><td>Yelp, Houzz, ClassPass, Easy Weddings, Checkatrade and Rover all give these away. Horse businesses market almost entirely on Facebook, and many coaches have no website at all, so the share image and the poster matter most.</td></tr>
+        <tr><td><strong>"Follow me for clinic dates"</strong>: a link a professional sends their clients, which signs them up for that person's events</td><td>Riders who already have a coach</td><td>The single best rider source we have. Every coach's students become riders on our list, and then see the farrier and the dentist too. That is the whole retention goal in one link.</td></tr>
+        <tr><td><strong>Review requests</strong>: a link the professional sends, plus our own "did you end up booking?" email a few weeks after an enquiry</td><td>Riders who used someone</td><td>Thumbtack says pros with five or more reviews are five times as likely to be hired; Zocdoc says ten reviews brings about three times the bookings. Both are the platforms' own figures. The follow-up also tells us whether enquiries turned into bookings, which is the number the monthly email needs.</td></tr>
+        <tr><td><strong>Provider refers provider</strong>: give a month, get a month</td><td>Professionals' colleagues</td><td>Lenny Rachitsky's survey of seventeen marketplaces found direct sales and referrals were the two big early supply levers. Coaches recommend farriers and bodyworkers all the time. A free month costs us almost nothing in cash.</td></tr>
+        <tr><td><strong>Onboarding emails and the completeness meter</strong></td><td>New professionals</td><td>Gets profiles finished without Kim chasing each one. Stops once the profile is done.</td></tr>
+        <tr><td><strong>Monthly numbers email</strong> (built), <strong>annual plan offer</strong>, <strong>Stripe failed-payment emails</strong></td><td>Paying professionals</td><td>Proving value every month is the churn defence for a flat fee. Stripe's retries and card-expiry emails are a setting, not a build.</td></tr>
+        <tr><td><strong>Founding-offer conversion campaign</strong></td><td>Every founding member</td><td>The day the free period ends is the biggest single churn risk in the plan. It needs its own sequence: their numbers, the locked $9.99, the annual option, and "drop to Listed" in place of "cancel".</td></tr>
+        <tr><td><strong>Rider alerts</strong> (built), <strong>rider welcome emails</strong>, <strong>"my horse's team"</strong> saved list</td><td>Riders</td><td>Events are the reason to come back. A saved farrier, dentist and saddle fitter is a reason to log in and a natural place for reminders later.</td></tr>
+        <tr><td><strong>"Alert me" when a search finds nobody</strong></td><td>Riders in thin areas</td><td>Turns an empty result, which we'll have plenty of at launch, into a sign-up instead of a bounce. Honest about coverage without faking it.</td></tr>
+        <tr><td><strong>Area and profession pages</strong> (built), <strong>guides</strong></td><td>People searching Google</td><td>The long-term rider channel. Guides co-written with professionals give them a byline and give us content nobody else has.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>People do it, the site keeps score</caption>
+      <thead><tr><th>Activity</th><th>Hours</th><th>What the site needs</th></tr></thead>
+      <tbody>
+        <tr><td>Kim's personal outreach, and being present in Facebook groups</td><td>1 to 2 a week, batched</td><td>Tracked links per channel, so admin shows which one worked</td></tr>
+        <tr><td>One or two club or association partnerships (Pony Club, state branches, discipline and breed bodies, the farrier and dentist associations)</td><td>Slow to agree, little after</td><td>A partner promo code and a landing page each</td></tr>
+        <tr><td>Launch PR: Horse Deals, Equestrian Hub, Hoofbeats, regional papers, guest spots on equestrian podcasts</td><td>2 to 4 per pitch</td><td>Tracked links</td></tr>
+        <tr><td>Newsletter swaps with clubs and event organisers</td><td>1 per swap</td><td>Tracked links</td></tr>
+        <tr><td>A quarterly online session for professionals on business basics (pricing lessons, running clinics)</td><td>2 to 4 each</td><td>A sign-up form</td></tr>
+        <tr><td>One guide a month, co-written with a professional</td><td>2 to 3 each</td><td>The guides editor</td></tr>
+        <tr><td>A twelve-month seasonal calendar planned once (spring competition season, winter health checks, school holiday camps)</td><td>Half a day a year</td><td>Campaigns and the announcement bar</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Later, once there's an audience to justify it</caption>
+      <thead><tr><th>Activity</th><th>When</th></tr></thead>
+      <tbody>
+        <tr><td>Selling sponsorship to horse brands (a newsletter slot, a "presented by" on a guide). For scale, Horse Deals charges $199 for one newsletter ad.</td><td>When the rider list is a few thousand</td></tr>
+        <tr><td>An annual "riders' choice" award, based on saves and reviews with published rules</td><td>After the first full year</td></tr>
+        <tr><td>Giveaways and competitions, judged on skill (no permits)</td><td>Launch and spring, a few times a year</td></tr>
+        <tr><td>Member perks for professionals from horse brands (feed, insurance, saddlery)</td><td>Pairs with sponsorship</td></tr>
+        <tr><td>Small Google Ads tests on high-intent searches ("equine dentist Ballarat")</td><td>Once the pages exist and rank</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="chip">Not doing</span>
+    <p>Paid social (about $272 or more per professional on the earlier modelling, and nobody in this market does it). Expo stands (the smallest Equitana stand is $3,730 before GST; walking the expo with QR cards costs a ticket). Our own podcast. SMS marketing. Web push (on an iPhone it only works after someone adds the site to their home screen). Retargeting ads. On-site A/B tests, because detecting a modest lift needs thousands of visitors per version and we won't have them. Cash rewards for riders who refer riders, since riders pay nothing and there is nothing to discount.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>What WordPress would have given us</h2></div>
+  <div class="col">
+    <p>About fifty WordPress plugins were checked: the email and CRM plugins (Mailchimp for WordPress, FluentCRM, MailPoet, Groundhogg), popups (OptinMonster, Convert Pro, Popup Maker), forms (Gravity Forms, WPForms, Fluent Forms), SEO (Yoast, Rank Math), referral and coupons (AffiliateWP, Advanced Coupons), reviews, social, ads, and the directory plugins (GeoDirectory, Directorist, HivePress, Voxel). Between them they cover about 130 separate capabilities. Most are aimed at shops and bloggers. The table groups them and says, for each group, whether we have it, need to build it, or should skip it.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>The plugin feature set against our site</caption>
+      <thead><tr><th>Group</th><th>What plugins do</th><th>We already have</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Contacts and consent</strong></td><td>One contact record, tags, import/export, double opt-in, a consent log with time and source</td><td>Riders, providers and the waitlist in three places; <code>rider_alerts</code> stores a consent time and source</td><td><strong>Build.</strong> One audience view and a proper consent ledger. Required by law (section 05).</td></tr>
+        <tr><td><strong>Segments</strong></td><td>Filter by tag, field, behaviour, engagement, location</td><td>Every field we'd filter on (door, profession, area, plan, cohort, source)</td><td><strong>Build</strong> as saved filters over the database. Our location and profession logic is richer than any plugin's.</td></tr>
+        <tr><td><strong>Broadcast campaigns</strong></td><td>Email editor, templates, scheduling, merge tags, dynamic "latest items" blocks</td><td>Every email is a content block with variables; the monthly round-ups are code</td><td><strong>Build</strong> a simple composer: fields, not drag and drop, same as the rest of admin.</td></tr>
+        <tr><td><strong>Automations</strong></td><td>Welcome series, trigger, wait, condition, goals that exit a contact, renewal reminders, abandoned sign-up</td><td>The founding reminders (30, 14, 3 days) and event-triggered rider emails</td><td><strong>Build</strong> sequences defined in code with words and delays edited in admin. A visual workflow canvas is the most expensive thing on this list and we'd use four of them.</td></tr>
+        <tr><td><strong>Forms and capture</strong></td><td>Inline forms, conditional logic, multi-step, surveys, quizzes</td><td>Sign-up, onboarding, enquiry, alerts, waitlist</td><td><strong>Build</strong> one reusable subscribe card. <strong>Buy</strong> nothing; use Tally's free plan for occasional surveys.</td></tr>
+        <tr><td><strong>Popups and bars</strong></td><td>Popups, slide-ins, announcement bars, countdowns, exit intent, targeting, frequency caps</td><td>Nothing</td><td><strong>Build</strong> an announcement bar and one gentle slide-in. Skip exit intent (mostly a desktop trick; our visitors are on phones).</td></tr>
+        <tr><td><strong>Coupons and promotions</strong></td><td>Codes with expiry and limits, trials, auto-apply links, sitewide sales</td><td>Stripe does all of this natively; the founding price is its own Stripe price</td><td><strong>Build</strong> a thin admin screen over Stripe promotion codes.</td></tr>
+        <tr><td><strong>Referral and affiliate</strong></td><td>Referral links, a referrer dashboard, rewards, payouts, fraud checks</td><td><code>ref</code> and utm into <code>acquisition_source</code></td><td><strong>Build</strong> referrals rewarded in free months. <strong>Skip</strong> cash payouts and affiliate software.</td></tr>
+        <tr><td><strong>Reviews and social proof</strong></td><td>Star reviews with moderation, owner replies, review schema, request emails, badges, "someone just joined" pop-ups</td><td>A <code>testimonials</code> table the provider fills in themselves</td><td><strong>Build</strong> rider reviews properly (section 06). <strong>Skip</strong> the pop-ups; they break the honest-numbers rule.</td></tr>
+        <tr><td><strong>Social</strong></td><td>Share buttons, social previews, auto-posting, recycling old posts</td><td>Page metadata</td><td><strong>Build</strong> share images for every profile, event and area page. <strong>Use</strong> Meta Business Suite (free) for scheduling. Facebook groups can't be posted to automatically anyway.</td></tr>
+        <tr><td><strong>SEO</strong></td><td>Meta control, sitemaps, schema, redirects, local SEO, content scoring</td><td>All of it, plus the three-provider gate and the weekly digest</td><td><strong>Done.</strong> Add Article markup when guides exist.</td></tr>
+        <tr><td><strong>Ads and banners</strong></td><td>Ad slots, scheduling, rotation, click reports, self-serve buying</td><td>Featured slots, labelled and capped</td><td><strong>Later</strong>: a small sponsors table, sold by hand. <strong>Skip</strong> self-serve buying.</td></tr>
+        <tr><td><strong>Directory money-makers</strong></td><td>Paid plans, featured listings, claim listings, renewal reminders, owner statistics, saved-search alerts, favourites</td><td>All of it except claim listings</td><td><strong>Done.</strong> Claim listings stay out: they depend on pre-creating profiles, which we don't do.</td></tr>
+        <tr><td><strong>Testing and analytics</strong></td><td>A/B tests, heatmaps, dashboards, campaign stats, attribution</td><td>Our own event table, Search Console, the digest</td><td><strong>Build</strong> sign-ups and paid conversions by source. <strong>Skip</strong> A/B testing. Free Microsoft Clarity if we ever want heatmaps.</td></tr>
+        <tr><td><strong>Deliverability</strong></td><td>Unsubscribe headers, preference centre, bounce and complaint suppression, spam protection</td><td>One-click unsubscribe on rider emails</td><td><strong>Build</strong> a preference page, a global suppression list and Resend's bounce and complaint webhooks.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <span class="chip">Plugin features we'd refuse</span>
+    <p>Several popular plugin features break rules we've already set. Pre-created listings that owners "claim" (GeoDirectory, Directorist). Paid ranking boosts (Voxel's promoted posts). A "Verified" badge handed out for claiming a listing rather than for a real check (GeoDirectory). Pop-ups announcing inflated activity. None of these get built.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Build or buy</h2></div>
+  <div class="col">
+    <p>The deciding rule: <strong>the list lives in our database, in Sydney, and outside tools get only what they need to do one job.</strong> The rider list is the most valuable thing the business builds. None of the email platforms checked store data in Australia, so every one of them is an overseas processor the privacy policy has to name. Keeping the master list in Supabase means we can change email provider in an afternoon.</p>
+    <p>Prices are US dollars from vendor pricing pages, checked 25 September 2026, unless marked. Roughly A$1.50 to the US dollar.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>What to use</caption>
+      <thead><tr><th>Need</th><th>Choice</th><th>Cost</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Hosting</td><td><strong>Vercel Pro</strong>, one seat</td><td>US$20/mo</td><td>Required: Hobby is non-commercial only. Also unlocks custom events in Vercel's analytics.</td></tr>
+        <tr><td>All email</td><td><strong>Resend</strong>, already in use</td><td>Free to 3,000 emails/mo, then US$20/mo for 50,000. Its marketing product is free to 1,000 contacts, then US$40/mo at 5,000.</td><td>Already sends every email. Since April 2026 it also has contacts, topics (a per-topic unsubscribe page), broadcasts and automations. See the open decision in section 11 on how much of that we use.</td></tr>
+        <tr><td>Promo codes, referral rewards, trials, failed payments</td><td><strong>Stripe</strong>, already in use</td><td>No extra fee</td><td>Promotion codes with expiry and limits, customer credit for a free month, Smart Retries and card-expiry emails.</td></tr>
+        <tr><td>Product analytics, surveys</td><td><strong>PostHog</strong> free tier</td><td>Free (1M events, 1,500 survey answers a month)</td><td>A "what brought you here?" question on sign-up and funnels on the professional sign-up. Set its billing limit to zero.</td></tr>
+        <tr><td>Occasional forms and surveys</td><td><strong>Tally</strong> free</td><td>Free</td><td>For one-off things like a survey of the first ten farriers. Results go to Supabase by webhook.</td></tr>
+        <tr><td>Social scheduling</td><td><strong>Meta Business Suite</strong></td><td>Free</td><td>Facebook and Instagram are where this audience is.</td></tr>
+        <tr><td>Design for hand-made posts</td><td>Canva, optional</td><td>A$165/yr for Pro</td><td>Only if Kim wants brand templates.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>What we build ourselves, and what it replaces</caption>
+      <thead><tr><th>Build</th><th>Instead of</th><th>Their price</th></tr></thead>
+      <tbody>
+        <tr><td>Referrals on Stripe codes and a <code>referrals</code> table</td><td>Rewardful, FirstPromoter, Tolt, GrowSurf, Dub Partners</td><td>US$49 to $125/mo, more than most months' referral value</td></tr>
+        <tr><td>Rider reviews through our own moderation queue</td><td>Trustpilot, REVIEWS.io, importing Google reviews</td><td>Trustpilot from US$99/mo; Google's API only returns reviews for locations you manage, so it can't show a farrier's own Google reviews</td></tr>
+        <tr><td><code>/go/</code> tracked links and QR codes</td><td>Dub, Bitly</td><td>Dub Pro US$25/mo</td></tr>
+        <tr><td>Share images generated per page (Next.js <code>ImageResponse</code>)</td><td>Canva's automation API</td><td>Needs a paid Canva plan</td></tr>
+        <tr><td>Subscribe card, announcement bar, slide-in</td><td>OptinMonster, Hello Bar, ConvertBox</td><td>US$7 to $49/mo</td></tr>
+        <tr><td>Guides in the admin, next to content blocks</td><td>Payload, Sanity, Contentful, Keystatic</td><td>Free to US$300/mo, and every one is a second admin with its own logins</td></tr>
+        <tr><td>Sponsors table and a slot component (later)</td><td>Broadstreet, Kevel, Google Ad Manager</td><td>Broadstreet about US$299/mo; Ad Manager brings in low-grade ads</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>Checked and turned down</caption>
+      <thead><tr><th>Tool</th><th>Why not</th></tr></thead>
+      <tbody>
+        <tr><td>Mailchimp, Klaviyo, Kit, Encharge</td><td>Priced per contact at levels that make no sense here, built for shops or creators. Mailchimp charges for unsubscribed contacts.</td></tr>
+        <tr><td>Customer.io</td><td>Excellent, and free for a year under its startup programme, but US$100/mo after that.</td></tr>
+        <tr><td>Loops (US$49/mo to 5,000 contacts), MailerLite, Brevo, Bento, Sequenzy</td><td>All reasonable. They're the fallback if Resend's marketing tools prove too thin. Loops has a ready-made Supabase connection.</td></tr>
+        <tr><td>Listmonk and other self-hosted senders</td><td>Free software, but someone has to run a server and keep it patched.</td></tr>
+        <tr><td>SMS (Twilio, ClickSend, Kudosity, about 5 to 8 Australian cents a message)</td><td>Not in year one. A monthly text to 2,000 riders would be about A$160, and needs its own consent. If we ever add it, the brand name has to be registered on the SMS Sender ID Register first, which became compulsory on 1 July 2026.</td></tr>
+        <tr><td>OneSignal and web push</td><td>Barely reaches iPhones. Email alerts do the same job.</td></tr>
+        <tr><td>GA4, Plausible, Fathom</td><td>Vercel's analytics and our own event table cover it. GA4 only if we run Google Ads.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>What it costs each month</caption>
+      <thead><tr><th>Line</th><th>At launch</th><th>End of year one (about 5,000 contacts, 10,000 emails a month)</th></tr></thead>
+      <tbody>
+        <tr><td>Vercel Pro</td><td>US$20</td><td>US$20</td></tr>
+        <tr><td>Resend sending</td><td>US$0</td><td>US$20</td></tr>
+        <tr><td>Resend marketing contacts (only if we use them; section 11)</td><td>US$0</td><td>US$40</td></tr>
+        <tr><td>Usage (analytics events and the like)</td><td>about US$0</td><td>about US$3</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>about A$30</strong></td><td><strong>about A$125</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>What the law makes the software do</h2></div>
+  <div class="col">
+    <p>This is research from the regulators' own pages (ACMA, the OAIC, the ACCC, the state gaming regulators and the vet and health practitioner boards), with law firm summaries where a page couldn't be read. It is not legal advice, and the questions at the end of this section should go to the solicitor with the partnership agreement.</p>
+    <p>The risk that matters most is the Spam Act. ACMA fined <strong>Oneflare</strong>, a services directory, $75,600 in 2019 for texting tradies whose numbers it took from other directories with no unsubscribe. In March 2026 it fined <strong>Lululemon</strong> $702,900 for putting promotional content in order emails that had no unsubscribe. In a community this small, the reputational cost of one complaint would hurt us more than the fine.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>A consent record for every person, kept forever</h3>
+        <p>Under the Spam Act the sender has to prove consent. For each person and channel we keep: the type of consent (they ticked a box; they're a paying customer; their business address was published), when, where (the form, invite link or admin user), <strong>the exact wording they saw</strong>, and when and how they withdrew. Rows are only ever added, never edited. Marketing boxes are unticked by default and separate for each purpose. Signing up for an account or sending an enquiry is not, by itself, consent to marketing.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>Every email template is labelled factual or commercial</h3>
+        <p>ACMA's position is that any promotional content at all makes a message commercial, even inside a receipt. So each email content block carries a class. A factual email (password reset, enquiry forwarded, receipt) is refused on save if it contains an upgrade line, a referral prompt or a "see what's new" banner. Commercial emails can't be sent without the consent check, the unsubscribe link and the sender details. Rider alerts are commercial: they promote other businesses' services. <strong>Treat the monthly numbers email as commercial too</strong>, since it will want to mention upgrades; it costs us an unsubscribe link.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>One unsubscribe list that every send checks</h3>
+        <p>One click, no login, free, honoured at once (the legal limit is five working days), working for at least 30 days after the email went. Rider emails already do this. It has to cover everything: waitlist, rider alerts and round-ups, provider marketing, campaigns, sequences and Kim's invites. Bounces and spam complaints from Resend's webhooks go on the same list. We never email someone who unsubscribed to ask them back.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>Say who we are in every message</h3>
+        <p>Every commercial email footer carries Equine Professionals Australia, the ABN, and a contact address that works for at least 30 days after sending.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">5</div>
+      <div class="sbody">
+        <h3>Kim's invites need a record of where the address came from</h3>
+        <p>Emailing a professional who hasn't opted in is allowed only when their business address was published (their website, their Facebook business page), nothing there says "no marketing", and the message is about their trade. The invite form records the page it came from and the date. It checks the unsubscribe list, carries the footer, and allows one reminder at most. Personal numbers found in Facebook comments don't qualify.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">6</div>
+      <div class="sbody">
+        <h3>Referral invites are sent by people, not by us</h3>
+        <p>If our system emails someone because a friend typed in their address, we're the sender and the friend's say-so isn't consent. So referrals and "recommend my farrier" work by giving the person a link to send themselves, by text, WhatsApp or email.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">7</div>
+      <div class="sbody">
+        <h3>Reviews: publish the bad ones too</h3>
+        <p>We're a review platform under the ACCC's guidance. Every genuine review is published, including negative ones. A public moderation policy says what gets removed (fake, abusive, defamatory, off-topic, conflict of interest), never "negative" and never "the provider asked". Who removed what, and why, is logged. Paying for a plan has no effect on which reviews show, their order or the average. Any incentive to review has to apply whatever the rating and be shown on the review. Nobody edits review text. Provider-entered testimonials are labelled "provided by the business" and kept out of the average.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">8</div>
+      <div class="sbody">
+        <h3>Paid placements are labelled where people see them</h3>
+        <p>Featured cards say "Featured, paid placement" on the card itself and sit above the list, not mixed into it (already the rule). A "How the list is ordered" page, linked from results, says paying doesn't change organic order. Sponsored content, when it comes, is labelled "Sponsored".</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">9</div>
+      <div class="sbody">
+        <h3>Subscriptions: remind before charging, cancel online</h3>
+        <p>New unfair trading practices law passed in 2026 and starts on 1 July 2027. Its subscription rules cover small business customers, so our providers are covered. It requires a clear summary before sign-up, notices before a free period converts and before renewal, and online cancellation. We already plan most of it (the 30, 14 and 3 day founding reminders, the Stripe billing portal). Add an annual-renewal reminder and make sure "free" never appears without the date and the price that follows. Prices show including GST as one figure. No fake countdowns.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">10</div>
+      <div class="sbody">
+        <h3>Privacy: build to the full standard even if we're exempt</h3>
+        <p>Businesses under $3 million turnover are usually exempt from the Australian Privacy Principles. That exemption is lost by a business that discloses personal information for a benefit, unless it has each person's consent. A directory arguably does that, so we keep it only by having consent for everything we publish or pass on. The new statutory privacy tort (since June 2025) applies whatever our size. From 10 December 2026 privacy policies must describe automated decisions that significantly affect people, which could include our ranking and any automatic hiding of profiles. There's no Australian cookie-consent law. But the OAIC found in June 2026 that a generic cookie banner doesn't cover Meta or Google tracking pixels, so keep to our own server-side analytics and add no pixels. The privacy policy names Resend, Stripe and any other overseas processor.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">11</div>
+      <div class="sbody">
+        <h3>Competitions: judged on skill, or a small prize pool</h3>
+        <p>A competition judged on merit ("best photo of your horse with your coach", against published criteria) needs no permit anywhere. A random draw needs a permit in the ACT over $3,000 in total prizes, in South Australia from $5,001, and in New South Wales over $10,000 (the NSW figure needs confirming). Keep draws at $3,000 or less. Full terms are published before entry, entering is free, and entering does not sign anyone up to marketing unless they tick a separate box.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">12</div>
+      <div class="sbody">
+        <h3>Protected titles for physios, chiros and vet specialists</h3>
+        <p>The national health practitioner law doesn't regulate work on animals, but "physiotherapist" and "chiropractor" remain protected titles. Someone unregistered calling themselves an "equine physio" may breach it. "Specialist" is restricted for vets. So: rename those two professions ("Equine physiotherapy and rehab", "Equine chiropractic and manual therapy", or similar; the slugs can stay), allow the protected titles on a profile only with a registration number that's been checked against the public register, record the check date, and block "specialist" in vet titles unless a specialist registration is recorded. No Australian vet board found bans testimonials, but they must not mislead or compare one vet unfavourably with another.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="chip">For the solicitor</span>
+    <p>1. Is the monthly numbers email, with no promotional content in it, a factual message? (We treat it as commercial either way.) 2. Does the directory model count as trading in personal information, and do our consent flows keep the small business exemption? 3. The wording of the founding-offer conversion notice and renewal reminders, once the 2027 regulations are published. 4. The current NSW trade promotion threshold. 5. Whether the Children's Online Privacy Code, due by 10 December 2026, reaches a directory that junior riders might use. 6. Vet advertising rules in New South Wales and Queensland, which weren't fully checked.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>What we build</h2></div>
+  <div class="col">
+    <p>Eleven modules. Each follows the CMS rule: the shape is code, the words and numbers are rows editable in admin. Sizes are rough: <strong>S</strong> is a day or two of build, <strong>M</strong> a few days, <strong>L</strong> a week or more.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="smark">M1</div>
+      <div class="sbody">
+        <h3>Audience and consent &middot; M &middot; before launch</h3>
+        <p>The foundation everything else sends through.</p>
+        <ul>
+          <li><code>contacts</code>: one row per email address across riders, providers, the waitlist and invitees, linked to a profile where there is one. Admin sees one person, not three tables.</li>
+          <li><code>consents</code>: append-only; contact, channel, purpose (<code>rider_alerts</code>, <code>rider_news</code>, <code>provider_news</code>, <code>waitlist</code>, <code>invite</code>), type (express, existing customer, published address), <code>wording_id</code>, source, IP, time, withdrawn time and method. <code>rider_alerts.consented_at</code> and the waitlist move onto it.</li>
+          <li><code>consent_wordings</code>: the exact text of every checkbox and label, versioned. Forms read their wording from here, so changing the words makes a new version automatically.</li>
+          <li><code>suppressions</code>: one list, per channel, checked by one function (<code>canSend(contact, purpose)</code>) that every send path has to call. Resend bounce and complaint webhooks write to it.</li>
+          <li><strong>Preference page</strong> at <code>/email-preferences</code>, reached from every email by token, no login: each topic on or off, plus "stop everything". It grows out of today's <code>/unsubscribe</code>.</li>
+          <li><strong>Message class</strong> on every email content block (factual or commercial), a check on save, and the footer and <code>List-Unsubscribe</code> headers added automatically to every commercial send.</li>
+          <li>The monthly numbers email gets a provider opt-in on sign-up and an unsubscribe that stops the marketing parts, not account emails.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">M2</div>
+      <div class="sbody">
+        <h3>Tracked links and attribution &middot; S &middot; before launch</h3>
+        <ul>
+          <li><code>links</code>: a short <code>/go/[slug]</code> for every channel (each Facebook group, each partner, each poster, each PR piece). It logs the click in <code>provider_events</code>' sibling <code>link_clicks</code>, adds the utm tags and redirects. Admin makes one in a line and downloads its QR code.</li>
+          <li>First touch and last touch stored on every sign-up, <strong>riders included</strong> (today only providers carry <code>acquisition_source</code>).</li>
+          <li>An admin report: sign-ups, finished profiles, paid conversions and riders by source and by month. It answers the month-eight question "which outreach worked?"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">M3</div>
+      <div class="sbody">
+        <h3>On-site capture &middot; S to M &middot; before launch</h3>
+        <ul>
+          <li><strong>Announcement bar</strong>: a content block with message, link, start and end dates, audience (everyone, riders, logged-out, one door) and a dismiss that remembers. The founding offer deadline goes here with its real date, never a rolling timer.</li>
+          <li><strong>Subscribe card</strong>: one component, placed on area pages, profession pages, events and guides, that knows where it is ("Tell me when a new farrier starts near Kyneton"). It writes an alert plus a consent row.</li>
+          <li><strong>Empty results</strong>: when a search finds nobody, offer the alert and "Know someone good? Send them this link".</li>
+          <li><strong>One slide-in</strong>, off by default: shows after a delay, never to someone logged in or already subscribed, never on a profile mid-enquiry, at most once a fortnight. Offers area alerts or a guide.</li>
+          <li><strong>Campaign landing pages</strong> at <code>/p/[slug]</code> from content blocks (a Pony Club page, an Equitana page), each with its own tracked link.</li>
+          <li><strong>The waitlist</strong> becomes contacts with consents on launch day, and gets the launch email.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">M4</div>
+      <div class="sbody">
+        <h3>Professional share kit &middot; M &middot; launch month</h3>
+        <p>A "Promote yourself" tab on the dashboard. Everything carries the professional's own tracked link, so their dashboard shows how many people each piece brought.</p>
+        <ul>
+          <li><strong>Share images</strong> generated for every profile, event and area page (the social preview), and a square and a story-sized version to download: photo, name, profession, town, "Find me on Equine Professionals Australia". A "Founding member" version at launch.</li>
+          <li><strong>Printables</strong>: an A4 poster with a QR code for noticeboards, a review card to hand out, a business-card-sized QR. Generated as PDFs.</li>
+          <li><strong>Badge</strong> for a website: a small image link, plus an optional live review widget once they have reviews.</li>
+          <li><strong>Email signature</strong> snippet to copy.</li>
+          <li><strong>Follow link</strong>: "Get my clinic dates by email". A rider who opens it signs up (one screen, consent box) and gets an alert on that provider's events. This is a new kind of rider alert: one provider, events only. It's the most important thing in this module.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">M5</div>
+      <div class="sbody">
+        <h3>Rider reviews &middot; M to L &middot; launch month or soon after</h3>
+        <ul>
+          <li><code>reviews</code>: rider, provider, profession, rating, text, how it came (after an enquiry through us, or from the provider's request link), status, and the provider's public reply. Separate from <code>testimonials</code>, which stay labelled "provided by the business".</li>
+          <li><strong>Request link</strong> in the share kit that a professional sends to every client. The page asks neutrally ("How was your experience with Jane?"), never "tell us why you loved her".</li>
+          <li><strong>Our own follow-up</strong> a set number of weeks after an enquiry (a setting): "Did you end up booking Jane?" Yes leads to a review; the answer also feeds the enquiry outcome that the monthly numbers email reports.</li>
+          <li><strong>Moderation queue</strong> in admin with reasons from the published policy only, a log of every decision, simple duplicate checks (same email, same device, pasted text) and a "report this review" link on every review.</li>
+          <li>A review tag says "Enquired through Equine Professionals Australia" where true. Never "verified".</li>
+          <li><code>Review</code> and <code>AggregateRating</code> markup on profiles, following Google's current rules for third-party reviews.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">M6</div>
+      <div class="sbody">
+        <h3>Referrals and promo codes &middot; S to M &middot; launch month</h3>
+        <ul>
+          <li>Every provider gets a referral link and code. A colleague who joins through it gets a free month (a Stripe coupon); when that colleague's first payment goes through, the referrer gets a month's credit on their Stripe balance. Amounts, caps and the "first payment" rule are settings. Self-referrals are blocked.</li>
+          <li>A "Invite a colleague" panel on the dashboard showing who joined and what they've earned, with full terms on the page ("I get a free month if you join" is shown in the message they send).</li>
+          <li>Promo codes screen in admin over Stripe promotion codes: partner codes (Pony Club members get three months of Spotlight), expiry, limits, first-time only, and redemptions by code. Codes can ride on a tracked link so they apply automatically.</li>
+          <li>Riders refer by sharing: share buttons on events, profiles and guides with the rider's own <code>ref</code>. No rewards, since riders pay nothing.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">M7</div>
+      <div class="sbody">
+        <h3>Sequences &middot; M &middot; by month three</h3>
+        <p>Emails that go out over days or weeks after something happens, and stop when the job is done. <strong>The triggers and exit rules are code; the words, delays and on/off switch are admin.</strong> Each step is an email content block, so the existing email editor and test-send already work.</p>
+        <div class="tablewrap">
+          <table>
+            <caption>The sequences, and what ends each one</caption>
+            <thead><tr><th>Sequence</th><th>Starts when</th><th>Stops when</th></tr></thead>
+            <tbody>
+              <tr><td>Unfinished sign-up</td><td>An account with no submitted profile after a day</td><td>Profile submitted</td></tr>
+              <tr><td>New professional onboarding: photos, share your profile, ask for reviews, first numbers</td><td>Profile published</td><td>Completeness over a set score, or after four emails</td></tr>
+              <tr><td>First win</td><td>First enquiry or contact reveal</td><td>One email</td></tr>
+              <tr><td>Founding conversion (extends today's 30/14/3 day reminders)</td><td>60 days before the founding free period ends</td><td>They pick a plan, move to Listed, or cancel</td></tr>
+              <tr><td>Annual plan offer</td><td>Third paid month on monthly billing</td><td>Switched to annual, or after two emails</td></tr>
+              <tr><td>Pause instead of cancel</td><td>They press Cancel on our billing page, which offers a pause beside a one-click cancel</td><td>Paused, cancelled or stayed</td></tr>
+              <tr><td>Win-back</td><td>30, 60 and 90 days after cancelling</td><td>Rejoined, unsubscribed, or after three</td></tr>
+              <tr><td>Rider welcome: how it works, the nine professions, set your area alerts</td><td>Rider signs up</td><td>After three, or once they have an alert</td></tr>
+              <tr><td>Quiet rider check</td><td>No opens or visits in 120 days</td><td>They click, or they're moved to "no longer emailed"</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Tables: <code>sequences</code> (key, on/off, trigger, exit rule), <code>sequence_steps</code> (order, delay, content block key), <code>sequence_runs</code> (contact, sequence, step reached, started, stopped, why). A cron every hour moves runs forward through <code>canSend</code>. A pause uses Stripe's pause-collection setting through our own billing page, since Stripe's hosted portal doesn't offer it. Cancelling must stay one click away on that page, never hidden behind the pause offer.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">M8</div>
+      <div class="sbody">
+        <h3>Campaigns &middot; M to L &middot; by month three</h3>
+        <p>One-off emails to a chosen group: the spring clinic season, a new profession opening in an area, news for professionals, the launch.</p>
+        <ul>
+          <li><strong>Audiences</strong>: saved filters built from dropdowns, never typed SQL. Riders or providers; door; profession; within so many kilometres of a place; plan; cohort; source; joined between dates; opened or clicked recently. The screen shows the count live, after consent and suppressions are taken off.</li>
+          <li><strong>Composer</strong>: subject, preview line, and a short stack of fixed section types (text, a button, events near the reader, new providers near the reader, a guide, a sponsor slot later). Fields, not drag and drop, rendered with the same email template as everything else.</li>
+          <li>Preview as a named person, send a test, schedule, then send in batches with the consent check on every recipient.</li>
+          <li><strong>Results</strong> per campaign from Resend's webhooks: delivered, bounced, clicked, unsubscribed, and sign-ups or upgrades from its links. Opens are shown but flagged as unreliable, since Apple Mail inflates them.</li>
+          <li>A public archive of rider newsletters is optional, and cheap SEO content if we want it.</li>
+        </ul>
+        <p>Tables: <code>audiences</code>, <code>campaigns</code>, <code>campaign_sends</code> (one row per recipient, which is also the record of who got what).</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">M9</div>
+      <div class="sbody">
+        <h3>Guides &middot; M &middot; by month three</h3>
+        <ul>
+          <li><code>guides</code>: title, slug, summary, body in Markdown, hero photo, profession and area tags, author, optional co-author who is a listed professional (their photo and a link to their profile), status and publish date, SEO fields. Edited in admin, with a preview.</li>
+          <li>Pages at <code>/guides/[slug]</code> with <code>Article</code> markup, a related-professionals block by tag and place, and the subscribe card.</li>
+          <li>A "lead magnet" option: a guide can have a PDF download (the annual horse care calendar) delivered by email after sign-up.</li>
+          <li>The weekly SEO digest reports guides alongside the other pages.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">M10</div>
+      <div class="sbody">
+        <h3>Competitions &middot; S &middot; later</h3>
+        <p>A competition record with every required term (promoter and ABN, who can enter, dates, how it's judged, the prize and its value, how winners are told), an entry form with an optional separate marketing box, entry logging with duplicate checks, the judging record, and the winner published. Skill-judged by default. The form refuses a random draw with total prizes over $3,000. Entrants must be 18 or over, or entered by a parent.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">M11</div>
+      <div class="sbody">
+        <h3>Sponsors &middot; S to M &middot; later</h3>
+        <p><code>sponsors</code> and <code>sponsor_slots</code>: brand, image, link, where it shows (rider newsletter, a guide, an area or profession page), start and end dates. Every slot says "Sponsored", never sits inside a list of professionals, and never uses rider data. Clicks go through <code>/go/</code>, and admin produces a monthly report for the sponsor. Sold by hand as fixed monthly packages.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="smark">&#10003;</div>
+      <div class="sbody">
+        <h3>Fixes to what exists, before launch</h3>
+        <ul>
+          <li>Rename the physiotherapist and chiropractor professions and add the registration check (section 05, item 12).</li>
+          <li>Label <code>testimonials</code> "Provided by the business" wherever they show.</li>
+          <li>Add the "How the list is ordered" page and link it from results.</li>
+          <li>Add an annual-renewal reminder alongside the founding reminders.</li>
+          <li>Turn on Stripe Smart Retries and its failed-payment and card-expiry emails.</li>
+          <li>Add "Automated decisions" and the overseas processors to the privacy policy draft for the solicitor.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="chip">Deliberately not built</span>
+    <p>A visual workflow builder. Drag-and-drop email or page building. A/B testing. Heatmaps (Microsoft Clarity is free if we ever want them). Lead scoring. SMS and push. Affiliate cash payouts. Self-serve ad buying. Auto-posting to social media. A second CMS for the blog. Each is something plugins sell hard and we'd use a handful of times.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>The new tables at a glance</h2></div>
+  <div class="tablewrap">
+    <table>
+      <caption>Data model additions</caption>
+      <thead><tr><th>Module</th><th>Tables</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>M1</td><td><code>contacts</code>, <code>consents</code>, <code>consent_wordings</code>, <code>suppressions</code></td><td><code>consents</code> is insert-only by policy; nothing updates or deletes a row. Every send path goes through <code>canSend()</code>.</td></tr>
+        <tr><td>M2</td><td><code>links</code>, <code>link_clicks</code>; <code>first_touch</code> and <code>last_touch</code> on <code>profiles</code></td><td>Click rows use the daily-salted session hash, as <code>provider_events</code> does.</td></tr>
+        <tr><td>M3</td><td>Content blocks for the bar, slide-in and landing pages; <code>rider_alerts</code> gains a provider-only kind</td><td>The slide-in's frequency is a setting.</td></tr>
+        <tr><td>M4</td><td>None beyond M2's links</td><td>Images and PDFs are generated on request and cached.</td></tr>
+        <tr><td>M5</td><td><code>reviews</code>, <code>review_moderation_log</code>, <code>review_reports</code></td><td>The enquiry follow-up answer writes <code>enquiries.outcome</code>.</td></tr>
+        <tr><td>M6</td><td><code>referrals</code>, <code>promo_codes</code> (a mirror of Stripe's, for reporting)</td><td>Stripe stays the authority for what a code does, as with prices.</td></tr>
+        <tr><td>M7</td><td><code>sequences</code>, <code>sequence_steps</code>, <code>sequence_runs</code></td><td>Hourly cron. Vercel Pro allows it; Hobby only allows daily jobs.</td></tr>
+        <tr><td>M8</td><td><code>audiences</code>, <code>campaigns</code>, <code>campaign_sends</code>, <code>email_events</code> (from Resend's webhooks)</td><td><code>email_events</code> also serves sequences and the transactional emails.</td></tr>
+        <tr><td>M9</td><td><code>guides</code>, <code>guide_terms</code></td><td>Same history and cache rules as content blocks.</td></tr>
+        <tr><td>M10</td><td><code>competitions</code>, <code>competition_entries</code></td><td></td></tr>
+        <tr><td>M11</td><td><code>sponsors</code>, <code>sponsor_slots</code></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><h2>The admin</h2></div>
+  <div class="col">
+    <p>A fifth group of tabs, <strong>Grow</strong>, next to Who, Lists, Says and Charges. Every screen keeps a history of who changed what, as the rest of admin does.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>Grow</caption>
+      <thead><tr><th>Screen</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Audience</td><td>Everyone we can email, searchable. One person's consents, topics, source and what we've sent them. Remove or suppress on request.</td></tr>
+        <tr><td>Campaigns</td><td>Audiences, composer, schedule, results.</td></tr>
+        <tr><td>Sequences</td><td>Each sequence on or off, its steps' words and delays, how many people are in it and why they left.</td></tr>
+        <tr><td>Links and sources</td><td>Make a tracked link and its QR code. The sign-ups-and-paid-by-source report.</td></tr>
+        <tr><td>Codes and referrals</td><td>Promo codes over Stripe, redemptions, referrals and credits given.</td></tr>
+        <tr><td>Reviews</td><td>The moderation queue, reports from readers, the decision log.</td></tr>
+        <tr><td>On the site</td><td>The announcement bar, the slide-in and its switch, landing pages.</td></tr>
+        <tr><td>Guides</td><td>Write, preview, publish.</td></tr>
+        <tr><td>Later: Competitions, Sponsors</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">09</span><h2>Build order</h2></div>
+  <div class="col">
+    <p>Each stage leaves the site working. The one fixed date is the end of the founding free period, six months after launch: the conversion sequence has to be finished and tested at least two months before it.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>Stages</caption>
+      <thead><tr><th>Stage</th><th>What ships</th><th>When</th></tr></thead>
+      <tbody>
+        <tr><td><strong>A. Foundations</strong></td><td>Vercel Pro. M1 audience and consent. M2 tracked links and sources. M3 announcement bar, subscribe card, empty-result alerts, waitlist handover. The fixes list (protected titles, testimonial label, ranking page, renewal reminder, Stripe retries).</td><td>Before launch</td></tr>
+        <tr><td><strong>B. Launch tools</strong></td><td>M4 share kit and follow link. M6 referrals and promo codes. The launch email to the waitlist.</td><td>Launch month</td></tr>
+        <tr><td><strong>C. Trust</strong></td><td>M5 reviews and the enquiry follow-up.</td><td>Months 1 to 2, once enquiries are coming in</td></tr>
+        <tr><td><strong>D. Running by itself</strong></td><td>M7 sequences, starting with onboarding, unfinished sign-up and rider welcome. M8 campaigns. M9 guides.</td><td>By month 3</td></tr>
+        <tr><td><strong>E. Keeping them</strong></td><td>The founding conversion, annual offer, pause and win-back sequences, tested on real founding members' data.</td><td>By month 4</td></tr>
+        <tr><td><strong>F. Later</strong></td><td>M10 competitions, M11 sponsors, the riders' choice award.</td><td>When the list is big enough</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">10</span><h2>What Kim and Alana do each week</h2></div>
+  <div class="col">
+    <p>The build is there so this list stays short. If it runs over five hours a week between two people, something on it gets dropped, not squeezed in.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>The weekly routine</caption>
+      <thead><tr><th>Task</th><th>Who</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr><td>Personal outreach and invites, with a tracked link for each channel</td><td>Kim</td><td>1 to 2 hours</td></tr>
+        <tr><td>Answering "can anyone recommend a farrier near…" posts in Facebook groups, as herself</td><td>Kim</td><td>Half an hour</td></tr>
+        <tr><td>The review queue and new profiles</td><td>Either</td><td>15 minutes</td></tr>
+        <tr><td>A look at the sources report and the SEO digest</td><td>Alana</td><td>15 minutes</td></tr>
+        <tr><td>Monthly: one guide with a professional, one campaign, one partner or press conversation</td><td>Both</td><td>About 4 hours a month</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">11</span><h2>Decisions needed</h2></div>
+  <div class="tablewrap">
+    <table>
+      <caption>Open, with a recommendation</caption>
+      <thead><tr><th>Question</th><th>Recommendation</th></tr></thead>
+      <tbody>
+        <tr><td>Move to Vercel Pro now or at launch?</td><td>Before the coming soon page collects its first sign-up, since that's commercial use. About A$30 a month.</td></tr>
+        <tr><td>Send campaigns through our own pipeline or through Resend's Broadcasts?</td><td>Our own, on Resend's sending API: it keeps the list in Sydney, applies our consent check to every recipient, and avoids paying for contacts twice. <strong>Before building, confirm with Resend that bulk marketing through the sending API is within their terms.</strong> If not, sync contacts and topics to Resend and use its Broadcasts, at US$40 a month from 1,000 contacts.</td></tr>
+        <tr><td>Reviews at launch, or after?</td><td>Build in the first two months. Nobody can review until enquiries exist, and reviews are the trust layer riders look for.</td></tr>
+        <tr><td>What does a referral earn?</td><td>One free month each way, capped at twelve a year per referrer. A setting, so it can change.</td></tr>
+        <tr><td>What do we call the physio and chiro professions?</td><td>"Equine physiotherapy" and "Equine chiropractic" as section names, with the practitioner's own title only when registration is checked. Kim knows how these people describe themselves; her call on the words.</td></tr>
+        <tr><td>Minimum age for accounts and competitions</td><td>18, or a parent's account. Revisit when the children's privacy code is published in December.</td></tr>
+        <tr><td>Which partners first?</td><td>Kim's call. The research points to Pony Club (almost 30,000 members in over 750 clubs) and the state Equestrian Australia branches, which already run coach finders we'd complement rather than copy.</td></tr>
+        <tr><td>Add EquiDirectory and Equestrian Australia's Coach Finder to the competitor section of <em>The First 100 Coaches</em>?</td><td>Yes.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">12</span><h2>Sources</h2></div>
+  <div class="col">
+    <p><strong>Marketplace growth:</strong> Lenny Rachitsky, <a href="https://www.lennysnewsletter.com/p/how-to-kickstart-and-scale-a-marketplace-911">how to kickstart and scale a marketplace</a> and <a href="https://www.lennysnewsletter.com/p/28-ways-to-grow-supply-in-a-marketplace">28 ways to grow supply</a>; <a href="https://www.nfx.com/post/19-marketplace-tactics-for-overcoming-the-chicken-or-egg-problem">NFX, 19 marketplace tactics</a>; <a href="https://www.easyweddings.com.au/pro-education/introducing-supplier-badges/">Easy Weddings supplier badges</a>; <a href="https://business.yelp.com/resources/articles/yelp-creative-assets-for-businesses/?domain=local-business">Yelp creative assets</a>; <a href="https://www.rover.com/blog/sitter-resources/referral-link-faqs/">Rover referral links</a>; <a href="https://www.zocdoc.com/resources/blog/article/get-the-most-out-of-online-reviews-to-boost-bookings/">Zocdoc on reviews</a>; <a href="https://community.thumbtack.com/discussion/2206/how-top-pros-ask-for-reviews">Thumbtack on reviews</a>; <a href="https://docs.stripe.com/billing/revenue-recovery">Stripe revenue recovery</a>; <a href="https://www.equidirectory.com.au/">EquiDirectory</a>; <a href="https://www.equestrian.org.au/content/coach-finder">EA Coach Finder</a>; <a href="https://ponyclubaustralia.com.au/about-us/">Pony Club Australia</a>; <a href="https://acm.media/wp-content/uploads/2025/01/Horse-Deals-Media-Kit-2025.pdf">Horse Deals media kit 2025</a>; <a href="https://www.equitana.com.au/wp-content/uploads/EQMELB-2024-Exhibitor-Rate-Card.pdf">Equitana rate card</a>; <a href="https://developers.google.com/search/docs/essentials/spam-policies">Google spam policies</a>.</p>
+    <p><strong>Tools and prices:</strong> <a href="https://vercel.com/docs/plans/hobby">Vercel Hobby terms</a>; <a href="https://resend.com/docs/knowledge-base/what-is-resend-pricing">Resend pricing</a> and <a href="https://resend.com/blog/introducing-automations">automations</a>; <a href="https://docs.stripe.com/billing/subscriptions/coupons">Stripe coupons and promotion codes</a>; <a href="https://posthog.com/pricing">PostHog</a>; <a href="https://tally.so/pricing">Tally</a>; <a href="https://loops.so/pricing">Loops</a>; <a href="https://customer.io/pricing">Customer.io</a>; <a href="https://www.rewardful.com/pricing">Rewardful</a>; <a href="https://developers.google.com/my-business/content/review-data">Google Business Profile reviews API</a>; <a href="https://www.twilio.com/en-us/sms/pricing/au">Twilio Australia</a>; <a href="https://kudosity.com/pricing">Kudosity</a>; <a href="https://onesignal.com/pricing">OneSignal</a>. WordPress plugin features and prices from each vendor's own pricing and feature pages, 25 September 2026.</p>
+    <p><strong>Law:</strong> <a href="https://www.acma.gov.au/avoid-sending-spam">ACMA, avoid sending spam</a>; <a href="https://www.acma.gov.au/telemarketing-and-e-marketing-common-issues-and-mistakes">ACMA common mistakes</a>; <a href="https://www.acma.gov.au/articles/2019-11/oneflare-pays-75600-infringement-notice-spamming">Oneflare infringement notice</a>; <a href="https://www.acma.gov.au/articles/2026-03/lululemon-penalised-702k-spam-breaches">Lululemon penalty</a>; <a href="https://www.acma.gov.au/sms-sender-id-register">SMS Sender ID Register</a>; <a href="https://www.oaic.gov.au/privacy/privacy-guidance-for-organisations-and-government-agencies/organisations/small-business">OAIC small business</a>; <a href="https://www.oaic.gov.au/privacy/your-privacy-rights/more-privacy-rights/statutory-tort-for-serious-invasions-of-privacy">statutory privacy tort</a>; <a href="https://www.oaic.gov.au/privacy/privacy-guidance-for-organisations-and-government-agencies/organisations/tracking-pixels-and-privacy-obligations">OAIC on tracking pixels</a>; <a href="https://www.accc.gov.au/business/advertising-promoting-your-business/managing-online-reviews">ACCC, managing online reviews</a>; <a href="https://mk.com.au/unfair-trading-practices-reforms-passed-businesses-have-12-months-to-prepare/">unfair trading practices reforms</a>; <a href="https://www.nsw.gov.au/money-and-taxes/community-gaming/trade-promotions">NSW trade promotions</a>; <a href="https://www.sa.gov.au/topics/business-and-trade/running-a-business/trade-promotions">SA trade promotions</a>; <a href="https://www.gamblingandracing.act.gov.au/industry/lotteries/trade-promotions">ACT trade promotions</a>; <a href="https://www.physiotherapyboard.gov.au/Codes-Guidelines/FAQ/Animal-practice.aspx">Physiotherapy Board on animal practice</a>; <a href="https://www.chiropracticboard.gov.au/Codes-guidelines/FAQ/Animal-chiropractic.aspx">Chiropractic Board on animal practice</a>; <a href="https://www.vetboard.vic.gov.au/VPRBV/VPRBV/VPRBV_Guidelines/Guideline_04_-_Communication.aspx">Veterinary Board of Victoria, guideline 4</a>.</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="col">
+    <p>Written 25 September 2026 from four research passes: marketing activities across comparable marketplaces, the WordPress marketing and directory plugin ecosystem, third-party services for this stack, and the Australian law that applies. Platform figures (Thumbtack, Zocdoc, Easy Weddings) are the platforms' own claims. Where a price came from a review site rather than the vendor, it was left out or marked. Builds on <em>The Site as a CMS</em>, which it does not change.</p>
+  </div>
+</footer>
+
+</main>
