@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { headers } from "next/headers";
-import { SITE_URL } from "@/lib/site-url";
+import { requestOrigin } from "@/lib/site-url";
 import { isGatedHost, showsComingSoon } from "@/lib/launch";
 
 /**
@@ -12,6 +12,10 @@ import { isGatedHost, showsComingSoon } from "@/lib/launch";
  */
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const host = (await headers()).get("host");
+  // The sitemap this host offers has to be on this host. Pointing the public
+  // host's robots.txt at the test host's sitemap would send a crawler somewhere
+  // it cannot reach.
+  const origin = await requestOrigin();
 
   // A test or preview host: nothing here is for the index. The X-Robots-Tag
   // header the proxy sets is what actually keeps these pages out — robots.txt
@@ -26,7 +30,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
   if (showsComingSoon(host)) {
     return {
       rules: [{ userAgent: "*", allow: "/$", disallow: "/" }],
-      sitemap: `${SITE_URL}/sitemap.xml`,
+      sitemap: `${origin}/sitemap.xml`,
     };
   }
 
@@ -38,6 +42,6 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         disallow: ["/dashboard", "/account", "/api", "/login", "/signup", "/onboarding"],
       },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: `${origin}/sitemap.xml`,
   };
 }

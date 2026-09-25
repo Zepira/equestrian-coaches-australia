@@ -100,6 +100,14 @@ if (mode === "prelaunch") {
   const sitemap = await get("/sitemap.xml");
   row((sitemap.body.match(/<url>/g) ?? []).length === 1, "public sitemap.xml lists one page");
 
+  // 5b. Whatever NEXT_PUBLIC_SITE_URL says, a host must name itself to
+  //     crawlers. Pointing the public host's canonical or sitemap at the
+  //     password-protected test host is how the one indexable page fails to be
+  //     indexed, and it is easy to do by setting one variable.
+  row(!robots.body.includes(TEST_HOST), "public robots.txt does not point at the test host", (robots.body.match(/Sitemap:.*/) ?? [""])[0]);
+  row(home.body.includes(`href="https://${PUBLIC_HOST}"`) || home.body.includes(`href="http://${PUBLIC_HOST}"`), "the coming soon page's canonical is the public host",
+    (home.body.match(/<link rel="canonical"[^>]*>/) ?? [""])[0]);
+
   // 6. One address for the site.
   const www = await get("/coaches", { host: `www.${PUBLIC_HOST}` });
   row(www.status === 301 && (www.headers.get("location") ?? "").includes(`${PUBLIC_HOST}/coaches`), "www 301s to the bare domain, path kept", www.headers.get("location") ?? "");

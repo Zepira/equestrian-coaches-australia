@@ -96,9 +96,17 @@ NEXT_PUBLIC_SITE_URL=https://test.equineprofessionals.com.au
 CRON_EMAILS_ENABLED=false
 ```
 
-`NEXT_PUBLIC_SITE_URL` on the test host means every canonical tag, sitemap
-entry, structured-data URL, email link and Stripe return URL on the test site
-points at the test site. Nothing there links to the production domain.
+`NEXT_PUBLIC_SITE_URL` on the test host keeps the test site's email links and
+Stripe return URLs on the test site, so a confirmation email from there does not
+send you to the production domain.
+
+It does **not** decide what a crawler is told. `robots.txt` and the coming soon
+page's canonical are built from the host the request came in on
+(`requestOrigin()` in `src/lib/site-url.ts`), so the public host always names
+itself. That distinction matters: an earlier version of this runbook let the
+public coming soon page declare the password-protected test host as its
+canonical and point its sitemap there, which Google cannot fetch, so the one
+page meant to be indexed would not have been.
 
 ### Run the waitlist migration
 

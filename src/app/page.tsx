@@ -30,6 +30,7 @@ import { disciplinePath } from "@/lib/page-paths";
 import { headers } from "next/headers";
 import { ComingSoon } from "@/components/coming-soon";
 import { SITE_LAUNCHED, showsComingSoon } from "@/lib/launch";
+import { requestOrigin } from "@/lib/site-url";
 
 // Overrides the root layout's cream themeColor (src/app/layout.tsx): the
 // hero, not the cream header, is this route's own top edge.
@@ -51,6 +52,10 @@ const LAUNCHED_DESCRIPTION =
  */
 export async function generateMetadata(): Promise<Metadata> {
   if (!SITE_LAUNCHED && showsComingSoon((await headers()).get("host"))) {
+    // Absolute, and built from the host this request came in on, not from
+    // NEXT_PUBLIC_SITE_URL: this is the one page before launch that is meant to
+    // be indexed, so it must not name a different host as the canonical one.
+    const origin = await requestOrigin();
     return {
       // Spelled out rather than left to the root layout's title template: a
       // page in the same segment as that layout gets `default`, not the
@@ -59,7 +64,8 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "Equine Professionals Australia: coming soon",
       description:
         "A place to find riding coaches and horse care professionals near where you keep your horse. Put your name down to hear when it opens.",
-      alternates: { canonical: "/" },
+      alternates: { canonical: origin },
+      openGraph: { url: origin },
     };
   }
   return { description: LAUNCHED_DESCRIPTION };
