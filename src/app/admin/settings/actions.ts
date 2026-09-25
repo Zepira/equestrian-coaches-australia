@@ -104,6 +104,7 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     return { value: v };
   },
   enquiry_followup_days: wholeNumber("enquiry_followup_days"),
+  onboarding_complete_pct: wholeNumber("onboarding_complete_pct"),
   reviews_hold_all(raw) {
     const v = raw.trim();
     if (v !== "true" && v !== "false") return { error: "Choose hold every review or only flagged ones." };
@@ -191,6 +192,7 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   business_abn: [],
   referral_reward_months: [],
   enquiry_followup_days: [],
+  onboarding_complete_pct: [],
   reviews_hold_all: [],
   referral_cap_per_year: [],
   referral_coupon_id: [],
@@ -213,7 +215,7 @@ export async function saveSetting(formData: FormData) {
   const key = String(formData.get("key") ?? "") as SettingKey;
   // Some settings are edited from another tab (the slide-in's, on On the site); go back there.
   const back = String(formData.get("back") ?? "");
-  await writeSetting(key, String(formData.get("value") ?? ""), back === "/admin/on-site" || back === "/admin/codes" || back === "/admin/reviews" ? back : "/admin/settings");
+  await writeSetting(key, String(formData.get("value") ?? ""), back === "/admin/on-site" || back === "/admin/codes" || back === "/admin/reviews" || back === "/admin/sequences" || back === "/admin/campaigns" ? back : "/admin/settings");
 }
 
 /** "$24.95" → 2495. */

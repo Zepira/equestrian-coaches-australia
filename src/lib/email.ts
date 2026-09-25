@@ -10,14 +10,7 @@ import { createServiceSupabase } from "@/lib/supabase/service";
  * sign-up, review and billing flows are testable before a key exists.
  * Never throws: a failed email must not undo the save that triggered it.
  */
-export async function sendEmail({
-  to,
-  subject,
-  text,
-  replyTo,
-  unsubscribe,
-  commercial,
-}: {
+type SendArgs = {
   to: string | string[];
   subject: string;
   text: string;
@@ -31,7 +24,14 @@ export async function sendEmail({
    * The caller has already checked canSend().
    */
   commercial?: { token: string; purpose: Purpose };
-}): Promise<"sent" | "logged" | "failed"> {
+};
+
+export async function sendEmail(args: SendArgs): Promise<"sent" | "logged" | "failed"> {
+  return (await sendEmailWithId(args)).result;
+}
+
+/** The same, also returning Resend's id for the message, so its webhook events can be matched to the send. */
+export async function sendEmailWithId({ to, subject, text, replyTo, unsubscribe, commercial }: SendArgs): Promise<{ result: "sent" | "logged" | "failed"; id: string | null }> {
   let recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);
   // Nothing goes to an address that bounced (suppressions); a commercial
   // email's consent check happened before this, in canSend().
@@ -41,7 +41,7 @@ export async function sendEmail({
     const skip = new Set((bounced ?? []).map((b) => b.email as string));
     recipients = recipients.filter((r) => !skip.has(r.toLowerCase()));
   }
-  if (recipients.length === 0) return "logged";
+  if (recipients.length === 0) return { result: "logged", id: null };
   if (commercial) {
     text = `${text}\n\n--\n${commercialFooter(commercial.token, await getBusinessAbn())}`;
     unsubscribe = unsubscribe ?? oneClickUrl(commercial.token, commercial.purpose);
@@ -49,10 +49,10 @@ export async function sendEmail({
   const resend = getResend();
   if (!isResendConfigured || !resend) {
     console.log(`email (not sent, Resend not configured) to ${recipients.join(", ")}: ${subject}\n${text}`);
-    return "logged";
+    return { result: "logged", id: null };
   }
   try {
-    await resend.emails.send({
+    const { data } = await resend.emails.send({
       from: NOTIFICATIONS_FROM,
       to: recipients,
       subject,
@@ -60,9 +60,9 @@ export async function sendEmail({
       ...(replyTo ? { replyTo } : {}),
       ...(unsubscribe ? { headers: { "List-Unsubscribe": `<${unsubscribe}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } } : {}),
     });
-    return "sent";
+    return { result: "sent", id: data?.id ?? null };
   } catch (err) {
     console.error("sendEmail failed", subject, err);
-    return "failed";
+    return { result: "failed", id: null };
   }
 }

@@ -23,6 +23,14 @@
     {
       "path": "/api/cron/enquiry-followup",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/sequences",
+      "schedule": "0 22 * * *"
+    },
+    {
+      "path": "/api/cron/campaigns",
+      "schedule": "0 23 * * *"
     }
   ]
 }

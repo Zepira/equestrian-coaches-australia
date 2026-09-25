@@ -56,6 +56,7 @@ export const PAGES: PageEntry[] = [
   { slug: "slide-in", name: "Slide-in", href: "/", keys: ["site.slide_in"], revalidate: [["/", "layout"]], onSite: true },
   { slug: "how-we-list", name: "How the list is ordered", href: "/how-we-list", keys: ["how_we_list"], revalidate: ["/how-we-list"] },
   { slug: "review-policy", name: "Review policy", href: "/review-policy", keys: ["review_policy"], revalidate: ["/review-policy"], note: "What gets a review taken down is the list the Reviews screen offers. Change one, change both: ask for the screen to match." },
+  { slug: "guides", name: "Guides pages", href: "/guides", keys: ["guides.words"], revalidate: ["/guides", ["/guides/[slug]", "page"]], note: "The guides themselves are on Admin → Guides. {plural} is a profession, like farriers." },
   {
     slug: "reviews",
     name: "Review pages",
@@ -105,6 +106,7 @@ export const BLOCK_NAMES: Partial<Record<ContentKey, string>> = {
   how_we_list: "How the list is ordered",
   review_policy: "Review policy",
   "reviews.words": "Review form and follow-up",
+  "guides.words": "Guides pages",
   "legal.terms": "Terms of service",
   "legal.privacy": "Privacy policy",
   footer: "Tagline",
@@ -154,6 +156,31 @@ const v = (name: string, what: string, sample: string): EmailVar => ({ name, wha
 const RIDER_ALERT_VARS = [
   v("account_url", "Their alerts page", "https://equineprofessionals.com.au/account"),
   v("unsubscribe_url", "One click stops this alert", "https://equineprofessionals.com.au/unsubscribe?a=test"),
+];
+
+const SEQ_PRO_VARS = [
+  v("first_name", "Their first name", "Jane"),
+  v("audience_plural", "riders or horse owners", "riders"),
+  v("onboarding_url", "Where they left off", "https://equineprofessionals.com.au/onboarding"),
+  v("contact_email", "Our address", "hello@equineprofessionals.au"),
+];
+const SEQ_ONBOARDING_VARS = [
+  v("first_name", "Their first name", "Jane"),
+  v("audience_plural", "riders or horse owners", "riders"),
+  v("pct", "How complete the profile is", "60"),
+  v("next_item", "The most useful thing left to do", "A photo of you coaching"),
+  v("profile_edit_url", "Their profile editor", "https://equineprofessionals.com.au/dashboard/profile"),
+  v("promote_url", "The Promote tab", "https://equineprofessionals.com.au/dashboard/promote"),
+  v("reviews_url", "Their reviews and review link", "https://equineprofessionals.com.au/dashboard/reviews"),
+  v("dashboard_url", "Their dashboard", "https://equineprofessionals.com.au/dashboard"),
+  v("views", "Profile views, counted", "34 profile views"),
+  v("reveals", "Taps to call, counted", "3 taps to call"),
+  v("enquiries", "Enquiries, counted", "1 enquiry"),
+];
+const SEQ_RIDER_VARS = [
+  v("first_name", "Their first name", "Sam"),
+  v("account_url", "Their account", "https://equineprofessionals.com.au/account"),
+  v("alerts_url", "Their alerts", "https://equineprofessionals.com.au/account#alerts"),
 ];
 
 export const EMAILS: EmailEntry[] = [
@@ -305,6 +332,70 @@ EMAILS.push(
       v("place", "Where, on its own (empty for a follow)", "Kyneton VIC"),
       v("confirm_url", "The button that starts the alert", "https://equineprofessionals.com.au/alerts/confirm?t=test"),
     ],
+  },
+  {
+    key: "email.seq.unfinished_signup.1",
+    name: "Unfinished sign-up, 1",
+    class: "factual",
+    to: "A professional with a draft profile",
+    when: "A day after they signed up without sending the profile in (Admin → Sequences).",
+    vars: SEQ_PRO_VARS,
+  },
+  {
+    key: "email.seq.unfinished_signup.2",
+    name: "Unfinished sign-up, 2",
+    class: "factual",
+    to: "A professional with a draft profile",
+    when: "Days after the first, while it's still a draft.",
+    vars: SEQ_PRO_VARS,
+  },
+  {
+    key: "email.seq.unfinished_signup.3",
+    name: "Unfinished sign-up, 3",
+    class: "factual",
+    to: "A professional with a draft profile",
+    when: "The last one, while it's still a draft.",
+    vars: SEQ_PRO_VARS,
+  },
+  { key: "email.seq.onboarding.1", name: "New profile, 1: finish it", class: "factual", to: "A newly published professional", when: "Days after going live, unless the profile is already complete enough.", vars: SEQ_ONBOARDING_VARS },
+  { key: "email.seq.onboarding.2", name: "New profile, 2: share it", class: "factual", to: "A newly published professional", when: "The next step of the same sequence.", vars: SEQ_ONBOARDING_VARS },
+  { key: "email.seq.onboarding.3", name: "New profile, 3: reviews", class: "factual", to: "A newly published professional", when: "The next step of the same sequence.", vars: SEQ_ONBOARDING_VARS },
+  { key: "email.seq.onboarding.4", name: "New profile, 4: first numbers", class: "factual", to: "A newly published professional", when: "The last step, about two weeks in.", vars: SEQ_ONBOARDING_VARS },
+  {
+    key: "email.seq.first_win.1",
+    name: "First enquiry",
+    class: "factual",
+    to: "A professional",
+    when: "Their first enquiry, or the first time someone taps to see their number.",
+    vars: [
+      v("first_name", "Their first name", "Jane"),
+      v("what_happened", "What happened, as a sentence start", "Someone sent you an enquiry"),
+      v("enquiries_url", "Their enquiries", "https://equineprofessionals.com.au/dashboard/enquiries"),
+    ],
+  },
+  { key: "email.seq.rider_welcome.1", name: "Rider welcome, 1", class: "factual", to: "A new rider or horse owner", when: "Soon after they make an account, unless they already have an alert.", vars: SEQ_RIDER_VARS },
+  { key: "email.seq.rider_welcome.2", name: "Rider welcome, 2", class: "factual", to: "A new rider or horse owner", when: "Days later, while they still have no alert.", vars: SEQ_RIDER_VARS },
+  { key: "email.seq.rider_welcome.3", name: "Rider welcome, 3", class: "factual", to: "A new rider or horse owner", when: "The last one, while they still have no alert.", vars: SEQ_RIDER_VARS },
+  {
+    key: "email.guide_download",
+    name: "A guide's download",
+    class: "factual",
+    to: "Someone who asked for a guide's file",
+    when: "Straight after they ask for it on the guide.",
+    vars: [
+      v("download_title", "What the file is", "horse care calendar"),
+      v("download_url", "The file", "https://equineprofessionals.com.au/storage/calendar.pdf"),
+      v("guide_title", "The guide it came with", "Getting your horse's feet through winter"),
+      v("guide_url", "The guide", "https://equineprofessionals.com.au/guides/winter-feet"),
+    ],
+  },
+  {
+    key: "email.sequence_footer",
+    name: "Sequence email footer",
+    class: "factual",
+    to: "Everyone in a sequence",
+    when: "Added to the end of every sequence email.",
+    vars: [v("stop_url", "Stops the rest of this sequence", "https://equineprofessionals.com.au/email-preferences/sequence?t=test")],
   },
   {
     key: "email.enquiry_followup",

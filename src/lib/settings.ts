@@ -75,6 +75,8 @@ export const DEFAULTS = {
   slide_in_delay_seconds: "25",
   /** Days before the same visitor sees it again. */
   slide_in_every_days: "14",
+  /** How complete (out of 100) a new profile must be for the "New profile" emails to stop (M7). */
+  onboarding_complete_pct: "90",
   /** Days after an enquiry before we ask the rider "Did you end up booking?" (M5). */
   enquiry_followup_days: "21",
   /**
@@ -186,6 +188,7 @@ async function intSetting(key: SettingKey, min: number, max: number): Promise<nu
 
 export const SETTING_RANGES = {
   enquiry_followup_days: [7, 90],
+  onboarding_complete_pct: [50, 100],
   referral_reward_months: [1, 3],
   referral_cap_per_year: [0, 24],
   slide_in_delay_seconds: [5, 300],
@@ -222,6 +225,7 @@ export async function getReferralCouponId(): Promise<string> {
   return (await getSetting("referral_coupon_id")).trim();
 }
 
+export const getOnboardingCompletePct = () => intSetting("onboarding_complete_pct", ...SETTING_RANGES.onboarding_complete_pct);
 export const getEnquiryFollowupDays = () => intSetting("enquiry_followup_days", ...SETTING_RANGES.enquiry_followup_days);
 export async function holdAllReviews(): Promise<boolean> {
   return (await getSetting("reviews_hold_all")) !== "false";

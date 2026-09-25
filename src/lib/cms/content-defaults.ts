@@ -229,6 +229,63 @@ export const CONTENT_DEFAULTS = {
     subject: "Confirm your alert",
     body: "Someone, hopefully you, asked us to email this address when {what}.\n\nTo start the alert, confirm here: {confirm_url}\n\nIf it wasn't you, ignore this email and we won't send anything else.",
   },
+  // ── Sequences (The Marketing Engine M7). Each step is one block; the
+  // delays and switches are on Admin → Sequences. All are factual: about the
+  // person's own account, promoting nothing, and every one ends with the
+  // email.sequence_footer line so a single click stops the rest.
+  "email.seq.unfinished_signup.1": {
+    subject: "Your profile is nearly there",
+    body: "Hi {first_name},\n\nYou started a profile on Equine Professionals Australia but haven't sent it in yet. It picks up where you left off: {onboarding_url}\n\nIf something got in the way, write to us at {contact_email} and tell us what.",
+  },
+  "email.seq.unfinished_signup.2": {
+    subject: "Your draft profile",
+    body: "Hi {first_name},\n\nYour profile is saved as a draft. Nobody can see it until you send it in, and one of us looks at every profile before it goes live.\n\nCarry on here: {onboarding_url}",
+  },
+  "email.seq.unfinished_signup.3": {
+    subject: "Last reminder about your draft",
+    body: "Hi {first_name},\n\nThis is the last email we'll send about your draft profile. It stays there whenever you want to finish it: {onboarding_url}\n\nIf you've decided against listing, you don't need to do anything.",
+  },
+  "email.seq.onboarding.1": {
+    subject: "Your profile is {pct}% complete",
+    body: "Hi {first_name},\n\nYour profile is live and {pct}% complete. The thing that would help most next: {next_item}.\n\nPeople choose from what they can see, so a clear photo and a proper bio make a real difference. Edit your profile: {profile_edit_url}",
+  },
+  "email.seq.onboarding.2": {
+    subject: "Where to put your profile link",
+    body: "Hi {first_name},\n\nMost people who find you will come from your own link: in your Facebook posts, your email signature, a poster in the tack room.\n\nThe Promote tab has all of those ready, each with its own link so you can see what works: {promote_url}",
+  },
+  "email.seq.onboarding.3": {
+    subject: "Ask your {audience_plural} for a review",
+    body: "Hi {first_name},\n\nMost {audience_plural} read reviews before they get in touch. Send your review link to people you've worked with recently and ask them how it went: {reviews_url}\n\nEvery genuine review goes on your profile, and you can reply to each one.",
+  },
+  "email.seq.onboarding.4": {
+    subject: "Your first two weeks",
+    body: "Hi {first_name},\n\nSince your profile went live: {views}, {reveals} and {enquiries}.\n\nYou'll get these numbers every month from now on. The full picture is on your dashboard: {dashboard_url}",
+  },
+  "email.seq.first_win.1": {
+    subject: "{what_happened}",
+    body: "Hi {first_name},\n\n{what_happened} through your profile on Equine Professionals Australia.\n\nEnquiries wait for you in your dashboard, where you can mark each one as replied or booked: {enquiries_url}",
+  },
+  "email.seq.rider_welcome.1": {
+    subject: "Your account on Equine Professionals Australia",
+    body: "Hi {first_name},\n\nYour account is set up. Here's what it keeps for you.\n\nAnyone you save with the heart on their profile, so you can come back to them.\nAlerts, so we can email you when someone starts near you.\nThe enquiries you send, so you can see who you've contacted.\n\nYour account: {account_url}",
+  },
+  "email.seq.rider_welcome.2": {
+    subject: "Hear when someone starts near you",
+    body: "Hi {first_name},\n\nTell us where your horse lives and we'll email you when a coach, farrier or anyone else starts nearby. You choose who you want to hear about and how far away.\n\nSet it up here: {alerts_url}",
+  },
+  "email.seq.rider_welcome.3": {
+    subject: "Following someone's clinic dates",
+    body: "Hi {first_name},\n\nIf there's someone whose clinics or events you'd go to, open their profile and choose \"Get their clinic dates by email\". We'll tell you when they list one, wherever it is.\n\nYour account: {account_url}",
+  },
+  // The file someone asked for on a guide (M9). Factual: it's what they asked for.
+  "email.guide_download": {
+    subject: "{download_title}",
+    body: "Here's the {download_title} you asked for: {download_url}\n\nIt came with our guide \"{guide_title}\": {guide_url}",
+  },
+  // The last line of every sequence email.
+  "email.sequence_footer": {
+    body: "Don't want these emails? One click stops them: {stop_url}",
+  },
   // "Did you end up booking?", a set number of days after an enquiry (M5). Factual: about their own enquiry, promotes nothing.
   "email.enquiry_followup": {
     subject: "Did you end up booking {name}?",
@@ -268,6 +325,17 @@ export const CONTENT_DEFAULTS = {
   "site.slide_in": {
     title: "Hear when someone good starts near you",
     body: "Tell us where your horse lives and we'll email you when a coach, farrier or other professional joins nearby. Nothing else.",
+  },
+  // /guides and each guide's page (M9). {plural} is a profession's plural, like "farriers".
+  "guides.words": {
+    indexTitle: "Guides",
+    indexIntro: "Practical reading for riders and horse owners, written with the professionals who do the work.",
+    related: "Find {plural} near you",
+    relatedAny: "Find someone near you",
+    downloadHeading: "Get the {download_title} by email",
+    downloadLead: "We'll send you a link to the file straight away.",
+    downloadSent: "Sent. Look in your inbox for the {download_title}.",
+    coauthor: "Written with {name}",
   },
   // The review form, the confirm page and the "did you book?" page (M5).
   // {name} is the professional; {audience_plural} is "riders" or "horse owners".

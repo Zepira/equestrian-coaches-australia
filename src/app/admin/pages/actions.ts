@@ -163,7 +163,7 @@ export async function sendTestEmail(slug: string, _prev: SaveResult, fd: FormDat
   const { subject, ...rest } = checked.value as { subject: string } & Record<string, string>;
   const result = await sendEmail({
     to,
-    subject: `[Test] ${f(subject)}`,
+    subject: `[Test] ${subject ? f(subject) : emailBySlug(slug)?.name ?? slug}`,
     text: Object.values(rest).map(f).join("\n\n"),
   });
   if (result === "failed") return { ok: false, message: "It didn't send. Try again in a minute." };

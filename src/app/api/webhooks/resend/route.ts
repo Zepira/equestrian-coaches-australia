@@ -23,7 +23,9 @@ function verify(secret: string, id: string, timestamp: string, body: string, hea
   });
 }
 
-type ResendEvent = { type: string; data?: { to?: string[] | string; bounce?: { type?: string } } };
+type ResendEvent = { type: string; data?: { email_id?: string; to?: string[] | string; bounce?: { type?: string } } };
+
+const EVENT_TYPE: Record<string, string> = { "email.delivered": "delivered", "email.bounced": "bounced", "email.complained": "complained" };
 
 export async function POST(request: Request) {
   const secret = process.env.RESEND_WEBHOOK_SECRET;
@@ -48,6 +50,23 @@ export async function POST(request: Request) {
       if (contact) await stopEverything(service, { id: contact.id as string, email }, "complaint", "resend");
       await suppress(service, email, "complaint", event.type);
     }
+  }
+  // What happened to the message, for campaign and sequence results (M7, M8).
+  const type = EVENT_TYPE[event.type];
+  const resendId = event.data?.email_id;
+  if (type && resendId) {
+    const [{ data: send }, { data: seq }] = await Promise.all([
+      service.from("campaign_sends").select("campaign_id, contact_id").eq("resend_id", resendId).maybeSingle(),
+      service.from("sequence_sends").select("run_id, sequence_runs(contact_id)").eq("resend_id", resendId).maybeSingle(),
+    ]);
+    const seqContact = (seq as unknown as { sequence_runs: { contact_id: string | null } | null } | null)?.sequence_runs?.contact_id ?? null;
+    await service.from("email_events").insert({
+      resend_id: resendId,
+      type,
+      campaign_id: send?.campaign_id ?? null,
+      sequence_run_id: seq?.run_id ?? null,
+      contact_id: send?.contact_id ?? seqContact,
+    });
   }
   return NextResponse.json({ ok: true });
 }
