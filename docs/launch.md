@@ -138,12 +138,25 @@ node scripts/launch/host-gate.mjs --mode nopassword
 node scripts/launch/host-gate.mjs --mode launched
 ```
 
-A waitlist sign-up landing in the table needs a database, so it is not in that
-script. Submit the form on the running site, then:
+The waitlist has its own script, which drives the real form in a browser:
 
 ```
-node scripts/db/run-migration.mjs --query "select email, role, consented_at from waitlist order by created_at desc limit 5"
+node scripts/launch/waitlist.mjs --base http://localhost:3000
 ```
+
+It checks the page, the profession picker appearing only for a horse care
+professional, an address and a consent box that are both required, and that the
+form posts and answers **with JavaScript off** as well as on. When `.env` has
+Supabase credentials it goes further: it signs up through the form, reads the
+row back (role, profession, consent and its timestamp, source, a hashed rather
+than stored IP), checks the same address twice makes one row, presses the
+unsubscribe link, and deletes the test rows after. Without credentials it says
+so and skips that half rather than passing quietly.
+
+**If an insert fails with "Could not find the table 'public.waitlist' in the
+schema cache"**, PostgREST has not noticed the new table yet. It usually picks
+it up within a few seconds; if not, reload the schema from the Supabase
+dashboard (API → Reload schema) or run `notify pgrst, 'reload schema';`.
 
 ## Launch day, in order
 
