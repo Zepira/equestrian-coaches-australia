@@ -219,8 +219,9 @@ export function searchMockProfessionals({
 }
 
 /** A spread for the featured row: one per profession, in the nav's order. */
-export function featuredMockProfessionals(n = 4): ProfessionalCard[] {
+export function featuredMockProfessionals(n = 4, show: (professionSlug: string) => boolean = () => true): ProfessionalCard[] {
   return horseCare
+    .filter((p) => show(p.slug))
     .map((p) => mockProfessionals.find((m) => m.professionSlug === p.slug))
     .filter((m): m is MockProfessional => Boolean(m))
     .slice(0, n)

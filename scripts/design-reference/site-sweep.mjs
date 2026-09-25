@@ -28,17 +28,20 @@ const opt = (k, d) => (args.includes(k) ? args[args.indexOf(k) + 1] : d);
 const base = opt("--base", "http://localhost:3000");
 const coachLogin = opt("--coach", null);
 const riderLogin = opt("--rider", null);
-const coachSlug = opt("--coach-slug", "parity-isabella");
+// The seeded parity accounts went with the CMS rebuild's clean baseline; any
+// real published coach will do (the one live profile today is alana-l).
+const coachSlug = opt("--coach-slug", "alana-l");
 const clinicId = opt("--clinic", null);
 
 let failed = 0;
 const row = (ok, label, detail = "") => { if (!ok) failed++; console.log(`${ok ? "ok  " : "FAIL"} ${label}${detail ? "  — " + String(detail).slice(0, 220) : ""}`); };
 const settle = (p) => p.waitForLoadState("networkidle", { timeout: 6000 }).catch(() => {});
-const noise = (t) => /GL Driver Message|WebGL-0x|Download the React DevTools|favicon/.test(t);
+// The map's third-party style (OpenFreeMap) logs filter warnings on load; not ours to fix.
+const noise = (t) => /GL Driver Message|WebGL-0x|Download the React DevTools|favicon|layers\[[^\]]+\]\.filter/.test(t);
 
 const PUBLIC = [
   ["/", 200], ["/search", 200], ["/search?d=dressage&location=Bendigo+VIC", 200], ["/coaches/dressage", 200],
-  [`/profile/${coachSlug}`, 200], ["/profile/emma-dawson-0", 200], ["/for-coaches", 200], ["/login", 200],
+  [`/profile/${coachSlug}`, 200], ["/horse-care", 200], ["/farriers", 200], ["/terms", 200], ["/privacy", 200], ["/for-coaches", 200], ["/login", 200],
   ["/signup", 200], ["/signup?role=coach", 200], ["/forgot-password", 200], ["/reset-password", 200],
   ["/coaches/in/bendigo-vic", 200], ["/nope-404", 404],
   ...(clinicId ? [[`/events/${clinicId}`, 200]] : []),
@@ -252,7 +255,8 @@ if (coachLogin) {
 // ── sitemap, robots, structured data ─────────────────────────────────────
 {
   const sm = await (await fetch(`${base}/sitemap.xml`)).text();
-  row(sm.includes(`/profile/${coachSlug}`) && !sm.includes("emma-dawson-0"), "sitemap: real coach in, mock coach out");
+  // Sample profiles (src/lib/samples.ts) are never in the sitemap: their slugs end in -<profession>-<n>, or are the mock coaches'.
+  row(sm.includes(`/profile/${coachSlug}`) && !sm.includes("emma-dawson-0") && !/\/profile\/[a-z-]+-(farrier|vet|dentist|bodyworker|chiropractor|physiotherapist|saddle-fitter|nutritionist)-\d/.test(sm), "sitemap: real coach in, samples out");
   row(sm.includes("/coaches/dressage") && sm.includes("/for-coaches"), "sitemap: static + discipline routes");
   const rb = await (await fetch(`${base}/robots.txt`)).text();
   row(/Disallow: \/dashboard/.test(rb) && /Disallow: \/account/.test(rb) && /Sitemap:/.test(rb), "robots: private routes disallowed, sitemap pointed");
@@ -264,7 +268,8 @@ if (coachLogin) {
   };
   const coachLd = await ld(`/profile/${coachSlug}`);
   row(coachLd.includes("Person") && coachLd.includes("BreadcrumbList"), "json-ld coach: Person + BreadcrumbList", coachLd.join(","));
-  const discLd = await ld("/coaches/dressage");
+  // A discipline the live coach teaches, so the page has a list to mark up.
+  const discLd = await ld("/coaches/bridleless");
   row(discLd.includes("ItemList") && discLd.includes("BreadcrumbList"), "json-ld discipline: ItemList + BreadcrumbList", discLd.join(","));
   if (clinicId) { const cl = await ld(`/events/${clinicId}`); row(cl.includes("Event") && cl.includes("BreadcrumbList"), "json-ld clinic: Event + BreadcrumbList", cl.join(",")); }
   const noindex = await page.goto(`${base}/search`, { waitUntil: "load" }).then(() => page.evaluate(() => document.querySelector("meta[name=robots]")?.content ?? ""));

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/password-input";
@@ -10,7 +10,6 @@ import { inputClass, labelClass } from "@/components/ui/field";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const explicitNext = searchParams.get("next");
 
@@ -54,8 +53,10 @@ function LoginForm() {
         next = profile?.role === "provider" ? "/dashboard" : "/account";
       }
 
-      router.push(next);
-      router.refresh();
+      // A full page load, not router.push: the header prefetched this page
+      // while signed out, and a client navigation would reuse that cached
+      // redirect back to /login. A fresh request carries the new session.
+      window.location.assign(next);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong logging in — try again.");
     } finally {

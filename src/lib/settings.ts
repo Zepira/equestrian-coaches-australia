@@ -56,6 +56,17 @@ export const DEFAULTS = {
   plan_capabilities: JSON.stringify(
     Object.fromEntries(TIERS.map((t) => [t, capabilityJson(DEFAULT_CAPABILITIES[t])]))
   ),
+  /**
+   * Whether the sample coaches and professionals show on the site. On before
+   * launch; switched off on launch day. A profession with one real published
+   * provider stops showing samples on its own either way (src/lib/samples.ts).
+   */
+  show_sample_listings: "true",
+  /**
+   * Whether the solicitor has signed off the terms and privacy policy. Until
+   * then both pages say they're a draft and stay out of search results.
+   */
+  legal_approved: "false",
   /** What a founding member pays once their free period ends, kept for as long as they stay (§09). */
   founding_price: "$9.99",
   /**
@@ -166,6 +177,14 @@ export const getBenchmarkMinProviders = () => intSetting("benchmark_min_provider
 export const getEventReachKm = () => intSetting("event_reach_km", ...SETTING_RANGES.event_reach_km);
 
 // ── Review ─────────────────────────────────────────────────────────────────
+
+export async function isLegalApproved(): Promise<boolean> {
+  return (await getSetting("legal_approved")) === "true";
+}
+
+export async function showSampleListings(): Promise<boolean> {
+  return (await getSetting("show_sample_listings")) !== "false";
+}
 
 export async function isReviewRequired(): Promise<boolean> {
   return (await getSetting("review_required")) !== "false";

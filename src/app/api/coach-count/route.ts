@@ -5,6 +5,7 @@ import { searchMockCoaches } from "@/lib/mock-coaches";
 import { searchMockProfessionals } from "@/lib/mock-professionals";
 import { getProfession } from "@/lib/cms/read";
 import { getSectionTerms } from "@/lib/sections";
+import { getSamples } from "@/lib/samples";
 
 // "N nearby" for the hero search card: how many coaches (real + mock) sit
 // within the default 50 km of a typed location, optionally in a
@@ -38,16 +39,17 @@ export async function GET(req: NextRequest) {
     resolved.kind === "state"
       ? { state: resolved.state.code }
       : { lat: resolved.lat, long: resolved.long, radiusKm: 50 };
+  const samples = await getSamples();
   let real, mock;
   if (other?.open && other.id) {
     real = await searchProviders(supabase, [other.id], { disciplineIds, ...where });
     // Mock data merge — see src/lib/mock-professionals.ts to remove.
     const speciality = disciplines.find((t) => disciplineSlugs.includes(t.slug))?.name ?? null;
-    mock = searchMockProfessionals({ professionSlug: other.slug, speciality, ...where });
+    mock = samples.show(other.slug) ? searchMockProfessionals({ professionSlug: other.slug, speciality, ...where }) : [];
   } else {
     real = await searchCoaches(supabase, { disciplineIds, ...where });
     // Mock data merge — see src/lib/mock-coaches.ts to remove.
-    mock = searchMockCoaches({ disciplineSlugs, ...where });
+    mock = samples.show("coaches") ? searchMockCoaches({ disciplineSlugs, ...where }) : [];
   }
 
   return NextResponse.json(

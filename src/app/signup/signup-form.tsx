@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/password-input";
@@ -37,7 +36,6 @@ export function SignupForm({
   source: string;
   invite: SignupInvite | null;
 }) {
-  const router = useRouter();
   const [profession, setProfession] = useState(defaultProfession);
   const [changing, setChanging] = useState(false);
   const [name, setName] = useState(invite?.usable ? invite.name : "");
@@ -84,8 +82,10 @@ export function SignupForm({
         setCheckEmail(true);
         return;
       }
-      router.push(next);
-      router.refresh();
+      // A full page load, not router.push: the header prefetched this page
+      // while signed out, and a client navigation would reuse that cached
+      // redirect back to /login. A fresh request carries the new session.
+      window.location.assign(next);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong making your account. Try again.");
     } finally {
@@ -204,6 +204,11 @@ export function SignupForm({
         <Button type="submit" disabled={loading} className="mt-1 h-12 w-full text-[15px]">
           {loading ? "Making your account…" : "Create account"}
         </Button>
+        <p className="text-center text-[13px] leading-[1.5] text-subtle">
+          By creating an account you agree to our{" "}
+          <Link href="/terms" className="underline underline-offset-2 hover:text-fg">terms</Link> and{" "}
+          <Link href="/privacy" className="underline underline-offset-2 hover:text-fg">privacy policy</Link>.
+        </p>
       </form>
     </AuthShell>
   );

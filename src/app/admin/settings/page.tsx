@@ -118,6 +118,44 @@ export default async function AdminSettingsPage({
         </div>
       </section>
 
+      <section className="border-t border-border pt-6" data-legal>
+        <h2 className="font-display text-[26px] leading-none text-ink">Terms and privacy</h2>
+        <p className="mt-1 max-w-[62ch] text-sm text-muted">
+          The words are on the Pages tab. Until the solicitor has checked them, both pages say they&apos;re a draft and stay out of search results.
+        </p>
+        {notice("legal_approved")}
+        <form action={saveSetting} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+          <input type="hidden" name="key" value="legal_approved" />
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-fg">Status</span>
+            <select name="value" defaultValue={stored("legal_approved")} className={input}>
+              <option value="false">Draft: being checked</option>
+              <option value="true">Approved by the solicitor</option>
+            </select>
+          </label>
+          <Button type="submit">Save</Button>
+        </form>
+      </section>
+
+      <section className="border-t border-border pt-6" data-samples>
+        <h2 className="font-display text-[26px] leading-none text-ink">Sample listings</h2>
+        <p className="mt-1 max-w-[62ch] text-sm text-muted">
+          Made-up coaches and professionals that fill the site before real people join. A profession stops showing them as soon as it has one real, live profile. Switch them off everywhere on launch day.
+        </p>
+        {notice("show_sample_listings")}
+        <form action={saveSetting} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+          <input type="hidden" name="key" value="show_sample_listings" />
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-fg">Samples</span>
+            <select name="value" defaultValue={stored("show_sample_listings")} className={input}>
+              <option value="true">On: fill professions that have nobody yet</option>
+              <option value="false">Off: real profiles only</option>
+            </select>
+          </label>
+          <Button type="submit">Save</Button>
+        </form>
+      </section>
+
       <section className="border-t border-border pt-6">
         <h2 className="font-display text-[26px] leading-none text-ink">Review</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">

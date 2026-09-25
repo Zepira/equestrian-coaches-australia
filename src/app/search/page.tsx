@@ -13,6 +13,7 @@ import { getProfession } from "@/lib/cms/read";
 import { getSectionTerms } from "@/lib/sections";
 import { pickFeatured } from "@/lib/featured";
 import type { Profession } from "@/lib/professions";
+import { getSamples } from "@/lib/samples";
 
 // noindex, follow — faceted URLs are the classic directory crawl-budget
 // disaster (spec: "What earns a page"). /coaches/[discipline] and
@@ -99,7 +100,10 @@ export default async function SearchPage({
       : [];
 
     // Mock data merge — see src/lib/mock-coaches.ts and mock-professionals.ts to remove.
-    const mock: CoachResultData[] = coaching
+    const samples = await getSamples();
+    const mock: CoachResultData[] = !samples.show(profession.slug)
+      ? []
+      : coaching
       ? searchMockCoaches({ disciplineSlugs, skillSlugs, attributeSlugs, lat, long, radiusKm, state })
       : searchMockProfessionals({
           professionSlug: profession.slug,

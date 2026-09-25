@@ -69,7 +69,11 @@ export function SiteFooter({ tagline }: { tagline: string }) {
           </div>
         </div>
         <div className="mt-8 border-t border-ink-fg/18 pb-7 pt-4 text-[12px] text-ink-fg/50 md:mt-10 md:border-0 md:pt-0 md:text-[13px]">
-          © {year} Equine Professionals Australia
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <span>© {year} Equine Professionals Australia</span>
+            <Link href="/terms" className="hover:text-peach">Terms</Link>
+            <Link href="/privacy" className="hover:text-peach">Privacy</Link>
+          </div>
         </div>
       </div>
     </footer>

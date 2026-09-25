@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { CoachesHome } from "@/components/coaches-home";
 import { ProfessionalListing } from "@/components/professional-listing";
-import { getProfession, getProfessions } from "@/lib/cms/read";
+import { getProfession } from "@/lib/cms/read";
 import { getSectionTerms, requireSection } from "@/lib/sections";
 import { absoluteUrl } from "@/lib/site-url";
 import { sectionPath } from "@/lib/page-paths";
@@ -9,16 +9,14 @@ import { sectionPath } from "@/lib/page-paths";
 /**
  * /[profession]: every profession's section, from one template (The Site as
  * a CMS §05.3). The coaches door renders its full front door; a horse care
- * profession renders its listing. Live professions are built ahead; one an
- * admin adds later renders on its first request (dynamicParams). A word that
+ * profession renders its listing. Rendered per request, not built ahead: it
+ * reads the ?location= query and counts impressions, and a profession an
+ * admin sets live after a build has to work without one (a prebuilt route
+ * tries to render a new slug statically and fails on both). A word that
  * isn't a live profession 404s, static routes always win over this segment,
  * and the database refuses a profession slug that would clash with one.
  */
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  return (await getProfessions()).filter((p) => p.open).map((p) => ({ profession: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
 type Params = { params: Promise<{ profession: string }> };
 

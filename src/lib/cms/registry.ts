@@ -50,6 +50,22 @@ export const PAGES: PageEntry[] = [
   },
   { slug: "profiles", name: "Every profile", href: "/search", keys: ["mention"], revalidate: [["/profile/[slug]", "page"]] },
   { slug: "footer", name: "Footer", href: "/", keys: ["footer"], revalidate: [["/", "layout"]] },
+  {
+    slug: "terms",
+    name: "Terms of service",
+    href: "/terms",
+    keys: ["legal.terms"],
+    revalidate: ["/terms"],
+    note: "For the solicitor to check. {founding_price}, {free_months} and {contact_email} fill themselves in. Mark it approved on the Settings tab.",
+  },
+  {
+    slug: "privacy",
+    name: "Privacy policy",
+    href: "/privacy",
+    keys: ["legal.privacy"],
+    revalidate: ["/privacy"],
+    note: "For the solicitor to check. {contact_email} fills itself in. Mark it approved on the Settings tab.",
+  },
 ];
 
 /** A readable name for each block, where the key alone isn't. */
@@ -70,6 +86,8 @@ export const BLOCK_NAMES: Partial<Record<ContentKey, string>> = {
   "about.record": "For the record, and we're new",
   "about.cta": "Last panel",
   mention: "The line under the contact details",
+  "legal.terms": "Terms of service",
+  "legal.privacy": "Privacy policy",
   footer: "Tagline",
 };
 
@@ -83,6 +101,8 @@ export const FIELD_HINTS: Record<string, string> = {
   body: "**words** are bold.",
   items: "Each item is a heading and a line or two under it.",
   facts: "Short label, then the fact.",
+  sections: "A heading, then its text. A blank line starts a new paragraph.",
+  updated: "The date line under the title.",
 };
 
 export type EmailVar = { name: string; what: string; sample: string };

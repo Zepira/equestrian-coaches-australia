@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { LISTINGS_TAG } from "@/lib/samples";
 import { sendEmail } from "@/lib/email";
 import { getAreaPageMinProviders, getReviewAlertEmails } from "@/lib/settings";
 import { absoluteUrl } from "@/lib/site-url";
@@ -111,6 +112,7 @@ export async function publish(service: SupabaseClient, providerId: string, revie
     .eq("id", providerId);
   if (error) throw error;
   await service.rpc("recompute_indexable_pages", { p_min_providers: await getAreaPageMinProviders() });
+  revalidateTag(LISTINGS_TAG, { expire: 0 });
 
   // Riders who asked to hear when someone like this starts near them (§07.1).
   await notifyRidersOfProvider(service, providerId);
@@ -160,6 +162,7 @@ export async function syncVisibility(service: SupabaseClient, providerId: string
     !planLive && data.status === "published" ? "hidden" : planLive && data.status === "hidden" && data.published_at && !data.hidden_by_admin ? "published" : null;
   if (!next) return;
   await service.from("providers").update({ status: next, updated_at: new Date().toISOString() }).eq("id", providerId);
+  revalidateTag(LISTINGS_TAG, { expire: 0 });
 }
 
 /**
@@ -181,6 +184,7 @@ export async function adminSetHidden(service: SupabaseClient, providerId: string
   if (error) throw error;
   await service.from("provider_changes").insert({ provider_id: providerId, field: hidden ? "hidden by admin" : "shown by admin", old_value: data.status, new_value: status, changed_by: adminId });
   await service.rpc("recompute_indexable_pages", { p_min_providers: await getAreaPageMinProviders() });
+  revalidateTag(LISTINGS_TAG, { expire: 0 });
   revalidatePath(profilePath(data.slug));
 }
 

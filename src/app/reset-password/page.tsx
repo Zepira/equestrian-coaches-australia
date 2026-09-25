@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/password-input";
@@ -15,7 +14,6 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 // update. No session (link expired, already used, or landed here cold)
 // shows a plain "request a new one" state instead of a broken form.
 export default function ResetPasswordPage() {
-  const router = useRouter();
   const [status, setStatus] = useState<"checking" | "ready" | "expired">(
     isSupabaseConfigured ? "checking" : "expired"
   );
@@ -67,8 +65,10 @@ export default function ResetPasswordPage() {
       }
 
       setDone(true);
-      router.push(next);
-      router.refresh();
+      // A full page load, not router.push: the header prefetched this page
+      // while signed out, and a client navigation would reuse that cached
+      // redirect back to /login. A fresh request carries the new session.
+      window.location.assign(next);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong — try again.");
     } finally {

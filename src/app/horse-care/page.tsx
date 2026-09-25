@@ -21,7 +21,10 @@ import { RichText } from "@/components/rich-text";
 import { horseCareOf, sectionHref } from "@/lib/professions";
 import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
 import { getPlans } from "@/lib/settings";
-import { featuredMockProfessionals, mockProfessionalCount, professionPhoto } from "@/lib/mock-professionals";
+import { featuredMockProfessionals, professionPhoto } from "@/lib/mock-professionals";
+import { getSamples, professionalCount } from "@/lib/samples";
+import { createPublicSupabase } from "@/lib/supabase/public";
+import { searchProviders } from "@/lib/supabase/queries";
 import { termImagePublicUrl } from "@/lib/discipline-content";
 
 export const viewport: Viewport = {
@@ -49,9 +52,16 @@ export default async function HorseCareHome() {
   ]);
   const horseCare = horseCareOf(all);
   const [titleFirst, ...titleRest] = pitch.title.split("\n");
-  const total = mockProfessionalCount();
-  const featured = featuredMockProfessionals(4);
-  const professions = horseCare.map((p) => ({ ...p, count: mockProfessionalCount(p.slug), photo: termImagePublicUrl(p.imagePath) ?? professionPhoto(p.slug, 600) }));
+  // Real counts, plus samples in the professions that still show them (src/lib/samples.ts).
+  const samples = await getSamples();
+  const total = professionalCount(samples, horseCare.map((p) => p.slug));
+  const professions = horseCare.map((p) => ({ ...p, count: professionalCount(samples, [p.slug]), photo: termImagePublicUrl(p.imagePath) ?? professionPhoto(p.slug, 600) }));
+  // Featured: real people first, samples after.
+  // The cookie-free client keeps this page static.
+  const supabase = createPublicSupabase();
+  const ids = horseCare.map((p) => p.id).filter((x): x is string => Boolean(x));
+  const real = supabase && ids.length ? (await searchProviders(supabase, ids, {})).slice(0, 4) : [];
+  const featured = [...real, ...featuredMockProfessionals(4, samples.show)].slice(0, 4);
 
   return (
     <>

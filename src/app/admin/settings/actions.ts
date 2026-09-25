@@ -78,6 +78,16 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     if (v !== "true" && v !== "false") return { error: "Choose on or off." };
     return { value: v };
   },
+  legal_approved(raw) {
+    const v = raw.trim();
+    if (v !== "true" && v !== "false") return { error: "Choose approved or draft." };
+    return { value: v };
+  },
+  show_sample_listings(raw) {
+    const v = raw.trim();
+    if (v !== "true" && v !== "false") return { error: "Choose on or off." };
+    return { value: v };
+  },
   review_alert_emails(raw) {
     const list = parseEmailList(raw);
     const bad = list.find((e) => !isEmail(e));
@@ -150,6 +160,8 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   founding_free_months: ["/for-coaches"],
   founding_join_by: ["/for-coaches"],
   review_required: [],
+  show_sample_listings: ["/", "/coaches", "/horse-care", "/search"],
+  legal_approved: ["/terms", "/privacy", "/sitemap.xml"],
   review_alert_emails: [],
   area_page_min_providers: ["/sitemap.xml"],
   featured_min_providers: ["/search"],
@@ -307,5 +319,7 @@ async function writeSetting(key: SettingKey, raw: string, page = "/admin/setting
   revalidateTag(SETTINGS_TAG, { expire: 0 });
   revalidatePath(page);
   for (const path of SHOWN_ON[key]) revalidatePath(path);
+  // Samples appear on every listing and profile page.
+  if (key === "show_sample_listings") revalidatePath("/", "layout");
   redirect(`${page}?saved=${key}`);
 }

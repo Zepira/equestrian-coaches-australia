@@ -16,6 +16,7 @@ import { pickFeatured } from "@/lib/featured";
 import { FeaturedBlock } from "@/components/featured-block";
 import { logImpressions } from "@/lib/coach-events";
 import { getAreaIntro } from "@/lib/cms/read";
+import { getSamples } from "@/lib/samples";
 
 /**
  * /coaches/in/[area] and /coaches/[discipline]/in/[area]. The first catches
@@ -78,7 +79,7 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const coaches = [
     ...real,
-    ...searchMockCoaches({ disciplineSlugs: discipline ? [discipline.slug] : undefined, lat: area.lat, long: area.long, radiusKm }),
+    ...((await getSamples()).show("coaches") ? searchMockCoaches({ disciplineSlugs: discipline ? [discipline.slug] : undefined, lat: area.lat, long: area.long, radiusKm }) : []),
   ].sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
 
   const self = areaPagePath({ professionSlug: profession.slug, termSlug: discipline?.slug, areaSlug });

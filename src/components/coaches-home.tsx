@@ -18,6 +18,7 @@ import { FALLBACK_PROFESSIONS } from "@/lib/professions";
 import { getContent, getProfession } from "@/lib/cms/read";
 import { getPlans } from "@/lib/settings";
 import { disciplinePath } from "@/lib/page-paths";
+import { getSamples } from "@/lib/samples";
 
 
 // "Start with what you ride" lists every discipline, alphabetically (the
@@ -40,7 +41,7 @@ export async function CoachesHome() {
   const profession = coaching ?? FALLBACK_PROFESSIONS[0];
   // Mock data merge — see src/lib/mock-coaches.ts to remove.
   const all = supabase
-    ? [...(await searchCoaches(supabase, {})), ...searchMockCoaches({})]
+    ? [...(await searchCoaches(supabase, {})), ...((await getSamples()).show("coaches") ? searchMockCoaches({}) : [])]
     : placeholderCoaches.map(toCoachCardData);
   const featured = all.slice(0, 4);
 

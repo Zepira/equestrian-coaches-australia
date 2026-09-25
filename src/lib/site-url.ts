@@ -11,3 +11,9 @@ export function absoluteUrl(path: string): string {
   if (/^https?:\/\//.test(path)) return path;
   return `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
 }
+
+/**
+ * The shared inbox people are told to write to. A placeholder until the
+ * domain's email is set up (CLAUDE.md, the rename): change it here.
+ */
+export const CONTACT_EMAIL = "hello@equineprofessionals.au";

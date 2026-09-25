@@ -29,6 +29,7 @@ import { getMockCoachBySlug, SKILL_NAMES, ATTRIBUTE_NAMES } from "@/lib/mock-coa
 import { getDisciplineBySlug } from "@/lib/disciplines";
 import { breadcrumbSchema, providerSchemas } from "@/lib/structured-data";
 import { logView } from "@/lib/coach-events";
+import { getSamples } from "@/lib/samples";
 
 type CoachView = {
   id: string | null;
@@ -257,13 +258,21 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
   };
 }
 
+/** A sample coach, while coaching still shows samples (src/lib/samples.ts). */
+async function sampleCoach(slug: string) {
+  return (await getSamples()).show("coaches") ? getCoachFromMock(slug) : null;
+}
+
 export async function coachMetadata(slug: string): Promise<Metadata> {
-  const coach = (await getCoachFromDb(slug)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
+  const real = await getCoachFromDb(slug);
+  const coach = real ?? (await sampleCoach(slug)) ?? getCoachFromPlaceholder(slug);
   if (!coach) return { title: "Coach not found" };
   return {
     title: coach.name,
     description: `${coach.headline} ${coach.suburb} ${coach.state}.`,
     alternates: { canonical: profilePath(coach.slug) },
+    // Sample profiles are for looking around before launch, never for search engines.
+    ...(real ? {} : { robots: { index: false, follow: false } }),
   };
 }
 
@@ -280,7 +289,7 @@ function StatusPill({ status, who, className = "" }: { status: CoachView["taking
 }
 
 export async function CoachProfile({ slug, preview = false }: { slug: string; preview?: boolean }) {
-  const coach = (await getCoachFromDb(slug, preview)) ?? getCoachFromMock(slug) ?? getCoachFromPlaceholder(slug);
+  const coach = (await getCoachFromDb(slug, preview)) ?? (await sampleCoach(slug)) ?? getCoachFromPlaceholder(slug);
   if (!coach) notFound();
   if (coach.id && !preview) await logView(coach.id); // real coaches only; deduped per visitor per day
   const profession = (await getProfession(coach.professionSlug ?? "coaches")) ?? FALLBACK_PROFESSIONS[0];

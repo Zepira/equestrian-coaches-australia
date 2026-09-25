@@ -25,6 +25,7 @@ import { fillVariables, getContent, getProfession, getProfessions } from "@/lib/
 import { getMockProfessionalBySlug } from "@/lib/mock-professionals";
 import { profilePath, termPath } from "@/lib/page-paths";
 import { getSectionTerms } from "@/lib/sections";
+import { getSamples } from "@/lib/samples";
 
 export function isProfessionalSlug(slug: string) {
   return Boolean(getMockProfessionalBySlug(slug));
@@ -32,18 +33,20 @@ export function isProfessionalSlug(slug: string) {
 
 export async function professionalMetadata(slug: string): Promise<Metadata> {
   const pro = getMockProfessionalBySlug(slug);
-  if (!pro) return { title: "Profile not found" };
+  if (!pro || !(await getSamples()).show(pro.professionSlug)) return { title: "Profile not found" };
   const profession = await getProfession(pro.professionSlug);
   return {
     title: `${pro.name}, ${profession?.singular ?? "horse care"} in ${pro.suburb}`,
     description: `${pro.headline} ${pro.suburb} ${pro.state}.`,
     alternates: { canonical: profilePath(pro.slug) },
+    // A sample, for looking around before launch: never for search engines.
+    robots: { index: false, follow: false },
   };
 }
 
 export async function ProfessionalProfile({ slug }: { slug: string }) {
   const pro = getMockProfessionalBySlug(slug);
-  if (!pro) notFound();
+  if (!pro || !(await getSamples()).show(pro.professionSlug)) notFound();
   const professions = await getProfessions();
   const profession = professions.find((x) => x.slug === pro.professionSlug);
   if (!profession) notFound();

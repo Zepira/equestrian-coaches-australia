@@ -24,7 +24,7 @@ import { placeholderCoaches } from "@/lib/placeholder-coaches";
 import { horseCareOf, sectionHref } from "@/lib/professions";
 import { getContent, getFeaturedDisciplines, getProfessions } from "@/lib/cms/read";
 import { getPlans } from "@/lib/settings";
-import { mockProfessionalCount } from "@/lib/mock-professionals";
+import { getSamples, professionalCount } from "@/lib/samples";
 import { ProfessionGlyph, hasGlyph } from "@/components/profession-glyph";
 import { disciplinePath } from "@/lib/page-paths";
 
@@ -59,15 +59,16 @@ export default async function Home() {
   const horseCare = horseCareOf(professions);
   // Mock data merge — see src/lib/mock-coaches.ts to remove. Same list the
   // coaches page counts, so the numbers agree between the two.
+  const samples = await getSamples();
   const coachCount = supabase
-    ? (await searchCoaches(supabase, {})).length + searchMockCoaches({}).length
+    ? (await searchCoaches(supabase, {})).length + (samples.show("coaches") ? searchMockCoaches({}).length : 0)
     : placeholderCoaches.length;
 
   const bySlug = new Map(disciplines.map((d) => [d.slug, d]));
   const chips = featured.map((f) => bySlug.get(f.slug)).filter((d) => d !== undefined);
   const lead = bySlug.get("dressage") ?? disciplines[0];
   const photo = lead ? disciplineImage(lead, 1000) : null;
-  const proCount = mockProfessionalCount(); // mock data, see src/lib/mock-professionals.ts
+  const proCount = professionalCount(samples, horseCare.map((p) => p.slug));
 
   return (
     <>
@@ -155,7 +156,7 @@ export default async function Home() {
                       {hasGlyph(p.glyphKey) && <ProfessionGlyph slug={p.glyphKey} size={20} className="text-accent" />}
                       {p.name}
                     </span>
-                    <span className="shrink-0 text-[12px] text-subtle">{mockProfessionalCount(p.slug)} listed</span>
+                    <span className="shrink-0 text-[12px] text-subtle">{professionalCount(samples, [p.slug])} listed</span>
                   </Link>
                 </li>
               ))}

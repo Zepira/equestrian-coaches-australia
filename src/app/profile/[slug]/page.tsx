@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { mockProfessionals } from "@/lib/mock-professionals";
 import { CoachProfile, PLACEHOLDER_COACH_SLUGS, coachMetadata } from "./coach-profile";
 import { ProfessionalProfile, isProfessionalSlug, professionalMetadata } from "./professional-profile";
 
@@ -11,7 +10,10 @@ import { ProfessionalProfile, isProfessionalSlug, professionalMetadata } from ".
  * database first. Old /coaches/<provider> links 301 here from the term page.
  */
 export function generateStaticParams() {
-  return [...mockProfessionals.map((p) => ({ slug: p.slug })), ...PLACEHOLDER_COACH_SLUGS.map((slug) => ({ slug }))];
+  // Sample profiles aren't prerendered: they render on request, so switching
+  // samples off (or a profession getting its first real profile) removes
+  // them at once.
+  return PLACEHOLDER_COACH_SLUGS.map((slug) => ({ slug }));
 }
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ preview?: string }> };

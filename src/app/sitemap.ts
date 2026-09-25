@@ -4,6 +4,7 @@ import { getDisciplineContent } from "@/lib/supabase/queries";
 import { getProfessions } from "@/lib/cms/read";
 import { areaPagePath, disciplinePath, profilePath, sectionPath } from "@/lib/page-paths";
 import { SITE_URL as siteUrl } from "@/lib/site-url";
+import { isLegalApproved } from "@/lib/settings";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -13,6 +14,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${siteUrl}/horse-care`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/list-your-business`, changeFrequency: "monthly", priority: 0.5 },
+    // The terms and privacy policy, once the solicitor has signed them off.
+    ...((await isLegalApproved())
+      ? (["/terms", "/privacy"] as const).map((p) => ({ url: `${siteUrl}${p}`, changeFrequency: "yearly" as const, priority: 0.2 }))
+      : []),
     // Every open profession's section (/coaches, /farriers…). Horse care
     // specialities (/farriers/[term]) stay out while every listing on them
     // is mock data; coaching's disciplines are below. Professional profiles

@@ -225,6 +225,48 @@ export const CONTENT_DEFAULTS = {
     subject: "Your first charge is in {days} days",
     body: "Hi {first_name},\n\nYour free founding period ends on {first_charge_date}. From then your plan is {listed} at {listed_price} a month, charged to the card you saved, and that price stays yours for as long as you stay.\n\nTo change plan or cancel before then: {billing_url}",
   },
+  // ── Legal ───────────────────────────────────────────────────────────────
+  // /terms and /privacy. A first draft for the solicitor (The Site as a CMS
+  // §12), written from how the site actually works on 25 Sep 2026. Square
+  // brackets are facts nobody has decided yet. The pages say "draft" until
+  // the legal_approved setting is switched on. Variables: {founding_price},
+  // {free_months} ("six"), {contact_email}. A blank line in a body starts a
+  // new paragraph.
+  "legal.terms": {
+    title: "Terms of service",
+    updated: "Draft, 25 September 2026",
+    intro: "These terms cover everyone who uses Equine Professionals Australia: riders and horse owners looking for help, and the coaches and horse care professionals who list here. By using the site, or by making an account, you agree to them.",
+    sections: [
+      { title: "Who we are", body: "Equine Professionals Australia is run by Alana La Bouchardiere and Kim Thompson as a partnership, [partnership name and ABN once registered]. When these terms say \"we\" or \"us\", that's who they mean. You can reach us at {contact_email}." },
+      { title: "What the site is", body: "A directory. Riders and horse owners search it for free. Coaches, farriers, vets, dentists and other horse care professionals pay a monthly or yearly fee to have a profile on it.\n\nWe don't book lessons or visits, take payments for them, or take a cut of what you pay a professional." },
+      { title: "We don't vet anyone", body: "Every profile is written by the person it's about. We don't check qualifications, registration numbers, insurance, facilities or the quality of anyone's work, and we don't accredit or recommend anyone. Anything a profile says about those things is shown as the professional supplied it.\n\nIf a professional needs to be registered to do their work (vets and some other health professionals do), check their registration with the board that keeps it. Ask a professional the questions you'd ask anyone new before they work with you or your horse." },
+      { title: "Dealing with a professional", body: "When you contact someone through the site, anything you arrange is between you and them. We're not part of that agreement and we aren't responsible for the lessons, visits, treatment or advice they give. If something goes wrong, take it up with them. We'd also like to hear about it at {contact_email}, because a profile that misleads people shouldn't stay up." },
+      { title: "If you list with us", body: "Your profile has to be about you, accurate, and kept up to date. Only add photos, video and testimonials you have the right to use. A testimonial has to come from a real client who agreed to it being shown.\n\nYou're responsible for holding any registration, licence or insurance the law requires for your work, and for anything you claim on your profile.\n\nThe details in an enquiry are for replying to that person. Don't add them to a mailing list or pass them on." },
+      { title: "Review, changes and removal", body: "We look at every new profile before it goes live, and we can ask for changes first. We can hide or remove a profile, an event or a testimonial that breaks these terms, misleads people or puts anyone at risk. We'll tell you why when we do." },
+      { title: "Plans and payment", body: "Plans and prices are on our pricing page, in Australian dollars. They're charged in advance, monthly or yearly, through Stripe. We never see your full card number.\n\nYou can change plan whenever you like from your dashboard. If you cancel, your profile stays live until the end of the period you've paid for.\n\nFounding members give their card when they sign up and aren't charged until {free_months} months after the site launches. We'll email the exact date on launch day, and again 30, 14 and 3 days before it. From then the plan costs {founding_price} a month for as long as you stay listed." },
+      { title: "What you add to the site", body: "What you put on your profile stays yours. While it's listed, you let us show it on the site, in our emails and in search engine results, and resize or crop your photos to fit." },
+      { title: "Using the site fairly", body: "Don't copy profiles or contact details off the site in bulk, send spam through the enquiry form, pretend to be someone else, or try to get into parts of the site that aren't yours." },
+      { title: "Our responsibility", body: "Nothing in these terms takes away your rights under the Australian Consumer Law. Apart from those, and as far as the law allows, we aren't liable for the work of the professionals listed here or for loss that comes from relying on what a profile says. [For the solicitor: the limitation and cap wording.]" },
+      { title: "Changes to these terms", body: "If we change these terms, we'll put the new version here with its date. If a change affects what you pay or what your plan includes, we'll email you before it applies." },
+      { title: "The law that applies", body: "These terms are governed by the law of [state, for the solicitor to confirm]." },
+    ] as Items,
+  },
+  "legal.privacy": {
+    title: "Privacy policy",
+    updated: "Draft, 25 September 2026",
+    intro: "What we collect, why, where it's kept, and what you can ask us to do with it. We follow the Australian Privacy Principles. We don't sell or rent anyone's details.",
+    sections: [
+      { title: "If you're looking for help", body: "To search, you don't need an account and we don't ask who you are.\n\nIf you make an account we keep your name and email address, the professionals you save, and any alerts you set up: the suburb or postcode, how far to look, and what you follow.\n\nWhen you send an enquiry, your name, how to contact you and your message go to that professional, and we keep a copy so you can both see where it's up to." },
+      { title: "If you list with us", body: "We keep what you put on your profile: your name, business name, where you're based and how far you travel, what you do, qualifications, registration numbers and insurance details you choose to add, photos, video, testimonials and events. Your email address and phone number are only shown if you switch them on.\n\nWe also keep your account email, your plan and its payment history, and the enquiries sent to you. Stripe handles your card; we never see the full number." },
+      { title: "What we count", body: "We count how often each profile appears in search, is opened, has its number revealed and gets an enquiry, so professionals can see their numbers. To count each visitor once a day we use a scrambled code made from the visitor's connection details. We don't store the connection details themselves.\n\nWe also record what people search for and how many results they got, without who searched, so we can see what the site is missing." },
+      { title: "Cookies", body: "A cookie keeps you signed in. Your browser also remembers small preferences, like whether you hid the map. We don't use advertising cookies or trackers." },
+      { title: "Emails", body: "Alert emails only go to people who set up an alert, and every one has a link that stops it straight away. Professionals get emails about their account, including a monthly summary of their numbers." },
+      { title: "Who helps us run the site", body: "The details above are stored with Supabase, whose servers are in Japan. The site is hosted by Vercel, payments go through Stripe and email is sent through Resend. Some of these companies handle data outside Australia. They use it only to provide their service to us. [For the solicitor: the overseas disclosure wording.]" },
+      { title: "How long we keep it", body: "For as long as your account is open. When an account is deleted, its profile, alerts, saved profiles and enquiries go with it. We may keep billing records for as long as tax law requires." },
+      { title: "Seeing, changing or deleting your details", body: "You can change most of your details yourself from your account or dashboard. To see everything we hold about you, correct it, or have it deleted, email {contact_email}. We'll reply within 30 days." },
+      { title: "Complaints", body: "If you're unhappy with how we've handled your details, email {contact_email} and we'll look into it. If we can't sort it out, you can complain to the Office of the Australian Information Commissioner at oaic.gov.au." },
+    ] as Items,
+  },
 };
 
 export type ContentKey = keyof typeof CONTENT_DEFAULTS;

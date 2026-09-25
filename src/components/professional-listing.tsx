@@ -34,6 +34,7 @@ import { logImpressions } from "@/lib/coach-events";
 import { termImagePublicUrl } from "@/lib/discipline-content";
 import { RichText } from "@/components/rich-text";
 import { getAreaIntro } from "@/lib/cms/read";
+import { getSamples } from "@/lib/samples";
 
 const RADIUS_KM = 100;
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -86,13 +87,14 @@ export async function ProfessionalListing({
   const featured = await pickFeatured(supabase, real, { point: Boolean(point) });
   await logImpressions(real.map((r) => ({ id: r.id, professionId: r.professionId })));
 
-  // Mock data merge — see src/lib/mock-professionals.ts to remove.
+  // Mock data merge — see src/lib/mock-professionals.ts to remove; each profession drops its samples once it has a real profile.
+  const samples = await getSamples();
   const cards: CoachCardData[] = [
     ...real.map((r) => ({
       ...r,
       disciplineNames: [capitalise(singularById.get(r.professionId ?? null) ?? ""), ...r.disciplineNames.slice(0, 2)].filter(Boolean),
     })),
-    ...searchMockProfessionals({ ...filters, professionSlug: profession?.slug, speciality: speciality?.name ?? null }),
+    ...searchMockProfessionals({ ...filters, professionSlug: profession?.slug, speciality: speciality?.name ?? null }).filter((m) => samples.show(m.professionSlug ?? "")),
   ].sort((a, b) => (point ? (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity) : a.name.localeCompare(b.name)));
   const noun = profession ? profession.name.toLowerCase() : "professionals";
   const placeName = where?.kind === "point" ? `${titleCase(where.suburb)} ${where.state}` : where?.kind === "state" ? where.state.name : null;
