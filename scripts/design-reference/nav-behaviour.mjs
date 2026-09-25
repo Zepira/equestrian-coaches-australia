@@ -29,10 +29,14 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
   const errors = [];
   page.on("console", (m) => m.type() === "error" && !/ERR_TUNNEL_CONNECTION_FAILED|Failed to load resource/.test(m.text()) && errors.push(m.text()));
   // Outbound image hosts (the mock coaches' Unsplash photos) are blocked in
-  // some sandboxes; that is the environment, not the page.
+  // some sandboxes; that is the environment, not the page. And the router
+  // cancels its own in-flight RSC fetches (link prefetches, a superseded
+  // navigation) when the test moves on: ERR_ABORTED there is the router
+  // working, not a failure.
   page.on("requestfailed", (r) => {
     const host = new URL(r.url()).host;
-    if (!host.includes("unsplash")) errors.push(`request failed: ${r.url()}`);
+    const routerAbort = r.headers()["rsc"] === "1" && r.failure()?.errorText === "net::ERR_ABORTED";
+    if (!host.includes("unsplash") && !routerAbort) errors.push(`request failed: ${r.url()} (${r.failure()?.errorText})`);
   });
   page.on("pageerror", (e) => errors.push(String(e)));
   await page.goto(BASE, { waitUntil: "networkidle" });
@@ -134,10 +138,14 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
   const errors = [];
   page.on("console", (m) => m.type() === "error" && !/ERR_TUNNEL_CONNECTION_FAILED|Failed to load resource/.test(m.text()) && errors.push(m.text()));
   // Outbound image hosts (the mock coaches' Unsplash photos) are blocked in
-  // some sandboxes; that is the environment, not the page.
+  // some sandboxes; that is the environment, not the page. And the router
+  // cancels its own in-flight RSC fetches (link prefetches, a superseded
+  // navigation) when the test moves on: ERR_ABORTED there is the router
+  // working, not a failure.
   page.on("requestfailed", (r) => {
     const host = new URL(r.url()).host;
-    if (!host.includes("unsplash")) errors.push(`request failed: ${r.url()}`);
+    const routerAbort = r.headers()["rsc"] === "1" && r.failure()?.errorText === "net::ERR_ABORTED";
+    if (!host.includes("unsplash") && !routerAbort) errors.push(`request failed: ${r.url()} (${r.failure()?.errorText})`);
   });
   page.on("pageerror", (e) => errors.push(String(e)));
   await page.goto(BASE, { waitUntil: "networkidle" });
