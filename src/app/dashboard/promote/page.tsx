@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { loadDashboard } from "@/lib/dashboard";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { shareKitLinks, type KitKind } from "@/lib/share-kit";
@@ -69,6 +70,14 @@ export default async function PromotePage() {
           Send this to your {profession.audienceNoun}s. They give their email once and hear whenever you list a {profession.slug === "coaches" ? "clinic" : "clinic or event"}. {count("follow")}.
         </p>
         <div className="mt-3"><CopyField value={go("follow")} label="Follow link" /></div>
+      </section>
+
+      <section className={card} data-kit="review">
+        <h2 className={h}>Ask for reviews</h2>
+        <p className={note}>
+          Send this to your {profession.audienceNoun}s after a lesson or visit. They say how it was and it goes on your profile, good or bad. {count("review")}. <Link href="/dashboard/reviews" className="font-medium text-accent">Your reviews</Link>
+        </p>
+        <div className="mt-3"><CopyField value={go("review")} label="Review link" /></div>
       </section>
 
       <section className={card} data-kit="share">

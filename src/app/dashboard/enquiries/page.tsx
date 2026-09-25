@@ -30,10 +30,12 @@ export default async function EnquiriesPage() {
   const want = (v: string) => options.find((o) => o.value === v)?.label ?? v;
   const { data: enquiries } = await ctx.supabase
     .from("enquiries")
-    .select("id, rider_name, rider_contact, want, message, status, created_at")
+    .select("id, rider_name, rider_contact, want, message, status, created_at, rider_outcome")
     .eq("provider_id", ctx.providerId)
     .order("created_at", { ascending: false });
   const rows = enquiries ?? [];
+  // What the rider told us when we asked "did you end up booking?" (M5).
+  const said = (o: string | null) => (o === "booked" ? "Told us they booked you" : o === "not_booked" ? "Told us they didn't book" : o === "still_talking" ? "Told us they're still sorting it out" : null);
   const replyHref = (contact: string) => (contact.includes("@") ? `mailto:${contact}` : `tel:${contact.replace(/\s+/g, "")}`);
 
   return (
@@ -59,6 +61,7 @@ export default async function EnquiriesPage() {
               <span className="rounded-[var(--radius-pill)] border border-border px-2.5 py-1 text-[12px] font-medium text-muted">{e.rider_contact}</span>
             </div>
             <p className="mt-3 text-[14.5px] leading-[1.5] text-fg">{e.message}</p>
+            {said(e.rider_outcome) && <p className="mt-2 text-[12.5px] text-subtle" data-rider-outcome>{said(e.rider_outcome)}</p>}
             <div className="mt-3.5 flex items-center justify-between gap-2">
               <a href={replyHref(e.rider_contact)} className="rounded-[var(--radius-pill)] border border-ink px-3.5 py-2 text-[14px] font-medium text-ink">
                 {e.rider_contact.includes("@") ? "Reply by email" : "Call back"}
@@ -87,7 +90,10 @@ export default async function EnquiriesPage() {
                   {e.rider_contact}
                 </a>
               </div>
-              <p role="cell" className="m-0 text-[14.5px] leading-[1.5] text-fg">{e.message}</p>
+              <div role="cell">
+                <p className="m-0 text-[14.5px] leading-[1.5] text-fg">{e.message}</p>
+                {said(e.rider_outcome) && <p className="mt-1 text-[12.5px] text-subtle" data-rider-outcome>{said(e.rider_outcome)}</p>}
+              </div>
               <span role="cell" className="text-[14px] text-muted">{want(e.want)}</span>
               <span role="cell" className="text-[13.5px] text-subtle">{when(e.created_at)}</span>
               <span role="cell" className="justify-self-start">

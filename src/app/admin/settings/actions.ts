@@ -103,6 +103,12 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     if (v !== "true" && v !== "false") return { error: "Choose approved or draft." };
     return { value: v };
   },
+  enquiry_followup_days: wholeNumber("enquiry_followup_days"),
+  reviews_hold_all(raw) {
+    const v = raw.trim();
+    if (v !== "true" && v !== "false") return { error: "Choose hold every review or only flagged ones." };
+    return { value: v };
+  },
   show_sample_listings(raw) {
     const v = raw.trim();
     if (v !== "true" && v !== "false") return { error: "Choose on or off." };
@@ -184,6 +190,8 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   legal_approved: ["/terms", "/privacy", "/sitemap.xml"],
   business_abn: [],
   referral_reward_months: [],
+  enquiry_followup_days: [],
+  reviews_hold_all: [],
   referral_cap_per_year: [],
   referral_coupon_id: [],
   slide_in_enabled: [],
@@ -205,7 +213,7 @@ export async function saveSetting(formData: FormData) {
   const key = String(formData.get("key") ?? "") as SettingKey;
   // Some settings are edited from another tab (the slide-in's, on On the site); go back there.
   const back = String(formData.get("back") ?? "");
-  await writeSetting(key, String(formData.get("value") ?? ""), back === "/admin/on-site" || back === "/admin/codes" ? back : "/admin/settings");
+  await writeSetting(key, String(formData.get("value") ?? ""), back === "/admin/on-site" || back === "/admin/codes" || back === "/admin/reviews" ? back : "/admin/settings");
 }
 
 /** "$24.95" → 2495. */

@@ -32,6 +32,17 @@
         "3100"
       ],
       "port": 3100
+    },
+    {
+      "name": "prod-alt",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "next",
+        "start",
+        "-p",
+        "3110"
+      ],
+      "port": 3110
     }
   ]
 }
