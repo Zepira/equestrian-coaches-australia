@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Hanken_Grotesk, Instrument_Serif } from "next/font/google";
-import Script from "next/script";
 import { horseCareOf, horseCarePrefixes, sectionHref } from "@/lib/professions";
 import { getContent, getFeaturedDisciplines, getProfessions } from "@/lib/cms/read";
 import "./globals.css";
+import { BootScript } from "@/components/boot-script";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Parallax } from "@/components/hero-parallax";
@@ -131,11 +131,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             and a plain <script> child of <body> is the documented, well-
             supported way to run something this early (the same pattern
             next-themes' own FOUC-prevention script uses). */}
-        <Script
+        <BootScript
           id="overlay-route"
-          strategy="beforeInteractive"
-        >{`document.documentElement.dataset.overlayRoute = String(["/", "/coaches", "/horse-care", "/for-coaches"].includes(location.pathname));
-if (${JSON.stringify(prefixes)}.some(function (p) { return location.pathname === p || location.pathname.indexOf(p + "/") === 0; })) document.documentElement.dataset.door = "horse-care";`}</Script>
+          code={`document.documentElement.dataset.overlayRoute = String(["/", "/coaches", "/horse-care", "/for-coaches"].includes(location.pathname));
+if (${JSON.stringify(prefixes)}.some(function (p) { return location.pathname === p || location.pathname.indexOf(p + "/") === 0; })) document.documentElement.dataset.door = "horse-care";`}
+        />
         {/* .reveal (src/app/globals.css) fades real content in as it scrolls
             into view — a scroll-reveal component has to start that content
             at opacity: 0 in the server-rendered HTML for the fade-in to
