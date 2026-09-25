@@ -58,6 +58,8 @@ await page.locator("label[for='role-horse-care']").click({ force: true });
 row(await picker.isVisible(), "and shows for a horse care professional");
 const options = await page.locator(".waitlist-profession select option").allTextContents();
 row(options.length > 1, `its options come from the professions, not a hardcoded list (${options.length})`, options.slice(1, 4).join(", "));
+// Name one, so the row has a profession to check further down ("any" records none).
+await page.locator(".waitlist-profession select").selectOption({ index: 1 });
 
 await page.locator("input[name='email']").fill("not-an-address");
 row(
