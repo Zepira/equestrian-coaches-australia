@@ -33,7 +33,10 @@ const field = "w-full rounded-[12px] border border-border bg-white px-3.5 h-12 t
  * follow the profession picked, so this is a client component; the fields
  * are plain named inputs and the server action does the rest.
  */
-export function AlertForm({ professions, defaults, submitLabel }: { professions: AlertProfession[]; defaults: AlertDefaults; submitLabel: string }) {
+/** The consent words shown on the form (consent_wordings), and whether the round-up is already on. */
+export type AlertConsent = { alerts: { id: string; body: string } | null; news: { id: string; body: string } | null; newsOn: boolean };
+
+export function AlertForm({ professions, defaults, submitLabel, consent }: { professions: AlertProfession[]; defaults: AlertDefaults; submitLabel: string; consent: AlertConsent }) {
   const [place, setPlace] = useState(defaults.place);
   const [who, setWho] = useState(defaults.who);
   const picked = who.startsWith("p:") ? professions.find((p) => p.id === who.slice(2)) : undefined;
@@ -103,9 +106,18 @@ export function AlertForm({ professions, defaults, submitLabel }: { professions:
           <input type="checkbox" name="wants_new_providers" defaultChecked={defaults.wantsNewProviders} className="accent-accent" />A new {noun} starting near me
         </label>
       </fieldset>
-      <p className="text-[13px] leading-[1.5] text-subtle">
-        We&apos;ll email you when something matches, plus one round-up a month. Every email has a link to stop it in one click.
-      </p>
+      {consent.alerts && (
+        <>
+          <input type="hidden" name="alerts_wording" value={consent.alerts.id} />
+          <p className="text-[13px] leading-[1.5] text-subtle">{consent.alerts.body}</p>
+        </>
+      )}
+      {consent.news && !consent.newsOn && (
+        <label className="flex gap-2.5 text-[14px] leading-[1.45] text-fg">
+          <input type="checkbox" name="news_wording" value={consent.news.id} className="mt-0.5 accent-accent" />
+          <span>{consent.news.body}</span>
+        </label>
+      )}
       <button type="submit" className="h-12 w-full rounded-[var(--radius-pill)] bg-ink text-[15px] font-semibold text-ink-fg transition-colors duration-200 hover:bg-ink-card">
         {submitLabel}
       </button>

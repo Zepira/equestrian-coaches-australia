@@ -5,6 +5,7 @@ import { getEventReachKm } from "@/lib/settings";
 import { absoluteUrl } from "@/lib/site-url";
 import { eventPath, profilePath } from "@/lib/page-paths";
 import type { Door } from "@/lib/professions";
+import { canSend, stopEverything } from "@/lib/audience";
 
 /**
  * Every email a rider or horse owner gets (The Site as a CMS §07): an event
@@ -56,6 +57,8 @@ export async function notifyRidersOfEvent(service: Service, eventId: string) {
   const copy = await getContent("email.rider_event");
   let sent = 0;
   for (const m of (data ?? []) as Match[]) {
+    const allowed = await canSend(service, m.email, "rider_alerts");
+    if (!allowed.ok) continue;
     const links = unsubscribeLinks("alert", m.unsubscribe_token);
     const vars = {
       event_title: event.title,
@@ -72,6 +75,7 @@ export async function notifyRidersOfEvent(service: Service, eventId: string) {
       subject: f(copy.subject),
       text: `${f(copy.body)}\n\n${f(copy.footer)}`,
       unsubscribe: links.oneClick,
+      commercial: { token: allowed.token!, purpose: "rider_alerts" },
     });
     if (result === "failed") continue;
     if (result === "sent") sent++;
@@ -102,6 +106,8 @@ export async function notifyRidersOfProvider(service: Service, providerId: strin
   const copy = await getContent("email.rider_new_provider");
   let sent = 0;
   for (const m of data as Match[]) {
+    const allowed = await canSend(service, m.email, "rider_alerts");
+    if (!allowed.ok) continue;
     const links = unsubscribeLinks("alert", m.unsubscribe_token);
     const vars = {
       name: p.name,
@@ -119,6 +125,7 @@ export async function notifyRidersOfProvider(service: Service, providerId: strin
       subject: f(copy.subject),
       text: [f(copy.body), p.headline ? f(copy.headline) : "", f(copy.profileLine), f(copy.footer)].filter(Boolean).join("\n\n"),
       unsubscribe: links.oneClick,
+      commercial: { token: allowed.token!, purpose: "rider_alerts" },
     });
     if (result === "failed") continue;
     if (result === "sent") sent++;
@@ -161,6 +168,11 @@ export async function sendRiderMonthly(service: Service, now = new Date()) {
       service.rpc("new_providers_for_rider", { p_rider_id: riderId, p_since: since }),
     ]);
     if (!profile?.email) continue;
+    const allowed = await canSend(service, profile.email as string, "rider_news");
+    if (!allowed.ok) {
+      skipped++;
+      continue;
+    }
     type Ev = { id: string; title: string; start_date: string; location_text: string; provider_name: string; door: Door | null };
     type Pr = { slug: string; name: string; suburb: string; state: string; profession_id: string | null; door: Door | null };
     const sections = (["coaches", "horse_care"] as Door[])
@@ -192,6 +204,7 @@ export async function sendRiderMonthly(service: Service, now = new Date()) {
       subject: fillVariables(copy.subject, vars),
       text: `${fillVariables(copy.intro, vars)}\n\n${sections.join("\n\n")}\n\n${fillVariables(copy.footer, vars)}`,
       unsubscribe: links.oneClick,
+      commercial: { token: allowed.token!, purpose: "rider_news" },
     });
     if (result === "failed") continue;
     if (result === "sent") sent++;
@@ -209,9 +222,11 @@ export async function unsubscribe(service: Service, { alert, rider }: { alert?: 
     return data?.length ? "alert" : "unknown";
   }
   if (rider && token.test(rider)) {
-    const { data: profile } = await service.from("profiles").select("id").eq("email_token", rider).maybeSingle();
+    const { data: profile } = await service.from("profiles").select("id, email").eq("email_token", rider).maybeSingle();
     if (!profile) return "unknown";
     await service.from("rider_alerts").update({ unsubscribed_at: now, updated_at: now }).eq("rider_id", profile.id).is("unsubscribed_at", null);
+    const { data: contact } = await service.from("contacts").select("id, email").eq("profile_id", profile.id).maybeSingle();
+    if (contact) await stopEverything(service, { id: contact.id as string, email: contact.email as string }, "link", "unsubscribe");
     return "all";
   }
   return "unknown";

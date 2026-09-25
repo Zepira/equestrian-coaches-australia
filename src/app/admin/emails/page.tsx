@@ -18,7 +18,8 @@ export default function AdminEmailsPage() {
           <li key={e.key}>
             <Link href={`/admin/emails/${e.key.slice("email.".length)}`} className="flex flex-col rounded-[14px] border border-border bg-surface p-4 hover:border-accent">
               <span className="font-display text-[20px] leading-none text-ink">{e.name}</span>
-              <span className="mt-1.5 text-[13px] text-subtle">
+              <span className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-subtle">{e.class}</span>
+              <span className="mt-1 text-[13px] text-subtle">
                 To {e.to.charAt(0).toLowerCase() + e.to.slice(1)}. {e.when}
               </span>
             </Link>

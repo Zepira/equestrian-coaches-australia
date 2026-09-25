@@ -1,4 +1,7 @@
 import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
+import { commercialFooter, oneClickUrl, type Purpose } from "@/lib/audience";
+import { getBusinessAbn } from "@/lib/settings";
+import { createServiceSupabase } from "@/lib/supabase/service";
 
 /**
  * One way to send an email from the app. With Resend set up it sends; without
@@ -13,6 +16,7 @@ export async function sendEmail({
   text,
   replyTo,
   unsubscribe,
+  commercial,
 }: {
   to: string | string[];
   subject: string;
@@ -20,9 +24,28 @@ export async function sendEmail({
   replyTo?: string;
   /** The one-click unsubscribe endpoint (RFC 8058): mail apps show their own "Unsubscribe" button for it. */
   unsubscribe?: string;
+  /**
+   * A commercial email (The Marketing Engine §05.2): the recipient's contact
+   * token and the purpose they agreed to. Adds who we are, how to reach us and
+   * how to stop, and a one-click header when the caller didn't give its own.
+   * The caller has already checked canSend().
+   */
+  commercial?: { token: string; purpose: Purpose };
 }): Promise<"sent" | "logged" | "failed"> {
-  const recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);
+  let recipients = (Array.isArray(to) ? to : [to]).filter(Boolean);
+  // Nothing goes to an address that bounced (suppressions); a commercial
+  // email's consent check happened before this, in canSend().
+  const service = createServiceSupabase();
+  if (service && recipients.length) {
+    const { data: bounced } = await service.from("suppressions").select("email").eq("reason", "bounce").in("email", recipients.map((r) => r.toLowerCase()));
+    const skip = new Set((bounced ?? []).map((b) => b.email as string));
+    recipients = recipients.filter((r) => !skip.has(r.toLowerCase()));
+  }
   if (recipients.length === 0) return "logged";
+  if (commercial) {
+    text = `${text}\n\n--\n${commercialFooter(commercial.token, await getBusinessAbn())}`;
+    unsubscribe = unsubscribe ?? oneClickUrl(commercial.token, commercial.purpose);
+  }
   const resend = getResend();
   if (!isResendConfigured || !resend) {
     console.log(`email (not sent, Resend not configured) to ${recipients.join(", ")}: ${subject}\n${text}`);

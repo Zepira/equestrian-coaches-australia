@@ -5,7 +5,9 @@ import { resolveLocation } from "@/lib/supabase/queries";
 import { getProfessions } from "@/lib/cms/read";
 import { getSectionTerms } from "@/lib/sections";
 import { deleteAlert, removeFavourite, setAlertActive } from "./actions";
-import { AlertForm, type AlertDefaults, type AlertProfession } from "./alert-form";
+import { AlertForm, type AlertConsent, type AlertDefaults, type AlertProfession } from "./alert-form";
+import { consentStatus, currentWording } from "@/lib/audience";
+import { createServiceSupabase } from "@/lib/supabase/service";
 import { eventPath, profilePath } from "@/lib/page-paths";
 
 export const metadata = { title: "My account", robots: { index: false, follow: false } };
@@ -130,6 +132,20 @@ export default async function AccountPage({
   const fromSearch = sp.alerts === "1";
   const searchProfession = professions.find((p) => p.slug === (sp.p || "coaches"));
   const searchTerm = sp.d ? searchProfession?.terms.find((t) => t.slug === sp.d) : undefined;
+  // The words the alert form shows, and whether the round-up is already on (M1).
+  const service = createServiceSupabase();
+  const [alertsWording, newsWording, contactRow] = await Promise.all([
+    currentWording(supabase, "rider_alerts"),
+    currentWording(supabase, "rider_news"),
+    service ? service.from("contacts").select("id, token").eq("profile_id", user.id).maybeSingle() : Promise.resolve({ data: null }),
+  ]);
+  const newsOn = service && contactRow.data ? Boolean((await consentStatus(service, contactRow.data.id as string)).rider_news) : false;
+  const consent: AlertConsent = {
+    alerts: alertsWording ? { id: alertsWording.id, body: alertsWording.body } : null,
+    news: newsWording ? { id: newsWording.id, body: newsWording.body } : null,
+    newsOn,
+  };
+
   const newDefaults: AlertDefaults = {
     place: fromSearch ? (sp.location ?? "") : "",
     radiusKm: 100,
@@ -294,6 +310,11 @@ export default async function AccountPage({
             <p className="mt-2 text-[14.5px] leading-[1.5] text-muted wide:text-[14px]">
               An email when a clinic comes up or someone new starts near you, for whoever you follow. Nothing else.
             </p>
+            {contactRow.data?.token && (
+              <p className="mt-1.5 text-[13.5px]">
+                <Link href={`/email-preferences?t=${contactRow.data.token}`} className="text-accent underline-offset-2 hover:underline">Choose what we email you</Link>
+              </p>
+            )}
             {saved === "1" && <p role="status" className="mt-3 text-[13.5px] text-muted">Alert saved.</p>}
             {sp.alert_error && <p role="alert" className="mt-3 text-[13.5px] text-accent">{sp.alert_error}</p>}
             <ul className="mt-4 flex flex-col gap-2.5">
@@ -319,7 +340,7 @@ export default async function AccountPage({
                       </form>
                       <details className="w-full [&[open]>summary]:mb-3">
                         <summary className="cursor-pointer font-medium text-accent">Change</summary>
-                        <AlertForm professions={professions} defaults={toDefaults(a)} submitLabel="Save changes" />
+                        <AlertForm professions={professions} defaults={toDefaults(a)} submitLabel="Save changes" consent={consent} />
                       </details>
                     </div>
                   </li>
@@ -328,7 +349,7 @@ export default async function AccountPage({
             </ul>
             <details open={alerts.length === 0 || fromSearch} className="mt-4 rounded-[14px] border border-dashed border-border p-3.5 [&[open]>summary]:mb-3">
               <summary className="cursor-pointer text-[15px] font-medium text-accent">{alerts.length ? "Add another alert" : "Set up an alert"}</summary>
-              <AlertForm professions={professions} defaults={newDefaults} submitLabel="Save alert" />
+              <AlertForm professions={professions} defaults={newDefaults} submitLabel="Save alert" consent={consent} />
             </details>
           </section>
 

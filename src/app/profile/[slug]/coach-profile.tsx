@@ -55,6 +55,8 @@ type CoachView = {
   skillNames: string[];
   attributeNames: string[];
   qualifications: string[];
+  /** Set only once an admin has checked it against the public register. */
+  registration?: { number: string; checkedAt: string } | null;
   testimonials: { quote: string; author: string }[];
   clinics: { id: string | null; title: string; date: string; location: string; placesLeft: number | null }[];
   photoUrl: string | null;
@@ -83,7 +85,7 @@ async function getCoachFromDb(slug: string, preview = false): Promise<CoachView 
   const { data: coach } = await supabase
     .from("providers")
     .select(
-      "id, name, business_name, headline, bio, suburb, state, lat, long, qualifications, video_url, availability, travel_radius_km, years_experience, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form"
+      "id, name, business_name, headline, bio, suburb, state, lat, long, qualifications, video_url, availability, travel_radius_km, years_experience, contact_email, contact_phone, facebook_url, show_contact_email, show_contact_phone, show_facebook, show_contact_form, registration_number, registration_checked_at"
     )
     .eq("slug", slug)
     // A preview drops the published filter and leaves the rest to RLS, which
@@ -151,6 +153,7 @@ async function getCoachFromDb(slug: string, preview = false): Promise<CoachView 
         .map((t) => t.name)
     ),
     qualifications: coach.qualifications ?? [],
+    registration: coach.registration_checked_at && coach.registration_number ? { number: coach.registration_number, checkedAt: coach.registration_checked_at } : null,
     testimonials: (testimonialRows ?? []).map((t) => ({ quote: t.quote, author: t.author_name })),
     clinics: (clinicRows ?? []).map((c) => ({
       id: c.id,
@@ -206,6 +209,7 @@ function getCoachFromMock(slug: string): CoachView | null {
     skillNames: sortByName(coach.skillSlugs.map((s) => SKILL_NAMES[s] ?? s)),
     attributeNames: sortByName(coach.attributeSlugs.map((s) => ATTRIBUTE_NAMES[s] ?? s)),
     qualifications: coach.qualifications,
+    registration: null,
     testimonials: [],
     clinics: [],
     photoUrl: coach.photoUrl,
@@ -245,6 +249,7 @@ function getCoachFromPlaceholder(slug: string): CoachView | null {
     skillNames: [],
     attributeNames: [],
     qualifications: coach.qualifications,
+    registration: null,
     testimonials: coach.testimonials,
     clinics: coach.clinics.map((c) => ({ ...c, id: null, placesLeft: null })),
     photoUrl: null,
@@ -274,6 +279,25 @@ export async function coachMetadata(slug: string): Promise<Metadata> {
     // Sample profiles are for looking around before launch, never for search engines.
     ...(real ? {} : { robots: { index: false, follow: false } }),
   };
+}
+
+/**
+ * Under the qualifications: they're shown as the professional supplied them
+ * (the terms say so), apart from a registration an admin has checked against
+ * the public register, which says when.
+ */
+function QualificationsNote({ coach }: { coach: CoachView }) {
+  return (
+    <div className="mt-3 flex flex-col gap-1.5 text-[13px] leading-[1.45] text-subtle" data-qualifications-note>
+      {coach.registration && (
+        <p className="text-fg">
+          Registration {coach.registration.number}, checked against the public register on{" "}
+          {new Date(coach.registration.checkedAt).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}.
+        </p>
+      )}
+      {coach.qualifications.length > 0 && <p>Qualifications are shown as {coach.name.split(" ")[0]} supplied them. We haven&rsquo;t checked them.</p>}
+    </div>
+  );
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -444,7 +468,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                     </div>
                   </section>
                 )}
-                {coach.qualifications.length > 0 && (
+                {(coach.qualifications.length > 0 || coach.registration) && (
                   <section className="hidden wide:block">
                     <h2 className="mt-8 text-[32px] leading-none text-ink">Qualifications</h2>
                     <ul className="mt-3 flex flex-col gap-2 text-[15px] text-muted">
@@ -455,6 +479,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                         </li>
                       ))}
                     </ul>
+                    <QualificationsNote coach={coach} />
                   </section>
                 )}
               </div>
@@ -474,7 +499,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                 )}
               </div>
             </div>
-            {coach.qualifications.length > 0 && (
+            {(coach.qualifications.length > 0 || coach.registration) && (
               <section className="wide:hidden">
                 <h2 className="mt-8 text-[30px] leading-none text-ink">Qualifications</h2>
                 <ul className="mt-3 flex flex-col gap-2 text-[15px] text-muted">
@@ -485,6 +510,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                     </li>
                   ))}
                 </ul>
+                <QualificationsNote coach={coach} />
               </section>
             )}
           </div>
@@ -497,6 +523,8 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
                 <h2 className="mt-2.5 text-[34px] leading-none wide:text-[40px]">
                   What {audiencePlural} <em className="text-peach">say</em>
                 </h2>
+                {/* Chosen and added by the professional, not collected or checked by us (ACCC; The Marketing Engine §05.7). */}
+                <p className="mt-2 text-[13px] text-ink-fg/65" data-testimonial-label>Provided by the business</p>
               </div>
               <div className="hs mt-[22px] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[18px] pb-9 wide:mt-6 wide:grid wide:grid-cols-3 wide:gap-3.5 wide:overflow-visible wide:px-0 wide:pb-0">
                 {coach.testimonials.map((t) => (

@@ -7,6 +7,7 @@ import { CoachResultCard, type CoachResultData, whereLine } from "@/components/c
 import { SearchChips, useChipState } from "@/components/search-chips";
 import { SearchFacets } from "@/components/search-facets";
 import { FeaturedBlock } from "@/components/featured-block";
+import { HowWeListLink } from "@/components/how-we-list-link";
 
 export type SearchNouns = { slug: string; singular: string; plural: string; termNoun: string };
 const COACH_NOUNS: SearchNouns = { slug: "coaches", singular: "coach", plural: "coaches", termNoun: "discipline" };
@@ -14,6 +15,8 @@ import type { TermOption } from "@/components/ui/multi-select-menu";
 import { SearchBar } from "@/components/search-bar";
 import { useWide } from "@/lib/use-wide";
 import { profilePath } from "@/lib/page-paths";
+import { SubscribeCardForm, type SubscribeCardProps } from "@/components/subscribe-card-form";
+import { ReferLink } from "@/components/refer-link";
 
 const CoachMap = dynamic(() => import("@/components/coach-map").then((m) => m.CoachMap), {
   ssr: false,
@@ -63,7 +66,10 @@ export function SearchResults({
   nouns = COACH_NOUNS,
   disciplineOptions,
   coachFacets = true,
+  subscribe,
 }: {
+  /** The alert card under the results (The Marketing Engine M3), from the page. */
+  subscribe?: { wordings: SubscribeCardProps["wordings"]; professionId: string | null; door: "coaches" | "horse_care" | null; termId: string | null; place: string | null };
   results: CoachResultData[];
   /** The featured block's providers (src/lib/featured.ts); empty for most searches. */
   featured?: CoachResultData[];
@@ -155,22 +161,25 @@ export function SearchResults({
     />
   );
 
-  const notify = (
-    <div className="mt-7 flex flex-col gap-3.5 rounded-[16px] bg-ink p-[22px] text-ink-fg wide:flex-row wide:items-center wide:justify-between wide:gap-6 wide:rounded-[18px] wide:px-7 wide:py-[26px]">
-      <div>
-        <div className="font-display text-[26px] leading-none wide:text-[28px]">Nobody quite right?</div>
-        <p className="mt-2 text-[14px] leading-[1.5] text-ink-fg/78 wide:text-[15px]">
-          Tell us your {nouns.termNoun} and town and we&apos;ll email you when a {nouns.singular} lists nearby.
-        </p>
-      </div>
-      <Link
-        href={`/account?alerts=1&p=${nouns.slug}${locationText ? `&location=${encodeURIComponent(locationText)}` : ""}${disciplineSlug ? `&d=${disciplineSlug}` : ""}#alerts`}
-        className="inline-block self-start border-b border-current text-[14px] font-medium text-peach wide:shrink-0 wide:rounded-[var(--radius-pill)] wide:border-0 wide:bg-bg wide:px-[22px] wide:py-[13px] wide:text-[15px] wide:font-semibold wide:text-ink"
-      >
-        Notify me
-      </Link>
+  // Under the results: an alert card anyone can use (signed in or not), and
+  // when the search found nobody, a link to pass to someone good (M3).
+  const article = /^[aeiou]/i.test(nouns.singular) ? "an" : "a";
+  const notify = subscribe ? (
+    <div className="mt-7 flex flex-col gap-4">
+      <SubscribeCardForm
+        heading={results.length === 0 ? `Nobody here yet. Hear when ${article} ${nouns.singular} starts${subscribe.place ? ` near ${subscribe.place}` : ""}` : "Nobody quite right?"}
+        what={`a new ${nouns.singular} starts`}
+        professionId={subscribe.professionId}
+        door={subscribe.door}
+        termId={subscribe.termId}
+        place={subscribe.place}
+        source={results.length === 0 ? "empty-search" : "search"}
+        wordings={subscribe.wordings}
+        tone="shade"
+      />
+      {results.length === 0 && <ReferLink singular={nouns.singular} slug={nouns.slug} />}
     </div>
-  );
+  ) : null;
 
   const mapPanel = (
     <div className="relative h-full overflow-hidden bg-shade">
@@ -264,6 +273,7 @@ export function SearchResults({
                 <div className="rounded-[16px] border border-dashed border-border p-8 text-center text-muted">{noneText}</div>
               )}
             </div>
+            <HowWeListLink className="mt-4 inline-block" />
             {notify}
           </div>
         ) : (
@@ -337,6 +347,7 @@ export function SearchResults({
               <div className="col-span-full rounded-[18px] border border-dashed border-border p-8 text-center text-muted">{noneText}</div>
             )}
           </div>
+          <HowWeListLink className="mt-4 inline-block" />
           {notify}
         </div>
         {/* Mount the map only at desktop widths — CSS hides this column on

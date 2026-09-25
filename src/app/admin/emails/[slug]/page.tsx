@@ -44,6 +44,11 @@ export default async function AdminEmailEdit({ params }: { params: Promise<{ slu
         <p className="mt-1.5 text-[14px] text-muted">
           To {email.to.charAt(0).toLowerCase() + email.to.slice(1)}. {email.when}
         </p>
+        <p className="mt-2 text-[13px] text-subtle" data-email-class={email.class}>
+          {email.class === "commercial"
+            ? "Commercial: it only goes to people who agreed to it, and the site adds who we are, our ABN and the unsubscribe links to the bottom."
+            : "Factual: it goes to everyone it concerns, so it can't promote anything. Upgrades, referrals and news belong in a commercial email."}
+        </p>
       </div>
       <div className="grid gap-6 wide:grid-cols-[1fr_300px] wide:items-start">
         <ContentEditor blocks={[block]} hints={HINTS} action={saveEmail.bind(null, slug)} testAction={sendTestEmail.bind(null, slug)} />

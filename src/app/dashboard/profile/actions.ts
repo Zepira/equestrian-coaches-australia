@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireProvider } from "@/lib/provider-session";
 import { PROVIDER_PHOTOS, PROVIDER_VIDEOS, resolveLocation } from "@/lib/supabase/queries";
@@ -7,6 +8,7 @@ import { hasVideo } from "@/lib/tiers";
 import { getPlanCapabilities, getPlans } from "@/lib/settings";
 import { TIERS } from "@/lib/tiers";
 import { logChange } from "@/lib/provider-lifecycle";
+import { protectedTitleProblem } from "@/lib/protected-titles";
 
 // Video is a plan perk: which plans is the plan_capabilities setting.
 async function requireVideoTierCoach() {
@@ -49,6 +51,13 @@ export async function saveProfile(formData: FormData) {
   const travelRadiusKm = travelRadiusRaw === "" ? null : Math.min(1000, Math.max(0, Number(travelRadiusRaw)));
   const yearsRaw = String(formData.get("years_experience") ?? "").replace(/[^\d]/g, "");
   const yearsCoaching = yearsRaw === "" ? null : Math.min(80, Math.max(0, Number(yearsRaw)));
+  const registrationNumber = String(formData.get("registration_number") ?? "").trim().slice(0, 40);
+
+  // A protected title ("physiotherapist", a vet "specialist") only once the
+  // registration has been checked (src/lib/protected-titles.ts). Nothing is
+  // saved until the wording's fixed.
+  const titleProblem = await protectedTitleProblem(supabase, providerId, [headline, bio, ...qualifications].join("\n"), formData.has("registration_number") ? registrationNumber : undefined);
+  if (titleProblem) redirect(`/dashboard/profile?error=${encodeURIComponent(titleProblem)}#registration`);
 
   // Geocode suburb/state/postcode into a point so radius search (phase 4)
   // can find this coach. Silently skipped if it doesn't resolve — the
@@ -74,6 +83,7 @@ export async function saveProfile(formData: FormData) {
       travel_radius_km: travelRadiusKm,
       travels_to_client: (travelRadiusKm ?? 0) > 0,
       years_experience: yearsCoaching,
+      ...(formData.has("registration_number") ? { registration_number: registrationNumber } : {}),
       ...(resolved
         ? {
             location: `SRID=4326;POINT(${resolved.long} ${resolved.lat})`,

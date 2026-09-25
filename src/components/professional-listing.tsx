@@ -35,6 +35,9 @@ import { termImagePublicUrl } from "@/lib/discipline-content";
 import { RichText } from "@/components/rich-text";
 import { getAreaIntro } from "@/lib/cms/read";
 import { getSamples } from "@/lib/samples";
+import { SubscribeCard } from "@/components/subscribe-card";
+import { ReferLink } from "@/components/refer-link";
+import { HowWeListLink } from "@/components/how-we-list-link";
 
 const RADIUS_KM = 100;
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -64,6 +67,8 @@ export async function ProfessionalListing({
   area?: { id?: string; slug: string; name: string; state: string };
 }) {
   const where = await place(area ? `${area.name} ${area.state}` : location);
+  // The place an alert card offers: the area page's, or the one searched.
+  const alertPlace = area ? `${area.name} ${area.state}` : where?.kind === "point" ? `${titleCase(where.suburb)} ${where.state}` : null;
   // A hand-written intro on the profession's own page about a place (not its speciality pages).
   const intro = area?.id && !speciality ? await getAreaIntro(area.id, profession?.id ?? null) : [];
   const horseCare = horseCareOf(await getProfessions());
@@ -254,6 +259,20 @@ export async function ProfessionalListing({
             </p>
           </div>
         )}
+        {cards.length > 0 && <HowWeListLink className="mt-6 inline-block" />}
+        {/* Hear when someone new starts (M3), and on an empty page, a link to pass to someone good. */}
+        <div className="mt-10 grid gap-4 wide:grid-cols-2">
+          <SubscribeCard
+            heading={`Hear when ${/^[aeiou]/i.test(profession?.singular ?? "p") ? "an" : "a"} ${speciality ? `${speciality.name.toLowerCase()} ` : ""}${profession?.singular ?? "professional"} starts ${alertPlace ? `near ${alertPlace}` : "near you"}`}
+            what={`a new ${profession?.singular ?? "horse care professional"} starts`}
+            professionId={profession?.id ?? null}
+            door="horse_care"
+            termId={speciality?.id ?? null}
+            place={alertPlace}
+            source={area ? "area-page" : cards.length === 0 ? "empty-search" : "profession-page"}
+          />
+          {cards.length === 0 && profession && <ReferLink singular={profession.singular} slug={profession.slug} />}
+        </div>
       </Reveal>
 
       {/* ── Specialities, then the other professions ─────────────────── */}

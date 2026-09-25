@@ -17,6 +17,8 @@ import { FeaturedBlock } from "@/components/featured-block";
 import { logImpressions } from "@/lib/coach-events";
 import { getAreaIntro } from "@/lib/cms/read";
 import { getSamples } from "@/lib/samples";
+import { SubscribeCard } from "@/components/subscribe-card";
+import { HowWeListLink } from "@/components/how-we-list-link";
 
 /**
  * /coaches/in/[area] and /coaches/[discipline]/in/[area]. The first catches
@@ -125,7 +127,7 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
 
       <p className="mt-6 text-sm text-muted">
         {coaches.length} {noun}
-        {coaches.length === 1 ? "" : "es"} in {area.name}
+        {coaches.length === 1 ? "" : "es"} in {area.name} · <HowWeListLink />
       </p>
 
       <FeaturedBlock providers={featured} searchTown={area.name} className="mt-4" />
@@ -134,6 +136,18 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
         {coaches.map((coach) => (
           <CoachResultCard key={coach.slug} coach={coach} />
         ))}
+      </div>
+
+      <div className="mt-10 max-w-[720px]">
+        <SubscribeCard
+          heading={`Hear when a new ${discipline ? `${discipline.name.toLowerCase()} ` : ""}coach starts near ${area.name}`}
+          what={`a new ${discipline ? `${discipline.name.toLowerCase()} ` : ""}coach starts`}
+          professionId={profession.id}
+          door="coaches"
+          termId={discipline?.id ?? null}
+          place={`${area.name} ${area.state}`}
+          source="area-page"
+        />
       </div>
     </div>
   );

@@ -17,6 +17,8 @@ export type PageEntry = {
   /** Routes to revalidate on save: a path, or [path, "page" | "layout"] for a dynamic route. */
   revalidate: (string | [string, "page" | "layout"])[];
   note?: string;
+  /** Edited on Admin → On the site rather than the Pages list. */
+  onSite?: boolean;
 };
 
 export const PAGES: PageEntry[] = [
@@ -50,6 +52,9 @@ export const PAGES: PageEntry[] = [
   },
   { slug: "profiles", name: "Every profile", href: "/search", keys: ["mention"], revalidate: [["/profile/[slug]", "page"]] },
   { slug: "footer", name: "Footer", href: "/", keys: ["footer"], revalidate: [["/", "layout"]] },
+  { slug: "announcement", name: "Announcement bar", href: "/", keys: ["site.announcement"], revalidate: [["/", "layout"]], onSite: true },
+  { slug: "slide-in", name: "Slide-in", href: "/", keys: ["site.slide_in"], revalidate: [["/", "layout"]], onSite: true },
+  { slug: "how-we-list", name: "How the list is ordered", href: "/how-we-list", keys: ["how_we_list"], revalidate: ["/how-we-list"] },
   {
     slug: "terms",
     name: "Terms of service",
@@ -86,10 +91,21 @@ export const BLOCK_NAMES: Partial<Record<ContentKey, string>> = {
   "about.record": "For the record, and we're new",
   "about.cta": "Last panel",
   mention: "The line under the contact details",
+  "site.announcement": "Announcement bar",
+  "site.slide_in": "Slide-in",
+  how_we_list: "How the list is ordered",
   "legal.terms": "Terms of service",
   "legal.privacy": "Privacy policy",
   footer: "Tagline",
 };
+
+/** Fields a block may leave empty (everything else must have words in it). */
+export const OPTIONAL_FIELDS: Partial<Record<ContentKey, string[]>> = {
+  "site.announcement": ["message", "linkLabel", "linkHref", "starts", "ends"],
+};
+
+/** Words a factual email mustn't contain: any promotion makes it commercial (§05.2). Checked with variables taken out. */
+export const PROMOTIONAL = /\b(upgrade|spotlight|clinic plan|refer|referral|free month|discount|% off|what's new|new on the site|sponsor(ed)?|special offer|don't miss)\b/i;
 
 /** Help for fields whose name doesn't explain itself. Keyed by field name, used for every block. */
 export const FIELD_HINTS: Record<string, string> = {
@@ -103,10 +119,24 @@ export const FIELD_HINTS: Record<string, string> = {
   facts: "Short label, then the fact.",
   sections: "A heading, then its text. A blank line starts a new paragraph.",
   updated: "The date line under the title.",
+  starts: "First day it shows, YYYY-MM-DD. Empty: from now.",
+  ends: "Last day it shows, YYYY-MM-DD. Empty: until you clear the message.",
+  audience: "everyone, logged_out, riders, coaches or horse_care.",
+  message: "Empty turns the bar off.",
+  linkHref: "Where the link goes: /coaches, or a full https:// address.",
 };
 
 export type EmailVar = { name: string; what: string; sample: string };
-export type EmailEntry = { key: ContentKey; name: string; to: string; when: string; vars: EmailVar[] };
+/**
+ * factual: about the person's own account or something they asked for (an
+ * enquiry, their bill, confirming an alert). commercial: anything that
+ * promotes, including alerts about other people's services (The Marketing
+ * Engine §05.2). A commercial email only goes with consent, and carries the
+ * footer and one-click unsubscribe; a factual one mustn't promote anything,
+ * which the save checks.
+ */
+export type EmailClass = "factual" | "commercial";
+export type EmailEntry = { key: ContentKey; name: string; to: string; when: string; class: EmailClass; vars: EmailVar[] };
 
 const v = (name: string, what: string, sample: string): EmailVar => ({ name, what, sample });
 
@@ -119,6 +149,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.enquiry",
     name: "New enquiry",
+    class: "factual",
     to: "The professional",
     when: "Someone sends the form on their profile.",
     vars: [
@@ -133,6 +164,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.live",
     name: "Profile is live",
+    class: "factual",
     to: "The professional",
     when: "Their profile is published, by review or straight away.",
     vars: [
@@ -144,6 +176,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.changes",
     name: "Changes asked for",
+    class: "factual",
     to: "The professional",
     when: "A reviewer asks for changes before publishing.",
     vars: [
@@ -155,6 +188,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.rider_event",
     name: "Event near you",
+    class: "commercial",
     to: "Riders and horse owners with a matching alert",
     when: "A professional lists an event that matches their alert.",
     vars: [
@@ -169,6 +203,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.rider_new_provider",
     name: "Someone new near you",
+    class: "commercial",
     to: "Riders and horse owners with a matching alert",
     when: "A matching professional's profile goes live near them. The headline line only shows when they have one.",
     vars: [
@@ -184,6 +219,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.rider_monthly",
     name: "Monthly round-up",
+    class: "commercial",
     to: "Riders and horse owners with alerts",
     when: "The 1st of the month, when there's something near them. The events and new people are listed by the site between the intro and the footer.",
     vars: [
@@ -195,6 +231,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.monthly",
     name: "Monthly numbers",
+    class: "commercial",
     to: "Every published professional",
     when: "The 1st of the month, about the month before. The quiet intro is used when nobody viewed, tapped or enquired. The site adds a line per profession, the searches list and the checklist step when they apply.",
     vars: [
@@ -215,6 +252,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.founding_launch",
     name: "Launch day, founding members",
+    class: "factual",
     to: "Founding members with a saved card",
     when: "Once, when the launch date is locked in Settings.",
     vars: [
@@ -230,6 +268,7 @@ export const EMAILS: EmailEntry[] = [
   {
     key: "email.founding_reminder",
     name: "First charge reminder",
+    class: "factual",
     to: "Founding members in their free period",
     when: "30, 14 and 3 days before the first charge.",
     vars: [
@@ -242,6 +281,35 @@ export const EMAILS: EmailEntry[] = [
     ],
   },
 ];
+
+EMAILS.push(
+  {
+    key: "email.alert_confirm",
+    name: "Confirm an alert",
+    class: "factual",
+    to: "Someone who asked for an alert without an account",
+    when: "They ask for an alert from a subscribe card. Nothing else is sent until they confirm.",
+    vars: [
+      v("what", "What they asked to hear about", "a new farrier starts"),
+      v("place", "Where", "Kyneton VIC"),
+      v("confirm_url", "The button that starts the alert", "https://equineprofessionals.com.au/alerts/confirm?t=test"),
+    ],
+  },
+  {
+    key: "email.renewal_reminder",
+    name: "Yearly renewal reminder",
+    class: "factual",
+    to: "Professionals on a yearly plan",
+    when: "30 days before a yearly plan renews.",
+    vars: [
+      v("first_name", "Their first name", "Jane"),
+      v("plan", "Their plan", "Spotlight"),
+      v("renewal_date", "When it renews", "1 May 2027"),
+      v("price", "What it costs", "$249"),
+      v("billing_url", "Their billing page", "https://equineprofessionals.com.au/dashboard/billing"),
+    ],
+  }
+);
 
 export const emailBySlug = (slug: string) => EMAILS.find((e) => e.key === `email.${slug}`);
 export const pageBySlug = (slug: string) => PAGES.find((p) => p.slug === slug);

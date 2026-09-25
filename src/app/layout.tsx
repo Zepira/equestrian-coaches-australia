@@ -9,6 +9,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { Parallax } from "@/components/hero-parallax";
 import { disciplinePath } from "@/lib/page-paths";
 import { SITE_URL } from "@/lib/site-url";
+import { SiteNudges } from "@/components/site-nudges";
+import { getAlertWordings } from "@/components/subscribe-card";
+import { getSlideInDelaySeconds, getSlideInEveryDays, isSlideInEnabled } from "@/lib/settings";
 
 // Golden Hour type: Instrument Serif (display, regular + italic — the face
 // has no other weights) and Hanken Grotesk (body).
@@ -76,10 +79,16 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   // The CMS reads are cached and cookie-free, so the layout stays static.
-  const [professions, featured, footer] = await Promise.all([
+  const [professions, featured, footer, announcement, slideCopy, slideOn, slideDelay, slideEvery, wordings] = await Promise.all([
     getProfessions(),
     getFeaturedDisciplines(),
     getContent("footer"),
+    getContent("site.announcement"),
+    getContent("site.slide_in"),
+    isSlideInEnabled(),
+    getSlideInDelaySeconds(),
+    getSlideInEveryDays(),
+    getAlertWordings(),
   ]);
   const prefixes = horseCarePrefixes(professions);
   const header = {
@@ -158,6 +167,12 @@ if (${JSON.stringify(prefixes)}.some(function (p) { return location.pathname ===
           {children}
         </main>
         <SiteFooter tagline={footer.tagline} />
+        <SiteNudges
+          announcement={announcement}
+          slideIn={{ enabled: slideOn, delaySeconds: slideDelay, everyDays: slideEvery, title: slideCopy.title, body: slideCopy.body }}
+          horseCarePrefixes={prefixes}
+          wordings={wordings}
+        />
       </body>
     </html>
   );

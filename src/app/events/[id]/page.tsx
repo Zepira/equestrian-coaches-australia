@@ -5,6 +5,8 @@ import { ContactForm } from "@/components/contact-form";
 import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbSchema, clinicEventSchema } from "@/lib/structured-data";
+import { SubscribeCard } from "@/components/subscribe-card";
+import { getProfession } from "@/lib/cms/read";
 
 const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -180,6 +182,16 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
             </p>
           )}
         </aside>
+      </div>
+      <div className="mt-12 max-w-[720px]">
+        <SubscribeCard
+          heading={`Hear about events like this${coach?.suburb ? ` near ${coach.suburb}` : ""}`}
+          what="an event comes up"
+          professionId={(await getProfession(professionSlug))?.id ?? null}
+          termId={null}
+          place={coach?.suburb ? `${coach.suburb} ${coach.state}`.trim() : null}
+          source="event-page"
+        />
       </div>
     </div>
   );

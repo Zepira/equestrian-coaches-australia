@@ -14,6 +14,7 @@ import { getSectionTerms } from "@/lib/sections";
 import { pickFeatured } from "@/lib/featured";
 import type { Profession } from "@/lib/professions";
 import { getSamples } from "@/lib/samples";
+import { getAlertWordings } from "@/components/subscribe-card";
 
 // noindex, follow — faceted URLs are the classic directory crawl-budget
 // disaster (spec: "What earns a page"). /coaches/[discipline] and
@@ -67,6 +68,8 @@ export default async function SearchPage({
   let featured: CoachResultData[] = [];
   let origin: { lat: number; long: number } | null = null;
   let searchTown: string | null = null;
+  // The place an alert card offers; a state-wide search has none, so the card asks.
+  let alertPlace: string | null = null;
   let stateWide: string | null = null;
   let locationNotFound = false;
 
@@ -90,6 +93,7 @@ export default async function SearchPage({
         long = resolved.long;
         origin = { lat, long };
         searchTown = titleCase(resolved.suburb);
+        alertPlace = `${titleCase(resolved.suburb)} ${resolved.state}`;
       } else {
         locationNotFound = true;
       }
@@ -172,6 +176,13 @@ export default async function SearchPage({
       attributes={attributes.map(toTermOption)}
       disciplineOptions={disciplines.map(toTermOption)}
       coachFacets={coaching}
+      subscribe={{
+        wordings: await getAlertWordings(),
+        professionId: profession?.id ?? null,
+        door: profession?.door ?? null,
+        termId: disciplines.find((t) => t.slug === disciplineSlugs[0])?.id ?? null,
+        place: alertPlace,
+      }}
       nouns={
         profession
           ? { slug: profession.slug, singular: profession.singular, plural: profession.plural, termNoun: profession.termNoun }

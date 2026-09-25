@@ -9,7 +9,8 @@ import { FALLBACK_PROFESSIONS } from "@/lib/professions";
 
 export const metadata = { title: "Edit profile" };
 
-export default async function ProfileEditPage() {
+export default async function ProfileEditPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const { error } = await searchParams;
   const supabase = await createClient();
   let disciplines: { id: string; slug: string; name: string }[] = await getDisciplines(supabase);
   let skills: { id: string; slug: string; name: string }[] = await getSkills(supabase);
@@ -85,8 +86,19 @@ export default async function ProfileEditPage() {
     url: supabase.storage.from(PROVIDER_PHOTOS).getPublicUrl(photo.storage_path).data.publicUrl,
   }));
 
+  // A registration number field for professions with protected titles (§05.12).
+  const { data: titleRows } = await supabase
+    .from("provider_terms")
+    .select("terms!inner(kind, profession_details(protected_titles))")
+    .eq("provider_id", providerId)
+    .eq("terms.kind", "profession");
+  const needsRegistration = (titleRows ?? []).some((r) => ((r as unknown as { terms: { profession_details: { protected_titles: string[] } | null } }).terms.profession_details?.protected_titles ?? []).length > 0);
+  const p = provider as unknown as { registration_number?: string; registration_checked_at?: string | null };
+
   return (
     <ProfileForm
+      error={error}
+      registration={needsRegistration ? { number: p.registration_number ?? "", checkedAt: p.registration_checked_at ?? null } : null}
       configured
       coach={coach}
       disciplines={disciplines}

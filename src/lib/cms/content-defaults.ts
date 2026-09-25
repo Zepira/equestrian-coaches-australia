@@ -225,6 +225,42 @@ export const CONTENT_DEFAULTS = {
     subject: "Your first charge is in {days} days",
     body: "Hi {first_name},\n\nYour free founding period ends on {first_charge_date}. From then your plan is {listed} at {listed_price} a month, charged to the card you saved, and that price stays yours for as long as you stay.\n\nTo change plan or cancel before then: {billing_url}",
   },
+  "email.alert_confirm": {
+    subject: "Confirm your alert",
+    body: "Someone, hopefully you, asked us to email this address when {what} near {place}.\n\nTo start the alert, confirm here: {confirm_url}\n\nIf it wasn't you, ignore this email and we won't send anything else.",
+  },
+  "email.renewal_reminder": {
+    subject: "Your {plan} plan renews on {renewal_date}",
+    body: "Hi {first_name},\n\nYour yearly {plan} plan renews on {renewal_date}, for {price}, charged to the card you have with us.\n\nTo change plan or cancel before then: {billing_url}",
+  },
+  // A thin line across the top of every page (The Marketing Engine M3).
+  // Empty message: no bar. Dates are YYYY-MM-DD; empty means no limit.
+  // audience: everyone, logged_out, riders, coaches or horse_care.
+  "site.announcement": {
+    message: "",
+    linkLabel: "",
+    linkHref: "",
+    starts: "",
+    ends: "",
+    audience: "everyone",
+  },
+  // The gentle slide-in offering alerts, when it's switched on in Settings.
+  "site.slide_in": {
+    title: "Hear when someone good starts near you",
+    body: "Tell us where your horse lives and we'll email you when a coach, farrier or other professional joins nearby. Nothing else.",
+  },
+  // /how-we-list, linked from every results list (The Marketing Engine §05.8).
+  "how_we_list": {
+    title: "How the list is ordered",
+    intro: "What decides where someone appears when you search, and what doesn't.",
+    sections: [
+      { title: "Nearest first", body: "When you search near a place, people based closest to it come first. Someone based further away who travels to your area comes after the people based in it, and their card says they travel to you." },
+      { title: "Then by how well they match", body: "If you pick disciplines, specialities or setup, people who match more of what you picked come before people who match less, at the same distance." },
+      { title: "Featured spots are labelled", body: "Some plans include a turn in a featured spot. Featured people sit in their own labelled block above the list, never inside it, take turns day to day, and don't show at all in areas with only a few professionals. Paying never moves anyone up or down the list itself." },
+      { title: "What never changes the order", body: "Which plan someone is on, how long they've been listed, and anything they pay us. We don't take a commission on lessons or visits, so we have no reason to push anyone." },
+      { title: "Who's on the list", body: "Everyone listed signed up themselves and finished their profile, and we looked at it before it went live. We don't check qualifications or registration unless a profile says so, and we don't recommend anyone." },
+    ] as Items,
+  },
   // ── Legal ───────────────────────────────────────────────────────────────
   // /terms and /privacy. A first draft for the solicitor (The Site as a CMS
   // §12), written from how the site actually works on 25 Sep 2026. Square
@@ -259,8 +295,9 @@ export const CONTENT_DEFAULTS = {
       { title: "If you're looking for help", body: "To search, you don't need an account and we don't ask who you are.\n\nIf you make an account we keep your name and email address, the professionals you save, and any alerts you set up: the suburb or postcode, how far to look, and what you follow.\n\nWhen you send an enquiry, your name, how to contact you and your message go to that professional, and we keep a copy so you can both see where it's up to." },
       { title: "If you list with us", body: "We keep what you put on your profile: your name, business name, where you're based and how far you travel, what you do, qualifications, registration numbers and insurance details you choose to add, photos, video, testimonials and events. Your email address and phone number are only shown if you switch them on.\n\nWe also keep your account email, your plan and its payment history, and the enquiries sent to you. Stripe handles your card; we never see the full number." },
       { title: "What we count", body: "We count how often each profile appears in search, is opened, has its number revealed and gets an enquiry, so professionals can see their numbers. To count each visitor once a day we use a scrambled code made from the visitor's connection details. We don't store the connection details themselves.\n\nWe also record what people search for and how many results they got, without who searched, so we can see what the site is missing." },
-      { title: "Cookies", body: "A cookie keeps you signed in. Your browser also remembers small preferences, like whether you hid the map. We don't use advertising cookies or trackers." },
-      { title: "Emails", body: "Alert emails only go to people who set up an alert, and every one has a link that stops it straight away. Professionals get emails about their account, including a monthly summary of their numbers." },
+      { title: "Cookies", body: "A cookie keeps you signed in. If you arrive through one of our links (a poster, a partner's page, a post), two cookies remember which one, for 90 days, so we can tell which ways of reaching people work. Your browser also remembers small preferences, like whether you hid the map. We don't use advertising cookies, tracking pixels or anyone else's trackers." },
+      { title: "Emails", body: "We only send marketing, including alerts and round-ups, to people who agreed to it, and we keep a record of each agreement: what you agreed to, the exact words you saw, where and when. Every marketing email says who we are and has a link to change what you get or stop everything, straight away. Emails about your own account, like an enquiry sent to you or a bill, keep coming while the account is open. If an email to you bounces or is marked as spam, we stop emailing that address." },
+      { title: "Decisions made automatically", body: "Some things the site decides on its own. Search results are ordered by distance and by how well someone matches what you searched for; how that works is on our \"How the list is ordered\" page. A professional's profile is hidden automatically when their plan lapses, and comes back when it's paid again. A person looks at every new profile before it goes live. No decision about you is made from your personal details beyond where you are and what you searched for." },
       { title: "Who helps us run the site", body: "The details above are stored with Supabase, whose servers are in Japan. The site is hosted by Vercel, payments go through Stripe and email is sent through Resend. Some of these companies handle data outside Australia. They use it only to provide their service to us. [For the solicitor: the overseas disclosure wording.]" },
       { title: "How long we keep it", body: "For as long as your account is open. When an account is deleted, its profile, alerts, saved profiles and enquiries go with it. We may keep billing records for as long as tax law requires." },
       { title: "Seeing, changing or deleting your details", body: "You can change most of your details yourself from your account or dashboard. To see everything we hold about you, correct it, or have it deleted, email {contact_email}. We'll reply within 30 days." },

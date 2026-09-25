@@ -28,6 +28,13 @@ async function tierByPrice(): Promise<Record<string, Tier>> {
   return map;
 }
 
+/** When the current period ends: on the item in newer Stripe API versions, on the subscription in older ones. */
+function periodEnd(subscription: Stripe.Subscription): string | null {
+  const item = subscription.items.data[0] as unknown as { current_period_end?: number } | undefined;
+  const ts = item?.current_period_end ?? (subscription as unknown as { current_period_end?: number }).current_period_end;
+  return ts ? new Date(ts * 1000).toISOString() : null;
+}
+
 function statusFromStripe(status: Stripe.Subscription.Status): "active" | "trialing" | "past_due" | "canceled" | "inactive" {
   if (status === "active") return "active";
   if (status === "trialing") return "trialing";
@@ -54,6 +61,9 @@ async function syncSubscription(supabase: ReturnType<typeof serviceClient>, subs
       stripe_subscription_id: subscription.id,
       stripe_customer_id: typeof subscription.customer === "string" ? subscription.customer : subscription.customer.id,
       stripe_price_id: priceId ?? null,
+      // For the yearly renewal reminder (The Marketing Engine §05.9).
+      billing_interval: (subscription.items.data[0]?.price?.recurring?.interval as string | undefined) === "year" ? "year" : "month",
+      current_period_end: periodEnd(subscription),
       tier: tier ?? null,
       status,
       ...(founding ? { founding: true } : {}),

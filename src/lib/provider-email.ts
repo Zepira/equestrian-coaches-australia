@@ -6,6 +6,7 @@ import { profileCompleteness } from "@/lib/coach-stats";
 import { hasVideo } from "@/lib/tiers";
 import { absoluteUrl } from "@/lib/site-url";
 import { profilePath } from "@/lib/page-paths";
+import { canSend } from "@/lib/audience";
 
 /**
  * The monthly numbers email (The Site as a CMS §08.2), on the 1st, about the
@@ -122,7 +123,16 @@ export async function sendProviderMonthly(service: Service, now = new Date()) {
     if (quiet) parts.push(f(copy.share));
     parts.push(f(copy.signOff));
 
-    const result = await sendEmail({ to: emails, subject: f(copy.subject), text: parts.join("\n\n") });
+    // The monthly numbers email is treated as commercial (The Marketing
+    // Engine §05.2): each member gets it only with provider_news consent.
+    let result: "sent" | "logged" | "failed" | "none" = "none";
+    for (const email of emails) {
+      const allowed = await canSend(service, email, "provider_news");
+      if (!allowed.ok) continue;
+      const r = await sendEmail({ to: email, subject: f(copy.subject), text: parts.join("\n\n"), commercial: { token: allowed.token!, purpose: "provider_news" } });
+      if (r === "sent" || (r === "logged" && result !== "sent")) result = r;
+      else if (r === "failed" && result === "none") result = "failed";
+    }
     if (result === "failed") continue;
     if (result === "sent") sent++;
     await service.from("provider_month_stats").update({ emailed_at: new Date().toISOString() }).eq("provider_id", p.id).eq("month", month);
