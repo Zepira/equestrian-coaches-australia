@@ -13,6 +13,31 @@ export function absoluteUrl(path: string): string {
 }
 
 /**
+ * An absolute URL on the **public** host, for a link a member of the public
+ * has to be able to open: the unsubscribe button in an email, and the email
+ * preferences page.
+ *
+ * Before launch those two are the whole of the site a stranger can reach, and
+ * NEXT_PUBLIC_SITE_URL points at the test host (docs/launch.md sets it that
+ * way deliberately, so test emails keep test links). A waitlist confirmation
+ * built on SITE_URL therefore told people to unsubscribe at
+ * test.equineprofessionals.com.au, which asks them for a password they do not
+ * have: an unsubscribe link that cannot be used. isPreLaunchPath in
+ * src/proxy.ts lets both paths through on the public host for exactly this.
+ *
+ * Falls back to SITE_URL when PUBLIC_HOST is unset, which is local
+ * development. Server side only in practice: PUBLIC_HOST is not a
+ * NEXT_PUBLIC_ variable, so in a browser this is SITE_URL. Every caller
+ * builds these links on the server.
+ */
+export function publicUrl(path: string): string {
+  if (/^https?:\/\//.test(path)) return path;
+  const host = (process.env.PUBLIC_HOST ?? "").trim().toLowerCase().replace(/\.$/, "");
+  const base = host ? `https://${host}` : SITE_URL;
+  return `${base}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
+/**
  * The origin this request actually came in on, e.g.
  * "https://test.equineprofessionals.com.au".
  *

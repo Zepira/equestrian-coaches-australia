@@ -123,6 +123,16 @@ CRON_EMAILS_ENABLED=false
 Stripe return URLs on the test site, so a confirmation email from there does not
 send you to the production domain.
 
+**Two links are the exception, and have to be:** the unsubscribe button in an
+email and the email preferences page. They are built on `PUBLIC_HOST`
+(`publicUrl()` in `src/lib/site-url.ts`), because the person reading the email
+has no password for any other host. A waitlist confirmation sent from the
+public form used to point at `test.equineprofessionals.com.au/unsubscribe`,
+which asks a stranger for a password: an unsubscribe link that cannot be used,
+which the Spam Act does not allow. Both paths are in `isPreLaunchPath()`, so
+they answer on the public host while everything else is still the coming soon
+page.
+
 It does **not** decide what a crawler is told. `robots.txt` and the coming soon
 page's canonical are built from the host the request came in on
 (`requestOrigin()` in `src/lib/site-url.ts`), so the public host always names

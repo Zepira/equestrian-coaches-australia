@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { absoluteUrl, CONTACT_EMAIL } from "@/lib/site-url";
+import { CONTACT_EMAIL, publicUrl } from "@/lib/site-url";
 
 /**
  * The audience and its consent record (The Marketing Engine §05, M1).
@@ -127,8 +127,10 @@ export async function stopEverything(service: Service, contact: { id: string; em
   await suppress(service, contact.email, "unsubscribe_all", method);
 }
 
-export const preferencesUrl = (token: string) => absoluteUrl(`/email-preferences?t=${token}`);
-export const oneClickUrl = (token: string, purpose: Purpose | "all") => absoluteUrl(`/api/unsubscribe?t=${token}&p=${purpose}`);
+// Both on the public host, for the same reason as unsubscribeLinks: the
+// person reading the email cannot get past the password on any other one.
+export const preferencesUrl = (token: string) => publicUrl(`/email-preferences?t=${token}`);
+export const oneClickUrl = (token: string, purpose: Purpose | "all") => publicUrl(`/api/unsubscribe?t=${token}&p=${purpose}`);
 
 /**
  * What the law asks every commercial email to carry (Spam Act; The

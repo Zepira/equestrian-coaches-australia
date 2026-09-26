@@ -90,9 +90,12 @@ if (mode === "prelaunch") {
   const api = await get("/api/terms");
   row(api.status === 404, "public host /api/terms is 404", `status ${api.status}`);
 
-  // 4. The unsubscribe link in the confirmation email still works.
+  // 4. The unsubscribe link in the confirmation email still works, and it is
+  //    built on this host rather than the password-protected one.
   const unsub = await get("/unsubscribe?w=deadbeef");
   row(unsub.status === 200 && !unsub.body.includes(COMING_SOON), "public host /unsubscribe still answers", `status ${unsub.status}`);
+  const prefs = await get("/email-preferences?t=deadbeef");
+  row(prefs.status === 200 && !prefs.body.includes(COMING_SOON), "public host /email-preferences still answers", `status ${prefs.status}`);
 
   // 5. robots.txt offers the home page only; the sitemap lists only it.
   const robots = await get("/robots.txt");

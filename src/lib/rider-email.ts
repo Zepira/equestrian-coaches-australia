@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { sendEmail } from "@/lib/email";
 import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
 import { getEventReachKm } from "@/lib/settings";
-import { absoluteUrl } from "@/lib/site-url";
+import { absoluteUrl, publicUrl } from "@/lib/site-url";
 import { eventPath, profilePath } from "@/lib/page-paths";
 import type { Door } from "@/lib/professions";
 import { canSend, stopEverything } from "@/lib/audience";
@@ -20,11 +20,16 @@ import { canSend, stopEverything } from "@/lib/audience";
 type Service = SupabaseClient;
 type Match = { rider_id: string; email: string; alert_id: string | null; unsubscribe_token: string };
 
-/** The page link for the email body, and the one-click endpoint for the header. */
+/**
+ * The page link for the email body, and the one-click endpoint for the header.
+ * On the public host (publicUrl, not absoluteUrl): before launch everything
+ * else runs behind a password, and an unsubscribe link nobody can open is not
+ * an unsubscribe link.
+ */
 export function unsubscribeLinks(kind: "alert" | "all" | "waitlist", token: string) {
   const param = kind === "alert" ? "a" : kind === "all" ? "r" : "w";
   const q = `${param}=${token}`;
-  return { page: absoluteUrl(`/unsubscribe?${q}`), oneClick: absoluteUrl(`/api/unsubscribe?${q}`) };
+  return { page: publicUrl(`/unsubscribe?${q}`), oneClick: publicUrl(`/api/unsubscribe?${q}`) };
 }
 
 const longDate = (iso: string) => new Date(iso).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });

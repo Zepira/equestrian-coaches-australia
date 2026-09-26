@@ -33,6 +33,10 @@ function isPreLaunchPath(path: string): boolean {
   // The unsubscribe link in the waitlist confirmation email. The form itself
   // is a server action, so it posts to "/" and needs nothing of its own here.
   if (path === "/unsubscribe" || path === "/api/unsubscribe") return true;
+  // The "choose what we send you, or stop it all" link in the footer of every
+  // commercial email (commercialFooter in src/lib/audience.ts), and the two
+  // pages its buttons lead to.
+  if (path === "/email-preferences" || path.startsWith("/email-preferences/")) return true;
   // Crawlers need these two to see that only the home page is on offer.
   if (path === "/robots.txt" || path === "/sitemap.xml") return true;
   // The page's own assets: the build output, the brand mark, the favicon.
