@@ -88,13 +88,13 @@ export default async function AdminRidersPage({ searchParams }: { searchParams: 
         <h2 className="font-display text-[26px] leading-none text-ink">Riders and horse owners</h2>
         <p className="mt-1.5 text-[14px] text-muted">Counts from their accounts and alerts. An alert counts once for each profession it follows.</p>
       </div>
-      <div className="grid gap-3 sm:grid-cols-4" data-rider-counts>
+      <div className="grid gap-3 @[880px]/admin:grid-cols-4" data-rider-counts>
         <Stat n={riders ?? 0} label="accounts" />
         <Stat n={withAlerts} label="with an alert on" />
         <Stat n={unsubscribed} label="alerts unsubscribed" />
         <Stat n={favourites ?? 0} label="saved profiles" />
       </div>
-      <div className="grid gap-6 sm:grid-cols-3">
+      <div className="grid gap-6 @[760px]/admin:grid-cols-3">
         <Table title="What they follow" rows={byWho} />
         <Table title="By state" rows={byState} />
         <Table title="Top places" rows={bySuburb} />
@@ -107,7 +107,7 @@ export default async function AdminRidersPage({ searchParams }: { searchParams: 
         </p>
         {removed && <p role="status" className="mt-3 rounded-[12px] bg-accent-soft px-3 py-2 text-[14px] text-fg">{removed}</p>}
         {error && <p role="alert" className="mt-3 rounded-[12px] bg-danger/10 px-3 py-2 text-[14px] text-danger">{error}</p>}
-        <form action={removeRider} className="mt-3 grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <form action={removeRider} className="mt-3 grid gap-3 @[560px]/admin:grid-cols-[1fr_1fr_auto] @[560px]/admin:items-end">
           <label className="block">
             <span className="mb-1 block text-[14px] font-medium text-fg">Their email</span>
             <input name="email" type="email" required autoComplete="off" className="w-full rounded-[10px] border border-border bg-surface px-3 py-2 text-fg" />

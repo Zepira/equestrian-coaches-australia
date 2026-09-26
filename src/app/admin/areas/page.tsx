@@ -47,7 +47,7 @@ export default async function AdminAreasPage({ searchParams }: { searchParams: P
       </div>
 
       {picked && profession ? (
-        <section className="rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-area-editor>
+        <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-area-editor>
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="font-display text-[22px] leading-none text-ink">
               {profession.name} in {picked.name}, {picked.state}
@@ -75,7 +75,7 @@ export default async function AdminAreasPage({ searchParams }: { searchParams: P
         </section>
       ) : null}
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-6 @[560px]/admin:grid-cols-2">
         <section>
           <h3 className="text-[15px] font-semibold text-fg">Area pages on the site now</h3>
           {(eligible ?? []).length === 0 ? (

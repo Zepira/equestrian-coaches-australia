@@ -55,7 +55,7 @@ export default async function InvitesPage({ searchParams }: { searchParams: Prom
         </p>
         {created && <p className="mt-3 rounded-[12px] bg-accent-soft px-3 py-2 text-sm text-fg">Invite made. Copy the link from the list below.</p>}
         {error && <p className="mt-3 rounded-[12px] bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
-        <form action={createInvite} className="mt-4 grid gap-3 sm:grid-cols-2">
+        <form action={createInvite} className="mt-4 grid gap-3 @[560px]/admin:grid-cols-2">
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-fg">Name</span>
             <input name="name" required className={input} />
@@ -79,14 +79,14 @@ export default async function InvitesPage({ searchParams }: { searchParams: Prom
             <span className="mb-1 block text-sm font-medium text-fg">Who&apos;s inviting</span>
             <input name="source" defaultValue={me?.name?.split(" ")[0] ?? ""} className={input} />
           </label>
-          <label className="block sm:col-span-2">
+          <label className="block @[560px]/admin:col-span-2">
             <span className="mb-1 block text-sm font-medium text-fg">Where their business email is published</span>
             <input name="address_source_url" type="url" required placeholder="https://their-website.com.au/contact" className={input} />
             <span className="mt-1 block text-[12.5px] text-subtle">
               The law lets us invite someone without asking first only when their business address is published and nothing there says no marketing. Their website or business page, not a personal post.
             </span>
           </label>
-          <p className="text-sm text-muted sm:col-span-2">Optional: start their profile with what you already know. They can change all of it.</p>
+          <p className="text-sm text-muted @[560px]/admin:col-span-2">Optional: start their profile with what you already know. They can change all of it.</p>
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-fg">One line about what they do</span>
             <input name="headline" className={input} />
@@ -103,7 +103,7 @@ export default async function InvitesPage({ searchParams }: { searchParams: Prom
             <span className="mb-1 block text-sm font-medium text-fg">State</span>
             <input name="state" maxLength={3} className={input} />
           </label>
-          <div className="sm:col-span-2">
+          <div className="@[560px]/admin:col-span-2">
             <Button type="submit">Make the invite</Button>
           </div>
         </form>

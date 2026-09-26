@@ -125,7 +125,7 @@ export default async function AdminDisciplinesPage({ searchParams }: { searchPar
                     </button>
                   </form>
                 )}
-                <Link href={termPath(profession.slug, d.slug)} target="_blank" className="hidden text-subtle hover:text-fg sm:inline">View</Link>
+                <Link href={termPath(profession.slug, d.slug)} target="_blank" className="hidden text-subtle hover:text-fg @[560px]/admin:inline">View</Link>
                 <Link href={`/admin/disciplines/${d.id}`} className="font-medium text-accent hover:text-accent-hover">Edit</Link>
               </div>
             </li>
@@ -136,7 +136,7 @@ export default async function AdminDisciplinesPage({ searchParams }: { searchPar
       <section className="border-t border-border pt-6">
         <h2 className="font-display text-[22px] leading-none text-ink">Add a {noun} to {profession.name.toLowerCase()}</h2>
         <p className="mt-1.5 text-[14px] text-muted">Starts as a name and an address; you land in its editor to add the rest. It shows on the site straight away, so add the blurb before you leave.</p>
-        <form action={createDiscipline} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+        <form action={createDiscipline} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
           <input type="hidden" name="profession_id" value={profession.id} />
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium text-fg">Name</span>

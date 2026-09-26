@@ -44,17 +44,17 @@ export default async function AdminCodesPage({ searchParams }: { searchParams: P
       {error && <p role="alert" className="rounded-[12px] bg-danger/10 px-3 py-2 text-[14px] text-danger">{error}</p>}
       {saved && <p role="status" className="rounded-[12px] bg-accent-soft px-3 py-2 text-[14px] text-fg">Saved.</p>}
 
-      <section className="rounded-[16px] border border-border bg-surface p-4 sm:p-5">
+      <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5">
         <h3 className="font-display text-[20px] leading-none text-ink">Make a code</h3>
-        <form action={createPromo} className="mt-3 grid gap-3 sm:grid-cols-2">
+        <form action={createPromo} className="mt-3 grid gap-3 @[560px]/admin:grid-cols-2">
           <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Code</span><input name="code" required placeholder="PONYCLUB" className={`${input} uppercase`} /></label>
           <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Who it&rsquo;s for</span><input name="description" required placeholder="Pony Club members, three months of Spotlight" className={input} /></label>
           <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Percent off</span><input name="percent_off" type="number" min={1} max={100} defaultValue={100} className={input} /></label>
           <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">For how many months</span><input name="duration_months" type="number" min={1} max={24} defaultValue={3} className={input} /></label>
           <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Most uses (empty for no limit)</span><input name="max_redemptions" type="number" min={1} className={input} /></label>
           <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Last day to use it (optional)</span><input name="expires_on" type="date" className={input} /></label>
-          <label className="flex items-center gap-2 text-[14px] sm:col-span-2"><input type="checkbox" name="first_time_only" defaultChecked /> New subscriptions only</label>
-          <div className="sm:col-span-2"><Button type="submit">Make the code</Button></div>
+          <label className="flex items-center gap-2 text-[14px] @[560px]/admin:col-span-2"><input type="checkbox" name="first_time_only" defaultChecked /> New subscriptions only</label>
+          <div className="@[560px]/admin:col-span-2"><Button type="submit">Make the code</Button></div>
         </form>
       </section>
 
@@ -62,7 +62,7 @@ export default async function AdminCodesPage({ searchParams }: { searchParams: P
         <h3 className="font-display text-[20px] leading-none text-ink">Codes</h3>
         <ul className="mt-3 flex flex-col gap-2 text-[14px]" data-codes>
           {(codes ?? []).map((c) => (
-            <li key={c.id} className={`flex flex-col gap-1 rounded-[12px] border border-border bg-surface px-3 py-2.5 sm:flex-row sm:items-center ${c.active ? "" : "opacity-55"}`} data-code={c.code}>
+            <li key={c.id} className={`flex flex-col gap-1 rounded-[12px] border border-border bg-surface px-3 py-2.5 @[560px]/admin:flex-row @[560px]/admin:items-center ${c.active ? "" : "opacity-55"}`} data-code={c.code}>
               <div className="min-w-0 flex-1">
                 <span className="font-mono font-medium text-fg">{c.code}</span> <span className="text-muted">· {c.description}</span>
                 <div className="text-[12.5px] text-subtle">

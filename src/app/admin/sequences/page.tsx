@@ -53,7 +53,7 @@ export default async function AdminSequencesPage({ searchParams }: { searchParam
         const running = mine.filter((r) => !r.stopped_at).length;
         const reasons = Object.entries(mine.filter((r) => r.stopped_at).reduce<Record<string, number>>((m, r) => ({ ...m, [r.stop_reason as string]: (m[r.stop_reason as string] ?? 0) + 1 }), {}));
         return (
-          <section key={s.key} className="rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-sequence={s.key}>
+          <section key={s.key} className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-sequence={s.key}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h3 className="font-display text-[22px] leading-none text-ink">{s.name}</h3>

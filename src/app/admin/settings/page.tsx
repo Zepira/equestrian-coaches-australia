@@ -76,7 +76,7 @@ export default async function AdminSettingsPage({
                   Set this on launch day. It locks once saved, and every founding member&apos;s free period counts from it.
                 </p>
                 {notice("launch_date")}
-                <form action={saveSetting} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+                <form action={saveSetting} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
                   <input type="hidden" name="key" value="launch_date" />
                   <label className="block">
                     <span className="mb-1 block text-sm font-medium text-fg">Launched on</span>
@@ -92,7 +92,7 @@ export default async function AdminSettingsPage({
           <div>
             <h3 className="text-[15px] font-semibold text-fg">Free months after launch</h3>
             {notice("founding_free_months")}
-            <form action={saveSetting} className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end">
+            <form action={saveSetting} className="mt-2 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
               <input type="hidden" name="key" value="founding_free_months" />
               <label className="block">
                 <span className="mb-1 block text-sm font-medium text-fg">Months</span>
@@ -106,7 +106,7 @@ export default async function AdminSettingsPage({
             <h3 className="text-[15px] font-semibold text-fg">Last day to join as a founding member</h3>
             <p className="mt-1 text-sm text-muted">Leave empty to keep the offer open.</p>
             {notice("founding_join_by")}
-            <form action={saveSetting} className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end">
+            <form action={saveSetting} className="mt-2 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
               <input type="hidden" name="key" value="founding_join_by" />
               <label className="block">
                 <span className="mb-1 block text-sm font-medium text-fg">Join by</span>
@@ -124,7 +124,7 @@ export default async function AdminSettingsPage({
           Goes in the footer of every marketing email, as the law asks. Empty until the partnership is registered.
         </p>
         {notice("business_abn")}
-        <form action={saveSetting} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+        <form action={saveSetting} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
           <input type="hidden" name="key" value="business_abn" />
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-fg">ABN</span>
@@ -140,7 +140,7 @@ export default async function AdminSettingsPage({
           The words are on the Pages tab. Until the solicitor has checked them, both pages say they&apos;re a draft and stay out of search results.
         </p>
         {notice("legal_approved")}
-        <form action={saveSetting} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+        <form action={saveSetting} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
           <input type="hidden" name="key" value="legal_approved" />
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-fg">Status</span>
@@ -159,7 +159,7 @@ export default async function AdminSettingsPage({
           Made-up coaches and professionals that fill the site before real people join. A profession stops showing them as soon as it has one real, live profile. Switch them off everywhere on launch day.
         </p>
         {notice("show_sample_listings")}
-        <form action={saveSetting} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+        <form action={saveSetting} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
           <input type="hidden" name="key" value="show_sample_listings" />
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-fg">Samples</span>
@@ -181,7 +181,7 @@ export default async function AdminSettingsPage({
           <div>
             <h3 className="text-[15px] font-semibold text-fg">Review new profiles</h3>
             {notice("review_required")}
-            <form action={saveSetting} className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end">
+            <form action={saveSetting} className="mt-2 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
               <input type="hidden" name="key" value="review_required" />
               <label className="block">
                 <span className="mb-1 block text-sm font-medium text-fg">Review</span>
@@ -197,7 +197,7 @@ export default async function AdminSettingsPage({
             <h3 className="text-[15px] font-semibold text-fg">Who gets the email</h3>
             <p className="mt-1 max-w-[62ch] text-sm text-muted">One or more addresses, separated by commas. Empty means nobody is told, so fill this in before launch.</p>
             {notice("review_alert_emails")}
-            <form action={saveSetting} className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end">
+            <form action={saveSetting} className="mt-2 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
               <input type="hidden" name="key" value="review_alert_emails" />
               <label className="block min-w-0 flex-1">
                 <span className="mb-1 block text-sm font-medium text-fg">Email addresses</span>
@@ -228,7 +228,7 @@ export default async function AdminSettingsPage({
               <h3 className="text-[15px] font-semibold text-fg">{title}</h3>
               <p className="mt-1 max-w-[62ch] text-sm text-muted">{help}</p>
               {notice(key)}
-              <form action={saveSetting} className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end">
+              <form action={saveSetting} className="mt-2 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
                 <input type="hidden" name="key" value={key} />
                 <label className="block">
                   <span className="mb-1 block text-sm font-medium text-fg">Number</span>

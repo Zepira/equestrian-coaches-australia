@@ -95,14 +95,14 @@ export default async function AdminWaitlistPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 wide:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 @[880px]/admin:grid-cols-4">
         <Stat n={live.length} label="On the list" />
         <Stat n={live.filter((r) => String(r.created_at) >= week).length} label="Added this week" />
         <Stat n={all.length - live.length} label="Unsubscribed" />
         <Stat n={byRole.get("coach") ?? 0} label="Riding coaches" />
       </div>
 
-      <div className="grid gap-6 wide:grid-cols-2">
+      <div className="grid gap-6 @[720px]/admin:grid-cols-2">
         <Table title="Who they are" rows={sorted(byRole).map(([k, n]) => [ROLE_LABEL[k] ?? k, n])} />
         <Table title="Horse care professionals, by trade" rows={sorted(byProfession)} />
       </div>

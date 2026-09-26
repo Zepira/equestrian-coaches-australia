@@ -85,7 +85,7 @@ export default async function ReviewPage({ searchParams }: { searchParams: Promi
                     Open the profile
                   </Link>
                 </p>
-                <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-start">
+                <div className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-start">
                   <form action={publishProvider.bind(null, r.id)}>
                     <Button type="submit">Publish</Button>
                   </form>

@@ -69,7 +69,7 @@ export default async function AdminAliasesPage() {
 
       <section className="border-t border-border pt-6">
         <h2 className="font-display text-[26px] leading-none text-ink">Add an alias</h2>
-        <form action={addAlias} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+        <form action={addAlias} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium text-fg">Term</span>
             <select

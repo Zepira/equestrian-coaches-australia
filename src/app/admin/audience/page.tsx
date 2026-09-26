@@ -61,7 +61,7 @@ export default async function AdminAudiencePage({ searchParams }: { searchParams
       {done && <p role="status" className="rounded-[12px] bg-accent-soft px-3 py-2 text-[14px] text-fg">{done}</p>}
       {error && <p role="alert" className="rounded-[12px] bg-danger/10 px-3 py-2 text-[14px] text-danger">{error}</p>}
 
-      <div className="grid gap-3 sm:grid-cols-3" data-audience-counts>
+      <div className="grid gap-3 @[760px]/admin:grid-cols-3" data-audience-counts>
         <div className="rounded-[14px] border border-border bg-surface p-4">
           <div className="font-display text-[32px] leading-none text-ink">{contacts ?? 0}</div>
           <div className="mt-1 text-[13px] text-subtle">email addresses</div>
@@ -72,12 +72,12 @@ export default async function AdminAudiencePage({ searchParams }: { searchParams
             <div className="mt-1 text-[13px] text-subtle">{PURPOSE_LABELS[p].toLowerCase()}</div>
           </div>
         ))}
-        <div className="rounded-[14px] border border-border bg-surface p-4 text-[13px] text-muted sm:col-span-2">
+        <div className="rounded-[14px] border border-border bg-surface p-4 text-[13px] text-muted @[760px]/admin:col-span-2">
           Not emailed: {blockCount("unsubscribe_all")} stopped everything, {blockCount("bounce")} bounced, {blockCount("complaint")} marked us as spam, {blockCount("admin")} blocked by you.
         </div>
       </div>
 
-      <section className="rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-launch>
+      <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-launch>
         <h3 className="font-display text-[20px] leading-none text-ink">The launch email</h3>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           {granted("waitlist")} {granted("waitlist") === 1 ? "person has" : "people have"} asked to hear when the site opens; {launchSent ?? 0} {launchSent === 1 ? "has" : "have"} been sent it. Each address gets it once, so pressing again only reaches people who asked since. The words are under Emails.
@@ -94,7 +94,7 @@ export default async function AdminAudiencePage({ searchParams }: { searchParams
         </form>
         {email && !contact && <p className="mt-3 text-[14px] text-subtle">Nobody with that address.</p>}
         {contact && (
-          <div className="mt-4 flex flex-col gap-4 rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-contact>
+          <div className="mt-4 flex flex-col gap-4 rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-contact>
             <div>
               <div className="font-display text-[22px] leading-none text-ink">{contact.email}</div>
               <p className="mt-1.5 text-[13px] text-subtle">

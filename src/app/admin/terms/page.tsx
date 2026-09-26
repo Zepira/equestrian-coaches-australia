@@ -72,16 +72,16 @@ export default async function AdminTermsPage({ searchParams }: { searchParams: P
             {byKind[kind].map((term) => (
               <div
                 key={term.id}
-                className={`flex flex-col gap-2 rounded-[14px] border border-border bg-surface p-3 sm:flex-row sm:items-center sm:justify-between ${
+                className={`flex flex-col gap-2 rounded-[14px] border border-border bg-surface p-3 @[560px]/admin:flex-row @[560px]/admin:items-center @[560px]/admin:justify-between ${
                   !term.active ? "opacity-50" : ""
                 }`}
               >
-                <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+                <div className="flex flex-1 flex-col gap-2 @[560px]/admin:flex-row @[560px]/admin:items-center">
                   <form action={renameTerm.bind(null, term.id)} className="flex items-center gap-2">
                     <input
                       name="name"
                       defaultValue={term.name}
-                      className="w-full rounded-[12px] border border-border bg-bg px-2 py-1.5 text-sm text-fg sm:max-w-xs"
+                      className="w-full rounded-[12px] border border-border bg-bg px-2 py-1.5 text-sm text-fg @[560px]/admin:max-w-xs"
                     />
                     <button type="submit" className="shrink-0 text-sm font-medium text-accent">
                       Save
@@ -144,7 +144,7 @@ export default async function AdminTermsPage({ searchParams }: { searchParams: P
 
       <section className="border-t border-border pt-6">
         <h2 className="font-display text-[26px] leading-none text-ink">Add a term</h2>
-        <form action={createTerm} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+        <form action={createTerm} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium text-fg">Name</span>
             <input
