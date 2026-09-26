@@ -69,7 +69,7 @@ NOTIFICATIONS_FROM=Equine Professionals Australia <notifications@send.equineprof
 ```
 
 Add a DMARC record yourself at `_dmarc` on the apex, starting at
-`v=DMARC1; p=none; rua=mailto:you@equineprofessionals.com.au`, which reports
+`v=DMARC1; p=none; rua=mailto:hello@equineprofessionals.com.au`, which reports
 without anything bouncing while the domain is new. Subdomains inherit it, so one
 record covers both.
 

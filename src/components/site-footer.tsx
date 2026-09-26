@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/wordmark";
+import { CONTACT_EMAIL } from "@/lib/site-url";
 
 const columns = [
   {
@@ -24,7 +25,7 @@ const columns = [
     links: [
       { href: "/about", label: "About us" },
       { href: "/login", label: "Log in" },
-      { href: "mailto:hello@equineprofessionals.au", label: "Contact" },
+      { href: `mailto:${CONTACT_EMAIL}`, label: "Contact" },
     ],
     desktopOnly: true,
   },

@@ -235,14 +235,3 @@ export async function buildSeoDigest(supabase: SupabaseClient): Promise<DigestSe
 export function renderDigestText(sections: DigestSection[]): string {
   return sections.map((s) => `${s.title}\n${s.lines.map((l) => l).join("\n")}`).join("\n\n");
 }
-
-export function renderDigestHtml(sections: DigestSection[]): string {
-  return sections
-    .map(
-      (s) =>
-        `<h2 style="font-size:16px;margin:24px 0 8px">${s.title}</h2><pre style="white-space:pre-wrap;font-family:monospace;font-size:13px;margin:0">${s.lines
-          .map((l) => l.replace(/</g, "&lt;"))
-          .join("\n")}</pre>`
-    )
-    .join("\n");
-}

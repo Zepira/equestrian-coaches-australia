@@ -179,7 +179,7 @@ const SEQ_PRO_VARS = [
   v("first_name", "Their first name", "Jane"),
   v("audience_plural", "riders or horse owners", "riders"),
   v("onboarding_url", "Where they left off", "https://equineprofessionals.com.au/onboarding"),
-  v("contact_email", "Our address", "hello@equineprofessionals.au"),
+  v("contact_email", "Our address", "hello@equineprofessionals.com.au"),
 ];
 const SEQ_ONBOARDING_VARS = [
   v("first_name", "Their first name", "Jane"),

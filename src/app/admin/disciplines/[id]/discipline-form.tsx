@@ -91,7 +91,7 @@ export function DisciplineForm({ discipline }: { discipline: DisciplineContent }
           <div className="rounded-[12px] border border-border bg-bg px-4 py-3">
             <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">Roughly how it appears in Google</p>
             <p className="mt-1.5 truncate text-[17px] text-[#1a0dab]">{seo.title} | Equine Professionals Australia</p>
-            <p className="text-[13px] text-[#006621]">equineprofessionals.au › disciplines › {discipline.slug}</p>
+            <p className="text-[13px] text-[#006621]">equineprofessionals.com.au › disciplines › {discipline.slug}</p>
             <p className="mt-0.5 line-clamp-2 text-[13.5px] leading-[1.45] text-muted">{seo.description}</p>
           </div>
         </section>

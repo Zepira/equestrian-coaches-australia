@@ -23,10 +23,13 @@ export function DashboardNav({
   newEnquiries,
   planName,
   planLine,
+  contactEmail,
 }: {
   newEnquiries: number;
   planName: string;
   planLine: string;
+  /** From the layout: a client component cannot read CONTACT_EMAIL itself. */
+  contactEmail: string;
 }) {
   const pathname = usePathname();
   const active = (href: string) => (href === "/dashboard" ? pathname === href : pathname.startsWith(href));
@@ -72,7 +75,7 @@ export function DashboardNav({
         </div>
         <p className="mt-5 px-3.5 text-[13px] leading-[1.5] text-subtle">
           Something not working? Tell Kim or Alana directly —{" "}
-          <a href="mailto:hello@equineprofessionals.au" className="text-accent">
+          <a href={`mailto:${contactEmail}`} className="text-accent">
             message us
           </a>
           .

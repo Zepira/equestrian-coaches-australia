@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { loadDashboard } from "@/lib/dashboard";
 import Link from "next/link";
 import { DashboardNav } from "./dashboard-nav";
+import { CONTACT_EMAIL } from "@/lib/site-url";
 
 /** Where the profile stands on its way to live (src/lib/provider-lifecycle.ts), when it isn't live. */
 function StatusBanner({ status, note }: { status: string; note: string | null }) {
@@ -54,7 +55,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const ctx = await loadDashboard();
   return (
     <div className="mx-auto max-w-[1184px] px-[18px] pb-10 wide:grid wide:grid-cols-[200px_1fr] wide:items-start wide:gap-12 wide:px-12 wide:pb-20 wide:pt-9">
-      <DashboardNav newEnquiries={ctx?.newEnquiries ?? 0} planName={ctx?.planName ?? "No plan yet"} planLine={ctx?.planLine ?? ""} />
+      <DashboardNav newEnquiries={ctx?.newEnquiries ?? 0} planName={ctx?.planName ?? "No plan yet"} planLine={ctx?.planLine ?? ""} contactEmail={CONTACT_EMAIL} />
       <div className="min-w-0 pt-[22px] wide:pt-0">
         {ctx && <StatusBanner status={String(ctx.provider.status)} note={(ctx.provider.review_note as string | null) ?? null} />}
         {children}
