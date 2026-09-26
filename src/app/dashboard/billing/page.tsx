@@ -3,7 +3,9 @@ import { loadDashboard } from "@/lib/dashboard";
 import { isMockPayments } from "@/lib/stripe";
 import { TIERS } from "@/lib/tiers";
 import { countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getFoundingPrice } from "@/lib/settings";
-import { startCheckout, changePlan, openBillingPortal, mockCancelSubscription, saveFoundingCardFromBilling } from "./actions";
+import Link from "next/link";
+import { startCheckout, changePlan, openBillingPortal, saveFoundingCardFromBilling, resumeSubscription, undoCancel, switchToYearly } from "./actions";
+import { fillVariables, getContent } from "@/lib/cms/read";
 import { chargeWording } from "@/lib/founding";
 import { isLiveStatus } from "@/lib/tiers";
 
@@ -15,8 +17,18 @@ export const metadata = { title: "Billing" };
  * time), Invoices / Update card via the Customer Portal, and the one-line
  * cancel. In mock mode the same DB fields change and no card exists.
  */
-export default async function BillingPage({ searchParams }: { searchParams: Promise<{ changed?: string }> }) {
-  const { changed } = await searchParams;
+const NOTICE: Record<string, string> = {
+  paused: "Paused. Your profile is hidden and nothing is charged until the pause ends.",
+  resumed: "Welcome back. Your profile is live again.",
+  cancelled: "Cancelled.",
+  kept: "Your plan carries on.",
+  yearly: "You're on yearly billing now.",
+};
+
+export default async function BillingPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const sp = await searchParams;
+  const { changed } = sp;
+  const notice = Object.keys(NOTICE).find((k) => sp[k] === "1");
   const ctx = await loadDashboard();
   if (!ctx) redirect("/login?next=/dashboard/billing");
   const { tier, status, planName, plans, provider } = ctx;
@@ -24,9 +36,27 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   // (card_saved before launch, trialing after), not only once paying.
   const active = isLiveStatus(status);
   const foundingNoCard = provider.cohort === "founding" && !active;
-  const [firstCharge, freeMonths, charge, foundingPrice] = await Promise.all([getFirstChargeDate(), getFoundingFreeMonths(), chargeWording(), getFoundingPrice()]);
+  const [firstCharge, freeMonths, charge, foundingPrice, leaving, { data: sub }] = await Promise.all([
+    getFirstChargeDate(),
+    getFoundingFreeMonths(),
+    chargeWording(),
+    getFoundingPrice(),
+    getContent("billing.leaving"),
+    ctx.supabase.from("subscriptions").select("paused_until, cancel_at, billing_interval, founding").eq("provider_id", ctx.providerId).maybeSingle(),
+  ]);
+  // Stage E: paused, a cancel waiting for the end of the period, and the yearly switch.
+  const paused = status === "paused";
+  const cancelling = active && Boolean(sub?.cancel_at);
+  const yearlyOffer = status === "active" && !cancelling && sub?.billing_interval !== "year" && !sub?.founding && Boolean(tier);
+  const fdate = (d: string | null | undefined) => (d ? formatLongDate(new Date(d)) : "");
   const nextCharge = active ? (isMockPayments ? "— (mock)" : "See portal") : "—";
-  const billingLine = status === "card_saved"
+  const billingLine = paused
+    ? fillVariables(leaving.pausedLine, { date: fdate(sub?.paused_until) })
+    : cancelling
+    ? fillVariables(leaving.cancellingLine, { date: fdate(sub?.cancel_at) })
+    : status === "canceled"
+    ? leaving.cancelledLine
+    : status === "card_saved"
     ? `Founding member: your card is saved. ${charge}`
     : active
     ? tier === "spotlight"
@@ -47,6 +77,23 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         </p>
       )}
       {changed === "1" && <p className="mt-4 rounded-[12px] bg-shade p-3 text-[14px] text-fg">Plan changed.</p>}
+      {notice && <p role="status" className="mt-4 rounded-[12px] bg-shade p-3 text-[14px] text-fg" data-billing-notice={notice}>{NOTICE[notice]}</p>}
+      {paused && (
+        <form action={resumeSubscription} className="mt-4">
+          <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover">Resume now</button>
+        </form>
+      )}
+      {cancelling && (
+        <form action={undoCancel} className="mt-4">
+          <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover">Keep my plan</button>
+        </form>
+      )}
+      {yearlyOffer && tier && (
+        <form action={switchToYearly} className="mt-4 flex flex-wrap items-center gap-3 rounded-[12px] border border-border bg-surface p-3" data-yearly>
+          <span className="text-[14px] text-fg">{fillVariables(leaving.yearlyLine, { yearly: plans[tier].yearly })}</span>
+          <button type="submit" className="rounded-[var(--radius-pill)] border border-ink px-4 py-2 text-[14px] font-medium text-ink">Switch to yearly</button>
+        </form>
+      )}
       {foundingNoCard && (
         <form action={saveFoundingCardFromBilling} className="mt-4">
           <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover">
@@ -87,6 +134,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           <p className="mt-2 text-[14px] leading-[1.5] text-muted wide:text-[14.5px]">
             {active ? "Both directions, any time. Go up for a clinic month and back down after." : "Annual is ten months' price; change plan any time once you're in."}
           </p>
+          {!paused && (
           <div className="mt-3 flex flex-col gap-2 wide:mt-3.5">
             {TIERS.map((t) => {
               const current = active && tier === t;
@@ -110,6 +158,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               );
             })}
           </div>
+          )}
           {active && (
             <>
               <div className="mt-[22px] flex flex-col gap-2 wide:hidden">
@@ -126,11 +175,11 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                   </button>
                 </form>
               </div>
-              <form action={isMockPayments ? mockCancelSubscription : openBillingPortal} className="mt-[18px]">
-                <button type="submit" className="block w-full px-4 py-3.5 text-center text-[14px] leading-[1.5] text-subtle wide:px-0 wide:text-left">
-                  Cancel subscription — one click, your listing stays live until the period ends and nothing you&apos;ve added is deleted.
-                </button>
-              </form>
+              {!cancelling && (
+                <Link href="/dashboard/billing/cancel" className="mt-[18px] block w-full px-4 py-3.5 text-center text-[14px] leading-[1.5] text-subtle underline-offset-2 hover:underline wide:px-0 wide:text-left" data-cancel-link>
+                  Cancel or pause your subscription. Your listing stays live until the period ends, and nothing you&apos;ve added is deleted.
+                </Link>
+              )}
             </>
           )}
         </div>

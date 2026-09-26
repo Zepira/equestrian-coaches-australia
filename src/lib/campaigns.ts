@@ -212,7 +212,8 @@ export async function advanceCampaign(service: Service, campaignId: string, limi
     }
     const m = byContact.get(q.contact_id as string) ?? { name: null, lat: null, long: null };
     const mail = await renderCampaign(service, { id: c.id, slug: c.slug, subject: c.subject, preview: c.preview, sections: c.sections as Section[] }, m, q.token as string);
-    const r = await sendEmailWithId({ to: q.email as string, subject: mail.subject, text: mail.text, commercial: { token: check.token, purpose } });
+    // campaign: true: a bulk send, reached from the cron too, so the pre-launch switch (CRON_EMAILS_ENABLED) holds it.
+    const r = await sendEmailWithId({ to: q.email as string, subject: mail.subject, text: mail.text, campaign: true, commercial: { token: check.token, purpose } });
     await service.from("campaign_sends").update({ status: r.result, resend_id: r.id, sent_at: new Date().toISOString() }).eq("campaign_id", campaignId).eq("contact_id", q.contact_id);
     sent++;
   }

@@ -19,14 +19,19 @@ export default async function AdminSequencesPage({ searchParams }: { searchParam
   const service = createServiceSupabase();
   if (!service) return null;
   await ensureSequences(service);
-  const [{ data: seqRows }, { data: steps }, { data: runs }, { data: pctRow }] = await Promise.all([
+  const [{ data: seqRows }, { data: steps }, { data: runs }, { data: settingRows }] = await Promise.all([
     service.from("sequences").select("key, active, updated_at"),
     service.from("sequence_steps").select("sequence_key, position, delay_hours, active"),
     service.from("sequence_runs").select("sequence_key, stopped_at, stop_reason"),
-    service.from("settings").select("value").eq("key", "onboarding_complete_pct").maybeSingle(),
+    service.from("settings").select("key, value").in("key", ["onboarding_complete_pct", "quiet_rider_days", "pause_max_months"]),
   ]);
+  // A step that acts instead of emailing (the quiet rider check's last step) has no words to show.
   const subjects = Object.fromEntries(
-    await Promise.all(SEQUENCES.flatMap((s) => s.delays.map(async (_, i) => [stepKey(s.key, i + 1), ((await getContent(stepKey(s.key, i + 1))) as { subject: string }).subject] as const)))
+    await Promise.all(
+      SEQUENCES.flatMap((s) =>
+        s.delays.map(async (_, i) => [stepKey(s.key, i + 1), s.actions?.[i + 1] ? null : ((await getContent(stepKey(s.key, i + 1))) as { subject: string }).subject] as const)
+      )
+    )
   );
   const input = "rounded-[10px] border border-border bg-surface px-3 py-2 text-[14px] text-fg";
 
@@ -35,7 +40,7 @@ export default async function AdminSequencesPage({ searchParams }: { searchParam
       <div>
         <h2 className="font-display text-[26px] leading-none text-ink">Sequences</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
-          Emails that go out over days after something happens, and stop when the job&rsquo;s done. What starts and stops each one is fixed; the waits, the switches and the words are yours. Each starts once per person, and only for things from the last two weeks, so switching one on never emails everyone who ever signed up. All of them are about the person&rsquo;s own account, and every email has a one-click stop.
+          Emails that go out over days after something happens, and stop when the job&rsquo;s done. What starts and stops each one is fixed; the waits, the switches and the words are yours. Each starts once per person, and only for things from the last two weeks, so switching one on never emails everyone who ever signed up. The ones that offer a plan only go to people who agreed to news for professionals; the rest are about the person&rsquo;s own account. Every email has a one-click stop, apart from the quiet rider check, where stopping would do the opposite of what the reader wants.
         </p>
       </div>
       {done && <p role="status" className="rounded-[12px] bg-accent-soft px-3 py-2 text-[14px] text-fg">{done}</p>}
@@ -53,7 +58,7 @@ export default async function AdminSequencesPage({ searchParams }: { searchParam
               <div>
                 <h3 className="font-display text-[22px] leading-none text-ink">{s.name}</h3>
                 <p className="mt-1.5 text-[13.5px] text-muted">
-                  To {s.to.toLowerCase()}. Starts: {s.starts.toLowerCase()}. Stops: {s.stops.toLowerCase()}.
+                  To {s.to.toLowerCase()}. Starts: {s.starts.charAt(0).toLowerCase() + s.starts.slice(1)}. Stops: {s.stops.charAt(0).toLowerCase() + s.stops.slice(1)}.{s.purpose ? " Offers a plan, so only people who agreed to news get it, with the unsubscribe link." : ""}
                 </p>
                 <p className="mt-1 text-[13px] text-subtle" data-sequence-counts>
                   {running} in it now, {mine.length - running} finished or stopped{reasons.length ? ` (${reasons.map(([r, n]) => `${n} ${r}`).join(", ")})` : ""}.
@@ -78,7 +83,11 @@ export default async function AdminSequencesPage({ searchParams }: { searchParam
                     <label className="flex items-center gap-1.5">
                       <input type="checkbox" name={`active_${i + 1}`} defaultChecked={st?.active ?? true} /> send
                     </label>
-                    <Link href={`/admin/emails/${key.slice(6)}`} className="text-accent">&ldquo;{subjects[key]}&rdquo;</Link>
+                    {subjects[key] === null ? (
+                      <span className="text-muted">No email: stops their alerts and round-up</span>
+                    ) : (
+                      <Link href={`/admin/emails/${key.slice(6)}`} className="text-accent">&ldquo;{subjects[key]}&rdquo;</Link>
+                    )}
                   </div>
                 );
               })}
@@ -89,15 +98,25 @@ export default async function AdminSequencesPage({ searchParams }: { searchParam
       })}
 
       <section className="border-t border-border pt-6">
-        <form action={saveSetting} className="flex items-end gap-2">
-          <input type="hidden" name="key" value="onboarding_complete_pct" />
-          <input type="hidden" name="back" value="/admin/sequences" />
-          <label className="block">
-            <span className="mb-1 block text-[13px] font-medium text-fg">&ldquo;New profile&rdquo; stops once the profile is this complete (%)</span>
-            <input name="value" type="number" min={SETTING_RANGES.onboarding_complete_pct[0]} max={SETTING_RANGES.onboarding_complete_pct[1]} defaultValue={pctRow?.value ?? DEFAULTS.onboarding_complete_pct} className={`${input} w-24`} />
-          </label>
-          <Button type="submit" variant="secondary">Save</Button>
-        </form>
+        <div className="flex flex-col gap-3">
+          {(
+            [
+              ["onboarding_complete_pct", "\u201cNew profile\u201d stops once the profile is this complete (%)"],
+              ["quiet_rider_days", "Ask a rider if they still want emails after this many quiet days"],
+              ["pause_max_months", "The longest a professional can pause, in months"],
+            ] as const
+          ).map(([key, text]) => (
+            <form key={key} action={saveSetting} className="flex items-end gap-2">
+              <input type="hidden" name="key" value={key} />
+              <input type="hidden" name="back" value="/admin/sequences" />
+              <label className="block">
+                <span className="mb-1 block text-[13px] font-medium text-fg">{text}</span>
+                <input name="value" type="number" min={SETTING_RANGES[key][0]} max={SETTING_RANGES[key][1]} defaultValue={settingRows?.find((r) => r.key === key)?.value ?? DEFAULTS[key]} className={`${input} w-24`} />
+              </label>
+              <Button type="submit" variant="secondary">Save</Button>
+            </form>
+          ))}
+        </div>
         <p className="mt-2 text-[13px] text-subtle">
           The emails go out once a day while the site is on Vercel&rsquo;s free plan, and every hour once it&rsquo;s on Pro.
         </p>

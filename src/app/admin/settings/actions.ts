@@ -105,6 +105,8 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
   },
   enquiry_followup_days: wholeNumber("enquiry_followup_days"),
   onboarding_complete_pct: wholeNumber("onboarding_complete_pct"),
+  pause_max_months: wholeNumber("pause_max_months"),
+  quiet_rider_days: wholeNumber("quiet_rider_days"),
   reviews_hold_all(raw) {
     const v = raw.trim();
     if (v !== "true" && v !== "false") return { error: "Choose hold every review or only flagged ones." };
@@ -193,6 +195,8 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   referral_reward_months: [],
   enquiry_followup_days: [],
   onboarding_complete_pct: [],
+  pause_max_months: ["/dashboard/billing"],
+  quiet_rider_days: [],
   reviews_hold_all: [],
   referral_cap_per_year: [],
   referral_coupon_id: [],

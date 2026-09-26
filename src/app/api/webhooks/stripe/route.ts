@@ -49,8 +49,17 @@ async function syncSubscription(supabase: ReturnType<typeof serviceClient>, subs
   if (!providerId) return; // not one of ours
 
   const priceId = subscription.items.data[0]?.price?.id;
-  const status = statusFromStripe(subscription.status);
+  // A pause (stage E) is Stripe's pause_collection on an otherwise active
+  // subscription: no invoices, and here the profile hides until it resumes.
+  const pause = (subscription as unknown as { pause_collection?: { resumes_at?: number | null } | null }).pause_collection;
+  const baseStatus = statusFromStripe(subscription.status);
+  const status = pause && baseStatus !== "canceled" ? "paused" : baseStatus;
   const live = status === "active" || status === "trialing";
+  // A plan or billing period they chose themselves (the founding conversion emails stop on it).
+  const { data: before } = await supabase.from("subscriptions").select("stripe_price_id, canceled_at").eq("provider_id", providerId).maybeSingle();
+  const changed = Boolean(before?.stripe_price_id && priceId && before.stripe_price_id !== priceId);
+  const endedAt = (subscription as unknown as { ended_at?: number | null; canceled_at?: number | null }).ended_at ?? subscription.canceled_at;
+  const cancelAt = (subscription as unknown as { cancel_at?: number | null }).cancel_at;
   // A founding member is on Spotlight while their free period runs, then on
   // the founding Listed price it's billed at (The Site as a CMS §09).
   const founding = subscription.metadata?.founding === "true";
@@ -69,6 +78,10 @@ async function syncSubscription(supabase: ReturnType<typeof serviceClient>, subs
       status,
       ...(founding ? { founding: true } : {}),
       trial_ends_at: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
+      paused_until: pause?.resumes_at ? new Date(pause.resumes_at * 1000).toISOString() : null,
+      cancel_at: cancelAt ? new Date(cancelAt * 1000).toISOString() : null,
+      canceled_at: status === "canceled" ? (before?.canceled_at ?? (endedAt ? new Date(endedAt * 1000).toISOString() : new Date().toISOString())) : null,
+      ...(changed ? { plan_changed_at: new Date().toISOString() } : {}),
       updated_at: new Date().toISOString(),
     },
     { onConflict: "provider_id" }

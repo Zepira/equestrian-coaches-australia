@@ -93,6 +93,23 @@ Migration `0013_sequences_campaigns_guides.sql`.
 - [ ] **Yours:** switch the sequences on when you're ready (Admin → Sequences), and read their words first (Admin → Emails). Set up Resend's webhook with `RESEND_WEBHOOK_SECRET` so delivered and bounced show in results. On Vercel Pro, change the sequences and campaigns crons in `vercel.json` to hourly (`0 * * * *`); the free plan only allows daily. Ask the solicitor whether the rider welcome emails count as factual (we treat them as about the rider's own account).
 - [ ] Not done: the "quiet rider" check (no clicks or visits in 120 days) waits until there's enough click data to judge by; stage E. Upgrades from a campaign's links aren't counted yet, only sign-ups. A public archive of rider newsletters (optional in the plan).
 
+## Stage E: Keeping them (done 26 Sep 2026)
+
+Migration `0015_keeping_them.sql` (its enum value runs on its own first; the file says how).
+
+- [x] **Pause instead of cancel.** "Cancel" on billing goes to `/dashboard/billing/cancel`: move down to Listed (when on a higher plan), pause for 1 to `pause_max_months` months, or cancel, side by side and equal. Cancelling is one click there, with an optional reason. A pause is Stripe's `pause_collection` (our own page, since the hosted portal has none): nothing charged, profile hidden, back by itself at the end (the webhook follows Stripe; in mock payments the daily billing job resumes it), or sooner with "Resume now". A cancel with Stripe runs to the end of the paid period with the listing live, and "Keep my plan" undoes it; in mock payments it ends at once. New columns on `subscriptions`: `paused_until`, `cancel_at`, `canceled_at`, `cancel_reason`, `plan_changed_at`, and the status `paused`. Words in the `billing.leaving` block.
+- [x] **Pay yearly.** A monthly payer (not on the founding rate, which is monthly by its terms) sees "Switch to yearly" on billing; with Stripe it swaps the price with proration.
+- [x] **Four more sequences** (`src/lib/sequences.ts`, all off by default):
+  - Founding free period ending: 60 days before, then about 40 and 22 days before: their numbers, the locked rate, the two plans, and moving down or pausing rather than cancelling. Stops when they choose a plan (`plan_changed_at`), pause, cancel or the free period ends. The legally required 30, 14 and 3 day reminders carry on regardless.
+  - Pay yearly: at the start of the third paid month and two weeks later; stops when they switch or stop paying.
+  - Come back: 30, 60 and 90 days after a plan ends; stops when they return.
+  - Quiet rider check: a rider we still email with no sign-in, click, alert change, save or enquiry for `quiet_rider_days` (120) gets "Do you still want our emails?" with a keep button (`/email-preferences/keep`, a button, since scanners open links). No answer in two weeks: their alerts and round-up consents are withdrawn and their alerts switched off (a step that acts instead of emailing).
+  - The three that offer a plan are commercial: only to people who agreed to news for professionals, with the unsubscribe footer. All four pass `campaign: true`, so the pre-launch switch holds them.
+- [x] Also: the campaign sender now passes `campaign: true` too (reachable from its cron, and missed by the merge audit).
+- [x] Check: 33/33 end to end on a production build (the yearly switch, the cancel line, three equal choices, moving down, a two-month pause hiding the profile, resume, a one-click cancel with its reason, an ended pause resuming by itself, the admin list with the action step, the founding emails at 60 days and not without consent or too early, stopping when they choose, the yearly offer at the third month and never on the founding rate, stopping when they switch, come back waiting 30 days then stopping when they return, the quiet check asking both, the keep button by press only and counting as activity, no answer withdrawing both consents and switching alerts off, the pause length following its setting). Cleaned back to the baseline.
+- [ ] **Yours:** read the new emails on Admin → Emails before switching the sequences on. The founding conversion only reaches founding members who ticked the news box: decide with the solicitor whether their "existing customer" relationship would cover these offers too (we assume it doesn't). Set a yearly Stripe price for each plan before the yearly switch works with real payments.
+- [ ] Not done: a quiet rider can only be checked once (each sequence starts once per person). Pausing while on a founding free period pauses the free period's clock with Stripe but not ours; worth a look once there are real founding members.
+
 ## Later stages
 
-E: founding conversion, annual offer, pause and win-back sequences, and the quiet rider check. F: M10 competitions, M11 sponsors.
+F: M10 competitions, M11 sponsors, the riders' choice award.
