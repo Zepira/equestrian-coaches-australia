@@ -159,7 +159,7 @@ export const CONTENT_DEFAULTS = {
     newEyebrow: "We're new, and we'd rather say so",
     newTitle: "The coach list is still filling out.",
     newBody: "If there's nobody in your area yet, that's because we haven't reached them, not because they don't exist. Tell us who's missing, or tell your coach we're here.",
-    email: "hello@equineprofessionals.au",
+    email: "hello@equineprofessionals.com.au",
   },
   "about.cta": {
     title: "Two of us built it. *Riders and coaches* are what make it work.",

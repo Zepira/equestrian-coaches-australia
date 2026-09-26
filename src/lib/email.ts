@@ -1,4 +1,5 @@
-import { getResend, isResendConfigured, NOTIFICATIONS_FROM } from "@/lib/resend";
+import { getResend, isResendConfigured, DEFAULT_REPLY_TO, NOTIFICATIONS_FROM } from "@/lib/resend";
+import { renderEmailHtml } from "@/lib/email-layout";
 import { commercialFooter, oneClickUrl, type Purpose } from "@/lib/audience";
 import { getBusinessAbn } from "@/lib/settings";
 import { createServiceSupabase } from "@/lib/supabase/service";
@@ -76,8 +77,12 @@ export async function sendEmailWithId({ to, subject, text, replyTo, unsubscribe,
       from: NOTIFICATIONS_FROM,
       to: recipients,
       subject,
+      // Both parts, from the one source: the text is what the caller built,
+      // the HTML is that same text in the shared layout. A client that cannot
+      // or will not render HTML still gets the whole message.
       text,
-      ...(replyTo ? { replyTo } : {}),
+      html: renderEmailHtml(text, subject),
+      replyTo: replyTo ?? DEFAULT_REPLY_TO,
       ...(unsubscribe ? { headers: { "List-Unsubscribe": `<${unsubscribe}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } } : {}),
     });
     // The SDK reports a rejected send by returning { data: null, error },
