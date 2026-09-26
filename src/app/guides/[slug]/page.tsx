@@ -14,6 +14,7 @@ import { coauthor, fileUrl, guideBySlug } from "@/lib/guides";
 import { breadcrumbSchema } from "@/lib/structured-data";
 import { absoluteUrl } from "@/lib/site-url";
 import { profilePath, sectionPath } from "@/lib/page-paths";
+import { SponsorSlot } from "@/components/sponsor-slot";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ preview?: string }> };
 
@@ -119,6 +120,7 @@ export default async function GuidePage({ params, searchParams }: Props) {
         </figure>
       )}
       <div className="mt-4" data-guide-body><Markdown source={g.body} /></div>
+      <SponsorSlot placement="guide" guideId={g.id} className="mt-10" />
 
       {co && (
         <Link href={profilePath(co.slug)} className="mt-10 flex items-center gap-4 rounded-[18px] border border-border bg-surface p-4 text-inherit hover:border-accent" data-coauthor>

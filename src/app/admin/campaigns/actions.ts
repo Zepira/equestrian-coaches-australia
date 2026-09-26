@@ -78,12 +78,12 @@ function parseSections(fd: FormData): Section[] | string {
       const url = String(fd.get(`s_${i}_url`) ?? "").trim();
       if (url && !/^https?:\/\/[^\s]+$/.test(url) && !/^\/[^\s/][^\s]*$|^\/$/.test(url)) return `The link "${url}" needs to start with https:// or with / for a page on this site.`;
       rows.push({ order, s: { type, label: String(fd.get(`s_${i}_label`) ?? "").trim().slice(0, 80), url } });
-    } else if (type === "events" || type === "providers") rows.push({ order, s: { type } });
+    } else if (type === "events" || type === "providers" || type === "sponsor") rows.push({ order, s: { type } });
     else if (type === "guide") rows.push({ order, s: { type, guide_id: String(fd.get(`s_${i}_guide`) ?? "") } });
   }
   const add = String(fd.get("add_type") ?? "");
   if (add in SECTION_TYPES) {
-    const s: Section = add === "text" ? { type: "text", body: "" } : add === "button" ? { type: "button", label: "", url: "" } : add === "guide" ? { type: "guide", guide_id: "" } : { type: add as "events" | "providers" };
+    const s: Section = add === "text" ? { type: "text", body: "" } : add === "button" ? { type: "button", label: "", url: "" } : add === "guide" ? { type: "guide", guide_id: "" } : { type: add as "events" | "providers" | "sponsor" };
     rows.push({ order: 999, s });
   }
   return rows.sort((a, b) => a.order - b.order).map((r) => r.s);

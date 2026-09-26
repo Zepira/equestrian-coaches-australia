@@ -110,6 +110,25 @@ Migration `0015_keeping_them.sql` (its enum value runs on its own first; the fil
 - [ ] **Yours:** read the new emails on Admin → Emails before switching the sequences on. The founding conversion only reaches founding members who ticked the news box: decide with the solicitor whether their "existing customer" relationship would cover these offers too (we assume it doesn't). Set a yearly Stripe price for each plan before the yearly switch works with real payments.
 - [ ] Not done: a quiet rider can only be checked once (each sequence starts once per person). Pausing while on a founding free period pauses the free period's clock with Stripe but not ours; worth a look once there are real founding members.
 
+## Stage F: Later (built 26 Sep 2026, to switch on when the list is big enough)
+
+Migration `0016_competitions_sponsors_awards.sql`.
+
+- [x] **M10 Competitions** (`src/lib/competitions.ts`, Admin → Competitions, `/competitions`)
+  - Each competition holds every term the law expects: promoter and ABN, who can enter, open and close (Melbourne time), how it's judged, the prize and its value, how many winners, when and how they're told. The full terms are written from those fields (`competitions.terms` block, square brackets for the solicitor) and shown on the page. It can't go public until all of it is there, including the ABN in Settings.
+  - Judged on skill against published criteria by default. A random draw over $3,000 in prizes is refused by the form and by the database (the ACT permit threshold, the lowest).
+  - Free, one entry per person, 18 or over or entered by a named parent or guardian. An entry counts only once its email is confirmed (by button), before the close; the separate unticked news box becomes consent then, with its words and source. Same-device entries are flagged, ten a day per device.
+  - The terms lock once entries open. After the close: place winners (skill) or draw them (only confirmed entries not set aside), write the judging record, then publish the result, which emails each winner (`email.competition_winner`) and shows "First L., STATE" on the page.
+- [x] **M11 Sponsors** (`src/lib/sponsors.ts`, Admin → Sponsors)
+  - A sponsor, then slots: the rider round-up email, a guide (one or all), a profession's page, or an area page, with dates, words, an optional picture and their https link. Every slot says "Sponsored" (in code), sits after the list rather than in it, and is the same for everyone. The round-up and campaigns carry the newsletter slot (a campaign section too).
+  - Each slot's link is a `/go/` link of kind `sponsor`, the only kind the database lets leave the site. Showings are counted per slot per day (pages and each round-up email); the sponsor page has the month's report and a CSV to send them.
+- [x] **Riders' choice** (`src/lib/awards.ts`, Admin → Awards, `/riders-choice`)
+  - For each profession in each state: among professionals listed now with at least `riders_choice_min_reviews` (3) reviews published in the year, the highest average wins; ties go to more reviews, then more saves. Plans, payments and testimonials never count. The rules are published (`riders_choice.rules`) and are the code: change both together.
+  - Admin works a year out, checks it, and publishes it as it stands (not the current year). Winners get a line on their profile.
+- [x] Check: 40/40 end to end on a production build (refused to go public without its terms or the ABN, a draw over $3,000 saved as skill keeping what was typed, Melbourne times, public once complete, "opens on" before it opens, the full terms with the ABN, criteria and value, editable until open and fixed after, an entry needing its email confirmed by button, one each, a parent entering, the news box becoming consent with its source only on confirm, no counting after the close, placing a winner, no result without the judging record, the result with who and when, the winner as first name, initial and state, a draw picking only confirmed entries with its record, no unpublishing once entered, https-only sponsor links, four slots with sponsor links, the current slot on a guide labelled Sponsored and not an expired one, the /go/ click to the sponsor with tags, a profession slot only on its profession, only sponsor links allowed off-site by the database, the report and its CSV, the CSV not public, the award by the rules with too few reviews and a paid plan not helping, this year not publishable, the award page and the profile badge). Cleaned back to the baseline. It found one real bug: the database check meant to keep tracked links on the site let a link with no kind point anywhere, because a CHECK that comes out NULL passes. Fixed with coalesce.
+- [ ] **Yours:** the ABN in Admin → Settings before any competition can go public. The solicitor on the competition terms (the square brackets) and the current NSW draw threshold. Sponsorship packages and prices are sold by hand; nothing here takes payment.
+- [ ] Not done: photo entries for competitions (text answers only for now). Area-page sponsor slots were built but only checked through the code path they share with profession pages.
+
 ## Later stages
 
-F: M10 competitions, M11 sponsors, the riders' choice award.
+Everything in the Marketing Engine plan is built. What's left is switching it on as the audience grows, and the "Yours" items above.

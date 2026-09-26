@@ -328,6 +328,11 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
   // Riders' reviews (M5): real, published providers only, never in a preview.
   const reviewService = coach.id && !preview ? createServiceSupabase() : null;
   const reviewSummary = reviewService && coach.id ? await getReviewSummary(reviewService, coach.id) : null;
+  // The riders' choice award (stage F), when they've won one.
+  const { data: awardRows } = reviewService && coach.id
+    ? await reviewService.from("awards").select("year, state, terms(name)").eq("provider_id", coach.id).not("published_at", "is", null).order("year", { ascending: false })
+    : { data: [] };
+  const awards = (awardRows ?? []) as unknown as { year: number; state: string; terms: { name: string } | null }[];
   // Coaching has students; everyone else has clients. Riders vs horse owners from the row.
   const who = horseCare ? "clients" : "students";
   const audiencePlural = `${profession.audienceNoun}s`;
@@ -458,6 +463,15 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
           </div>
 
           <div className="px-[18px] wide:px-0">
+            {awards.length > 0 && (
+              <p className="mt-[26px] text-[13.5px] font-medium text-accent wide:mt-11" data-award-badge>
+                {awards.map((x) => (
+                  <Link key={`${x.year}${x.state}`} href="/riders-choice" className="mr-3 inline-block underline-offset-2 hover:underline">
+                    Riders&rsquo; choice {x.year}: {x.terms?.name ?? ""}, {x.state}
+                  </Link>
+                ))}
+              </p>
+            )}
             <p className="fade-in mt-[26px] font-display text-[24px] leading-[1.25] text-ink wide:mt-11 wide:max-w-[26ch] wide:text-[32px] wide:leading-[1.2]" style={{ animationDuration: "0.7s", animationDelay: "0.2s" }}>
               {coach.headline}
             </p>

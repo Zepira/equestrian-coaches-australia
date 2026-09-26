@@ -19,6 +19,7 @@ import { getAreaIntro } from "@/lib/cms/read";
 import { getSamples } from "@/lib/samples";
 import { SubscribeCard } from "@/components/subscribe-card";
 import { HowWeListLink } from "@/components/how-we-list-link";
+import { SponsorSlot } from "@/components/sponsor-slot";
 
 /**
  * /coaches/in/[area] and /coaches/[discipline]/in/[area]. The first catches
@@ -152,6 +153,8 @@ export async function CoachArea({ profession, areaSlug, disciplineSlug }: { prof
           source="area-page"
         />
       </div>
+      {/* A sponsor's slot (M11): after the list, never inside it. */}
+      <SponsorSlot placement="area" professionId={profession.id} areaId={area.id} className="mt-8 max-w-[720px]" />
     </div>
   );
 }

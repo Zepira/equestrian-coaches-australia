@@ -366,6 +366,16 @@ export const CONTENT_DEFAULTS = {
     cancelledLine: "Your plan has ended. Your profile is saved and hidden; pick a plan to bring it back.",
     yearlyLine: "Pay yearly: {yearly} a year, ten months' price.",
   },
+  // Competitions (M10). Confirming proves the address, so an entry only
+  // counts once it's confirmed, and the news box only becomes consent then.
+  "email.competition_confirm": {
+    subject: "Confirm your entry: {competition}",
+    body: "Thanks for entering {competition}. To confirm your entry, press the button on this page: {confirm_url}\n\nIf you didn't enter, ignore this email and your entry won't count.",
+  },
+  "email.competition_winner": {
+    subject: "You won: {competition}",
+    body: "Hi {first_name},\n\nYou've won {competition}. The prize: {prize}.\n\nReply to this email or write to us at {contact_email} within 14 days so we can arrange it. The result is on the competition page: {competition_url}",
+  },
   // The last line of every sequence email.
   "email.sequence_footer": {
     body: "Don't want these emails? One click stops them: {stop_url}",
@@ -409,6 +419,46 @@ export const CONTENT_DEFAULTS = {
   "site.slide_in": {
     title: "Hear when someone good starts near you",
     body: "Tell us where your horse lives and we'll email you when a coach, farrier or other professional joins nearby. Nothing else.",
+  },
+  // /competitions and each competition's page (M10).
+  "competitions.words": {
+    indexTitle: "Competitions",
+    indexIntro: "Free to enter, judged on what you write, with the full terms on each one.",
+    none: "Nothing's running at the moment.",
+    enterHeading: "Enter",
+    ageLabel: "I'm 18 or over",
+    parentLabel: "I'm a parent or guardian entering for my child",
+    sent: "Nearly done. We've emailed you a link: press it to confirm your entry.",
+    confirmed: "You're in. We'll announce the result by {winners_by}.",
+    notYet: "Entries open on {opens}.",
+    closed: "Entries have closed.",
+    winnersHeading: "Winners",
+    termsHeading: "Full terms",
+  },
+  // The terms every competition publishes, filled from its fields. Square
+  // brackets are for the solicitor. {judging} is the skill or draw sentence.
+  "competitions.terms": {
+    sections: [
+      { title: "The promoter", body: "Equine Professionals Australia, ABN {abn}. Contact: {contact_email}." },
+      { title: "Who can enter", body: "{who_can_enter} Entrants must be 18 or over, or entered by a parent or guardian. People who run Equine Professionals Australia and their families can't enter." },
+      { title: "When", body: "Entries open {opens} and close {closes}, Melbourne time. Entries after the close aren't counted." },
+      { title: "How to enter", body: "Answer the question on the competition page and confirm your email address with the link we send. It's free, and one entry per person." },
+      { title: "How the winner is chosen", body: "{judging}" },
+      { title: "The prize", body: "{prize}, worth {prize_value} in total. {winner_count_text} The prize can't be exchanged for cash." },
+      { title: "The result", body: "Winners are chosen by {winners_by}. {how_winners_told} The winner's first name, the first letter of their surname and their state are published on this page." },
+      { title: "Your details", body: "We use your details to run the competition and contact the winner. Entering doesn't sign you up for anything; the separate box on the form does, if you tick it. [Privacy wording for the solicitor.]" },
+    ] as Items,
+  },
+  // /riders-choice: the published rules for the award (stage F).
+  "riders_choice.rules": {
+    title: "Riders' choice",
+    intro: "Once a year, for each profession in each state, the professional riders and horse owners rated highest.",
+    sections: [
+      { title: "Who can win", body: "Anyone listed on the site at the end of the year, with at least {min_reviews} reviews published during that year." },
+      { title: "How it's worked out", body: "The highest average rating from reviews published during the year wins. If two are level, the one with more reviews wins; if still level, the one more riders and horse owners saved to their accounts that year." },
+      { title: "What doesn't count", body: "Which plan someone is on, anything they've paid us, and testimonials they added themselves. Reviews come in only under our review policy, and we publish the bad ones too." },
+      { title: "Nobody picks the winners", body: "The numbers do. We check the result before it's published, and we'd only change it if a review turned out to break the review policy." },
+    ] as Items,
   },
   // /guides and each guide's page (M9). {plural} is a profession's plural, like "farriers".
   "guides.words": {

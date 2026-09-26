@@ -19,6 +19,7 @@ import { getContent, getProfession } from "@/lib/cms/read";
 import { getPlans } from "@/lib/settings";
 import { disciplinePath } from "@/lib/page-paths";
 import { getSamples } from "@/lib/samples";
+import { SponsorSlot } from "@/components/sponsor-slot";
 
 
 // "Start with what you ride" lists every discipline, alphabetically (the
@@ -240,6 +241,10 @@ export async function CoachesHome() {
           </Link>
         </div>
       </Reveal>
+      {/* A sponsor's slot (M11), below the page's own content. */}
+      <div className="mx-auto max-w-[1184px] px-[18px] pb-10 wide:px-12">
+        <SponsorSlot placement="profession" professionId={profession.id} />
+      </div>
       <div className="h-14 wide:hidden" />
     </>
   );

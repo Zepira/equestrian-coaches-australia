@@ -4,6 +4,7 @@ import { sendEmailWithId } from "@/lib/email";
 import { fillVariables, getProfessions } from "@/lib/cms/read";
 import { absoluteUrl } from "@/lib/site-url";
 import { eventPath, profilePath } from "@/lib/page-paths";
+import { newsletterSponsorText } from "@/lib/sponsors";
 
 /**
  * Campaigns (The Marketing Engine M8): one-off emails to a saved audience.
@@ -39,7 +40,8 @@ export type Section =
   | { type: "button"; label: string; url: string }
   | { type: "events" }
   | { type: "providers" }
-  | { type: "guide"; guide_id: string };
+  | { type: "guide"; guide_id: string }
+  | { type: "sponsor" };
 
 export const SECTION_TYPES: Record<Section["type"], string> = {
   text: "Text",
@@ -47,6 +49,7 @@ export const SECTION_TYPES: Record<Section["type"], string> = {
   events: "Events near the reader",
   providers: "New professionals near the reader",
   guide: "A guide",
+  sponsor: "The newsletter sponsor, if one is booked",
 };
 
 export type Member = { contact_id: string; email: string; name: string | null; profile_id: string | null; provider_id: string | null; lat: number | null; long: number | null; sendable: boolean };
@@ -160,6 +163,9 @@ export async function renderCampaign(service: Service, c: Campaign, m: Pick<Memb
         .limit(300);
       const near = (data ?? []).filter((p) => p.lat != null && p.long != null && dist(m.lat!, m.long!, p.lat as number, p.long as number) <= KM).slice(0, 5);
       if (near.length) parts.push(["New near you", ...near.map((p) => `${p.name}, ${p.suburb ?? ""}: ${click({ to: profilePath(p.slug as string) })}`)].join("\n"));
+    } else if (s.type === "sponsor") {
+      const text = await newsletterSponsorText(service);
+      if (text) parts.push(text);
     } else if (s.type === "guide") {
       const { data: g } = await service.from("guides").select("title, summary, slug").eq("id", s.guide_id).eq("status", "published").maybeSingle();
       if (g) parts.push(`${g.title}\n${g.summary}\n${click({ to: `/guides/${g.slug}` })}`);

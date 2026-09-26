@@ -6,6 +6,7 @@ import { absoluteUrl } from "@/lib/site-url";
 import { eventPath, profilePath } from "@/lib/page-paths";
 import type { Door } from "@/lib/professions";
 import { canSend, stopEverything } from "@/lib/audience";
+import { newsletterSponsorText } from "@/lib/sponsors";
 
 /**
  * Every email a rider or horse owner gets (The Site as a CMS §07): an event
@@ -203,7 +204,8 @@ export async function sendRiderMonthly(service: Service, now = new Date()) {
     const result = await sendEmail({
       to: profile.email as string,
       subject: fillVariables(copy.subject, vars),
-      text: `${fillVariables(copy.intro, vars)}\n\n${sections.join("\n\n")}\n\n${fillVariables(copy.footer, vars)}`,
+      // A sponsor's block (M11), the same for everyone, when one is booked.
+      text: `${fillVariables(copy.intro, vars)}\n\n${[...sections, await newsletterSponsorText(service)].filter(Boolean).join("\n\n")}\n\n${fillVariables(copy.footer, vars)}`,
       unsubscribe: links.oneClick,
       campaign: true,
       commercial: { token: allowed.token!, purpose: "rider_news" },
