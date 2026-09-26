@@ -36,7 +36,12 @@ export async function requestOrigin(): Promise<string> {
 }
 
 /**
- * The shared inbox people are told to write to. A placeholder until the
- * domain's email is set up (CLAUDE.md, the rename): change it here.
+ * The shared inbox people are told to write to, and the Reply-To on every
+ * email the site sends. It has to be a mailbox somebody reads.
+ *
+ * Defaults to the .com.au domain, which is the one that carries the MX records
+ * and the real mailbox; the .au form this used to name is not attached to
+ * anything. An environment variable so it can move to the Gmail address later
+ * without a deploy.
  */
-export const CONTACT_EMAIL = "hello@equineprofessionals.au";
+export const CONTACT_EMAIL = process.env.CONTACT_EMAIL ?? "hello@equineprofessionals.com.au";

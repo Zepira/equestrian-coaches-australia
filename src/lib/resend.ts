@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { CONTACT_EMAIL } from "@/lib/site-url";
 
 export const isResendConfigured = Boolean(process.env.RESEND_API_KEY);
 
@@ -25,3 +26,12 @@ export function getResend(): Resend | null {
  */
 export const NOTIFICATIONS_FROM =
   process.env.NOTIFICATIONS_FROM ?? "Equine Professionals Australia <notifications@equineprofessionals.com.au>";
+
+/**
+ * Where a reply goes. Without one, answering an email from the site reaches
+ * notifications@send.…, which nobody reads: a coach replying to say "yes, I'm
+ * interested" would have been talking to nothing. Individual sends override it
+ * where the reply should go elsewhere, as the enquiry email does when it points
+ * replies at the rider.
+ */
+export const DEFAULT_REPLY_TO = process.env.REPLY_TO ?? CONTACT_EMAIL;
