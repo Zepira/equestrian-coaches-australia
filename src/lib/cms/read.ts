@@ -74,6 +74,7 @@ function toProfession(r: Row): Profession | null {
     enquiryOptions: asOptions(d.enquiry_options),
     eventsEnabled: d.events_enabled !== false,
     remoteAllowed: d.remote_allowed === true,
+    commonTermIds: Array.isArray(d.common_term_ids) ? d.common_term_ids.filter((x): x is string => typeof x === "string") : [],
     sortOrder: r.sort_order,
     completeness: asCompleteness(d.completeness),
     faq: asSteps(d.faq),

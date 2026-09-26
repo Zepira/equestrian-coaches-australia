@@ -37,6 +37,7 @@ export type ProfessionRow = {
     completeness: Check[];
     events_enabled: boolean;
     remote_allowed: boolean;
+    common_term_ids: string[] | null;
   };
 };
 
@@ -91,7 +92,7 @@ function Rows({ prefix, items, a, b, aLabel, bLabel }: { prefix: string; items: 
   );
 }
 
-export function ProfessionForm({ row, slugLocked, planNames }: { row: ProfessionRow; slugLocked: boolean; planNames: Record<string, string> }) {
+export function ProfessionForm({ row, slugLocked, planNames, specialities }: { row: ProfessionRow; slugLocked: boolean; planNames: Record<string, string>; specialities: { id: string; name: string }[] }) {
   const d = row.profession_details;
   const [state, action, pending] = useActionState<ProfessionSaveState, FormData>(saveProfession.bind(null, row.id), null);
   const [glyph, setGlyph] = useState(d.glyph_key);
@@ -176,6 +177,24 @@ export function ProfessionForm({ row, slugLocked, planNames }: { row: Profession
         <Text name="pitch" label="The pitch" hint="**words** are bold" value={d.pitch} long maxLength={2000} />
         <span className="text-[14px] font-medium text-fg">Their questions</span>
         <Rows prefix="faq" items={d.faq} a="title" b="body" aLabel="Question" bLabel="Answer" />
+      </Section>
+
+      <Section
+        title={`Common ${d.term_noun_plural}`}
+        note={`What most ${d.plural} do. Sign-up lists these first under "Most ${d.plural} tick these", but leaves them unticked: each person still says what they actually do.`}
+      >
+        {specialities.length ? (
+          <div className="flex flex-wrap gap-2" data-common-terms>
+            {specialities.map((t) => (
+              <label key={t.id} className="flex cursor-pointer items-center gap-2 rounded-[var(--radius-pill)] border border-border bg-surface px-3 py-1.5 text-[14px] text-fg has-[:checked]:border-accent has-[:checked]:bg-accent-soft">
+                <input type="checkbox" name="common" value={t.id} defaultChecked={(d.common_term_ids ?? []).includes(t.id)} className="accent-accent" />
+                {t.name}
+              </label>
+            ))}
+          </div>
+        ) : (
+          <p className="text-[14px] text-muted">No {d.term_noun_plural} yet. Add them on the {d.term_noun_plural} screen first.</p>
+        )}
       </Section>
 
       <Section title="Enquiries" note="What someone picks on the enquiry form. The value is filled in from the label if left blank; once enquiries use it, keep it.">

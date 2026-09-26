@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-type Option = { slug: string; name: string; termNoun: string; termNounPlural: string; terms: { id: string; name: string }[] };
+type Term = { id: string; name: string };
+type Option = { slug: string; name: string; termNoun: string; termNounPlural: string; plural: string; common: string[]; terms: Term[] };
 
 /**
  * Step 1's fields. The speciality list follows the profession picked above it
@@ -13,6 +14,16 @@ export function WhatStep({ options, primary, second, picked }: { options: Option
   const [profession, setProfession] = useState(primary);
   const current = options.find((o) => o.slug === profession) ?? options[0];
   const others = options.filter((o) => o.slug !== profession);
+  // The admin's common picks go first, in their own row; never pre-ticked.
+  const commonSet = new Set(current.common);
+  const common = current.terms.filter((t) => commonSet.has(t.id));
+  const rest = common.length ? current.terms.filter((t) => !commonSet.has(t.id)) : current.terms;
+  const pill = (t: Term) => (
+    <label key={t.id} className="flex cursor-pointer items-center gap-2 rounded-[var(--radius-pill)] border border-border bg-surface px-3.5 py-2 text-[14px] text-fg has-[:checked]:border-accent has-[:checked]:bg-accent-soft">
+      <input type="checkbox" name="term" value={t.id} defaultChecked={picked.includes(t.id)} className="accent-accent" />
+      {t.name}
+    </label>
+  );
 
   return (
     <>
@@ -44,14 +55,14 @@ export function WhatStep({ options, primary, second, picked }: { options: Option
       <fieldset key={current.slug}>
         <legend className="text-[15px] font-semibold text-fg">Your {current.termNounPlural}</legend>
         <p className="mt-1 text-[14px] text-muted">Tick every {current.termNoun} you&apos;d want to be found for. You can change these later.</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {current.terms.map((t) => (
-            <label key={t.id} className="flex cursor-pointer items-center gap-2 rounded-[var(--radius-pill)] border border-border bg-surface px-3.5 py-2 text-[14px] text-fg has-[:checked]:border-accent has-[:checked]:bg-accent-soft">
-              <input type="checkbox" name="term" value={t.id} defaultChecked={picked.includes(t.id)} className="accent-accent" />
-              {t.name}
-            </label>
-          ))}
-        </div>
+        {common.length > 0 && (
+          <>
+            <p className="mt-4 text-[13px] font-medium uppercase tracking-[0.12em] text-subtle">Most {current.plural} tick these</p>
+            <div className="mt-2 flex flex-wrap gap-2" data-common-terms>{common.map(pill)}</div>
+            <p className="mt-5 text-[13px] font-medium uppercase tracking-[0.12em] text-subtle">Everything else</p>
+          </>
+        )}
+        <div className={`${common.length ? "mt-2" : "mt-3"} flex flex-wrap gap-2`}>{rest.map(pill)}</div>
       </fieldset>
     </>
   );

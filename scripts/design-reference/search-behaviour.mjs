@@ -3,8 +3,15 @@
 // slider, list/map toggle, pin ↔ card selection, marker count, tile
 // loading, and keyboard reach. Exits 1 on any FAIL.
 //
-//   node scripts/design-reference/search-behaviour.mjs [--base http://localhost:3000]
+//   node scripts/design-reference/search-behaviour.mjs [--base http://localhost:3000] [--no-seed]
+//
+// Coaching has one real coach, and the pin/card checks need several near
+// Bendigo, so the suite seeds the parity coaches itself (throwaway-coach.mjs
+// create-rider) and removes them at the end. --no-seed runs against whatever
+// is in the database, for a database that already has real coaches there.
 
+import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 // "load", then up to 8s of network quiet — a page with a live map or a
 // long-polling dev connection never reaches a strict networkidle.
@@ -17,6 +24,17 @@ const row = (ok, label, detail = "") => {
   if (!ok) failed++;
   console.log(`${ok ? "ok  " : "FAIL"} ${label}${detail ? "  — " + detail : ""}`);
 };
+const seeder = fileURLToPath(new URL("../smoke/throwaway-coach.mjs", import.meta.url));
+const seed = !process.argv.includes("--no-seed");
+const runSeeder = (cmd) => execFileSync(process.execPath, [seeder, cmd], { stdio: ["ignore", "ignore", "inherit"] });
+if (seed) {
+  runSeeder("delete");
+  runSeeder("create-rider");
+  // execFileSync is synchronous, so this also cleans up after a crash.
+  process.on("exit", () => runSeeder("delete"));
+  // Listing pages cache for a few seconds; let the new coaches through.
+  await new Promise((r) => setTimeout(r, 3000));
+}
 const browser = await chromium.launch();
 // Every coach near Bendigo, not one discipline: the pin and card checks need at
 // least two results, and the seeded parity coaches (throwaway-coach.mjs

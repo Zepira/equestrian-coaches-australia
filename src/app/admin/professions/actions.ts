@@ -93,6 +93,15 @@ export async function saveProfession(termId: string, _prev: ProfessionSaveState,
   }
   if (completeness.length < 3) return fail("Keep at least three items on the profile checklist.");
 
+  // Only this profession's own specialities count as common.
+  const wanted = [...new Set(fd.getAll("common").map(String))];
+  let commonTermIds: string[] = [];
+  if (wanted.length) {
+    const { data: own } = await supabase.from("terms").select("id").eq("kind", "discipline").eq("parent_id", termId).in("id", wanted);
+    const ok = new Set((own ?? []).map((t) => t.id as string));
+    commonTermIds = wanted.filter((id) => ok.has(id));
+  }
+
   const tierLabels = Object.fromEntries(TIERS.map((t) => [t, formText(fd, `tier.${t}`, 30)]).filter(([, v]) => v));
 
   const { error: termError } = await supabase
@@ -126,6 +135,7 @@ export async function saveProfession(termId: string, _prev: ProfessionSaveState,
       completeness,
       events_enabled: fd.get("events_enabled") === "on",
       remote_allowed: fd.get("remote_allowed") === "on",
+      common_term_ids: commonTermIds,
       updated_at: new Date().toISOString(),
     })
     .eq("term_id", termId);

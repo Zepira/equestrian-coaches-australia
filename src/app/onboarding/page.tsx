@@ -123,6 +123,8 @@ export default async function OnboardingPage({
                       name: p.name,
                       termNoun: p.termNoun,
                       termNounPlural: p.termNounPlural,
+                      plural: p.plural,
+                      common: p.commonTermIds ?? [],
                       terms: (await getSectionTerms(p.id)).map((t) => ({ id: t.id, name: t.name })),
                     }))
                   )}

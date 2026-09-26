@@ -54,6 +54,8 @@ export type Profession = {
   enquiryOptions: EnquiryOption[];
   eventsEnabled: boolean;
   remoteAllowed: boolean;
+  /** Specialities most of them do: listed first in onboarding, never pre-ticked. */
+  commonTermIds?: string[];
   sortOrder: number;
   completeness: CompletenessItem[];
   /** Questions and answers for this profession's pitch page. */
