@@ -1,12 +1,12 @@
 import type { createServiceSupabase } from "@/lib/supabase/service";
-import { canSend, ensureContact } from "@/lib/audience";
+import { canSend, consentStatus, ensureContact, recordConsent, type Purpose } from "@/lib/audience";
 import { sendEmailWithId } from "@/lib/email";
 import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
 import type { ContentKey } from "@/lib/cms/content-defaults";
 import { profileCompleteness } from "@/lib/coach-stats";
 import { hasVideo } from "@/lib/tiers";
 import { absoluteUrl, CONTACT_EMAIL } from "@/lib/site-url";
-import { getOnboardingCompletePct, getPlanCapabilities } from "@/lib/settings";
+import { addMonths, countWord, formatLongDate, getFoundingPrice, getOnboardingCompletePct, getPauseMaxMonths, getPlanCapabilities, getPlans, getQuietRiderDays } from "@/lib/settings";
 
 /**
  * Sequences (The Marketing Engine M7): emails that go out over days after
@@ -39,6 +39,12 @@ export type SequenceDef = {
   /** A reason to stop before the next step, or null to carry on. */
   exit: (service: Service, run: Run) => Promise<string | null>;
   vars: (service: Service, run: Run) => Promise<Record<string, string> | null>;
+  /** A commercial sequence: only to people who agreed to this purpose, with the unsubscribe footer. Unset: factual. */
+  purpose?: Purpose;
+  /** Steps that do something instead of sending an email; the return value is why the run ends. */
+  actions?: Record<number, (service: Service, run: Run) => Promise<string>>;
+  /** Leave off the one-click stop line (where stopping would do the opposite of what the reader wants). */
+  noFooter?: boolean;
 };
 
 // ── helpers ──────────────────────────────────────────────────────────────
@@ -235,6 +241,185 @@ export const SEQUENCES: SequenceDef[] = [
   },
 ];
 
+// ── Stage E: keeping them ────────────────────────────────────────────────
+
+async function subscriptionOf(service: Service, providerId: string) {
+  const { data } = await service
+    .from("subscriptions")
+    .select("id, tier, status, founding, billing_interval, trial_ends_at, created_at, canceled_at, plan_changed_at")
+    .eq("provider_id", providerId)
+    .maybeSingle();
+  return data;
+}
+
+const money = (s: string) => Number(String(s).replace(/[^0-9.]/g, "")) || 0;
+
+async function billingVars(service: Service, providerId: string, since: string | null) {
+  const b = await providerBasics(service, providerId);
+  if (!b) return null;
+  const [plans, foundingPrice, pauseMax, sub] = await Promise.all([getPlans(), getFoundingPrice(), getPauseMaxMonths(), subscriptionOf(service, providerId)]);
+  const from = since ?? (sub?.created_at as string | undefined) ?? new Date(0).toISOString();
+  const [{ count: views }, { count: reveals }, { count: enquiries }] = await Promise.all([
+    service.from("provider_events").select("id", { count: "exact", head: true }).eq("provider_id", providerId).eq("kind", "view").gte("created_at", from),
+    service.from("provider_events").select("id", { count: "exact", head: true }).eq("provider_id", providerId).eq("kind", "reveal").gte("created_at", from),
+    service.from("enquiries").select("id", { count: "exact", head: true }).eq("provider_id", providerId).gte("created_at", from),
+  ]);
+  const tier = (sub?.tier as keyof typeof plans | null) ?? "listed";
+  const plan = plans[tier] ?? plans.listed;
+  const saving = Math.max(0, money(plan.monthly) * 12 - money(plan.yearly));
+  return {
+    first_name: b.firstName,
+    billing_url: absoluteUrl("/dashboard/billing"),
+    leaving_url: absoluteUrl("/dashboard/billing/cancel"),
+    first_charge_date: sub?.trial_ends_at ? formatLongDate(new Date(sub.trial_ends_at as string)) : "",
+    listed: plans.listed.name,
+    spotlight: plans.spotlight.name,
+    founding_price: foundingPrice,
+    listed_price: plans.listed.monthly,
+    spotlight_price: plans.spotlight.monthly,
+    listed_tagline: plans.listed.tagline,
+    spotlight_tagline: plans.spotlight.tagline,
+    pause_months: countWord(pauseMax),
+    views: count(views ?? 0, "profile view", "profile views"),
+    reveals: count(reveals ?? 0, "tap to call", "taps to call"),
+    enquiries: count(enquiries ?? 0, "enquiry", "enquiries"),
+    plan: plan.name,
+    monthly: plan.monthly,
+    yearly: plan.yearly,
+    saving: `$${saving.toFixed(2).replace(/\.00$/, "")}`,
+  };
+}
+
+async function subscriptionCandidates(service: Service, rows: { provider_id: string; at: Date }[], since: Date): Promise<Candidate[]> {
+  const out: Candidate[] = [];
+  const now = new Date();
+  for (const r of rows) {
+    // Only once the trigger has come, and not long ago (the lookback).
+    if (r.at < since || r.at > now) continue;
+    const email = await ownerEmail(service, r.provider_id);
+    if (email) out.push({ subjectId: r.provider_id, email, at: r.at });
+  }
+  return out;
+}
+
+SEQUENCES.push(
+  {
+    key: "founding_conversion",
+    name: "Founding free period ending",
+    to: "Founding members who agreed to news for professionals",
+    starts: "60 days before their free period ends",
+    stops: "They choose a plan, pause or cancel, or the free period ends. The 30, 14 and 3 day reminders go regardless",
+    delays: [0, 480, 432],
+    purpose: "provider_news",
+    async candidates(service, since) {
+      const { data } = await service.from("subscriptions").select("provider_id, trial_ends_at").eq("founding", true).eq("status", "trialing").not("trial_ends_at", "is", null);
+      return subscriptionCandidates(service, (data ?? []).map((s) => ({ provider_id: s.provider_id as string, at: new Date(new Date(s.trial_ends_at as string).getTime() - 60 * 86_400_000) })), since);
+    },
+    async exit(service, run) {
+      const s = await subscriptionOf(service, run.subject_id);
+      if (!s) return "no plan";
+      if (s.status === "canceled" || s.status === "paused") return String(s.status);
+      if (s.status !== "trialing") return "free period over";
+      if (s.plan_changed_at && new Date(s.plan_changed_at as string) > new Date(run.started_at)) return "chose a plan";
+      return null;
+    },
+    async vars(service, run) {
+      const s = await subscriptionOf(service, run.subject_id);
+      return billingVars(service, run.subject_id, (s?.created_at as string | undefined) ?? null);
+    },
+  },
+  {
+    key: "annual_offer",
+    name: "Pay yearly",
+    to: "Monthly professionals who agreed to news for professionals",
+    starts: "The start of their third paid month (not the founding rate, which is monthly)",
+    stops: "They switch to yearly or stop paying, or after two emails",
+    delays: [0, 336],
+    purpose: "provider_news",
+    async candidates(service, since) {
+      const { data } = await service.from("subscriptions").select("provider_id, created_at, billing_interval").eq("status", "active").eq("founding", false).not("tier", "is", null);
+      return subscriptionCandidates(
+        service,
+        (data ?? []).filter((s) => s.billing_interval !== "year").map((s) => ({ provider_id: s.provider_id as string, at: addMonths(new Date(s.created_at as string), 2) })),
+        since
+      );
+    },
+    async exit(service, run) {
+      const s = await subscriptionOf(service, run.subject_id);
+      if (!s || s.status !== "active") return "not paying";
+      return s.billing_interval === "year" ? "switched to yearly" : null;
+    },
+    async vars(service, run) {
+      return billingVars(service, run.subject_id, null);
+    },
+  },
+  {
+    key: "win_back",
+    name: "Come back",
+    to: "Professionals who cancelled and agreed to news for professionals",
+    starts: "Their plan ends",
+    stops: "They come back or stop news emails, or after three emails",
+    delays: [720, 720, 720],
+    purpose: "provider_news",
+    async candidates(service, since) {
+      const { data } = await service.from("subscriptions").select("provider_id, canceled_at").eq("status", "canceled").not("canceled_at", "is", null);
+      return subscriptionCandidates(service, (data ?? []).map((s) => ({ provider_id: s.provider_id as string, at: new Date(s.canceled_at as string) })), since);
+    },
+    async exit(service, run) {
+      const s = await subscriptionOf(service, run.subject_id);
+      return s && s.status !== "canceled" ? "came back" : null;
+    },
+    async vars(service, run) {
+      return billingVars(service, run.subject_id, null);
+    },
+  },
+  {
+    key: "quiet_rider",
+    name: "Quiet rider check",
+    to: "Riders we still email",
+    starts: "No sign-in, click, alert change, save or enquiry for the quiet_rider_days setting",
+    stops: "They press the button, or anything else shows they're around. Otherwise the second step stops their alerts and round-up",
+    delays: [0, 336],
+    noFooter: true,
+    actions: {
+      2: async (service, run) => {
+        const { data: c } = await service.from("contacts").select("id").eq("profile_id", run.subject_id).maybeSingle();
+        if (c) {
+          const status = await consentStatus(service, c.id as string);
+          for (const purpose of ["rider_alerts", "rider_news"] as const) {
+            if (status[purpose]) await recordConsent(service, { contactId: c.id as string, purpose, action: "withdraw", method: "quiet check", source: "quiet rider check" });
+          }
+        }
+        await service.from("rider_alerts").update({ unsubscribed_at: new Date().toISOString() }).eq("rider_id", run.subject_id).is("unsubscribed_at", null);
+        return "no longer emailed";
+      },
+    },
+    async candidates(service) {
+      const days = await getQuietRiderDays();
+      const { data } = await service.rpc("quiet_riders", { p_days: days });
+      return ((data ?? []) as { profile_id: string; email: string; last_active: string }[]).map((r) => ({
+        subjectId: r.profile_id,
+        email: r.email,
+        at: new Date(new Date(r.last_active).getTime() + days * 86_400_000),
+      }));
+    },
+    async exit(service, run) {
+      const { data } = await service.rpc("quiet_riders", { p_days: await getQuietRiderDays() });
+      return ((data ?? []) as { profile_id: string }[]).some((r) => r.profile_id === run.subject_id) ? null : "active again";
+    },
+    async vars(service, run) {
+      const { data: p } = await service.from("profiles").select("name").eq("id", run.subject_id).maybeSingle();
+      const { data: step } = await service.from("sequence_steps").select("delay_hours").eq("sequence_key", "quiet_rider").eq("position", 2).maybeSingle();
+      const stop = new Date(Date.now() + ((step?.delay_hours as number | undefined) ?? 336) * HOUR);
+      return {
+        first_name: String(p?.name ?? "").trim().split(/\s+/)[0] || "there",
+        keep_url: absoluteUrl(`/email-preferences/keep?t=${run.stop_token}`),
+        stop_date: stop.toLocaleDateString("en-AU", { day: "numeric", month: "long", timeZone: "Australia/Melbourne" }),
+      };
+    },
+  }
+);
+
 export const stepKey = (sequence: string, position: number) => `email.seq.${sequence}.${position}` as ContentKey;
 
 /** Rows for every sequence and step, off until someone switches them on. Safe to run any time. */
@@ -311,8 +496,16 @@ export async function runSequences(service: Service, now = new Date()) {
       await stop(run.id, reason);
       continue;
     }
+    const action = def.actions?.[step.position];
+    if (action) {
+      const why = await action(service, run);
+      await service.from("sequence_sends").insert({ run_id: run.id, position: step.position, result: "action" });
+      await service.from("sequence_runs").update({ step_reached: step.position, next_at: null, stopped_at: now.toISOString(), stop_reason: why }).eq("id", run.id);
+      tally.stopped++;
+      continue;
+    }
     const email = run.contacts?.email;
-    const allowed = email ? await canSend(service, email, "factual") : { ok: false, why: "no email" };
+    const allowed = email ? await canSend(service, email, def.purpose ?? "factual") : { ok: false, why: "no email" };
     const vars = allowed.ok ? await def.vars(service, run) : null;
     if (!email || !allowed.ok || !vars) {
       await stop(run.id, !email ? "no email" : !allowed.ok ? `not emailable: ${allowed.why}` : "gone");
@@ -323,10 +516,11 @@ export async function runSequences(service: Service, now = new Date()) {
     const sent = await sendEmailWithId({
       to: email,
       subject: fillVariables(copy.subject, all),
-      text: `${fillVariables(copy.body, all)}\n\n--\n${fillVariables(footer.body, all)}`,
+      text: def.noFooter ? fillVariables(copy.body, all) : `${fillVariables(copy.body, all)}\n\n--\n${fillVariables(footer.body, all)}`,
       // Scheduled bulk email: silent until CRON_EMAILS_ENABLED is on, so the
       // test deployment can run the whole sequence without mailing anyone.
       campaign: true,
+      ...(def.purpose && allowed.token ? { commercial: { token: allowed.token, purpose: def.purpose } } : {}),
     });
     await service.from("sequence_sends").insert({ run_id: run.id, position: step.position, result: sent.result, resend_id: sent.id });
     tally.sent++;

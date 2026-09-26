@@ -5,6 +5,7 @@ import { addMonths, countWord, formatLongDate, getFirstChargeDate, getFoundingFr
 import { absoluteUrl } from "@/lib/site-url";
 import { fillVariables, getContent } from "@/lib/cms/read";
 import { rewardOnFirstPayment } from "@/lib/referrals";
+import { syncVisibility } from "@/lib/provider-lifecycle";
 
 /**
  * The founding offer's billing (The Site as a CMS §09):
@@ -193,10 +194,22 @@ export async function runFoundingJob(service: Service, now = new Date()): Promis
     }
     reminders++;
   }
+  // A pause that has run its course comes back by itself (stage E). Stripe
+  // does this for real and the webhook follows; mock payments need the job.
+  if (isMockPayments) await resumeEndedPauses(service, now);
   // Yearly plans: a reminder 30 days before each renewal, once per period
   // (The Marketing Engine §05.9; the 2027 unfair trading rules expect it).
   const renewals = await remindYearlyRenewals(service, today, plans);
   return { reminders, converted, renewals };
+}
+
+async function resumeEndedPauses(service: Service, now: Date) {
+  const { data } = await service.from("subscriptions").select("id, provider_id, founding, trial_ends_at").eq("status", "paused").lte("paused_until", now.toISOString());
+  for (const s of data ?? []) {
+    const trialing = s.founding && s.trial_ends_at && new Date(s.trial_ends_at as string) > now;
+    await service.from("subscriptions").update({ status: trialing ? "trialing" : "active", paused_until: null, updated_at: now.toISOString() }).eq("id", s.id);
+    await syncVisibility(service, s.provider_id as string, true);
+  }
 }
 
 async function remindYearlyRenewals(service: Service, today: Date, plans: Awaited<ReturnType<typeof getPlans>>): Promise<number> {

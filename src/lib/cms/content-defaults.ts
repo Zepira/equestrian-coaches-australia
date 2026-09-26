@@ -308,6 +308,64 @@ export const CONTENT_DEFAULTS = {
     subject: "{download_title}",
     body: "Here's the {download_title} you asked for: {download_url}\n\nIt came with our guide \"{guide_title}\": {guide_url}",
   },
+  // ── Stage E sequences. founding_conversion, annual_offer and win_back are
+  // commercial (they offer a plan), so they only go to people who agreed to
+  // news for professionals, with the unsubscribe footer. quiet_rider is
+  // factual: it's about their own email settings.
+  "email.seq.founding_conversion.1": {
+    subject: "Your free period ends on {first_charge_date}",
+    body: "Hi {first_name},\n\nYour free {spotlight} period as a founding member ends on {first_charge_date}. Since it started, your profile has had {views}, {reveals} and {enquiries}.\n\nFrom {first_charge_date} you move to {listed} at {founding_price} a month, the founding rate, and it stays that price for as long as you stay. You don't need to do anything for that.\n\nIf you'd rather keep {spotlight}, it's {spotlight_price} a month. Choose here: {billing_url}",
+  },
+  "email.seq.founding_conversion.2": {
+    subject: "{listed} or {spotlight} after {first_charge_date}",
+    body: "Hi {first_name},\n\nA quick comparison before your free period ends on {first_charge_date}.\n\n{listed}, {founding_price} a month: {listed_tagline}\n{spotlight}, {spotlight_price} a month: {spotlight_tagline}\n\nYou can change plan any time afterwards, up or down: {billing_url}",
+  },
+  "email.seq.founding_conversion.3": {
+    subject: "Before you decide to leave",
+    body: "Hi {first_name},\n\nIf the numbers haven't been what you hoped, two things are worth trying before you cancel. {listed} at {founding_price} a month keeps you listed for the least it costs. Or pause for up to {pause_months} months, and your profile comes back by itself.\n\nBoth, and cancelling, are on one page: {leaving_url}",
+  },
+  "email.seq.annual_offer.1": {
+    subject: "Pay yearly and save {saving}",
+    body: "Hi {first_name},\n\nYou've been on {plan} for a few months now. Paid yearly it's {yearly} a year, which is ten months' price: {saving} less than a year of monthly payments.\n\nYou can switch from your billing page: {billing_url}",
+  },
+  "email.seq.annual_offer.2": {
+    subject: "Yearly billing, if it suits",
+    body: "Hi {first_name},\n\nOne last note about paying yearly: {yearly} a year for {plan}, instead of {monthly} a month. Nothing about your listing changes.\n\n{billing_url}",
+  },
+  "email.seq.win_back.1": {
+    subject: "Your profile is still saved",
+    body: "Hi {first_name},\n\nEverything you added to your profile is still here: the photos, the words, the reviews. It's hidden while you're not on a plan.\n\nIf you'd like it back, pick a plan and it goes live again straight away: {billing_url}",
+  },
+  "email.seq.win_back.2": {
+    subject: "If it was the price",
+    body: "Hi {first_name},\n\nIf cost was the reason you left, {listed} is {listed_price} a month and keeps your profile, enquiries and contact details working. And if you need a break later, you can pause instead of cancelling.\n\n{billing_url}",
+  },
+  "email.seq.win_back.3": {
+    subject: "The last email about coming back",
+    body: "Hi {first_name},\n\nThis is the last email we'll send about your old profile. It stays saved, so if you come back in a year it'll be where you left it: {billing_url}",
+  },
+  "email.seq.quiet_rider.1": {
+    subject: "Do you still want our emails?",
+    body: "Hi {first_name},\n\nWe haven't seen you for a while, so we're checking before we send anything else. If you'd like to keep getting your alerts and the monthly round-up, press the button here: {keep_url}\n\nIf we don't hear from you by {stop_date}, we'll stop emailing you. Your account stays, and you can switch emails back on from it any time.",
+  },
+  // The page behind "Cancel" on billing, and the billing page's lines about
+  // pausing, cancelling and paying yearly (stage E).
+  "billing.leaving": {
+    title: "Before you go",
+    lead: "Three choices. Cancelling is one of them, and it's one click.",
+    listedTitle: "Move to {listed}",
+    listedBody: "Stay listed for {listed_price} a month. Your profile, enquiries and contact details keep working.",
+    pauseTitle: "Pause",
+    pauseBody: "Nothing is charged and your profile is hidden. It comes back by itself when the pause ends, or sooner if you resume it.",
+    cancelTitle: "Cancel",
+    cancelBody: "Your listing stays live until {end_date}, and nothing you've added is deleted.",
+    reasonLabel: "Why are you leaving? (optional)",
+    reasons: "Not enough enquiries\nToo expensive\nI'm fully booked\nI'm stopping work\nSomething else",
+    pausedLine: "Paused until {date}. Your profile is hidden until then, and nothing is charged.",
+    cancellingLine: "Your plan ends on {date}. Your profile stays live until then.",
+    cancelledLine: "Your plan has ended. Your profile is saved and hidden; pick a plan to bring it back.",
+    yearlyLine: "Pay yearly: {yearly} a year, ten months' price.",
+  },
   // The last line of every sequence email.
   "email.sequence_footer": {
     body: "Don't want these emails? One click stops them: {stop_url}",
