@@ -8,6 +8,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/**
+ * Admin shell. The sections live in a rail down the left from 900px (see
+ * AdminNav) and the page fills the rest, which is the readability change:
+ * the old wrapped tab bar spent the top of every screen on 24 links and then
+ * squeezed dense tables into 1024px. Breakpoints are written in px because
+ * Tailwind v4 cannot order a px breakpoint against the default rem ones.
+ */
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   if (!supabase) redirect("/");
@@ -19,15 +26,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { count: waiting } = await supabase.from("providers").select("id", { count: "exact", head: true }).eq("status", "in_review");
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <h1 className="font-display text-[40px] leading-none -tracking-[0.02em] text-ink wide:text-[56px] wide:leading-[0.98]">Admin</h1>
-      <p className="mt-2 text-[15px] leading-[1.5] text-muted">
-        Everything the site lists, says and charges, and who is on it. A save is live straight away, and each screen keeps a history of who changed what.
-      </p>
-
+    <div className="mx-auto max-w-[1360px] px-4 py-6 min-[640px]:px-6 min-[900px]:grid min-[900px]:grid-cols-[224px_minmax(0,1fr)] min-[900px]:items-start min-[900px]:gap-10 min-[900px]:px-8 min-[900px]:py-9 min-[1200px]:gap-14">
       <AdminNav waiting={waiting ?? 0} />
-
-      <div className="mt-6">{children}</div>
+      <div className="min-w-0 pt-6 min-[900px]:pt-0">{children}</div>
     </div>
   );
 }
