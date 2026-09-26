@@ -1,6 +1,6 @@
 {
  "width": 390,
- "scrollHeight": 6525,
+ "scrollHeight": 6713,
  "elements": [
   {
    "tag": "a",
@@ -60,9 +60,9 @@
    "tag": "a",
    "box": {
     "x": 18,
-    "y": 17,
-    "w": 35,
-    "h": 26
+    "y": 9,
+    "w": 181,
+    "h": 42
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -102,8 +102,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "35.0625px",
-    "height": "26px",
+    "width": "181.266px",
+    "height": "41.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -111,20 +111,20 @@
   },
   {
    "tag": "span",
-   "text": "ECA",
+   "text": "Equine Professionals",
    "box": {
-    "x": 18,
-    "y": 17,
-    "w": 35,
-    "h": 26
+    "x": 56,
+    "y": 10,
+    "w": 143,
+    "h": 21
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "26px",
+    "fontSize": "21px",
     "fontWeight": "400",
     "fontStyle": "normal",
-    "lineHeight": "26px",
-    "letterSpacing": "-0.26px",
+    "lineHeight": "21px",
+    "letterSpacing": "-0.21px",
     "textTransform": "none",
     "color": "rgb(246, 241, 231)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
@@ -156,8 +156,62 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "35.0625px",
-    "height": "26px",
+    "width": "143.141px",
+    "height": "21px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "span",
+   "text": "Australia",
+   "box": {
+    "x": 56,
+    "y": 33,
+    "w": 143,
+    "h": 9
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "9px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "9px",
+    "letterSpacing": "2.34px",
+    "textTransform": "uppercase",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(246, 241, 231)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(246, 241, 231)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "1.8px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "0.75",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "143.141px",
+    "height": "9px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -1029,7 +1083,7 @@
    "tag": "span",
    "text": "Cancel any time",
    "box": {
-    "x": 70,
+    "x": 69,
     "y": 721,
     "w": 131,
     "h": 18
@@ -1191,7 +1245,7 @@
    "tag": "span",
    "text": "Riders contact you direct",
    "box": {
-    "x": 848,
+    "x": 847,
     "y": 721,
     "w": 215,
     "h": 18
@@ -1245,7 +1299,7 @@
    "tag": "span",
    "text": "Testimonials are yours",
    "box": {
-    "x": 1125,
+    "x": 1124,
     "y": 721,
     "w": 190,
     "h": 18
@@ -1461,7 +1515,7 @@
    "tag": "span",
    "text": "No accreditation gatekeeping",
    "box": {
-    "x": 2030,
+    "x": 2029,
     "y": 721,
     "w": 244,
     "h": 18
@@ -1626,7 +1680,7 @@
     "x": 0,
     "y": 757,
     "w": 390,
-    "h": 435
+    "h": 597
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -1667,7 +1721,7 @@
     "top": "0px",
     "bottom": "0px",
     "width": "390px",
-    "height": "434.781px",
+    "height": "596.766px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "100%"
@@ -1729,12 +1783,12 @@
   },
   {
    "tag": "h2",
-   "text": "Free until",
+   "text": "Free for six months",
    "box": {
     "x": 18,
     "y": 851,
     "w": 354,
-    "h": 38
+    "h": 76
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
@@ -1775,7 +1829,7 @@
     "top": "auto",
     "bottom": "auto",
     "width": "354px",
-    "height": "38px",
+    "height": "76px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -1783,12 +1837,12 @@
   },
   {
    "tag": "em",
-   "text": "15 June 2027",
+   "text": "after launch",
    "box": {
-    "x": 138,
+    "x": 18,
     "y": 845,
-    "w": 151,
-    "h": 50
+    "w": 296,
+    "h": 88
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
@@ -1837,12 +1891,12 @@
   },
   {
    "tag": "p",
-   "text": "Sign up before then and you pay nothing until that date. After it, $9.99 a month",
+   "text": "We take your card when you sign up, and we don't charge it until six months afte",
    "box": {
     "x": 18,
-    "y": 905,
+    "y": 943,
     "w": 354,
-    "h": 149
+    "h": 273
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -1883,7 +1937,7 @@
     "top": "auto",
     "bottom": "auto",
     "width": "354px",
-    "height": "148.781px",
+    "height": "272.766px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -1894,7 +1948,7 @@
    "text": "Claim a founding spot",
    "box": {
     "x": 18,
-    "y": 1076,
+    "y": 1238,
     "w": 201,
     "h": 52
    },
@@ -1948,7 +2002,7 @@
    "text": "Every month, good or quiet",
    "box": {
     "x": 18,
-    "y": 1248,
+    "y": 1410,
     "w": 354,
     "h": 18
    },
@@ -2002,7 +2056,7 @@
    "text": "The monthly email, shown",
    "box": {
     "x": 18,
-    "y": 1276,
+    "y": 1438,
     "w": 354,
     "h": 38
    },
@@ -2056,7 +2110,7 @@
    "text": "Example email",
    "box": {
     "x": 37,
-    "y": 1353,
+    "y": 1515,
     "w": 102,
     "h": 17
    },
@@ -2107,11 +2161,11 @@
   },
   {
    "tag": "span",
-   "text": "Equestrian Coaches Australia",
+   "text": "Equine Professionals Australia",
    "box": {
-    "x": 216,
-    "y": 1351,
-    "w": 137,
+    "x": 210,
+    "y": 1513,
+    "w": 143,
     "h": 21
    },
    "style": {
@@ -2152,7 +2206,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "137.078px",
+    "width": "142.766px",
     "height": "21px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -2164,7 +2218,7 @@
    "text": "Subject",
    "box": {
     "x": 37,
-    "y": 1406,
+    "y": 1568,
     "w": 316,
     "h": 17
    },
@@ -2215,10 +2269,10 @@
   },
   {
    "tag": "p",
-   "text": "Your August on Equestrian Coaches Australia",
+   "text": "Your August on Equine Professionals Australia",
    "box": {
     "x": 37,
-    "y": 1426,
+    "y": 1588,
     "w": 316,
     "h": 53
    },
@@ -2272,7 +2326,7 @@
    "text": "412",
    "box": {
     "x": 48,
-    "y": 1514,
+    "y": 1676,
     "w": 132,
     "h": 36
    },
@@ -2326,7 +2380,7 @@
    "text": "Appeared in search",
    "box": {
     "x": 48,
-    "y": 1556,
+    "y": 1718,
     "w": 132,
     "h": 16
    },
@@ -2380,7 +2434,7 @@
    "text": "38",
    "box": {
     "x": 210,
-    "y": 1514,
+    "y": 1676,
     "w": 132,
     "h": 36
    },
@@ -2434,7 +2488,7 @@
    "text": "Profile views",
    "box": {
     "x": 210,
-    "y": 1556,
+    "y": 1718,
     "w": 132,
     "h": 16
    },
@@ -2488,7 +2542,7 @@
    "text": "9",
    "box": {
     "x": 48,
-    "y": 1610,
+    "y": 1772,
     "w": 132,
     "h": 36
    },
@@ -2542,7 +2596,7 @@
    "text": "Tapped to call",
    "box": {
     "x": 48,
-    "y": 1652,
+    "y": 1814,
     "w": 132,
     "h": 16
    },
@@ -2596,7 +2650,7 @@
    "text": "4",
    "box": {
     "x": 210,
-    "y": 1610,
+    "y": 1772,
     "w": 132,
     "h": 36
    },
@@ -2650,7 +2704,7 @@
    "text": "Enquiries",
    "box": {
     "x": 210,
-    "y": 1652,
+    "y": 1814,
     "w": 132,
     "h": 16
    },
@@ -2704,7 +2758,7 @@
    "text": "You came up most often for “dressage lessons Geelong” and “flatwork coach Bellar",
    "box": {
     "x": 37,
-    "y": 1702,
+    "y": 1864,
     "w": 316,
     "h": 93
    },
@@ -2758,7 +2812,7 @@
    "text": "(example figures)",
    "box": {
     "x": 85,
-    "y": 1773,
+    "y": 1935,
     "w": 112,
     "h": 20
    },
@@ -2812,7 +2866,7 @@
    "text": "Two of your four enquiries are still marked as no response.",
    "box": {
     "x": 37,
-    "y": 1805,
+    "y": 1967,
     "w": 316,
     "h": 47
    },
@@ -2866,7 +2920,7 @@
    "text": "The quiet months get the same email. If nothing happened, it says so, and tells ",
    "box": {
     "x": 19,
-    "y": 1874,
+    "y": 2036,
     "w": 352,
     "h": 90
    },
@@ -2920,7 +2974,7 @@
    "text": "What’s included",
    "box": {
     "x": 18,
-    "y": 2077,
+    "y": 2238,
     "w": 354,
     "h": 18
    },
@@ -2974,7 +3028,7 @@
    "text": "What we actually do to bring to you",
    "box": {
     "x": 18,
-    "y": 2107,
+    "y": 2268,
     "w": 354,
     "h": 76
    },
@@ -3028,7 +3082,7 @@
    "text": "riders",
    "box": {
     "x": 18,
-    "y": 2139,
+    "y": 2300,
     "w": 77,
     "h": 50
    },
@@ -3082,7 +3136,7 @@
    "text": "01",
    "box": {
     "x": 18,
-    "y": 2230,
+    "y": 2391,
     "w": 36,
     "h": 120
    },
@@ -3136,7 +3190,7 @@
    "text": "We build a page for your suburb and your discipline",
    "box": {
     "x": 64,
-    "y": 2230,
+    "y": 2391,
     "w": 308,
     "h": 48
    },
@@ -3190,7 +3244,7 @@
    "text": "\"Dressage coaches in Geelong\" — and about 400 others. Riders search discipline +",
    "box": {
     "x": 64,
-    "y": 2284,
+    "y": 2446,
     "w": 308,
     "h": 65
    },
@@ -3244,7 +3298,7 @@
    "text": "02",
    "box": {
     "x": 18,
-    "y": 2386,
+    "y": 2548,
     "w": 36,
     "h": 95
    },
@@ -3298,7 +3352,7 @@
    "text": "We write those pages properly",
    "box": {
     "x": 64,
-    "y": 2386,
+    "y": 2548,
     "w": 308,
     "h": 24
    },
@@ -3352,7 +3406,7 @@
    "text": "150 words each on the top 20, by a person. Google's 2024 rules punished director",
    "box": {
     "x": 64,
-    "y": 2416,
+    "y": 2578,
     "w": 308,
     "h": 65
    },
@@ -3406,7 +3460,7 @@
    "text": "03",
    "box": {
     "x": 18,
-    "y": 2518,
+    "y": 2680,
     "w": 36,
     "h": 98
    },
@@ -3460,7 +3514,7 @@
    "text": "We only build a page where three or more real coaches exist",
    "box": {
     "x": 64,
-    "y": 2518,
+    "y": 2680,
     "w": 308,
     "h": 48
    },
@@ -3514,7 +3568,7 @@
    "text": "Keeps the site out of the category Google demotes, which protects your profile t",
    "box": {
     "x": 64,
-    "y": 2573,
+    "y": 2735,
     "w": 308,
     "h": 44
    },
@@ -3568,7 +3622,7 @@
    "text": "04",
    "box": {
     "x": 18,
-    "y": 2653,
+    "y": 2815,
     "w": 36,
     "h": 95
    },
@@ -3622,7 +3676,7 @@
    "text": "Your profile carries structured data",
    "box": {
     "x": 64,
-    "y": 2653,
+    "y": 2815,
     "w": 308,
     "h": 24
    },
@@ -3676,7 +3730,7 @@
    "text": "LocalBusiness and Person markup, so search engines can read who you are and wher",
    "box": {
     "x": 64,
-    "y": 2683,
+    "y": 2845,
     "w": 308,
     "h": 65
    },
@@ -3730,7 +3784,7 @@
    "text": "05",
    "box": {
     "x": 18,
-    "y": 2786,
+    "y": 2948,
     "w": 36,
     "h": 98
    },
@@ -3784,7 +3838,7 @@
    "text": "Kim answers the recommendation posts in equestrian Facebook groups",
    "box": {
     "x": 64,
-    "y": 2786,
+    "y": 2948,
     "w": 308,
     "h": 48
    },
@@ -3838,7 +3892,7 @@
    "text": "By name — not an anonymous account, not an ad.",
    "box": {
     "x": 64,
-    "y": 2840,
+    "y": 3002,
     "w": 308,
     "h": 44
    },
@@ -3892,7 +3946,7 @@
    "text": "06",
    "box": {
     "x": 18,
-    "y": 2920,
+    "y": 3082,
     "w": 36,
     "h": 52
    },
@@ -3946,7 +4000,7 @@
    "text": "We email riders every month",
    "box": {
     "x": 64,
-    "y": 2920,
+    "y": 3082,
     "w": 308,
     "h": 24
    },
@@ -4000,7 +4054,7 @@
    "text": "Clinics near them, new coaches in their area.",
    "box": {
     "x": 64,
-    "y": 2951,
+    "y": 3113,
     "w": 308,
     "h": 22
    },
@@ -4054,7 +4108,7 @@
    "text": "07",
    "box": {
     "x": 18,
-    "y": 3009,
+    "y": 3171,
     "w": 36,
     "h": 74
    },
@@ -4108,7 +4162,7 @@
    "text": "Cards and flyers where riders already stand",
    "box": {
     "x": 64,
-    "y": 3009,
+    "y": 3171,
     "w": 308,
     "h": 24
    },
@@ -4162,7 +4216,7 @@
    "text": "Saddleries, feed stores, pony club, campdraft canteens.",
    "box": {
     "x": 64,
-    "y": 3039,
+    "y": 3201,
     "w": 308,
     "h": 44
    },
@@ -4216,7 +4270,7 @@
    "text": "08",
    "box": {
     "x": 18,
-    "y": 3120,
+    "y": 3282,
     "w": 36,
     "h": 74
    },
@@ -4270,7 +4324,7 @@
    "text": "We give you something to share",
    "box": {
     "x": 64,
-    "y": 3120,
+    "y": 3282,
     "w": 308,
     "h": 24
    },
@@ -4321,10 +4375,10 @@
   },
   {
    "tag": "p",
-   "text": "A \"find me on ECA\" graphic and a post you can paste. Free on every plan.",
+   "text": "A \"find me on EPA\" graphic and a post you can paste. Free on every plan.",
    "box": {
     "x": 64,
-    "y": 3150,
+    "y": 3312,
     "w": 308,
     "h": 44
    },
@@ -4378,7 +4432,7 @@
    "text": "09",
    "box": {
     "x": 18,
-    "y": 3231,
+    "y": 3393,
     "w": 36,
     "h": 76
    },
@@ -4432,7 +4486,7 @@
    "text": "We help you set up your own Google Business Profile",
    "box": {
     "x": 64,
-    "y": 3231,
+    "y": 3393,
     "w": 308,
     "h": 48
    },
@@ -4486,7 +4540,7 @@
    "text": "Free, and yours to keep.",
    "box": {
     "x": 64,
-    "y": 3285,
+    "y": 3447,
     "w": 308,
     "h": 22
    },
@@ -4537,10 +4591,10 @@
   },
   {
    "tag": "p",
-   "text": "All of that happens whether you’re on Listed or Clinic.",
+   "text": "All of that happens whether you’re on Listed or Clinic .",
    "box": {
     "x": 18,
-    "y": 3348,
+    "y": 3510,
     "w": 354,
     "h": 45
    },
@@ -4594,7 +4648,7 @@
    "text": "Pick a plan",
    "box": {
     "x": 18,
-    "y": 3510,
+    "y": 3672,
     "w": 134,
     "h": 38
    },
@@ -4648,7 +4702,7 @@
    "text": "Monthly",
    "box": {
     "x": 236,
-    "y": 3509,
+    "y": 3671,
     "w": 72,
     "h": 36
    },
@@ -4701,7 +4755,7 @@
    "tag": "button",
    "box": {
     "x": 308,
-    "y": 3509,
+    "y": 3671,
     "w": 60,
     "h": 36
    },
@@ -4755,7 +4809,7 @@
    "text": "Yearly",
    "box": {
     "x": 320,
-    "y": 3518,
+    "y": 3680,
     "w": 36,
     "h": 17
    },
@@ -4809,7 +4863,7 @@
    "text": "Annual is ten months’ price. Change plan any time, both directions — a coach run",
    "box": {
     "x": 18,
-    "y": 3560,
+    "y": 3722,
     "w": 354,
     "h": 68
    },
@@ -4863,7 +4917,7 @@
    "text": "Listed",
    "box": {
     "x": 39,
-    "y": 3675,
+    "y": 3837,
     "w": 57,
     "h": 30
    },
@@ -4917,7 +4971,7 @@
    "text": "For most coaches",
    "box": {
     "x": 39,
-    "y": 3709,
+    "y": 3871,
     "w": 312,
     "h": 21
    },
@@ -4971,7 +5025,7 @@
    "text": "$9.99",
    "box": {
     "x": 39,
-    "y": 3746,
+    "y": 3908,
     "w": 67,
     "h": 40
    },
@@ -5025,7 +5079,7 @@
    "text": "a month · or $99/yr",
    "box": {
     "x": 114,
-    "y": 3765,
+    "y": 3927,
     "w": 123,
     "h": 21
    },
@@ -5079,7 +5133,7 @@
    "text": "Everything a coach needs to be found and reached: an indexed profile, area and d",
    "box": {
     "x": 39,
-    "y": 3800,
+    "y": 3962,
     "w": 312,
     "h": 87
    },
@@ -5133,7 +5187,7 @@
    "text": "Join as a founding coach",
    "box": {
     "x": 39,
-    "y": 3905,
+    "y": 4067,
     "w": 312,
     "h": 53
    },
@@ -5187,7 +5241,7 @@
    "text": "Spotlight",
    "box": {
     "x": 39,
-    "y": 4015,
+    "y": 4177,
     "w": 87,
     "h": 30
    },
@@ -5241,7 +5295,7 @@
    "text": "Most popular",
    "box": {
     "x": 253,
-    "y": 4028,
+    "y": 4190,
     "w": 98,
     "h": 17
    },
@@ -5295,7 +5349,7 @@
    "text": "For coaches building a book",
    "box": {
     "x": 39,
-    "y": 4049,
+    "y": 4211,
     "w": 312,
     "h": 21
    },
@@ -5349,7 +5403,7 @@
    "text": "$24.95",
    "box": {
     "x": 39,
-    "y": 4086,
+    "y": 4248,
     "w": 83,
     "h": 40
    },
@@ -5403,7 +5457,7 @@
    "text": "a month · or $249/yr",
    "box": {
     "x": 130,
-    "y": 4105,
+    "y": 4267,
     "w": 131,
     "h": 21
    },
@@ -5457,7 +5511,7 @@
    "text": "Everything in Listed, plus a featured slot on your area pages, instant enquiry a",
    "box": {
     "x": 39,
-    "y": 4140,
+    "y": 4302,
     "w": 312,
     "h": 65
    },
@@ -5511,7 +5565,7 @@
    "text": "Choose Spotlight",
    "box": {
     "x": 39,
-    "y": 4223,
+    "y": 4385,
     "w": 312,
     "h": 53
    },
@@ -5565,7 +5619,7 @@
    "text": "Clinic",
    "box": {
     "x": 39,
-    "y": 4334,
+    "y": 4496,
     "w": 55,
     "h": 30
    },
@@ -5619,7 +5673,7 @@
    "text": "For coaches who are already full",
    "box": {
     "x": 39,
-    "y": 4368,
+    "y": 4530,
     "w": 312,
     "h": 21
    },
@@ -5673,7 +5727,7 @@
    "text": "$49.95",
    "box": {
     "x": 39,
-    "y": 4405,
+    "y": 4567,
     "w": 81,
     "h": 40
    },
@@ -5727,7 +5781,7 @@
    "text": "a month · or $499/yr",
    "box": {
     "x": 128,
-    "y": 4424,
+    "y": 4586,
     "w": 131,
     "h": 21
    },
@@ -5781,7 +5835,7 @@
    "text": "Everything in Spotlight, plus your events pushed to riders statewide, waitlist c",
    "box": {
     "x": 39,
-    "y": 4459,
+    "y": 4621,
     "w": 312,
     "h": 65
    },
@@ -5835,7 +5889,7 @@
    "text": "Choose Clinic",
    "box": {
     "x": 39,
-    "y": 4542,
+    "y": 4704,
     "w": 312,
     "h": 53
    },
@@ -5889,7 +5943,7 @@
    "text": "Listed comes with everything a coach needs to be found and reached — it isn’t a ",
    "box": {
     "x": 18,
-    "y": 4634,
+    "y": 4796,
     "w": 354,
     "h": 63
    },
@@ -5942,7 +5996,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 4717,
+    "y": 4879,
     "w": 354,
     "h": 61
    },
@@ -5996,7 +6050,7 @@
    "text": "Full comparison, all 27 features",
    "box": {
     "x": 37,
-    "y": 4735,
+    "y": 4897,
     "w": 226,
     "h": 24
    },
@@ -6050,7 +6104,7 @@
    "text": "+",
    "box": {
     "x": 343,
-    "y": 4734,
+    "y": 4896,
     "w": 10,
     "h": 27
    },
@@ -6104,7 +6158,7 @@
    "text": "We never take a of a lesson.",
    "box": {
     "x": 42,
-    "y": 4870,
+    "y": 5032,
     "w": 306,
     "h": 69
    },
@@ -6158,7 +6212,7 @@
    "text": "percentage",
    "box": {
     "x": 218,
-    "y": 4864,
+    "y": 5026,
     "w": 124,
     "h": 45
    },
@@ -6212,7 +6266,7 @@
    "text": "A flat monthly fee and nothing else, forever. What a rider pays you is between y",
    "box": {
     "x": 42,
-    "y": 4953,
+    "y": 5115,
     "w": 306,
     "h": 68
    },
@@ -6266,7 +6320,7 @@
    "text": "Questions",
    "box": {
     "x": 18,
-    "y": 5112,
+    "y": 5274,
     "w": 354,
     "h": 38
    },
@@ -6319,7 +6373,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5171,
+    "y": 5333,
     "w": 354,
     "h": 64
    },
@@ -6372,7 +6426,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5171,
+    "y": 5333,
     "w": 354,
     "h": 64
    },
@@ -6426,7 +6480,7 @@
    "text": "What if I don't get any enquiries?",
    "box": {
     "x": 18,
-    "y": 5191,
+    "y": 5353,
     "w": 208,
     "h": 24
    },
@@ -6480,7 +6534,7 @@
    "text": "−",
    "box": {
     "x": 344,
-    "y": 5189,
+    "y": 5351,
     "w": 28,
     "h": 28
    },
@@ -6534,7 +6588,7 @@
    "text": "You'll know, because we'll tell you. The monthly email shows the real numbers wh",
    "box": {
     "x": 18,
-    "y": 5235,
+    "y": 5397,
     "w": 354,
     "h": 160
    },
@@ -6587,7 +6641,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5396,
+    "y": 5558,
     "w": 354,
     "h": 64
    },
@@ -6640,7 +6694,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5396,
+    "y": 5558,
     "w": 354,
     "h": 64
    },
@@ -6694,7 +6748,7 @@
    "text": "Can I cancel any time?",
    "box": {
     "x": 18,
-    "y": 5416,
+    "y": 5578,
     "w": 142,
     "h": 24
    },
@@ -6748,7 +6802,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5414,
+    "y": 5576,
     "w": 28,
     "h": 28
    },
@@ -6801,7 +6855,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5461,
+    "y": 5623,
     "w": 354,
     "h": 64
    },
@@ -6854,7 +6908,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5461,
+    "y": 5623,
     "w": 354,
     "h": 64
    },
@@ -6908,7 +6962,7 @@
    "text": "Do you take a cut of my lesson fees?",
    "box": {
     "x": 18,
-    "y": 5481,
+    "y": 5643,
     "w": 223,
     "h": 24
    },
@@ -6962,7 +7016,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5479,
+    "y": 5641,
     "w": 28,
     "h": 28
    },
@@ -7015,7 +7069,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5526,
+    "y": 5688,
     "w": 354,
     "h": 64
    },
@@ -7068,7 +7122,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5526,
+    "y": 5688,
     "w": 354,
     "h": 64
    },
@@ -7122,7 +7176,7 @@
    "text": "What happens to my testimonials if I leave?",
    "box": {
     "x": 18,
-    "y": 5546,
+    "y": 5708,
     "w": 273,
     "h": 24
    },
@@ -7176,7 +7230,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5544,
+    "y": 5706,
     "w": 28,
     "h": 28
    },
@@ -7229,7 +7283,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5591,
+    "y": 5753,
     "w": 354,
     "h": 64
    },
@@ -7282,7 +7336,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5591,
+    "y": 5753,
     "w": 354,
     "h": 64
    },
@@ -7336,7 +7390,7 @@
    "text": "Will you sell my details?",
    "box": {
     "x": 18,
-    "y": 5611,
+    "y": 5773,
     "w": 149,
     "h": 24
    },
@@ -7390,7 +7444,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5609,
+    "y": 5771,
     "w": 28,
     "h": 28
    },
@@ -7443,7 +7497,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5656,
+    "y": 5818,
     "w": 354,
     "h": 64
    },
@@ -7496,7 +7550,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5656,
+    "y": 5818,
     "w": 354,
     "h": 64
    },
@@ -7550,7 +7604,7 @@
    "text": "Do I need to be accredited?",
    "box": {
     "x": 18,
-    "y": 5676,
+    "y": 5838,
     "w": 168,
     "h": 24
    },
@@ -7604,7 +7658,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5674,
+    "y": 5836,
     "w": 28,
     "h": 28
    },
@@ -7657,7 +7711,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5721,
+    "y": 5883,
     "w": 354,
     "h": 64
    },
@@ -7710,7 +7764,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5721,
+    "y": 5883,
     "w": 354,
     "h": 64
    },
@@ -7764,7 +7818,7 @@
    "text": "What if there aren't many coaches in my area?",
    "box": {
     "x": 18,
-    "y": 5741,
+    "y": 5903,
     "w": 293,
     "h": 24
    },
@@ -7818,7 +7872,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5739,
+    "y": 5901,
     "w": 28,
     "h": 28
    },
@@ -7871,7 +7925,7 @@
    "tag": "h3",
    "box": {
     "x": 18,
-    "y": 5786,
+    "y": 5948,
     "w": 354,
     "h": 64
    },
@@ -7924,7 +7978,7 @@
    "tag": "button",
    "box": {
     "x": 18,
-    "y": 5786,
+    "y": 5948,
     "w": 354,
     "h": 64
    },
@@ -7978,7 +8032,7 @@
    "text": "How long before I see anything?",
    "box": {
     "x": 18,
-    "y": 5806,
+    "y": 5968,
     "w": 201,
     "h": 24
    },
@@ -8032,7 +8086,7 @@
    "text": "+",
    "box": {
     "x": 344,
-    "y": 5804,
+    "y": 5966,
     "w": 28,
     "h": 28
    },
@@ -8086,7 +8140,7 @@
    "text": "Tell us what to fix",
    "box": {
     "x": 38,
-    "y": 5903,
+    "y": 6065,
     "w": 314,
     "h": 26
    },
@@ -8140,7 +8194,7 @@
    "text": "This site is new and we’d rather hear what’s not working from you than guess. If",
    "box": {
     "x": 38,
-    "y": 5939,
+    "y": 6101,
     "w": 314,
     "h": 112
    },
@@ -8193,9 +8247,9 @@
    "tag": "a",
    "box": {
     "x": 18,
-    "y": 6176,
-    "w": 53,
-    "h": 41
+    "y": 6338,
+    "w": 259,
+    "h": 59
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -8235,8 +8289,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "52.7344px",
-    "height": "41px",
+    "width": "258.672px",
+    "height": "59px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -8244,20 +8298,20 @@
   },
   {
    "tag": "span",
-   "text": "ECA",
+   "text": "Equine Professionals",
    "box": {
-    "x": 18,
-    "y": 6170,
-    "w": 53,
-    "h": 52
+    "x": 72,
+    "y": 6339,
+    "w": 204,
+    "h": 30
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "40px",
+    "fontSize": "30px",
     "fontWeight": "400",
     "fontStyle": "normal",
-    "lineHeight": "40px",
-    "letterSpacing": "-0.8px",
+    "lineHeight": "30px",
+    "letterSpacing": "-0.3px",
     "textTransform": "none",
     "color": "rgb(246, 241, 231)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
@@ -8285,12 +8339,66 @@
     "transition": "all",
     "objectFit": "fill",
     "objectPosition": "50% 50%",
-    "display": "inline",
+    "display": "block",
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "auto",
-    "height": "auto",
+    "width": "204.484px",
+    "height": "30px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "span",
+   "text": "Australia",
+   "box": {
+    "x": 72,
+    "y": 6371,
+    "w": 204,
+    "h": 12
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "12px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "12px",
+    "letterSpacing": "3.12px",
+    "textTransform": "uppercase",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(246, 241, 231)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(246, 241, 231)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "2.4px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "0.75",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "204.484px",
+    "height": "12px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -8298,12 +8406,12 @@
   },
   {
    "tag": "p",
-   "text": "Equestrian Coaches Australia. The coach who teaches what you ride, wherever you ",
+   "text": "Riding coaches, farriers, vets and the rest of your horse's team, across Austral",
    "box": {
     "x": 18,
-    "y": 6227,
+    "y": 6407,
     "w": 280,
-    "h": 63
+    "h": 42
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -8344,7 +8452,7 @@
     "top": "auto",
     "bottom": "auto",
     "width": "280px",
-    "height": "63px",
+    "height": "42px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "280px"
@@ -8352,10 +8460,10 @@
   },
   {
    "tag": "div",
-   "text": "Riders",
+   "text": "Find",
    "box": {
     "x": 18,
-    "y": 6318,
+    "y": 6477,
     "w": 167,
     "h": 21
    },
@@ -8406,10 +8514,64 @@
   },
   {
    "tag": "a",
-   "text": "Find a coach",
+   "text": "Riding coaches",
    "box": {
     "x": 18,
-    "y": 6345,
+    "y": 6504,
+    "w": 167,
+    "h": 29
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "28.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "167px",
+    "height": "28.5px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Horse care",
+   "box": {
+    "x": 18,
+    "y": 6532,
     "w": 167,
     "h": 29
    },
@@ -8463,7 +8625,7 @@
    "text": "Disciplines",
    "box": {
     "x": 18,
-    "y": 6373,
+    "y": 6561,
     "w": 167,
     "h": 29
    },
@@ -8517,7 +8679,7 @@
    "text": "My account",
    "box": {
     "x": 18,
-    "y": 6402,
+    "y": 6589,
     "w": 167,
     "h": 29
    },
@@ -8568,10 +8730,10 @@
   },
   {
    "tag": "div",
-   "text": "Coaches",
+   "text": "Professionals",
    "box": {
     "x": 205,
-    "y": 6318,
+    "y": 6477,
     "w": 167,
     "h": 21
    },
@@ -8622,10 +8784,10 @@
   },
   {
    "tag": "a",
-   "text": "List your profile",
+   "text": "List your business",
    "box": {
     "x": 205,
-    "y": 6345,
+    "y": 6504,
     "w": 167,
     "h": 29
    },
@@ -8679,7 +8841,7 @@
    "text": "Pricing",
    "box": {
     "x": 205,
-    "y": 6373,
+    "y": 6532,
     "w": 167,
     "h": 29
    },
@@ -8733,7 +8895,7 @@
    "text": "Dashboard",
    "box": {
     "x": 205,
-    "y": 6402,
+    "y": 6561,
     "w": 167,
     "h": 29
    },
@@ -8783,13 +8945,13 @@
    }
   },
   {
-   "tag": "div",
-   "text": "© 2026 Equestrian Coaches Australia",
+   "tag": "span",
+   "text": "© 2026 Equine Professionals Australia",
    "box": {
     "x": 18,
-    "y": 6462,
-    "w": 354,
-    "h": 63
+    "y": 6667,
+    "w": 204,
+    "h": 18
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -8803,15 +8965,15 @@
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
-    "borderTopWidth": "1px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.18)",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.18)",
-    "paddingTop": "16px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "paddingTop": "0px",
     "paddingRight": "0px",
-    "paddingBottom": "28px",
+    "paddingBottom": "0px",
     "paddingLeft": "0px",
-    "marginTop": "32px",
+    "marginTop": "0px",
     "marginBottom": "0px",
     "gap": "normal",
     "opacity": "1",
@@ -8829,8 +8991,116 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "354px",
-    "height": "63px",
+    "width": "204.109px",
+    "height": "18px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Terms",
+   "box": {
+    "x": 242,
+    "y": 6667,
+    "w": 33,
+    "h": 18
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "12px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "18px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "32.8594px",
+    "height": "18px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Privacy",
+   "box": {
+    "x": 295,
+    "y": 6667,
+    "w": 39,
+    "h": 18
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "12px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "18px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "39.375px",
+    "height": "18px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"

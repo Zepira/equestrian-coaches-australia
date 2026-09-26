@@ -13,9 +13,9 @@ export default async function AdminAliasesPage() {
   const [{ data: aliasRows }, { data: terms }] = await Promise.all([
     supabase
       .from("term_aliases")
-      .select("id, alias, source, is_primary, terms(name, kind, parent:terms!terms_parent_id_fkey(name))")
+      .select("id, alias, source, is_primary, terms(name, kind, parent:parent_id(name))")
       .order("alias"),
-    supabase.from("terms").select("id, name, kind, parent:terms!terms_parent_id_fkey(name)").eq("active", true).order("kind").order("name"),
+    supabase.from("terms").select("id, name, kind, parent:parent_id(name)").eq("active", true).order("kind").order("name"),
   ]);
 
   const aliases = (aliasRows ?? []) as unknown as {

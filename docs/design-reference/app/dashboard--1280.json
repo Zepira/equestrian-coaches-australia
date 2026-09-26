@@ -1,6 +1,6 @@
 {
  "width": 1280,
- "scrollHeight": 1443,
+ "scrollHeight": 1538,
  "elements": [
   {
    "tag": "a",
@@ -60,9 +60,9 @@
    "tag": "a",
    "box": {
     "x": 112,
-    "y": 21,
-    "w": 197,
-    "h": 30
+    "y": 11,
+    "w": 367,
+    "h": 51
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -102,8 +102,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "197.062px",
-    "height": "30px",
+    "width": "367.406px",
+    "height": "51px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -111,20 +111,20 @@
   },
   {
    "tag": "span",
-   "text": "ECA",
+   "text": "Equine Professionals",
    "box": {
-    "x": 112,
-    "y": 21,
-    "w": 40,
-    "h": 30
+    "x": 158,
+    "y": 11,
+    "w": 177,
+    "h": 26
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "30px",
+    "fontSize": "26px",
     "fontWeight": "400",
     "fontStyle": "normal",
-    "lineHeight": "30px",
-    "letterSpacing": "-0.3px",
+    "lineHeight": "26px",
+    "letterSpacing": "-0.26px",
     "textTransform": "none",
     "color": "rgb(31, 58, 46)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
@@ -156,8 +156,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "40.4531px",
-    "height": "30px",
+    "width": "177.219px",
+    "height": "26px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -165,11 +165,65 @@
   },
   {
    "tag": "span",
-   "text": "Coach dashboard",
+   "text": "Australia",
    "box": {
-    "x": 166,
-    "y": 33,
-    "w": 143,
+    "x": 158,
+    "y": 39,
+    "w": 177,
+    "h": 10
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "10.4px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "10.4px",
+    "letterSpacing": "2.704px",
+    "textTransform": "uppercase",
+    "color": "rgb(31, 58, 46)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(31, 58, 46)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(31, 58, 46)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "2.08px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "0.75",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "177.219px",
+    "height": "10.4062px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "span",
+   "text": "Your dashboard",
+   "box": {
+    "x": 349,
+    "y": 27,
+    "w": 130,
     "h": 18
    },
    "style": {
@@ -210,7 +264,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "142.609px",
+    "width": "130.359px",
     "height": "18px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -378,8 +432,8 @@
    }
   },
   {
-   "tag": "span",
-   "text": "I",
+   "tag": "img",
+   "src": "https://hpvzjdrfnlkteuldnhyi.supabase.co/storage/v1/object/public/provider-photos/4a9fdc18-b340-4a4e-88f2-b3b3383aa357/parity.jpg",
    "box": {
     "x": 1070,
     "y": 18,
@@ -387,21 +441,21 @@
     "h": 36
    },
    "style": {
-    "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "16px",
-    "fontWeight": "400",
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "500",
     "fontStyle": "normal",
-    "lineHeight": "24px",
-    "letterSpacing": "-0.32px",
+    "lineHeight": "22.5px",
+    "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "rgb(246, 241, 231)",
-    "backgroundColor": "rgb(31, 58, 46)",
+    "color": "rgb(31, 58, 46)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
-    "borderRadius": "3.35544e+07px",
+    "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "rgb(246, 241, 231)",
+    "borderTopColor": "rgb(31, 58, 46)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(246, 241, 231)",
+    "borderBottomColor": "rgb(31, 58, 46)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -418,9 +472,9 @@
     "animationTimingFunction": "ease",
     "animationIterationCount": "1",
     "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "flex",
+    "objectFit": "cover",
+    "objectPosition": "50% 25%",
+    "display": "block",
     "position": "static",
     "top": "auto",
     "bottom": "auto",
@@ -428,7 +482,7 @@
     "height": "36px",
     "aspectRatio": "auto",
     "textAlign": "start",
-    "maxWidth": "none"
+    "maxWidth": "100%"
    }
   },
   {
@@ -649,7 +703,7 @@
   },
   {
    "tag": "a",
-   "text": "Profile",
+   "text": "Reviews",
    "box": {
     "x": 96,
     "y": 201,
@@ -703,7 +757,7 @@
   },
   {
    "tag": "a",
-   "text": "Clinics",
+   "text": "Profile",
    "box": {
     "x": 96,
     "y": 248,
@@ -757,10 +811,118 @@
   },
   {
    "tag": "a",
-   "text": "Billing",
+   "text": "Events",
    "box": {
     "x": 96,
     "y": 294,
+    "w": 200,
+    "h": 45
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "22.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(108, 104, 94)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "10px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(108, 104, 94)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(108, 104, 94)",
+    "paddingTop": "11px",
+    "paddingRight": "14px",
+    "paddingBottom": "11px",
+    "paddingLeft": "14px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), outline-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-from 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-via 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-to 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "flex",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "200px",
+    "height": "44.5px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Promote",
+   "box": {
+    "x": 96,
+    "y": 341,
+    "w": 200,
+    "h": 45
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "22.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(108, 104, 94)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "10px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(108, 104, 94)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(108, 104, 94)",
+    "paddingTop": "11px",
+    "paddingRight": "14px",
+    "paddingBottom": "11px",
+    "paddingLeft": "14px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), outline-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), text-decoration-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), fill 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-from 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-via 0.2s cubic-bezier(0.4, 0, 0.2, 1), --tw-gradient-to 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "flex",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "200px",
+    "height": "44.5px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Billing",
+   "box": {
+    "x": 96,
+    "y": 387,
     "w": 200,
     "h": 45
    },
@@ -814,7 +976,7 @@
    "text": "Plan",
    "box": {
     "x": 110,
-    "y": 381,
+    "y": 474,
     "w": 172,
     "h": 17
    },
@@ -868,7 +1030,7 @@
    "text": "Spotlight",
    "box": {
     "x": 110,
-    "y": 403,
+    "y": 496,
     "w": 172,
     "h": 20
    },
@@ -922,7 +1084,7 @@
    "text": "$24.95 a month · founding price locked in.",
    "box": {
     "x": 110,
-    "y": 427,
+    "y": 520,
     "w": 172,
     "h": 35
    },
@@ -976,7 +1138,7 @@
    "text": "Something not working? Tell Kim or Alana directly — .",
    "box": {
     "x": 96,
-    "y": 500,
+    "y": 593,
     "w": 200,
     "h": 59
    },
@@ -1030,7 +1192,7 @@
    "text": "message us",
    "box": {
     "x": 110,
-    "y": 540,
+    "y": 633,
     "w": 67,
     "h": 17
    },
@@ -1189,7 +1351,7 @@
   },
   {
    "tag": "p",
-   "text": "9 riders tapped to see your number, up from 0 in August. 412 searches on ECA lis",
+   "text": "9 riders tapped to see your number, up from 0 in August. 413 searches on the sit",
    "box": {
     "x": 344,
     "y": 201,
@@ -1243,7 +1405,7 @@
   },
   {
    "tag": "span",
-   "text": "Taking new students?",
+   "text": "Taking new students ?",
    "box": {
     "x": 901,
     "y": 162,
@@ -1459,11 +1621,11 @@
   },
   {
    "tag": "span",
-   "text": "412",
+   "text": "413",
    "box": {
     "x": 365,
     "y": 304,
-    "w": 47,
+    "w": 46,
     "h": 48
    },
    "style": {
@@ -1504,7 +1666,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "47.3281px",
+    "width": "45.75px",
     "height": "48px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -1513,7 +1675,7 @@
   },
   {
    "tag": "span",
-   "text": "+412",
+   "text": "+413",
    "box": {
     "x": 495,
     "y": 330,
@@ -1567,7 +1729,7 @@
   },
   {
    "tag": "div",
-   "text": "Appeared in search (on ECA)",
+   "text": "Appeared in search (on the site)",
    "box": {
     "x": 365,
     "y": 362,
@@ -1621,11 +1783,11 @@
   },
   {
    "tag": "span",
-   "text": "38",
+   "text": "39",
    "box": {
     "x": 578,
     "y": 304,
-    "w": 37,
+    "w": 35,
     "h": 48
    },
    "style": {
@@ -1666,7 +1828,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "36.6875px",
+    "width": "35.1875px",
     "height": "48px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -1675,7 +1837,7 @@
   },
   {
    "tag": "span",
-   "text": "+38",
+   "text": "+39",
    "box": {
     "x": 715,
     "y": 330,
@@ -1945,7 +2107,7 @@
   },
   {
    "tag": "span",
-   "text": "3",
+   "text": "5",
    "box": {
     "x": 1004,
     "y": 304,
@@ -1990,7 +2152,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "16.8594px",
+    "width": "17.3906px",
     "height": "48px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -1999,7 +2161,7 @@
   },
   {
    "tag": "span",
-   "text": "+2",
+   "text": "+5",
    "box": {
     "x": 1148,
     "y": 330,
@@ -2106,11 +2268,119 @@
    }
   },
   {
+   "tag": "p",
+   "text": "Email me my monthly numbers, and now and then news for professionals. I can stop",
+   "box": {
+    "x": 361,
+    "y": 462,
+    "w": 621,
+    "h": 21
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "14px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "21px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(34, 32, 28)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(34, 32, 28)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(34, 32, 28)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "621.062px",
+    "height": "21px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "button",
+   "text": "Yes, email me",
+   "box": {
+    "x": 1050,
+    "y": 454,
+    "w": 117,
+    "h": 37
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "14px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "21px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "rgb(31, 58, 46)",
+    "backgroundImage": "none",
+    "borderRadius": "999px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(246, 241, 231)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(246, 241, 231)",
+    "paddingTop": "8px",
+    "paddingRight": "16px",
+    "paddingBottom": "8px",
+    "paddingLeft": "16px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "117.219px",
+    "height": "37px",
+    "aspectRatio": "auto",
+    "textAlign": "center",
+    "maxWidth": "none"
+   }
+  },
+  {
    "tag": "span",
    "text": "Twelve months of views",
    "box": {
     "x": 372,
-    "y": 463,
+    "y": 550,
     "w": 197,
     "h": 26
    },
@@ -2164,7 +2434,7 @@
    "text": "Spotlight insight",
    "box": {
     "x": 683,
-    "y": 473,
+    "y": 560,
     "w": 127,
     "h": 17
    },
@@ -2218,7 +2488,7 @@
    "text": "O",
    "box": {
     "x": 372,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2230,14 +2500,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2272,7 +2542,7 @@
    "text": "N",
    "box": {
     "x": 409,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2284,14 +2554,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2326,7 +2596,7 @@
    "text": "D",
    "box": {
     "x": 446,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2338,14 +2608,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2380,7 +2650,7 @@
    "text": "J",
    "box": {
     "x": 484,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2392,14 +2662,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2434,7 +2704,7 @@
    "text": "F",
    "box": {
     "x": 521,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2446,14 +2716,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2488,7 +2758,7 @@
    "text": "M",
    "box": {
     "x": 558,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2500,14 +2770,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2542,7 +2812,7 @@
    "text": "A",
    "box": {
     "x": 595,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2554,14 +2824,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2596,7 +2866,7 @@
    "text": "M",
    "box": {
     "x": 632,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2608,14 +2878,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2650,7 +2920,7 @@
    "text": "J",
    "box": {
     "x": 670,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2662,14 +2932,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2704,7 +2974,7 @@
    "text": "J",
    "box": {
     "x": 707,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2716,14 +2986,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2758,7 +3028,7 @@
    "text": "A",
    "box": {
     "x": 744,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2770,14 +3040,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2812,7 +3082,7 @@
    "text": "S",
    "box": {
     "x": 781,
-    "y": 650,
+    "y": 737,
     "w": 29,
     "h": 17
    },
@@ -2824,14 +3094,14 @@
     "lineHeight": "16.5px",
     "letterSpacing": "normal",
     "textTransform": "none",
-    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.55)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.65)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
@@ -2863,12 +3133,12 @@
   },
   {
    "tag": "p",
-   "text": "Views have started arriving over the year. Search impressions are the leading nu",
+   "text": "Views have started arriving over the year. Appearing in search comes first; view",
    "box": {
     "x": 372,
-    "y": 684,
+    "y": 771,
     "w": 438,
-    "h": 65
+    "h": 44
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -2909,7 +3179,7 @@
     "top": "auto",
     "bottom": "auto",
     "width": "438.391px",
-    "height": "65.25px",
+    "height": "43.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -2920,7 +3190,7 @@
    "text": "Latest enquiries",
    "box": {
     "x": 369,
-    "y": 815,
+    "y": 880,
     "w": 120,
     "h": 24
    },
@@ -2974,7 +3244,7 @@
    "text": "All 2 new →",
    "box": {
     "x": 738,
-    "y": 820,
+    "y": 885,
     "w": 75,
     "h": 21
    },
@@ -3028,8 +3298,8 @@
    "text": "Megan Hartley",
    "box": {
     "x": 369,
-    "y": 864,
-    "w": 332,
+    "y": 929,
+    "w": 325,
     "h": 23
    },
    "style": {
@@ -3070,7 +3340,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "331.531px",
+    "width": "324.531px",
     "height": "22.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -3082,7 +3352,7 @@
    "text": "· Regular lessons",
    "box": {
     "x": 471,
-    "y": 865,
+    "y": 930,
     "w": 114,
     "h": 20
    },
@@ -3136,8 +3406,8 @@
    "text": "Adult returning rider, 12yo TB gelding who rushes in canter. Weekday afternoons ",
    "box": {
     "x": 369,
-    "y": 889,
-    "w": 332,
+    "y": 954,
+    "w": 325,
     "h": 19
    },
    "style": {
@@ -3178,7 +3448,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "331.531px",
+    "width": "324.531px",
     "height": "18.8906px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -3187,11 +3457,11 @@
   },
   {
    "tag": "span",
-   "text": "8 Sept",
+   "text": "24 Sept",
    "box": {
-    "x": 717,
-    "y": 876,
-    "w": 36,
+    "x": 710,
+    "y": 942,
+    "w": 43,
     "h": 19
    },
    "style": {
@@ -3232,7 +3502,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "35.7188px",
+    "width": "42.7188px",
     "height": "18.75px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -3244,7 +3514,7 @@
    "text": "New",
    "box": {
     "x": 768,
-    "y": 864,
+    "y": 929,
     "w": 45,
     "h": 27
    },
@@ -3298,8 +3568,8 @@
    "text": "Cara & Lily Nguyen",
    "box": {
     "x": 369,
-    "y": 937,
-    "w": 332,
+    "y": 1002,
+    "w": 325,
     "h": 23
    },
    "style": {
@@ -3340,7 +3610,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "331.531px",
+    "width": "324.531px",
     "height": "22.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -3352,7 +3622,7 @@
    "text": "· Regular lessons",
    "box": {
     "x": 501,
-    "y": 938,
+    "y": 1003,
     "w": 114,
     "h": 20
    },
@@ -3403,11 +3673,11 @@
   },
   {
    "tag": "div",
-   "text": "My daughter is 11 and wants to move up from Preliminary — can you take on a juni",
+   "text": "My daughter is 11 and wants to move up from Preliminary. Can you take on a junio",
    "box": {
     "x": 369,
-    "y": 962,
-    "w": 332,
+    "y": 1028,
+    "w": 325,
     "h": 19
    },
    "style": {
@@ -3448,7 +3718,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "331.531px",
+    "width": "324.531px",
     "height": "18.8906px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -3457,11 +3727,11 @@
   },
   {
    "tag": "span",
-   "text": "5 Sept",
+   "text": "21 Sept",
    "box": {
-    "x": 717,
-    "y": 950,
-    "w": 36,
+    "x": 710,
+    "y": 1015,
+    "w": 43,
     "h": 19
    },
    "style": {
@@ -3502,7 +3772,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "35.7188px",
+    "width": "42.7188px",
     "height": "18.75px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -3514,7 +3784,7 @@
    "text": "New",
    "box": {
     "x": 768,
-    "y": 937,
+    "y": 1002,
     "w": 45,
     "h": 27
    },
@@ -3568,8 +3838,8 @@
    "text": "Josh Whitfield",
    "box": {
     "x": 369,
-    "y": 1010,
-    "w": 311,
+    "y": 1076,
+    "w": 304,
     "h": 23
    },
    "style": {
@@ -3610,7 +3880,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "311.25px",
+    "width": "304.25px",
     "height": "22.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -3622,7 +3892,7 @@
    "text": "· One-off",
    "box": {
     "x": 469,
-    "y": 1011,
+    "y": 1077,
     "w": 59,
     "h": 20
    },
@@ -3676,8 +3946,8 @@
    "text": "Would love a test-riding session before the Kyneton comp on the 4th.",
    "box": {
     "x": 369,
-    "y": 1036,
-    "w": 311,
+    "y": 1101,
+    "w": 304,
     "h": 19
    },
    "style": {
@@ -3718,7 +3988,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "311.25px",
+    "width": "304.25px",
     "height": "18.8906px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -3727,11 +3997,11 @@
   },
   {
    "tag": "span",
-   "text": "2 Sept",
+   "text": "18 Sept",
    "box": {
-    "x": 696,
-    "y": 1023,
-    "w": 36,
+    "x": 689,
+    "y": 1088,
+    "w": 43,
     "h": 19
    },
    "style": {
@@ -3772,7 +4042,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "35.7188px",
+    "width": "42.7188px",
     "height": "18.75px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -3784,7 +4054,7 @@
    "text": "Replied",
    "box": {
     "x": 748,
-    "y": 1010,
+    "y": 1076,
     "w": 65,
     "h": 27
    },
@@ -3838,7 +4108,7 @@
    "text": "Profile completeness",
    "box": {
     "x": 879,
-    "y": 466,
+    "y": 553,
     "w": 157,
     "h": 24
    },
@@ -3889,11 +4159,11 @@
   },
   {
    "tag": "span",
-   "text": "50 %",
+   "text": "67 %",
    "box": {
-    "x": 1126,
-    "y": 460,
-    "w": 33,
+    "x": 1128,
+    "y": 547,
+    "w": 31,
     "h": 36
    },
    "style": {
@@ -3934,116 +4204,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "32.9375px",
+    "width": "31.1719px",
     "height": "36px",
-    "aspectRatio": "auto",
-    "textAlign": "start",
-    "maxWidth": "none"
-   }
-  },
-  {
-   "tag": "span",
-   "text": "Photo uploaded",
-   "box": {
-    "x": 909,
-    "y": 532,
-    "w": 216,
-    "h": 22
-   },
-   "style": {
-    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
-    "fontSize": "14.5px",
-    "fontWeight": "400",
-    "fontStyle": "normal",
-    "lineHeight": "21.75px",
-    "letterSpacing": "normal",
-    "textTransform": "none",
-    "color": "rgb(108, 104, 94)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(108, 104, 94)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(108, 104, 94)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "block",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "216.031px",
-    "height": "21.75px",
-    "aspectRatio": "auto",
-    "textAlign": "start",
-    "maxWidth": "none"
-   }
-  },
-  {
-   "tag": "a",
-   "text": "Add",
-   "box": {
-    "x": 1135,
-    "y": 533,
-    "w": 24,
-    "h": 20
-   },
-   "style": {
-    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
-    "fontSize": "13px",
-    "fontWeight": "500",
-    "fontStyle": "normal",
-    "lineHeight": "19.5px",
-    "letterSpacing": "normal",
-    "textTransform": "none",
-    "color": "rgb(180, 85, 58)",
-    "backgroundColor": "rgba(0, 0, 0, 0)",
-    "backgroundImage": "none",
-    "borderRadius": "0px",
-    "borderTopWidth": "0px",
-    "borderTopColor": "rgb(180, 85, 58)",
-    "borderBottomWidth": "0px",
-    "borderBottomColor": "rgb(180, 85, 58)",
-    "paddingTop": "0px",
-    "paddingRight": "0px",
-    "paddingBottom": "0px",
-    "paddingLeft": "0px",
-    "marginTop": "0px",
-    "marginBottom": "0px",
-    "gap": "normal",
-    "opacity": "1",
-    "backdropFilter": "none",
-    "boxShadow": "none",
-    "animationName": "none",
-    "animationDuration": "0s",
-    "animationDelay": "0s",
-    "animationTimingFunction": "ease",
-    "animationIterationCount": "1",
-    "transition": "all",
-    "objectFit": "fill",
-    "objectPosition": "50% 50%",
-    "display": "block",
-    "position": "static",
-    "top": "auto",
-    "bottom": "auto",
-    "width": "23.5781px",
-    "height": "19.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -4054,7 +4216,115 @@
    "text": "✓",
    "box": {
     "x": 879,
-    "y": 565,
+    "y": 620,
+    "w": 20,
+    "h": 20
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "12px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "18px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "rgb(31, 58, 46)",
+    "backgroundImage": "none",
+    "borderRadius": "999px",
+    "borderTopWidth": "1px",
+    "borderTopColor": "rgb(31, 58, 46)",
+    "borderBottomWidth": "1px",
+    "borderBottomColor": "rgb(31, 58, 46)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "flex",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "20px",
+    "height": "20px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "span",
+   "text": "A photo of you coaching",
+   "box": {
+    "x": 909,
+    "y": 619,
+    "w": 250,
+    "h": 22
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "14.5px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "21.75px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "rgb(34, 32, 28)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(34, 32, 28)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(34, 32, 28)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "249.609px",
+    "height": "21.75px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "span",
+   "text": "✓",
+   "box": {
+    "x": 879,
+    "y": 652,
     "w": 20,
     "h": 20
    },
@@ -4108,7 +4378,7 @@
    "text": "Bio written",
    "box": {
     "x": 909,
-    "y": 564,
+    "y": 651,
     "w": 250,
     "h": 22
    },
@@ -4162,7 +4432,7 @@
    "text": "✓",
    "box": {
     "x": 879,
-    "y": 597,
+    "y": 684,
     "w": 20,
     "h": 20
    },
@@ -4216,7 +4486,7 @@
    "text": "Disciplines tagged",
    "box": {
     "x": 909,
-    "y": 596,
+    "y": 683,
     "w": 250,
     "h": 22
    },
@@ -4270,7 +4540,7 @@
    "text": "✓",
    "box": {
     "x": 879,
-    "y": 628,
+    "y": 715,
     "w": 20,
     "h": 20
    },
@@ -4324,7 +4594,7 @@
    "text": "Location set",
    "box": {
     "x": 909,
-    "y": 628,
+    "y": 715,
     "w": 250,
     "h": 22
    },
@@ -4378,7 +4648,7 @@
    "text": "Three testimonials",
    "box": {
     "x": 909,
-    "y": 659,
+    "y": 746,
     "w": 216,
     "h": 22
    },
@@ -4432,7 +4702,7 @@
    "text": "Add",
    "box": {
     "x": 1135,
-    "y": 660,
+    "y": 747,
     "w": 24,
     "h": 20
    },
@@ -4486,7 +4756,7 @@
    "text": "Intro video",
    "box": {
     "x": 909,
-    "y": 691,
+    "y": 778,
     "w": 216,
     "h": 22
    },
@@ -4540,7 +4810,7 @@
    "text": "Add",
    "box": {
     "x": 1135,
-    "y": 692,
+    "y": 779,
     "w": 24,
     "h": 20
    },
@@ -4591,10 +4861,10 @@
   },
   {
    "tag": "span",
-   "text": "Next clinic",
+   "text": "Next event",
    "box": {
     "x": 879,
-    "y": 815,
+    "y": 880,
     "w": 79,
     "h": 24
    },
@@ -4636,7 +4906,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "78.8438px",
+    "width": "79.4688px",
     "height": "24px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -4648,7 +4918,7 @@
    "text": "Manage →",
    "box": {
     "x": 1092,
-    "y": 820,
+    "y": 885,
     "w": 67,
     "h": 21
    },
@@ -4699,10 +4969,10 @@
   },
   {
    "tag": "span",
-   "text": "10",
+   "text": "26",
    "box": {
     "x": 879,
-    "y": 865,
+    "y": 930,
     "w": 60,
     "h": 26
    },
@@ -4756,7 +5026,7 @@
    "text": "Oct",
    "box": {
     "x": 879,
-    "y": 893,
+    "y": 958,
     "w": 60,
     "h": 17
    },
@@ -4807,10 +5077,10 @@
   },
   {
    "tag": "div",
-   "text": "Test Riding Day — Preliminary to Elementary",
+   "text": "Test Riding Day: Preliminary to Elementary",
    "box": {
     "x": 953,
-    "y": 857,
+    "y": 922,
     "w": 206,
     "h": 44
    },
@@ -4861,10 +5131,10 @@
   },
   {
    "tag": "div",
-   "text": "Strathfieldsaye VIC · 9am–3pm",
+   "text": "Strathfieldsaye VIC · 9am to 3pm",
    "box": {
     "x": 953,
-    "y": 906,
+    "y": 971,
     "w": 206,
     "h": 20
    },
@@ -4918,7 +5188,7 @@
    "text": "places left",
    "box": {
     "x": 953,
-    "y": 935,
+    "y": 1000,
     "w": 206,
     "h": 20
    },
@@ -4972,7 +5242,7 @@
    "text": "6",
    "box": {
     "x": 953,
-    "y": 936,
+    "y": 1001,
     "w": 8,
     "h": 18
    },
@@ -5025,9 +5295,9 @@
    "tag": "a",
    "box": {
     "x": 96,
-    "y": 1236,
-    "w": 63,
-    "h": 48
+    "y": 1301,
+    "w": 310,
+    "h": 71
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -5067,8 +5337,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "63.2656px",
-    "height": "48px",
+    "width": "309.625px",
+    "height": "71px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -5076,20 +5346,20 @@
   },
   {
    "tag": "span",
-   "text": "ECA",
+   "text": "Equine Professionals",
    "box": {
-    "x": 96,
-    "y": 1228,
-    "w": 63,
-    "h": 63
+    "x": 160,
+    "y": 1302,
+    "w": 245,
+    "h": 36
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "48px",
+    "fontSize": "36px",
     "fontWeight": "400",
     "fontStyle": "normal",
-    "lineHeight": "48px",
-    "letterSpacing": "-0.96px",
+    "lineHeight": "36px",
+    "letterSpacing": "-0.36px",
     "textTransform": "none",
     "color": "rgb(246, 241, 231)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
@@ -5117,12 +5387,66 @@
     "transition": "all",
     "objectFit": "fill",
     "objectPosition": "50% 50%",
-    "display": "inline",
+    "display": "block",
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "auto",
-    "height": "auto",
+    "width": "245.391px",
+    "height": "36px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "span",
+   "text": "Australia",
+   "box": {
+    "x": 160,
+    "y": 1341,
+    "w": 245,
+    "h": 14
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "14.4px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "14.4px",
+    "letterSpacing": "3.744px",
+    "textTransform": "uppercase",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(246, 241, 231)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(246, 241, 231)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "2.88px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "0.75",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "245.391px",
+    "height": "14.4062px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -5130,10 +5454,10 @@
   },
   {
    "tag": "p",
-   "text": "Equestrian Coaches Australia. The coach who teaches what you ride, wherever you ",
+   "text": "Riding coaches, farriers, vets and the rest of your horse's team, across Austral",
    "box": {
     "x": 96,
-    "y": 1296,
+    "y": 1384,
     "w": 320,
     "h": 45
    },
@@ -5184,10 +5508,10 @@
   },
   {
    "tag": "div",
-   "text": "Riders",
+   "text": "Find",
    "box": {
     "x": 523,
-    "y": 1236,
+    "y": 1301,
     "w": 194,
     "h": 22
    },
@@ -5238,10 +5562,64 @@
   },
   {
    "tag": "a",
-   "text": "Find a coach",
+   "text": "Riding coaches",
    "box": {
     "x": 523,
-    "y": 1266,
+    "y": 1331,
+    "w": 194,
+    "h": 30
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "30px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "193.609px",
+    "height": "30px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Horse care",
+   "box": {
+    "x": 523,
+    "y": 1361,
     "w": 194,
     "h": 30
    },
@@ -5295,7 +5673,7 @@
    "text": "Disciplines",
    "box": {
     "x": 523,
-    "y": 1296,
+    "y": 1391,
     "w": 194,
     "h": 30
    },
@@ -5349,7 +5727,7 @@
    "text": "My account",
    "box": {
     "x": 523,
-    "y": 1326,
+    "y": 1421,
     "w": 194,
     "h": 30
    },
@@ -5400,10 +5778,10 @@
   },
   {
    "tag": "div",
-   "text": "Coaches",
+   "text": "Professionals",
    "box": {
     "x": 757,
-    "y": 1236,
+    "y": 1301,
     "w": 194,
     "h": 22
    },
@@ -5454,10 +5832,10 @@
   },
   {
    "tag": "a",
-   "text": "List your profile",
+   "text": "List your business",
    "box": {
     "x": 757,
-    "y": 1266,
+    "y": 1331,
     "w": 194,
     "h": 30
    },
@@ -5511,7 +5889,7 @@
    "text": "Pricing",
    "box": {
     "x": 757,
-    "y": 1296,
+    "y": 1361,
     "w": 194,
     "h": 30
    },
@@ -5565,7 +5943,7 @@
    "text": "Dashboard",
    "box": {
     "x": 757,
-    "y": 1326,
+    "y": 1391,
     "w": 194,
     "h": 30
    },
@@ -5619,7 +5997,7 @@
    "text": "About",
    "box": {
     "x": 990,
-    "y": 1236,
+    "y": 1301,
     "w": 194,
     "h": 22
    },
@@ -5670,10 +6048,64 @@
   },
   {
    "tag": "a",
+   "text": "About us",
+   "box": {
+    "x": 990,
+    "y": 1331,
+    "w": 194,
+    "h": 30
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "30px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "193.609px",
+    "height": "30px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
    "text": "Log in",
    "box": {
     "x": 990,
-    "y": 1266,
+    "y": 1361,
     "w": 194,
     "h": 30
    },
@@ -5727,7 +6159,7 @@
    "text": "Contact",
    "box": {
     "x": 990,
-    "y": 1296,
+    "y": 1391,
     "w": 194,
     "h": 30
    },
@@ -5777,13 +6209,13 @@
    }
   },
   {
-   "tag": "div",
-   "text": "© 2026 Equestrian Coaches Australia",
+   "tag": "span",
+   "text": "© 2026 Equine Professionals Australia",
    "box": {
     "x": 96,
-    "y": 1396,
-    "w": 1088,
-    "h": 48
+    "y": 1491,
+    "w": 221,
+    "h": 20
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -5798,14 +6230,14 @@
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.18)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.18)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
     "paddingTop": "0px",
     "paddingRight": "0px",
-    "paddingBottom": "28px",
+    "paddingBottom": "0px",
     "paddingLeft": "0px",
-    "marginTop": "40px",
+    "marginTop": "0px",
     "marginBottom": "0px",
     "gap": "normal",
     "opacity": "1",
@@ -5823,8 +6255,116 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "1088px",
-    "height": "47.5px",
+    "width": "221.109px",
+    "height": "19.5px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Terms",
+   "box": {
+    "x": 337,
+    "y": 1491,
+    "w": 36,
+    "h": 20
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "19.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "35.5938px",
+    "height": "19.5px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Privacy",
+   "box": {
+    "x": 393,
+    "y": 1491,
+    "w": 43,
+    "h": 20
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "19.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "42.6562px",
+    "height": "19.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"

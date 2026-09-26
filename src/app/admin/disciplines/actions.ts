@@ -61,7 +61,7 @@ export async function saveDiscipline(termId: string, _prev: SaveState, formData:
   const name = text(formData, "name", 80);
   if (!name) return { ok: false, message: "A name is required." };
 
-  const { data: before } = await supabase.from("terms").select("slug, parent:terms!terms_parent_id_fkey(slug)").eq("id", termId).single();
+  const { data: before } = await supabase.from("terms").select("slug, parent:parent_id(slug)").eq("id", termId).single();
 
   const { error } = await supabase
     .from("terms")
@@ -117,7 +117,7 @@ export async function uploadDisciplineImage(termId: string, formData: FormData) 
   if (!file || file.size === 0) throw new Error("No file provided.");
   if (!file.type.startsWith("image/")) throw new Error("That isn't an image.");
 
-  const { data: term, error: termError } = await supabase.from("terms").select("slug, image_path, parent:terms!terms_parent_id_fkey(slug)").eq("id", termId).single();
+  const { data: term, error: termError } = await supabase.from("terms").select("slug, image_path, parent:parent_id(slug)").eq("id", termId).single();
   if (termError) throw termError;
 
   const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
@@ -134,7 +134,7 @@ export async function uploadDisciplineImage(termId: string, formData: FormData) 
 
 export async function removeDisciplineImage(termId: string) {
   const supabase = await requireAdmin();
-  const { data: term, error: termError } = await supabase.from("terms").select("slug, image_path, parent:terms!terms_parent_id_fkey(slug)").eq("id", termId).single();
+  const { data: term, error: termError } = await supabase.from("terms").select("slug, image_path, parent:parent_id(slug)").eq("id", termId).single();
   if (termError) throw termError;
   if (!term.image_path) return;
 
@@ -187,7 +187,7 @@ export async function moveFeatured(termId: string, direction: "up" | "down") {
 // restores them. This is the "remove" an admin normally wants.
 export async function setDisciplineActive(termId: string, active: boolean) {
   const supabase = await requireAdmin();
-  const { data: term } = await supabase.from("terms").select("slug, parent:terms!terms_parent_id_fkey(slug)").eq("id", termId).single();
+  const { data: term } = await supabase.from("terms").select("slug, parent:parent_id(slug)").eq("id", termId).single();
   const { error } = await supabase.from("terms").update({ active, updated_at: new Date().toISOString() }).eq("id", termId);
   if (error) throw error;
   revalidateDiscipline(term?.slug ?? null, parentSlug(term));
@@ -201,7 +201,7 @@ export async function deleteDiscipline(termId: string) {
   const [{ count: coaches }, { count: clinics }, { data: term }] = await Promise.all([
     supabase.from("provider_terms").select("*", { count: "exact", head: true }).eq("term_id", termId),
     supabase.from("events").select("*", { count: "exact", head: true }).eq("term_id", termId),
-    supabase.from("terms").select("slug, image_path, parent:terms!terms_parent_id_fkey(slug)").eq("id", termId).single(),
+    supabase.from("terms").select("slug, image_path, parent:parent_id(slug)").eq("id", termId).single(),
   ]);
   if ((coaches ?? 0) > 0 || (clinics ?? 0) > 0) {
     throw new Error("Coaches or clinics still use this discipline — deactivate it instead.");
