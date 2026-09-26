@@ -52,7 +52,7 @@ const CHECK_KEYS: { key: string; what: string }[] = [
 
 function Section({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
   return (
-    <fieldset className="flex flex-col gap-4 rounded-[16px] border border-border bg-surface p-4 sm:p-5">
+    <fieldset className="flex flex-col gap-4 rounded-[16px] border border-border bg-surface p-4 @[460px]/editor:p-5">
       <legend className="px-1 font-display text-[20px] text-ink">{title}</legend>
       {note && <p className="-mt-2 text-[13px] text-subtle">{note}</p>}
       {children}
@@ -78,7 +78,7 @@ function Rows({ prefix, items, a, b, aLabel, bLabel }: { prefix: string; items: 
   return (
     <div className="flex flex-col gap-2">
       {Array.from({ length: n }, (_, i) => (
-        <div key={i} className="grid gap-2 rounded-[12px] border border-border p-3 sm:grid-cols-[1fr_2fr]">
+        <div key={i} className="grid gap-2 rounded-[12px] border border-border p-3 @[460px]/editor:grid-cols-[1fr_2fr]">
           <input name={`${prefix}.${i}.${a}`} defaultValue={items[i]?.[a] ?? ""} aria-label={`${aLabel} ${i + 1}`} placeholder={aLabel} className={input} />
           <textarea name={`${prefix}.${i}.${b}`} defaultValue={items[i]?.[b] ?? ""} aria-label={`${bLabel} ${i + 1}`} placeholder={bLabel} rows={2} className={input} />
         </div>
@@ -98,9 +98,9 @@ export function ProfessionForm({ row, slugLocked, planNames }: { row: Profession
   const checks = new Map(d.completeness.map((c) => [c.key, c]));
 
   return (
-    <form action={action} className="flex flex-col gap-6">
+    <form action={action} className="@container/editor flex flex-col gap-6">
       <Section title="On the site">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 @[640px]/editor:grid-cols-3">
           <label className="block">
             <span className="mb-1 block text-[14px] font-medium text-fg">Launch state</span>
             <select name="launch_state" defaultValue={d.launch_state} className={input}>
@@ -150,7 +150,7 @@ export function ProfessionForm({ row, slugLocked, planNames }: { row: Profession
       </Section>
 
       <Section title="Names">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 @[460px]/editor:grid-cols-2">
           <Text name="name" label="Name, as in the menu" value={row.name} maxLength={40} />
           <Text name="short_name" label="Short name" hint="for tight spots, optional" value={d.short_name ?? ""} maxLength={20} />
           <Text name="singular" label="One of them" value={d.singular} maxLength={40} />
@@ -183,7 +183,7 @@ export function ProfessionForm({ row, slugLocked, planNames }: { row: Profession
       </Section>
 
       <Section title="Plan names" note="Only where the shared name reads oddly for this profession. Empty uses the shared name.">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 @[640px]/editor:grid-cols-3">
           {Object.entries(planNames).map(([t, n]) => (
             <Text key={t} name={`tier.${t}`} label={n} value={d.tier_labels?.[t] ?? ""} maxLength={30} />
           ))}
@@ -194,8 +194,8 @@ export function ProfessionForm({ row, slugLocked, planNames }: { row: Profession
         {CHECK_KEYS.map(({ key, what }) => {
           const c = checks.get(key);
           return (
-            <div key={key} className="grid items-center gap-2 sm:grid-cols-[auto_1fr_80px]">
-              <label className="flex items-center gap-2 text-[14px] text-fg sm:w-[260px]">
+            <div key={key} className="grid items-center gap-2 @[460px]/editor:grid-cols-[auto_1fr_80px]">
+              <label className="flex items-center gap-2 text-[14px] text-fg @[460px]/editor:w-[260px]">
                 <input type="checkbox" name={`completeness.${key}.on`} defaultChecked={Boolean(c)} /> {what}
               </label>
               <input name={`completeness.${key}.label`} defaultValue={c?.label ?? ""} aria-label={`Wording: ${what}`} placeholder="How it reads" className={input} />

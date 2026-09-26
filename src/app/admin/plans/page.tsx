@@ -80,7 +80,7 @@ export default async function AdminPlansPage({ searchParams }: { searchParams: P
         {plans.map((p) => {
           const n = onTier(p.tier);
           return (
-            <fieldset key={p.tier} className="grid gap-3 rounded-[16px] border border-border bg-surface p-4 sm:grid-cols-2" data-plan={p.tier}>
+            <fieldset key={p.tier} className="grid gap-3 rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:grid-cols-2" data-plan={p.tier}>
               <legend className="px-1 text-[12px] font-medium uppercase tracking-[0.12em] text-subtle">{p.tier}</legend>
               <label className="block">
                 <span className="mb-1 block text-[14px] font-medium text-fg">Name</span>
@@ -108,13 +108,13 @@ export default async function AdminPlansPage({ searchParams }: { searchParams: P
                 <span className="mb-1 block text-[14px] font-medium text-fg">Its Stripe price</span>
                 <input name={`${p.tier}.yearly_id`} defaultValue={ids[p.tier].yearly} placeholder="price_… (when yearly is sold)" className={idInput} />
               </label>
-              <p className="text-[13px] text-muted sm:col-span-2">
+              <p className="text-[13px] text-muted @[560px]/admin:col-span-2">
                 A new price applies to new subscriptions only. {n === 0 ? "Nobody is on this plan yet." : `${n} ${n === 1 ? "person stays" : "people stay"} on what they pay now.`}
               </p>
             </fieldset>
           );
         })}
-        <fieldset className="grid gap-3 rounded-[16px] border border-border bg-surface p-4 sm:grid-cols-2" data-plan="founding">
+        <fieldset className="grid gap-3 rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:grid-cols-2" data-plan="founding">
           <legend className="px-1 text-[12px] font-medium uppercase tracking-[0.12em] text-subtle">Founding</legend>
           <label className="block">
             <span className="mb-1 block text-[14px] font-medium text-fg">Founding price, monthly</span>
@@ -126,7 +126,7 @@ export default async function AdminPlansPage({ searchParams }: { searchParams: P
             <input name="founding.id" defaultValue={ids.founding} placeholder="price_…" className={idInput} />
             <span className="mt-1 block text-[12px] text-subtle">A separate Stripe price from the open {plans[0].name} one, so a rise for new members never reaches founding ones.</span>
           </label>
-          <p className="text-[13px] text-muted sm:col-span-2">
+          <p className="text-[13px] text-muted @[560px]/admin:col-span-2">
             {founding === 0 ? "No founding members yet." : `${founding} founding ${founding === 1 ? "member" : "members"}.`} The free months and join-by date are on the Settings tab.
           </p>
         </fieldset>

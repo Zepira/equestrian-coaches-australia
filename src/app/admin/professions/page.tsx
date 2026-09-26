@@ -61,7 +61,7 @@ export default async function AdminProfessionsPage({ searchParams }: { searchPar
                   <button disabled={i === list.length - 1} aria-label={`Move ${p.name} down`} className="rounded-[8px] px-2 py-1 text-subtle hover:bg-shade disabled:opacity-30">↓</button>
                 </form>
                 {d?.launch_state === "live" && (
-                  <Link href={sectionPath(p.slug)} target="_blank" className="hidden text-subtle hover:text-fg sm:inline">View</Link>
+                  <Link href={sectionPath(p.slug)} target="_blank" className="hidden text-subtle hover:text-fg @[560px]/admin:inline">View</Link>
                 )}
                 <Link href={`/admin/professions/${p.id}`} className="font-medium text-accent hover:text-accent-hover">Edit</Link>
               </div>
@@ -74,7 +74,7 @@ export default async function AdminProfessionsPage({ searchParams }: { searchPar
         <h2 className="font-display text-[22px] leading-none text-ink">Add a profession</h2>
         <p className="mt-1.5 text-[14px] text-muted">It starts as a draft. You land in its editor to fill in the rest before setting it live.</p>
         {error && <p role="alert" className="mt-3 text-[14px] text-danger">{error}</p>}
-        <form action={createProfession} className="mt-3 grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
+        <form action={createProfession} className="mt-3 grid gap-3 @[560px]/admin:grid-cols-[1fr_1fr_auto_auto] @[560px]/admin:items-end">
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-fg">Name, as in the menu</span>
             <input name="name" required maxLength={40} placeholder="Chiropractors" className="w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-fg" />

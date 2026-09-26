@@ -28,7 +28,7 @@ export default async function AdminPagesPage() {
           The words on each page. A save is live straight away. Profession pages (each door&rsquo;s sections, pitches and questions) are on the Professions tab, and discipline pages on Specialities.
         </p>
       </div>
-      <ul className="grid gap-2 sm:grid-cols-2">
+      <ul className="grid gap-2 @[560px]/admin:grid-cols-2">
         {PAGES.filter((p) => !p.onSite).map((p) => (
           <li key={p.slug}>
             <Link href={`/admin/pages/${p.slug}`} className="flex h-full flex-col rounded-[14px] border border-border bg-surface p-4 hover:border-accent">

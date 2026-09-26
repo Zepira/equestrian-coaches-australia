@@ -86,12 +86,12 @@ export default async function AdminLinksPage({ searchParams }: { searchParams: P
         </p>
       </div>
 
-      <section className="rounded-[16px] border border-border bg-surface p-4 sm:p-5">
+      <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5">
         <h3 className="font-display text-[20px] leading-none text-ink">Make a link</h3>
         {error && <p role="alert" className="mt-3 text-[14px] text-danger">{error}</p>}
         {made && <p role="status" className="mt-3 text-[14px] text-success">Made: {absoluteUrl(`/go/${made}`)}</p>}
-        <form action={createLink} className="mt-3 grid gap-3 sm:grid-cols-2">
-          <label className="block sm:col-span-2">
+        <form action={createLink} className="mt-3 grid gap-3 @[560px]/admin:grid-cols-2">
+          <label className="block @[560px]/admin:col-span-2">
             <span className="mb-1 block text-[14px] font-medium text-fg">Name</span>
             <input name="label" required maxLength={80} placeholder="Kim's post in Western Riders Victoria" className={input} />
           </label>
@@ -111,11 +111,11 @@ export default async function AdminLinksPage({ searchParams }: { searchParams: P
             <span className="mb-1 block text-[14px] font-medium text-fg">Kind of channel</span>
             <input name="utm_medium" placeholder="social, poster, partner, press" className={input} />
           </label>
-          <label className="block sm:col-span-2">
+          <label className="block @[560px]/admin:col-span-2">
             <span className="mb-1 block text-[14px] font-medium text-fg">Campaign (optional)</span>
             <input name="utm_campaign" placeholder="launch" className={input} />
           </label>
-          <div className="sm:col-span-2">
+          <div className="@[560px]/admin:col-span-2">
             <Button type="submit">Make the link</Button>
           </div>
         </form>
@@ -127,7 +127,7 @@ export default async function AdminLinksPage({ searchParams }: { searchParams: P
           {((links ?? []) as LinkRow[]).map((l) => {
             const c = clickTotal.get(l.id) ?? { all: 0, recent: 0 };
             return (
-              <li key={l.id} className={`flex flex-col gap-1.5 rounded-[12px] border border-border bg-surface px-3 py-2.5 sm:flex-row sm:items-center ${l.archived ? "opacity-55" : ""}`} data-link={l.slug}>
+              <li key={l.id} className={`flex flex-col gap-1.5 rounded-[12px] border border-border bg-surface px-3 py-2.5 @[560px]/admin:flex-row @[560px]/admin:items-center ${l.archived ? "opacity-55" : ""}`} data-link={l.slug}>
                 <div className="min-w-0 flex-1">
                   <div className="font-medium text-fg">{l.label}</div>
                   <div className="font-mono text-[12px] text-subtle">

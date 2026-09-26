@@ -55,9 +55,9 @@ export default async function AudiencePage({ params, searchParams }: { params: P
         )}
       </div>
 
-      <form action={saveAudience.bind(null, id)} className="grid gap-4 sm:grid-cols-2">
+      <form action={saveAudience.bind(null, id)} className="grid gap-4 @[560px]/admin:grid-cols-2">
         <input type="hidden" name="check" value="1" />
-        <label className="sm:col-span-2"><span className={label}>Name</span><input name="name" defaultValue={name} required className={input} /></label>
+        <label className="@[560px]/admin:col-span-2"><span className={label}>Name</span><input name="name" defaultValue={name} required className={input} /></label>
         <label><span className={label}>Who</span>
           <select name="who" defaultValue={f.who} className={input}>
             <option value="riders">Riders and horse owners</option>
@@ -110,7 +110,7 @@ export default async function AudiencePage({ params, searchParams }: { params: P
         </label>
         <label><span className={label}>Joined from</span><input type="date" name="joined_from" defaultValue={f.joined_from ?? ""} className={input} /></label>
         <label><span className={label}>Joined up to</span><input type="date" name="joined_to" defaultValue={f.joined_to ?? ""} className={input} /></label>
-        <div className="flex flex-wrap gap-2 sm:col-span-2">
+        <div className="flex flex-wrap gap-2 @[560px]/admin:col-span-2">
           <Button type="submit">Save</Button>
           <Button type="submit" variant="secondary" formAction={`/admin/campaigns/audiences/${id}`} formMethod="get">Check the count</Button>
         </div>

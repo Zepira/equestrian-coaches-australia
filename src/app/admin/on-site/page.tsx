@@ -119,7 +119,7 @@ export default async function AdminOnSitePage({ searchParams }: { searchParams: 
         </form>
 
         {editing && (
-          <form action={saveLanding.bind(null, editing.id)} className="mt-5 flex flex-col gap-3 rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-landing-editor>
+          <form action={saveLanding.bind(null, editing.id)} className="mt-5 flex flex-col gap-3 rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-landing-editor>
             {saved && <p role="status" className="text-[14px] text-success">Saved.</p>}
             <div className="flex items-baseline justify-between gap-2">
               <h4 className="font-display text-[20px] leading-none text-ink">/p/{editing.slug}</h4>
@@ -128,7 +128,7 @@ export default async function AdminOnSitePage({ searchParams }: { searchParams: 
             <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Small line above the headline</span><input name="eyebrow" defaultValue={editing.eyebrow} className={input} /></label>
             <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Headline <span className="font-normal text-subtle">*words* in italic</span></span><input name="title" defaultValue={editing.title} className={input} /></label>
             <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Words <span className="font-normal text-subtle">a blank line starts a paragraph; **bold**</span></span><textarea name="body" defaultValue={editing.body} rows={8} className={input} /></label>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 @[560px]/admin:grid-cols-2">
               <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Button</span><input name="button_label" defaultValue={editing.button_label} placeholder="List your business" className={input} /></label>
               <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Button goes to</span><input name="button_href" defaultValue={editing.button_href} placeholder="/join/coaches?ref=pony-club" className={input} /></label>
             </div>

@@ -82,22 +82,22 @@ export default async function AdminCompetitionPage({ params, searchParams }: { p
         <p className="rounded-[12px] bg-shade px-3 py-2 text-[13.5px] text-muted" data-missing>Still needs: {missing.join("; ")}.</p>
       )}
 
-      <div className="grid gap-6 wide:grid-cols-[1fr_320px]">
-        <form action={saveCompetition.bind(null, id)} data-competition-form>
+      <div className="grid gap-6 @[760px]/admin:grid-cols-[1fr_320px]">
+        <form action={saveCompetition.bind(null, id)} className="@container/editor" data-competition-form>
           <fieldset disabled={locked} className="flex flex-col gap-4">
             {locked && <p className="text-[13px] text-subtle">Entries have opened, so the terms are fixed.</p>}
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 @[460px]/editor:grid-cols-2">
               <label><span className={label}>Title</span><input name="title" defaultValue={c.title} className={input} /></label>
               <label><span className={label}>Address</span><input name="slug" defaultValue={c.slug} disabled={c.status !== "draft"} className={input} /></label>
             </div>
             <label><span className={label}>Summary</span><textarea name="summary" defaultValue={c.summary} rows={2} className={input} /></label>
             <label><span className={label}>The question entrants answer</span><input name="question" defaultValue={c.question} placeholder="In 25 words or fewer, what's the best thing your coach taught you?" className={input} /></label>
-            <div className="grid gap-4 sm:grid-cols-[1fr_140px_110px]">
+            <div className="grid gap-4 @[560px]/editor:grid-cols-[1fr_140px_110px]">
               <label><span className={label}>Prize</span><input name="prize" defaultValue={c.prize} className={input} /></label>
               <label><span className={label}>Total value ($)</span><input name="prize_value" defaultValue={c.prize_value_cents ? String(c.prize_value_cents / 100) : ""} inputMode="decimal" className={input} /></label>
               <label><span className={label}>Winners</span><input name="winner_count" type="number" min={1} max={20} defaultValue={c.winner_count} className={input} /></label>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 @[460px]/editor:grid-cols-2">
               <label><span className={label}>Judged by</span>
                 <select name="judging" defaultValue={c.judging} className={input}>
                   <option value="skill">Skill, against published criteria</option>
@@ -107,7 +107,7 @@ export default async function AdminCompetitionPage({ params, searchParams }: { p
               <label><span className={label}>Who can enter</span><input name="who_can_enter" defaultValue={c.who_can_enter} placeholder="Australian residents." className={input} /></label>
             </div>
             <label><span className={label}>Judging criteria (skill)</span><textarea name="criteria" defaultValue={c.criteria} rows={2} placeholder="Originality, and how well it shows what you learned." className={input} /></label>
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 @[640px]/editor:grid-cols-3">
               <label><span className={label}>Opens (Melbourne)</span><input type="datetime-local" name="opens_at" defaultValue={localValue(c.opens_at)} className={input} /></label>
               <label><span className={label}>Closes (Melbourne)</span><input type="datetime-local" name="closes_at" defaultValue={localValue(c.closes_at)} className={input} /></label>
               <label><span className={label}>Result by</span><input type="date" name="winners_by" defaultValue={c.winners_by ?? ""} className={input} /></label>
@@ -179,7 +179,7 @@ export default async function AdminCompetitionPage({ params, searchParams }: { p
       </section>
 
       {p === "closed" && (
-        <section className="rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-judging>
+        <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-judging>
           <h3 className="font-display text-[20px] leading-none text-ink">The result</h3>
           {c.judging === "draw" && (
             <form action={drawWinners.bind(null, id)} className="mt-3"><Button type="submit" variant="secondary">Draw {c.winner_count === 1 ? "the winner" : "the winners"}</Button></form>

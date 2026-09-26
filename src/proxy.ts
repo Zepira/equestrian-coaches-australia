@@ -56,7 +56,14 @@ function unauthorised(): NextResponse {
     status: 401,
     headers: {
       // The realm is what the browser's password box is titled.
-      "WWW-Authenticate": 'Basic realm="Equine Professionals Australia", charset="UTF-8"',
+      //
+      // Deliberately just realm: RFC 7617 allows a charset parameter, but the
+      // only value it defines is UTF-8 and the credentials here are ASCII, so
+      // it buys nothing, while some embedded browsers (the in-app view inside
+      // a messaging or social app) give up on a challenge carrying an
+      // auth-param they do not know and render the 401 body instead of asking
+      // for a password. A bare challenge is the one every client understands.
+      "WWW-Authenticate": 'Basic realm="Equine Professionals Australia"',
       "Content-Type": "text/plain; charset=utf-8",
       "X-Robots-Tag": "noindex, nofollow",
     },

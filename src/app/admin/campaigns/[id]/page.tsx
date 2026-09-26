@@ -64,9 +64,9 @@ export default async function CampaignPage({ params, searchParams }: { params: P
       {error && <p role="alert" className="rounded-[12px] bg-danger/10 px-3 py-2 text-[14px] text-danger">{error}</p>}
 
       {results && (
-        <section className="rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-results>
+        <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-results>
           <h3 className="font-display text-[20px] leading-none text-ink">Results</h3>
-          <dl className="mt-3 grid grid-cols-2 gap-3 text-[14px] sm:grid-cols-4">
+          <dl className="mt-3 grid grid-cols-2 gap-3 text-[14px] @[880px]/admin:grid-cols-4">
             {(
               [
                 ["Sent", results.sent],
@@ -97,7 +97,7 @@ export default async function CampaignPage({ params, searchParams }: { params: P
 
       <form action={saveCampaign.bind(null, id)} className="flex flex-col gap-4" data-campaign-form>
         <fieldset disabled={locked} className="flex flex-col gap-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 @[560px]/admin:grid-cols-2">
             <label><span className={label}>Name (for us)</span><input name="name" defaultValue={c.name} className={input} /></label>
             <label><span className={label}>Audience</span>
               <select name="audience_id" defaultValue={c.audience_id ?? ""} className={input}>
@@ -121,7 +121,7 @@ export default async function CampaignPage({ params, searchParams }: { params: P
               </div>
               {s.type === "text" && <textarea name={`s_${i}_body`} defaultValue={s.body} rows={5} className={`${input} mt-2`} />}
               {s.type === "button" && (
-                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                <div className="mt-2 grid gap-2 @[560px]/admin:grid-cols-2">
                   <input name={`s_${i}_label`} defaultValue={s.label} placeholder="See this spring's clinics" className={input} aria-label="Link words" />
                   <input name={`s_${i}_url`} defaultValue={s.url} placeholder="/coaches or https://..." className={input} aria-label="Link address" />
                 </div>
@@ -147,7 +147,7 @@ export default async function CampaignPage({ params, searchParams }: { params: P
         </fieldset>
       </form>
 
-      <section className="rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-preview>
+      <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-preview>
         <h3 className="font-display text-[20px] leading-none text-ink">Preview</h3>
         <form className="mt-3 flex max-w-[520px] gap-2" method="get">
           <input name="as" type="email" defaultValue={as ?? ""} placeholder="Someone in the audience, by email" className={input} aria-label="Preview as" />
@@ -167,7 +167,7 @@ export default async function CampaignPage({ params, searchParams }: { params: P
       </section>
 
       {!locked && (
-        <section className="rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-send>
+        <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-send>
           <h3 className="font-display text-[20px] leading-none text-ink">Send it</h3>
           <div className="mt-3 flex flex-col gap-4">
             <form action={scheduleCampaign.bind(null, id)} className="flex flex-wrap items-end gap-2">

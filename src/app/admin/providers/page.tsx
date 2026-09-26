@@ -119,7 +119,7 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
           const plan = sub && isTier(sub.tier) ? `${plans[sub.tier].name} (${sub.status.replace("_", " ")})` : "No plan";
           const profs = professionsOf(r);
           return (
-            <li key={r.id} className="flex flex-col gap-2 rounded-[14px] border border-border bg-surface p-3 sm:flex-row sm:items-center" data-provider={r.slug}>
+            <li key={r.id} className="flex flex-col gap-2 rounded-[14px] border border-border bg-surface p-3 @[560px]/admin:flex-row @[560px]/admin:items-center" data-provider={r.slug}>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline gap-x-2">
                   <span className="font-display text-[19px] leading-none text-ink">{r.name}</span>

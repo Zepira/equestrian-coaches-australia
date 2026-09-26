@@ -52,7 +52,7 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
   const label = "mb-1 block text-[13px] font-medium text-fg";
 
   const slotForm = (s: SlotRow | null) => (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid gap-3 @[460px]/editor:grid-cols-2">
       <label><span className={label}>Where it shows</span>
         <select name="placement" defaultValue={s?.placement ?? "newsletter"} className={input}>
           {Object.entries(PLACEMENTS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
@@ -67,8 +67,8 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
       </label>
       <label><span className={label}>Area (area pages; empty for all)</span><input name="area" defaultValue={s?.areas?.name ?? ""} placeholder="Bendigo" className={input} /></label>
       <label><span className={label}>Their link (https://)</span><input name="url" defaultValue={s?.links?.destination ?? sponsor.website} className={input} /></label>
-      <label className="sm:col-span-2"><span className={label}>Headline</span><input name="headline" defaultValue={s?.headline ?? ""} maxLength={90} className={input} /></label>
-      <label className="sm:col-span-2"><span className={label}>A line or two (up to 300)</span><textarea name="body" defaultValue={s?.body ?? ""} maxLength={300} rows={2} className={input} /></label>
+      <label className="@[460px]/editor:col-span-2"><span className={label}>Headline</span><input name="headline" defaultValue={s?.headline ?? ""} maxLength={90} className={input} /></label>
+      <label className="@[460px]/editor:col-span-2"><span className={label}>A line or two (up to 300)</span><textarea name="body" defaultValue={s?.body ?? ""} maxLength={300} rows={2} className={input} /></label>
       <label><span className={label}>Link words</span><input name="link_label" defaultValue={s?.link_label ?? "Find out more"} maxLength={40} className={input} /></label>
       <div className="grid grid-cols-2 gap-2">
         <label><span className={label}>First day</span><input type="date" name="starts_on" defaultValue={s?.starts_on ?? ""} className={input} /></label>
@@ -84,7 +84,7 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
       {sp.done && <p role="status" className="rounded-[12px] bg-accent-soft px-3 py-2 text-[14px] text-fg">{sp.done}</p>}
       {sp.error && <p role="alert" className="rounded-[12px] bg-danger/10 px-3 py-2 text-[14px] text-danger">{sp.error}</p>}
 
-      <form action={saveSponsor.bind(null, id)} className="grid max-w-[760px] gap-3 sm:grid-cols-2">
+      <form action={saveSponsor.bind(null, id)} className="grid max-w-[760px] gap-3 @[560px]/admin:grid-cols-2">
         <label><span className={label}>Name</span><input name="name" defaultValue={sponsor.name} className={input} /></label>
         <label><span className={label}>Website</span><input name="website" defaultValue={sponsor.website} placeholder="https://" className={input} /></label>
         <label><span className={label}>Who to send the report to</span><input name="contact_email" defaultValue={sponsor.contact_email} className={input} /></label>
@@ -92,7 +92,7 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
         <div><Button type="submit" variant="secondary">Save</Button></div>
       </form>
 
-      <section className="rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-report>
+      <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-report>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h3 className="font-display text-[20px] leading-none text-ink">Report</h3>
           <form className="flex items-end gap-2" method="get">
@@ -114,9 +114,9 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
       </section>
 
       {((slots ?? []) as SlotRow[]).map((s) => (
-        <section key={s.id} className="rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-slot={s.id}>
-          <div className="grid gap-4 wide:grid-cols-[1fr_280px]">
-            <form action={updateSlot.bind(null, id, s.id)} className="flex flex-col gap-3">
+        <section key={s.id} className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-slot={s.id}>
+          <div className="grid gap-4 @[760px]/admin:grid-cols-[1fr_280px]">
+            <form action={updateSlot.bind(null, id, s.id)} className="@container/editor flex flex-col gap-3">
               {slotForm(s)}
               <label className="flex items-center gap-2 text-[14px]"><input type="checkbox" name="active" defaultChecked={s.active} /> Running (untick to stop it early)</label>
               <p className="text-[12.5px] text-subtle">Tracked link: /go/{s.links?.slug}</p>
@@ -134,9 +134,9 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
         </section>
       ))}
 
-      <section className="rounded-[16px] border border-dashed border-border p-4 sm:p-5">
+      <section className="rounded-[16px] border border-dashed border-border p-4 @[560px]/admin:p-5">
         <h3 className="font-display text-[20px] leading-none text-ink">Book a slot</h3>
-        <form action={createSlot.bind(null, id)} className="mt-3 flex flex-col gap-3" data-new-slot>
+        <form action={createSlot.bind(null, id)} className="@container/editor mt-3 flex flex-col gap-3" data-new-slot>
           {slotForm(null)}
           <div><Button type="submit">Book it</Button></div>
         </form>
