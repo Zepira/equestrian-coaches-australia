@@ -20,8 +20,9 @@ import { FIRST_TOUCH, setTouchCookies, touchFromParams } from "@/lib/touch";
 function isMachinePath(path: string): boolean {
   // Vercel Cron invokes the deployment's own *.vercel.app address, which is a
   // gated host, and Stripe posts to whichever URL its webhook is set to.
-  // Both carry their own secret: CRON_SECRET and the Stripe signature.
-  return path.startsWith("/api/cron/") || path === "/api/webhooks/stripe";
+  // Resend's webhook is the same. Each carries its own secret: CRON_SECRET,
+  // the Stripe signature and the Resend (Svix) signature.
+  return path.startsWith("/api/cron/") || path === "/api/webhooks/stripe" || path === "/api/webhooks/resend";
 }
 
 /**
@@ -37,6 +38,10 @@ function isPreLaunchPath(path: string): boolean {
   // commercial email (commercialFooter in src/lib/audience.ts), and the two
   // pages its buttons lead to.
   if (path === "/email-preferences" || path.startsWith("/email-preferences/")) return true;
+  // Resend reports bounces and complaints here, and the waitlist confirmation
+  // is sent before launch. It checks its own signature and refuses everything
+  // without RESEND_WEBHOOK_SECRET.
+  if (path === "/api/webhooks/resend") return true;
   // Crawlers need these two to see that only the home page is on offer.
   if (path === "/robots.txt" || path === "/sitemap.xml") return true;
   // The page's own assets: the build output, the brand mark, the favicon.

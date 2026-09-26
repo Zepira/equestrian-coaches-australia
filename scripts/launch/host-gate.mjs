@@ -42,13 +42,13 @@ const row = (ok, label, detail = "") => {
  * That made an earlier version of this script pass everything by testing
  * nothing.
  */
-function get(path, { host = PUBLIC_HOST, auth } = {}) {
+function get(path, { host = PUBLIC_HOST, auth, method = "GET" } = {}) {
   const url = new URL(base);
   const headers = { Host: host };
   if (auth) headers.Authorization = `Basic ${Buffer.from(auth).toString("base64")}`;
   return new Promise((resolve, reject) => {
     const req = request(
-      { hostname: url.hostname, port: url.port, path, method: "GET", headers },
+      { hostname: url.hostname, port: url.port, path, method, headers },
       (res) => {
         let body = "";
         res.setEncoding("utf8");
@@ -139,10 +139,17 @@ if (mode === "prelaunch") {
   // 9. The machines still get through: Vercel Cron and Stripe. Both answer 401
   //    of their own when their secret is missing, so the tell is the absence of
   //    the password challenge, not the status.
-  for (const path of ["/api/cron/seo-digest", "/api/webhooks/stripe"]) {
+  for (const path of ["/api/cron/seo-digest", "/api/webhooks/stripe", "/api/webhooks/resend"]) {
     const r = await get(path, { host: TEST_HOST });
     row(!r.headers.get("www-authenticate"), `test host ${path} is not behind the password`, `status ${r.status}`);
   }
+
+  // 10. Resend's webhook is set to the public host, and the waitlist emails go
+  //     out before launch, so it has to reach the route there too. Unsigned, the
+  //     route itself refuses it (401, or 503 without the secret), never a 404
+  //     from the coming soon gate.
+  const hook = await get("/api/webhooks/resend", { method: "POST" });
+  row(hook.status === 401 || hook.status === 503, "public host passes Resend's webhook to its route, which refuses it unsigned", `status ${hook.status}`);
 }
 
 if (mode === "nopassword") {

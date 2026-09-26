@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { getAreaPageMinProviders } from "@/lib/settings";
+import { cronAuthorized } from "@/lib/cron-auth";
 
 // Nightly eligibility recompute for indexable_pages (see
 // supabase/migrations/0001_baseline.sql). The sitemap and the place pages
@@ -9,8 +10,7 @@ import { getAreaPageMinProviders } from "@/lib/settings";
 // Configure as a Vercel Cron job (see vercel.json) once deployed; call
 // manually with the CRON_SECRET header until then.
 export async function GET(request: Request) {
-  const secret = process.env.CRON_SECRET;
-  if (secret && request.headers.get("authorization") !== `Bearer ${secret}`) {
+  if (!cronAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

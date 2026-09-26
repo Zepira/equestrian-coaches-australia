@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { notifyRidersOfClinic } from "@/lib/notifications";
+import { cronAuthorized } from "@/lib/cron-auth";
 
 // Backstop for the inline send in createClinic (src/app/dashboard/clinics/
 // actions.ts) — re-runs matching for recent clinics so a rider who saves
@@ -9,8 +10,7 @@ import { notifyRidersOfClinic } from "@/lib/notifications";
 // way. Configure as a Vercel Cron job (see vercel.json) once deployed;
 // call manually with the CRON_SECRET header until then.
 export async function GET(request: Request) {
-  const secret = process.env.CRON_SECRET;
-  if (secret && request.headers.get("authorization") !== `Bearer ${secret}`) {
+  if (!cronAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { sendEmail } from "@/lib/email";
 import { buildSeoDigest, renderDigestText } from "@/lib/seo-digest";
+import { cronAuthorized } from "@/lib/cron-auth";
 
 // Weekly SEO digest (spec: "Vercel Cron + CRON_SECRET → Resend email, not a
 // dashboard"). Always computes the on-site section (search_events — real
@@ -11,8 +12,7 @@ import { buildSeoDigest, renderDigestText } from "@/lib/seo-digest";
 // CLAUDE.md). Configure as a Vercel Cron job (vercel.json) once deployed;
 // call manually with the CRON_SECRET header until then.
 export async function GET(request: Request) {
-  const secret = process.env.CRON_SECRET;
-  if (secret && request.headers.get("authorization") !== `Bearer ${secret}`) {
+  if (!cronAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

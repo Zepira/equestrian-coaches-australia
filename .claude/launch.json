@@ -43,6 +43,15 @@
         "3110"
       ],
       "port": 3110
+    },
+    {
+      "name": "gate-prelaunch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "-e",
+        "Object.assign(process.env,{PUBLIC_HOST:'equineprofessionals.com.au',SITE_LAUNCHED:'false',REDIRECT_HOSTS:'equineprofessionals.au',TEST_AUTH_USER:'kim',TEST_AUTH_PASSWORD:'hoofbeats'});require('child_process').spawn('npx next start -p 3120',{stdio:'inherit',shell:true})"
+      ],
+      "port": 3120
     }
   ]
 }
