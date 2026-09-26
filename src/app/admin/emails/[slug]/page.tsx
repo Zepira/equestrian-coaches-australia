@@ -50,9 +50,9 @@ export default async function AdminEmailEdit({ params }: { params: Promise<{ slu
             : "Factual: it goes to everyone it concerns, so it can't promote anything. Upgrades, referrals and news belong in a commercial email."}
         </p>
       </div>
-      <div className="grid gap-6 wide:grid-cols-[1fr_300px] wide:items-start">
+      <div className="grid gap-6 @[760px]/admin:grid-cols-[1fr_300px] @[760px]/admin:items-start">
         <ContentEditor blocks={[block]} hints={HINTS} action={saveEmail.bind(null, slug)} testAction={sendTestEmail.bind(null, slug)} />
-        <aside className="rounded-[16px] border border-border bg-shade p-4 wide:sticky wide:top-24" data-variables>
+        <aside className="rounded-[16px] border border-border bg-shade p-4 @[760px]/admin:sticky @[760px]/admin:top-24" data-variables>
           <h3 className="font-display text-[18px] leading-none text-ink">Variables</h3>
           <p className="mt-1.5 text-[13px] text-subtle">Written in curly brackets. The test fills them with these samples.</p>
           <dl className="mt-3 flex flex-col gap-2.5 text-[13px]">

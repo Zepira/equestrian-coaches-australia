@@ -34,8 +34,8 @@ export function DisciplineForm({ discipline }: { discipline: DisciplineContent }
   const seo = disciplineSeo({ name, blurb, seo_title: seoTitle, seo_description: seoDescription });
 
   return (
-    <div className="grid gap-8 wide:grid-cols-[1fr_320px] wide:items-start">
-      <form action={action} className="flex flex-col gap-6">
+    <div className="grid gap-8 @[760px]/admin:grid-cols-[1fr_320px] @[760px]/admin:items-start">
+      <form action={action} className="@container/editor flex flex-col gap-6">
         <section className="flex flex-col gap-4">
           <label className="block">
             <span className={labelCls}>Name</span>
@@ -59,7 +59,7 @@ export function DisciplineForm({ discipline }: { discipline: DisciplineContent }
 
         <section className="flex flex-col gap-4 border-t border-border pt-6">
           <h3 className="font-display text-[22px] leading-none text-ink">Photo</h3>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 @[460px]/editor:grid-cols-2">
             <label className="block">
               <span className={labelCls}>Alt text</span>
               <input name="image_alt" defaultValue={discipline.image_alt ?? ""} maxLength={200} placeholder="A grey horse and rider in a dressage arena" className={field} />
@@ -149,7 +149,7 @@ function ImagePanel({ discipline }: { discipline: DisciplineContent }) {
   const busy = status !== "idle" || isPending;
 
   return (
-    <aside className="flex flex-col gap-3 rounded-[16px] border border-border bg-surface p-4 wide:sticky wide:top-[100px]">
+    <aside className="flex flex-col gap-3 rounded-[16px] border border-border bg-surface p-4 @[760px]/admin:sticky @[760px]/admin:top-[100px]">
       <div className="relative aspect-[4/3] overflow-hidden rounded-[12px] bg-shade">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={image.src} alt={image.alt} className="block h-full w-full object-cover" />

@@ -55,8 +55,8 @@ export default async function AdminGuidePage({ params, searchParams }: { params:
       {done && <p role="status" className="rounded-[12px] bg-accent-soft px-3 py-2 text-[14px] text-fg">{done}</p>}
       {error && <p role="alert" className="rounded-[12px] bg-danger/10 px-3 py-2 text-[14px] text-danger">{error}</p>}
 
-      <div className="grid gap-6 wide:grid-cols-[1fr_320px]">
-        <form action={saveGuide.bind(null, id)} className="flex flex-col gap-4" data-guide-form>
+      <div className="grid gap-6 @[760px]/admin:grid-cols-[1fr_320px]">
+        <form action={saveGuide.bind(null, id)} className="@container/editor flex flex-col gap-4" data-guide-form>
           <label><span className={label}>Title</span><input name="title" defaultValue={g.title} required maxLength={120} className={input} /></label>
           <label><span className={label}>Address</span>
             <input name="slug" defaultValue={g.slug} disabled={live} className={input} />
@@ -68,7 +68,7 @@ export default async function AdminGuidePage({ params, searchParams }: { params:
             <textarea name="body" defaultValue={g.body} rows={18} className={`${input} font-mono text-[13px]`} />
             <span className="mt-1 block text-[12.5px] text-subtle">## for a heading, ### for a smaller one, - for a list, &gt; for a quote, **bold**, *italic*, [words](https://… or /coaches) for a link. A blank line starts a new paragraph.</span>
           </label>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 @[460px]/editor:grid-cols-2">
             <label><span className={label}>Written by</span><input name="author_name" defaultValue={g.author_name} maxLength={80} className={input} /></label>
             <label><span className={label}>With (a listed professional)</span>
               <select name="coauthor_provider_id" defaultValue={g.coauthor_provider_id ?? ""} className={input}>
@@ -94,12 +94,12 @@ export default async function AdminGuidePage({ params, searchParams }: { params:
               </div>
             </fieldset>
           )}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 @[460px]/editor:grid-cols-2">
             <label><span className={label}>Photo description (for screen readers)</span><input name="hero_alt" defaultValue={g.hero_alt} className={input} /></label>
             <label><span className={label}>Photo credit</span><input name="hero_credit" defaultValue={g.hero_credit} className={input} /></label>
             <label><span className={label}>What the download is</span><input name="download_title" defaultValue={g.download_title} placeholder="horse care calendar" className={input} /></label>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 @[460px]/editor:grid-cols-2">
             <label><span className={label}>Search title (up to 70)</span><input name="seo_title" defaultValue={g.seo_title} maxLength={70} placeholder={g.title} className={input} /></label>
             <label><span className={label}>Search description (up to 170)</span><input name="seo_description" defaultValue={g.seo_description} maxLength={170} placeholder={g.summary} className={input} /></label>
           </div>

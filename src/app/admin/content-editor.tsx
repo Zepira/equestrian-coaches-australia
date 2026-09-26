@@ -44,13 +44,13 @@ export function ContentEditor({
     setDraft((d) => ({ ...d, [key]: { ...(d[key] as Record<string, Json>), [field]: v } }));
 
   return (
-    <form action={formAction} className="flex flex-col gap-8">
+    <form action={formAction} className="@container/editor flex flex-col gap-8">
       <input type="hidden" name="blocks" value={JSON.stringify(draft)} />
       {blocks.map((b) => {
         const value = draft[b.key] as Record<string, Json>;
         const def = b.def as Record<string, Json>;
         return (
-          <fieldset key={b.key} className="flex flex-col gap-4 rounded-[16px] border border-border bg-surface p-4 sm:p-5" data-block={b.key}>
+          <fieldset key={b.key} className="flex flex-col gap-4 rounded-[16px] border border-border bg-surface p-4 @[460px]/editor:p-5" data-block={b.key}>
             {blocks.length > 1 && <legend className="px-1 font-display text-[20px] text-ink">{b.name}</legend>}
             {Object.keys(def).map((field) => (
               <Field

@@ -45,9 +45,9 @@ export default async function AdminProfessionEdit({ params }: { params: Promise<
           <Link href={`/admin/disciplines?p=${row.slug}`} className="text-subtle underline-offset-2 hover:underline">its {row.profession_details.term_noun_plural}</Link>
         </p>
       </div>
-      <div className="grid gap-8 wide:grid-cols-[1fr_300px] wide:items-start">
+      <div className="grid gap-8 @[760px]/admin:grid-cols-[1fr_300px] @[760px]/admin:items-start">
         <ProfessionForm row={row} slugLocked={row.profession_details.launch_state !== "draft" || (providers ?? 0) > 0} planNames={Object.fromEntries(Object.entries(plans).map(([t, p]) => [t, p.name]))} />
-        <div className="wide:sticky wide:top-24">
+        <div className="@[760px]/admin:sticky @[760px]/admin:top-24">
           <TermImagePanel
             src={uploaded ?? professionPhoto(row.slug, 800)}
             uploaded={Boolean(uploaded)}
