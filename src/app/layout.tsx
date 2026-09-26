@@ -34,7 +34,10 @@ const hanken = Hanken_Grotesk({
 
 const title = "Equine Professionals Australia";
 const description =
-  "Find your perfect riding coach, nearby. Search verified coaches across Australia by discipline and location.";
+  // Never "verified", "accredited" or "recommended" about anyone listed here:
+  // the site says plainly that it vets nobody, and this string feeds the
+  // Open Graph and Twitter cards, where the claim would be public.
+  "Find riding coaches and horse care professionals across Australia, by what you need and where you keep your horse. Free for riders and horse owners.";
 
 // `viewport-fit: cover` is what lets the hero photo and the header's own
 // background paint underneath the iOS status bar / notch / Dynamic Island

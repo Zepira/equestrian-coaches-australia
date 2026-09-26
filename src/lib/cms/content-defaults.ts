@@ -193,8 +193,8 @@ export const CONTENT_DEFAULTS = {
    */
   "coming_soon": {
     eyebrow: "Coming soon",
-    title: "The people your *horse* needs, near you.",
-    lead: "A place to find riding coaches and horse care professionals near where you keep your horse. Free for riders and horse owners.",
+    title: "Coaches and *horse care* near you.",
+    lead: "Find riding coaches and horse professionals near where you and your horse need them.",
     formTitle: "Hear when it opens",
     roleLabel: "I'm a",
     roleRider: "Rider or horse owner",

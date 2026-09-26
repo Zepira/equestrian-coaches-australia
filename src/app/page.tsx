@@ -41,6 +41,9 @@ export const viewport: Viewport = {
   themeColor: "#14281f",
 };
 
+const COMING_SOON_DESCRIPTION =
+  "Find riding coaches and horse professionals near where you and your horse need them. Put your name down to hear when it opens.";
+
 const LAUNCHED_DESCRIPTION =
   "Find riding coaches, farriers, vets, dentists and the rest of your horse's team across Australia, by what you need and where you are. Free for riders and owners.";
 
@@ -62,10 +65,12 @@ export async function generateMetadata(): Promise<Metadata> {
       // template, so a bare "Coming soon" is what a tab and a search result
       // would show.
       title: "Equine Professionals Australia: coming soon",
-      description:
-        "A place to find riding coaches and horse care professionals near where you keep your horse. Put your name down to hear when it opens.",
+      description: COMING_SOON_DESCRIPTION,
       alternates: { canonical: origin },
       openGraph: { url: origin },
+      // Without this the card falls back to the root layout's site-wide
+      // description, which describes a site nobody can reach yet.
+      twitter: { description: COMING_SOON_DESCRIPTION },
     };
   }
   return { description: LAUNCHED_DESCRIPTION };
