@@ -13,7 +13,7 @@ export function LegalPage({
 }: {
   doc: { title: string; updated: string; intro: string; sections: { title: string; body: string }[] };
   approved: boolean;
-  vars: { founding_price: string; free_months: number; contact_email: string };
+  vars: { founding_price: string; free_months: number; contact_email: string; enquiry_months?: string };
 }) {
   const fill = (t: string) => fillVariables(t, { ...vars, free_months: countWord(vars.free_months) });
   return (

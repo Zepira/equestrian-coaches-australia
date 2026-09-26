@@ -33,7 +33,7 @@ Schema, `supabase/migrations/0001_baseline.sql` (old `0001`–`0023` moved to `s
 - [x] Content: `settings` + history, `content_blocks` + history (triggers).
 - [x] Functions: `nearby_providers()`, `riders_for_event()`, `events_for_rider()`, `nearest_postcode()`, `provider_is_subscribed()`, `slugify()`.
 - [x] Storage policies for `provider-photos`, `provider-videos`, `term-images`; old coach bucket policies dropped by name.
-- [ ] Enquiry retention (contact details deleted after 24 months): needs a scheduled job; do with the stage 7 crons.
+- [x] Enquiry retention (26 Sep 2026): `/api/cron/retention` daily runs `redact_old_enquiries()` (`0017_enquiry_retention.sql`), which clears the name, contact details, message and rider link of enquiries older than the `enquiry_retention_months` setting (24, at least 12) and drops their follow-up token; the row, its status and its outcome stay, so counts do not change. The dashboard shows "Details removed". The privacy draft says so ({enquiry_months}). Checked 7/7 at the database.
 
 Seed and reload, `scripts/db/rebuild.mjs --yes-wipe` (after `export-keepers.mjs`), seed content in `supabase/seed/professions.mjs`:
 
