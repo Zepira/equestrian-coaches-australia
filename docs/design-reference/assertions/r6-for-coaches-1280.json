@@ -12,7 +12,7 @@
   { "selector": ".rise-word.italic", "prop": "animationDelay", "expect": "0.29s" },
   { "selector": ".hero__lead", "prop": "fontSize", "expect": "19px" },
   { "selector": ".hero__lead", "prop": "maxWidth", "expect": "595.84px" },
-  { "selector": ".hero__col a[href^='/signup']", "prop": "paddingLeft", "expect": "26px" },
+  { "selector": ".hero__col a[href^='/join/']", "prop": "paddingLeft", "expect": "26px" },
   { "selector": ".marquee--slow", "prop": "animationDuration", "expect": "60s" },
   { "selector": ".marquee--slow > span", "prop": "fontSize", "expect": "13px" },
   { "selector": ".founding", "prop": "borderRadius", "expect": "20px" },

@@ -222,6 +222,7 @@ export default async function AdminSettingsPage({
               ["featured_slots_per_area", "Featured spots per profession in one place", "Shown in a labelled block above the results, taking turns day to day. Never a place in the results themselves."],
               ["event_reach_km", "How far a Clinic plan's events are emailed, in km", "Other plans' events reach riders within each rider's own alert distance. Clinic events go this far."],
               ["benchmark_min_providers", "Providers in a profession before benchmarks show", "A comparison needs enough people in it to mean something and to keep any one of them anonymous."],
+              ["enquiry_retention_months", "Months before an enquiry's details are deleted", "The name, contact details and message go; the enquiry still counts in the professional's numbers. The privacy policy quotes this number."],
             ] as const
           ).map(([key, title, help]) => (
             <div key={key}>

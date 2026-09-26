@@ -18,7 +18,10 @@ const row = (ok, label, detail = "") => {
   console.log(`${ok ? "ok  " : "FAIL"} ${label}${detail ? "  — " + detail : ""}`);
 };
 const browser = await chromium.launch();
-const START = "/search?location=Bendigo+VIC&d=dressage";
+// Every coach near Bendigo, not one discipline: the pin and card checks need at
+// least two results, and the seeded parity coaches (throwaway-coach.mjs
+// create-rider) give Bendigo and Maldon within 50 km.
+const START = "/search?location=Bendigo+VIC";
 
 // ── desktop ─────────────────────────────────────────────────────────────
 {
@@ -34,7 +37,7 @@ const START = "/search?location=Bendigo+VIC&d=dressage";
   const cards = async () => page.locator(".grid-cols-2 > a[href^='/profile/']").count();
   const n0 = await countOf();
   row(n0 === (await cards()), `h1 count equals rendered cards (${n0})`);
-  const api = await page.evaluate(() => fetch("/api/coach-count?location=Bendigo%20VIC&d=dressage").then((r) => r.json()));
+  const api = await page.evaluate(() => fetch("/api/coach-count?location=Bendigo%20VIC").then((r) => r.json()));
   row(n0 === api.count, `count equals /api/coach-count at 50 km (${api.count})`);
 
   // chips → URL + count

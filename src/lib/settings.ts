@@ -75,6 +75,8 @@ export const DEFAULTS = {
   slide_in_delay_seconds: "25",
   /** Days before the same visitor sees it again. */
   slide_in_every_days: "14",
+  /** Months before an enquiry's name, contact details and message are deleted (the row and its outcome stay). */
+  enquiry_retention_months: "24",
   /** Fewest published reviews in the year before a professional can win the riders' choice award (stage F). */
   riders_choice_min_reviews: "3",
   /** The longest a professional can pause their plan for, in months (stage E). */
@@ -195,6 +197,7 @@ async function intSetting(key: SettingKey, min: number, max: number): Promise<nu
 export const SETTING_RANGES = {
   enquiry_followup_days: [7, 90],
   pause_max_months: [1, 6],
+  enquiry_retention_months: [12, 84],
   riders_choice_min_reviews: [1, 50],
   quiet_rider_days: [60, 365],
   onboarding_complete_pct: [50, 100],
@@ -234,6 +237,7 @@ export async function getReferralCouponId(): Promise<string> {
   return (await getSetting("referral_coupon_id")).trim();
 }
 
+export const getEnquiryRetentionMonths = () => intSetting("enquiry_retention_months", ...SETTING_RANGES.enquiry_retention_months);
 export const getRidersChoiceMinReviews = () => intSetting("riders_choice_min_reviews", ...SETTING_RANGES.riders_choice_min_reviews);
 export const getPauseMaxMonths = () => intSetting("pause_max_months", ...SETTING_RANGES.pause_max_months);
 export const getQuietRiderDays = () => intSetting("quiet_rider_days", ...SETTING_RANGES.quiet_rider_days);

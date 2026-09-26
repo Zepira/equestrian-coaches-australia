@@ -97,7 +97,7 @@ export const PAGES: PageEntry[] = [
     href: "/privacy",
     keys: ["legal.privacy"],
     revalidate: ["/privacy"],
-    note: "For the solicitor to check. {contact_email} fills itself in. Mark it approved on the Settings tab.",
+    note: "For the solicitor to check. {contact_email} and {enquiry_months} (a setting) fill themselves in. Mark it approved on the Settings tab.",
   },
 ];
 

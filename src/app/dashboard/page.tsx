@@ -56,7 +56,7 @@ export default async function DashboardPage({
   const [stats, trend, { data: enquiries }, { data: photos }, { data: terms }, { data: testimonials }, { data: clinics }, sections, benchmark] = await Promise.all([
     monthStats(supabase, providerId, now),
     twelveMonthViews(supabase, providerId, now),
-    supabase.from("enquiries").select("id, rider_name, want, message, status, created_at").eq("provider_id", providerId).order("created_at", { ascending: false }).limit(3),
+    supabase.from("enquiries").select("id, rider_name, want, message, status, created_at, redacted_at").eq("provider_id", providerId).order("created_at", { ascending: false }).limit(3),
     supabase.from("provider_photos").select("id").eq("provider_id", providerId).limit(1),
     supabase.from("provider_terms").select("terms(kind)").eq("provider_id", providerId),
     supabase.from("testimonials").select("id").eq("provider_id", providerId),
@@ -155,7 +155,7 @@ export default async function DashboardPage({
           <div key={e.id} className="grid grid-cols-[1fr_auto] gap-2.5 border-t border-shade py-[13px] wide:grid-cols-[1fr_auto_auto] wide:items-center wide:gap-4 wide:py-3.5">
             <div className="min-w-0">
               <div className="text-[15px] font-medium text-fg">
-                {e.rider_name} <span className="font-normal text-subtle">· {wantLabel(e.want)}</span>
+                {e.redacted_at ? "Details removed" : e.rider_name} <span className="font-normal text-subtle">· {wantLabel(e.want)}</span>
               </div>
               <div className="mt-[3px] truncate text-[13px] leading-[1.4] text-muted wide:text-[13.5px]">{e.message}</div>
             </div>

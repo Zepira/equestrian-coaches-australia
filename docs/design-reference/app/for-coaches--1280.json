@@ -1,6 +1,6 @@
 {
  "width": 1280,
- "scrollHeight": 6629,
+ "scrollHeight": 6659,
  "elements": [
   {
    "tag": "a",
@@ -60,9 +60,9 @@
    "tag": "a",
    "box": {
     "x": 112,
-    "y": 21,
-    "w": 301,
-    "h": 30
+    "y": 11,
+    "w": 223,
+    "h": 51
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -102,8 +102,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "301.25px",
-    "height": "30px",
+    "width": "223.047px",
+    "height": "51px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -111,20 +111,20 @@
   },
   {
    "tag": "span",
-   "text": "ECA",
+   "text": "Equine Professionals",
    "box": {
-    "x": 112,
-    "y": 21,
-    "w": 40,
-    "h": 30
+    "x": 158,
+    "y": 11,
+    "w": 177,
+    "h": 26
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "30px",
+    "fontSize": "26px",
     "fontWeight": "400",
     "fontStyle": "normal",
-    "lineHeight": "30px",
-    "letterSpacing": "-0.3px",
+    "lineHeight": "26px",
+    "letterSpacing": "-0.26px",
     "textTransform": "none",
     "color": "rgb(246, 241, 231)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
@@ -156,8 +156,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "40.4531px",
-    "height": "30px",
+    "width": "177.219px",
+    "height": "26px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -165,37 +165,37 @@
   },
   {
    "tag": "span",
-   "text": "Equestrian Coaches Australia",
+   "text": "Australia",
    "box": {
-    "x": 166,
-    "y": 33,
-    "w": 247,
-    "h": 18
+    "x": 158,
+    "y": 39,
+    "w": 177,
+    "h": 10
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
-    "fontSize": "12px",
+    "fontSize": "10.4px",
     "fontWeight": "500",
     "fontStyle": "normal",
-    "lineHeight": "18px",
-    "letterSpacing": "1.92px",
+    "lineHeight": "10.4px",
+    "letterSpacing": "2.704px",
     "textTransform": "uppercase",
-    "color": "rgba(246, 241, 231, 0.7)",
+    "color": "rgb(246, 241, 231)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "rgba(246, 241, 231, 0.7)",
+    "borderTopColor": "rgb(246, 241, 231)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "rgba(246, 241, 231, 0.7)",
+    "borderBottomColor": "rgb(246, 241, 231)",
     "paddingTop": "0px",
     "paddingRight": "0px",
     "paddingBottom": "0px",
     "paddingLeft": "0px",
-    "marginTop": "0px",
+    "marginTop": "2.08px",
     "marginBottom": "0px",
     "gap": "normal",
-    "opacity": "1",
+    "opacity": "0.75",
     "backdropFilter": "none",
     "boxShadow": "none",
     "animationName": "none",
@@ -203,15 +203,15 @@
     "animationDelay": "0s",
     "animationTimingFunction": "ease",
     "animationIterationCount": "1",
-    "transition": "color 0.3s",
+    "transition": "all",
     "objectFit": "fill",
     "objectPosition": "50% 50%",
     "display": "block",
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "246.797px",
-    "height": "18px",
+    "width": "177.219px",
+    "height": "10.4062px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -547,8 +547,8 @@
    "box": {
     "x": -17,
     "y": -97,
-    "w": 1314,
-    "h": 828
+    "w": 1313,
+    "h": 827
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -1246,7 +1246,7 @@
    "tag": "span",
    "text": "No commission",
    "box": {
-    "x": -111,
+    "x": -112,
     "y": 744,
     "w": 130,
     "h": 20
@@ -1300,7 +1300,7 @@
    "tag": "span",
    "text": "Cancel any time",
    "box": {
-    "x": 105,
+    "x": 104,
     "y": 744,
     "w": 142,
     "h": 20
@@ -1354,7 +1354,7 @@
    "tag": "span",
    "text": "Real numbers every month",
    "box": {
-    "x": 333,
+    "x": 332,
     "y": 744,
     "w": 234,
     "h": 20
@@ -1408,7 +1408,7 @@
    "tag": "span",
    "text": "No accreditation gatekeeping",
    "box": {
-    "x": 653,
+    "x": 652,
     "y": 744,
     "w": 265,
     "h": 20
@@ -1462,7 +1462,7 @@
    "tag": "span",
    "text": "Riders contact you direct",
    "box": {
-    "x": 1004,
+    "x": 1003,
     "y": 744,
     "w": 233,
     "h": 20
@@ -1516,7 +1516,7 @@
    "tag": "span",
    "text": "Testimonials are yours",
    "box": {
-    "x": 1323,
+    "x": 1322,
     "y": 744,
     "w": 205,
     "h": 20
@@ -1570,7 +1570,7 @@
    "tag": "span",
    "text": "No commission",
    "box": {
-    "x": 1615,
+    "x": 1614,
     "y": 744,
     "w": 130,
     "h": 20
@@ -1624,7 +1624,7 @@
    "tag": "span",
    "text": "Cancel any time",
    "box": {
-    "x": 1830,
+    "x": 1829,
     "y": 744,
     "w": 142,
     "h": 20
@@ -1678,7 +1678,7 @@
    "tag": "span",
    "text": "Real numbers every month",
    "box": {
-    "x": 2059,
+    "x": 2058,
     "y": 744,
     "w": 234,
     "h": 20
@@ -1732,7 +1732,7 @@
    "tag": "span",
    "text": "No accreditation gatekeeping",
    "box": {
-    "x": 2379,
+    "x": 2378,
     "y": 744,
     "w": 265,
     "h": 20
@@ -1786,7 +1786,7 @@
    "tag": "span",
    "text": "Riders contact you direct",
    "box": {
-    "x": 2730,
+    "x": 2729,
     "y": 744,
     "w": 233,
     "h": 20
@@ -1840,7 +1840,7 @@
    "tag": "span",
    "text": "Testimonials are yours",
    "box": {
-    "x": 3049,
+    "x": 3048,
     "y": 744,
     "w": 205,
     "h": 20
@@ -1895,7 +1895,7 @@
    "src": "/hero/founding-1024.jpg",
    "box": {
     "x": 65,
-    "y": 771,
+    "y": 786,
     "w": 578,
     "h": 627
    },
@@ -1949,7 +1949,7 @@
    "text": "Founding coaches",
    "box": {
     "x": 140,
-    "y": 1085,
+    "y": 940,
     "w": 428,
     "h": 18
    },
@@ -2000,12 +2000,12 @@
   },
   {
    "tag": "h2",
-   "text": "Free until",
+   "text": "Free for six months",
    "box": {
     "x": 140,
-    "y": 1117,
+    "y": 972,
     "w": 428,
-    "h": 46
+    "h": 92
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
@@ -2046,7 +2046,7 @@
     "top": "auto",
     "bottom": "auto",
     "width": "428px",
-    "height": "46px",
+    "height": "92px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -2054,12 +2054,12 @@
   },
   {
    "tag": "em",
-   "text": "15 June 2027",
+   "text": "after launch",
    "box": {
-    "x": 285,
-    "y": 1110,
-    "w": 183,
-    "h": 60
+    "x": 140,
+    "y": 965,
+    "w": 359,
+    "h": 106
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
@@ -2108,12 +2108,12 @@
   },
   {
    "tag": "p",
-   "text": "Sign up before then and you pay nothing until that date. After it, $9.99 a month",
+   "text": "We take your card when you sign up, and we don't charge it until six months afte",
    "box": {
     "x": 140,
-    "y": 1181,
+    "y": 1082,
     "w": 428,
-    "h": 124
+    "h": 223
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -2154,7 +2154,7 @@
     "top": "auto",
     "bottom": "auto",
     "width": "428px",
-    "height": "123.984px",
+    "height": "223.172px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -2378,11 +2378,11 @@
   },
   {
    "tag": "span",
-   "text": "Equestrian Coaches Australia",
+   "text": "Equine Professionals Australia",
    "box": {
-    "x": 1014,
+    "x": 1008,
     "y": 986,
-    "w": 147,
+    "w": 153,
     "h": 23
    },
    "style": {
@@ -2423,7 +2423,7 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "146.875px",
+    "width": "152.969px",
     "height": "22.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
@@ -2486,7 +2486,7 @@
   },
   {
    "tag": "p",
-   "text": "Your August on Equestrian Coaches Australia",
+   "text": "Your August on Equine Professionals Australia",
    "box": {
     "x": 691,
     "y": 1065,
@@ -3350,7 +3350,7 @@
   },
   {
    "tag": "p",
-   "text": "All of that happens whether you’re on Listed or Clinic.",
+   "text": "All of that happens whether you’re on Listed or Clinic .",
    "box": {
     "x": 96,
     "y": 1783,
@@ -4646,7 +4646,7 @@
   },
   {
    "tag": "p",
-   "text": "A \"find me on ECA\" graphic and a post you can paste. Free on every plan.",
+   "text": "A \"find me on EPA\" graphic and a post you can paste. Free on every plan.",
    "box": {
     "x": 634,
     "y": 2526,
@@ -14352,8 +14352,8 @@
    "box": {
     "x": 96,
     "y": 6421,
-    "w": 63,
-    "h": 48
+    "w": 310,
+    "h": 71
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -14393,8 +14393,8 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "63.2656px",
-    "height": "48px",
+    "width": "309.625px",
+    "height": "71px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -14402,20 +14402,20 @@
   },
   {
    "tag": "span",
-   "text": "ECA",
+   "text": "Equine Professionals",
    "box": {
-    "x": 96,
-    "y": 6413,
-    "w": 63,
-    "h": 63
+    "x": 160,
+    "y": 6422,
+    "w": 245,
+    "h": 36
    },
    "style": {
     "fontFamily": "\"Instrument Serif\", \"Instrument Serif Fallback\", \"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-    "fontSize": "48px",
+    "fontSize": "36px",
     "fontWeight": "400",
     "fontStyle": "normal",
-    "lineHeight": "48px",
-    "letterSpacing": "-0.96px",
+    "lineHeight": "36px",
+    "letterSpacing": "-0.36px",
     "textTransform": "none",
     "color": "rgb(246, 241, 231)",
     "backgroundColor": "rgba(0, 0, 0, 0)",
@@ -14443,12 +14443,66 @@
     "transition": "all",
     "objectFit": "fill",
     "objectPosition": "50% 50%",
-    "display": "inline",
+    "display": "block",
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "auto",
-    "height": "auto",
+    "width": "245.391px",
+    "height": "36px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "span",
+   "text": "Australia",
+   "box": {
+    "x": 160,
+    "y": 6461,
+    "w": 245,
+    "h": 14
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "14.4px",
+    "fontWeight": "500",
+    "fontStyle": "normal",
+    "lineHeight": "14.4px",
+    "letterSpacing": "3.744px",
+    "textTransform": "uppercase",
+    "color": "rgb(246, 241, 231)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "rgb(246, 241, 231)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "rgb(246, 241, 231)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "2.88px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "0.75",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "245.391px",
+    "height": "14.4062px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"
@@ -14456,10 +14510,10 @@
   },
   {
    "tag": "p",
-   "text": "Equestrian Coaches Australia. The coach who teaches what you ride, wherever you ",
+   "text": "Riding coaches, farriers, vets and the rest of your horse's team, across Austral",
    "box": {
     "x": 96,
-    "y": 6481,
+    "y": 6504,
     "w": 320,
     "h": 45
    },
@@ -14510,7 +14564,7 @@
   },
   {
    "tag": "div",
-   "text": "Riders",
+   "text": "Find",
    "box": {
     "x": 523,
     "y": 6421,
@@ -14564,7 +14618,7 @@
   },
   {
    "tag": "a",
-   "text": "Find a coach",
+   "text": "Riding coaches",
    "box": {
     "x": 523,
     "y": 6451,
@@ -14618,7 +14672,7 @@
   },
   {
    "tag": "a",
-   "text": "Disciplines",
+   "text": "Horse care",
    "box": {
     "x": 523,
     "y": 6481,
@@ -14672,7 +14726,7 @@
   },
   {
    "tag": "a",
-   "text": "My account",
+   "text": "Disciplines",
    "box": {
     "x": 523,
     "y": 6511,
@@ -14725,8 +14779,62 @@
    }
   },
   {
+   "tag": "a",
+   "text": "My account",
+   "box": {
+    "x": 523,
+    "y": 6541,
+    "w": 194,
+    "h": 30
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "30px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.85)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "193.609px",
+    "height": "30px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
    "tag": "div",
-   "text": "Coaches",
+   "text": "Professionals",
    "box": {
     "x": 757,
     "y": 6421,
@@ -14780,7 +14888,7 @@
   },
   {
    "tag": "a",
-   "text": "List your profile",
+   "text": "List your business",
    "box": {
     "x": 757,
     "y": 6451,
@@ -15157,13 +15265,13 @@
    }
   },
   {
-   "tag": "div",
-   "text": "© 2026 Equestrian Coaches Australia",
+   "tag": "span",
+   "text": "© 2026 Equine Professionals Australia",
    "box": {
     "x": 96,
-    "y": 6581,
-    "w": 1088,
-    "h": 48
+    "y": 6611,
+    "w": 221,
+    "h": 20
    },
    "style": {
     "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
@@ -15178,14 +15286,14 @@
     "backgroundImage": "none",
     "borderRadius": "0px",
     "borderTopWidth": "0px",
-    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.18)",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
     "borderBottomWidth": "0px",
-    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.18)",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
     "paddingTop": "0px",
     "paddingRight": "0px",
-    "paddingBottom": "28px",
+    "paddingBottom": "0px",
     "paddingLeft": "0px",
-    "marginTop": "40px",
+    "marginTop": "0px",
     "marginBottom": "0px",
     "gap": "normal",
     "opacity": "1",
@@ -15203,8 +15311,116 @@
     "position": "static",
     "top": "auto",
     "bottom": "auto",
-    "width": "1088px",
-    "height": "47.5px",
+    "width": "221.109px",
+    "height": "19.5px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Terms",
+   "box": {
+    "x": 337,
+    "y": 6611,
+    "w": 36,
+    "h": 20
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "19.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "35.5938px",
+    "height": "19.5px",
+    "aspectRatio": "auto",
+    "textAlign": "start",
+    "maxWidth": "none"
+   }
+  },
+  {
+   "tag": "a",
+   "text": "Privacy",
+   "box": {
+    "x": 393,
+    "y": 6611,
+    "w": 43,
+    "h": 20
+   },
+   "style": {
+    "fontFamily": "\"Hanken Grotesk\", \"Hanken Grotesk Fallback\", \"Hanken Grotesk\", ui-sans-serif, system-ui, -apple-system, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "400",
+    "fontStyle": "normal",
+    "lineHeight": "19.5px",
+    "letterSpacing": "normal",
+    "textTransform": "none",
+    "color": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "backgroundImage": "none",
+    "borderRadius": "0px",
+    "borderTopWidth": "0px",
+    "borderTopColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "borderBottomWidth": "0px",
+    "borderBottomColor": "oklab(0.959283 0.00139529 0.0142711 / 0.5)",
+    "paddingTop": "0px",
+    "paddingRight": "0px",
+    "paddingBottom": "0px",
+    "paddingLeft": "0px",
+    "marginTop": "0px",
+    "marginBottom": "0px",
+    "gap": "normal",
+    "opacity": "1",
+    "backdropFilter": "none",
+    "boxShadow": "none",
+    "animationName": "none",
+    "animationDuration": "0s",
+    "animationDelay": "0s",
+    "animationTimingFunction": "ease",
+    "animationIterationCount": "1",
+    "transition": "all",
+    "objectFit": "fill",
+    "objectPosition": "50% 50%",
+    "display": "block",
+    "position": "static",
+    "top": "auto",
+    "bottom": "auto",
+    "width": "42.6562px",
+    "height": "19.5px",
     "aspectRatio": "auto",
     "textAlign": "start",
     "maxWidth": "none"

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { loadDashboard } from "@/lib/dashboard";
 import { EnquiryStatusButton } from "../enquiry-status-button";
+import { getEnquiryRetentionMonths } from "@/lib/settings";
 import type { EnquiryStatus } from "../actions";
 
 export const metadata = { title: "Enquiries" };
@@ -30,10 +31,14 @@ export default async function EnquiriesPage() {
   const want = (v: string) => options.find((o) => o.value === v)?.label ?? v;
   const { data: enquiries } = await ctx.supabase
     .from("enquiries")
-    .select("id, rider_name, rider_contact, want, message, status, created_at, rider_outcome")
+    .select("id, rider_name, rider_contact, want, message, status, created_at, rider_outcome, redacted_at")
     .eq("provider_id", ctx.providerId)
     .order("created_at", { ascending: false });
-  const rows = enquiries ?? [];
+  // Past the retention period the person's details are gone (the privacy policy); the enquiry still counts.
+  const months = await getEnquiryRetentionMonths();
+  const rows = (enquiries ?? []).map((e) =>
+    e.redacted_at ? { ...e, rider_name: "Details removed", message: `The name, contact details and message were deleted after ${months} months, as our privacy policy says.` } : e
+  );
   // What the rider told us when we asked "did you end up booking?" (M5).
   const said = (o: string | null) => (o === "booked" ? "Told us they booked you" : o === "not_booked" ? "Told us they didn't book" : o === "still_talking" ? "Told us they're still sorting it out" : null);
   const replyHref = (contact: string) => (contact.includes("@") ? `mailto:${contact}` : `tel:${contact.replace(/\s+/g, "")}`);
@@ -58,14 +63,18 @@ export default async function EnquiriesPage() {
             </div>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               <span className="rounded-[var(--radius-pill)] border border-border px-2.5 py-1 text-[12px] font-medium text-muted">{want(e.want)}</span>
-              <span className="rounded-[var(--radius-pill)] border border-border px-2.5 py-1 text-[12px] font-medium text-muted">{e.rider_contact}</span>
+              {e.rider_contact && <span className="rounded-[var(--radius-pill)] border border-border px-2.5 py-1 text-[12px] font-medium text-muted">{e.rider_contact}</span>}
             </div>
             <p className="mt-3 text-[14.5px] leading-[1.5] text-fg">{e.message}</p>
             {said(e.rider_outcome) && <p className="mt-2 text-[12.5px] text-subtle" data-rider-outcome>{said(e.rider_outcome)}</p>}
             <div className="mt-3.5 flex items-center justify-between gap-2">
-              <a href={replyHref(e.rider_contact)} className="rounded-[var(--radius-pill)] border border-ink px-3.5 py-2 text-[14px] font-medium text-ink">
-                {e.rider_contact.includes("@") ? "Reply by email" : "Call back"}
-              </a>
+              {e.rider_contact ? (
+                <a href={replyHref(e.rider_contact)} className="rounded-[var(--radius-pill)] border border-ink px-3.5 py-2 text-[14px] font-medium text-ink">
+                  {e.rider_contact.includes("@") ? "Reply by email" : "Call back"}
+                </a>
+              ) : (
+                <span />
+              )}
               <EnquiryStatusButton id={e.id} status={e.status as EnquiryStatus} />
             </div>
           </div>
@@ -86,9 +95,11 @@ export default async function EnquiriesPage() {
             <div key={e.id} className="grid grid-cols-[180px_1fr_140px_130px_150px] items-center gap-4 border-t border-shade px-6 py-[18px]" role="row" data-enquiry>
               <div role="cell">
                 <div className="font-display text-[20px] leading-none text-ink">{e.rider_name}</div>
-                <a href={replyHref(e.rider_contact)} className="mt-1 block truncate text-[12.5px] text-subtle hover:text-accent">
-                  {e.rider_contact}
-                </a>
+                {e.rider_contact && (
+                  <a href={replyHref(e.rider_contact)} className="mt-1 block truncate text-[12.5px] text-subtle hover:text-accent">
+                    {e.rider_contact}
+                  </a>
+                )}
               </div>
               <div role="cell">
                 <p className="m-0 text-[14.5px] leading-[1.5] text-fg">{e.message}</p>

@@ -107,6 +107,7 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
   onboarding_complete_pct: wholeNumber("onboarding_complete_pct"),
   pause_max_months: wholeNumber("pause_max_months"),
   riders_choice_min_reviews: wholeNumber("riders_choice_min_reviews"),
+  enquiry_retention_months: wholeNumber("enquiry_retention_months"),
   quiet_rider_days: wholeNumber("quiet_rider_days"),
   reviews_hold_all(raw) {
     const v = raw.trim();
@@ -198,6 +199,7 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   onboarding_complete_pct: [],
   pause_max_months: ["/dashboard/billing"],
   riders_choice_min_reviews: ["/riders-choice"],
+  enquiry_retention_months: ["/privacy"],
   quiet_rider_days: [],
   reviews_hold_all: [],
   referral_cap_per_year: [],
