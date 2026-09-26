@@ -38,6 +38,7 @@ import { getSamples } from "@/lib/samples";
 import { SubscribeCard } from "@/components/subscribe-card";
 import { ReferLink } from "@/components/refer-link";
 import { HowWeListLink } from "@/components/how-we-list-link";
+import { SponsorSlot } from "@/components/sponsor-slot";
 
 const RADIUS_KM = 100;
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -273,6 +274,8 @@ export async function ProfessionalListing({
           />
           {cards.length === 0 && profession && <ReferLink singular={profession.singular} slug={profession.slug} />}
         </div>
+        {/* A sponsor's slot (M11): after the list, never inside it. */}
+        <SponsorSlot placement={area ? "area" : "profession"} professionId={profession?.id ?? null} areaId={area?.id ?? null} className="mt-8" />
       </Reveal>
 
       {/* ── Specialities, then the other professions ─────────────────── */}

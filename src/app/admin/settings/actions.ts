@@ -106,6 +106,7 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
   enquiry_followup_days: wholeNumber("enquiry_followup_days"),
   onboarding_complete_pct: wholeNumber("onboarding_complete_pct"),
   pause_max_months: wholeNumber("pause_max_months"),
+  riders_choice_min_reviews: wholeNumber("riders_choice_min_reviews"),
   quiet_rider_days: wholeNumber("quiet_rider_days"),
   reviews_hold_all(raw) {
     const v = raw.trim();
@@ -196,6 +197,7 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   enquiry_followup_days: [],
   onboarding_complete_pct: [],
   pause_max_months: ["/dashboard/billing"],
+  riders_choice_min_reviews: ["/riders-choice"],
   quiet_rider_days: [],
   reviews_hold_all: [],
   referral_cap_per_year: [],
@@ -219,7 +221,7 @@ export async function saveSetting(formData: FormData) {
   const key = String(formData.get("key") ?? "") as SettingKey;
   // Some settings are edited from another tab (the slide-in's, on On the site); go back there.
   const back = String(formData.get("back") ?? "");
-  await writeSetting(key, String(formData.get("value") ?? ""), back === "/admin/on-site" || back === "/admin/codes" || back === "/admin/reviews" || back === "/admin/sequences" || back === "/admin/campaigns" ? back : "/admin/settings");
+  await writeSetting(key, String(formData.get("value") ?? ""), back === "/admin/on-site" || back === "/admin/codes" || back === "/admin/reviews" || back === "/admin/sequences" || back === "/admin/campaigns" || back === "/admin/awards" ? back : "/admin/settings");
 }
 
 /** "$24.95" → 2495. */

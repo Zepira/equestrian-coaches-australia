@@ -127,6 +127,7 @@ export default async function CampaignPage({ params, searchParams }: { params: P
               )}
               {s.type === "events" && <p className="mt-1.5 text-[13px] text-subtle">Up to five events in the next 60 days within 50 km of the reader. Left out for anyone with nothing near them.</p>}
               {s.type === "providers" && <p className="mt-1.5 text-[13px] text-subtle">Up to five professionals who went live in the last 30 days within 50 km of the reader.</p>}
+              {s.type === "sponsor" && <p className="mt-1.5 text-[13px] text-subtle">The sponsor booked for the newsletter on the day it sends, labelled Sponsored. Left out if nobody is booked.</p>}
               {s.type === "guide" && (
                 <select name={`s_${i}_guide`} defaultValue={s.guide_id} className={`${input} mt-2`}>
                   <option value="">Pick a published guide</option>

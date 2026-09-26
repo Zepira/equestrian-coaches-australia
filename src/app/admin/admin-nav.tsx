@@ -47,6 +47,9 @@ const GROUPS: { name: string; tabs: { href: string; label: string }[] }[] = [
       { href: "/admin/sequences", label: "Sequences" },
       { href: "/admin/campaigns", label: "Campaigns" },
       { href: "/admin/guides", label: "Guides" },
+      { href: "/admin/competitions", label: "Competitions" },
+      { href: "/admin/sponsors", label: "Sponsors" },
+      { href: "/admin/awards", label: "Awards" },
     ],
   },
   {

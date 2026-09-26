@@ -87,5 +87,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...(guides ?? []).map((g) => ({ url: `${siteUrl}/guides/${g.slug}`, lastModified: new Date(g.updated_at as string), changeFrequency: "monthly" as const, priority: 0.6 })),
   ];
 
-  return [...staticRoutes, ...disciplineRoutes, ...coachRoutes, ...areaRoutes, ...guideRoutes];
+  // Competitions that are public, and the award page once a year is published (stage F).
+  const [{ data: comps }, { count: awards }] = db
+    ? await Promise.all([db.from("competitions").select("slug, updated_at").neq("status", "draft"), db.from("awards").select("id", { count: "exact", head: true })])
+    : [{ data: [] }, { count: 0 }];
+  const extraRoutes: MetadataRoute.Sitemap = [
+    ...((comps ?? []).length ? [{ url: `${siteUrl}/competitions`, changeFrequency: "weekly" as const, priority: 0.5 }] : []),
+    ...(comps ?? []).map((c) => ({ url: `${siteUrl}/competitions/${c.slug}`, lastModified: new Date(c.updated_at as string), changeFrequency: "weekly" as const, priority: 0.5 })),
+    ...((awards ?? 0) > 0 ? [{ url: `${siteUrl}/riders-choice`, changeFrequency: "yearly" as const, priority: 0.5 }] : []),
+  ];
+
+  return [...staticRoutes, ...disciplineRoutes, ...coachRoutes, ...areaRoutes, ...guideRoutes, ...extraRoutes];
 }
