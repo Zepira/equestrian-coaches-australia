@@ -246,6 +246,7 @@ export async function campaignResults(service: Service, c: { id: string; slug: s
   const uniq = (t: string) => new Set((events ?? []).filter((e) => e.type === t).map((e) => e.contact_id)).size;
   let stopped = 0;
   let signups = 0;
+  let planChanges = 0;
   if (c.started_at && c.filter) {
     const ids = (sends ?? []).map((s) => s.contact_id as string);
     const until = new Date(new Date(c.started_at).getTime() + 14 * 86_400_000).toISOString();
@@ -262,6 +263,7 @@ export async function campaignResults(service: Service, c: { id: string; slug: s
     }
     const { count } = await service.from("contacts").select("id", { count: "exact", head: true }).eq("last_touch->>campaign", c.slug).gte("created_at", c.started_at);
     signups = count ?? 0;
+    planChanges = await planChangesAfterClicks(service, c.id);
   }
   return {
     recipients: (sends ?? []).length,
@@ -275,5 +277,31 @@ export async function campaignResults(service: Service, c: { id: string; slug: s
     clicked: uniq("clicked"),
     stopped,
     signups,
+    planChanges,
   };
+}
+
+/**
+ * Professionals who clicked a link in the campaign and then started or
+ * changed a plan within 14 days of their first click: the nearest honest
+ * measure of "upgrades from its links" (a plan change goes through billing,
+ * not the link itself).
+ */
+async function planChangesAfterClicks(service: Service, campaignId: string): Promise<number> {
+  const { data: clicks } = await service.from("email_events").select("contact_id, created_at").eq("campaign_id", campaignId).eq("type", "clicked").order("created_at");
+  const firstClick = new Map<string, Date>();
+  for (const k of clicks ?? []) if (k.contact_id && !firstClick.has(k.contact_id as string)) firstClick.set(k.contact_id as string, new Date(k.created_at as string));
+  if (!firstClick.size) return 0;
+  const { data: contacts } = await service.from("contacts").select("id, profile_id").in("id", [...firstClick.keys()]).not("profile_id", "is", null);
+  let n = 0;
+  for (const c of contacts ?? []) {
+    const { data: m } = await service.from("provider_members").select("provider_id").eq("user_id", c.profile_id).limit(1).maybeSingle();
+    if (!m) continue;
+    const { data: s } = await service.from("subscriptions").select("plan_changed_at, created_at").eq("provider_id", m.provider_id).maybeSingle();
+    const from = firstClick.get(c.id as string)!;
+    const to = new Date(from.getTime() + 14 * 86_400_000);
+    const within = (d: string | null | undefined) => Boolean(d) && new Date(d!) >= from && new Date(d!) <= to;
+    if (s && (within(s.plan_changed_at as string | null) || within(s.created_at as string | null))) n++;
+  }
+  return n;
 }

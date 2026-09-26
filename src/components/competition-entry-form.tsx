@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
+import { compressImage, MAX_SOURCE_BYTES } from "@/lib/compress-image";
 import { Button } from "@/components/ui/button";
 import { Field, inputClass } from "@/components/ui/field";
 import { enterCompetition, type EntryResult } from "@/app/competitions/actions";
@@ -15,7 +16,10 @@ export function CompetitionEntryForm({
   parentLabel,
   sent,
   news,
+  photo = "none",
 }: {
+  /** Whether entries include a photo: none, optional or required (M10). */
+  photo?: "none" | "optional" | "required";
   competitionId: string;
   question: string;
   ageLabel: string;
@@ -25,14 +29,37 @@ export function CompetitionEntryForm({
 }) {
   const [state, action, pending] = useActionState<EntryResult, FormData>(enterCompetition, { ok: false, message: "" });
   const [age, setAge] = useState("");
+  const [photoError, setPhotoError] = useState("");
+  const [preparing, setPreparing] = useState(false);
+  // The photo is shrunk to 1600px before it goes, so a phone's 8MB original
+  // fits in a form post; everything else is sent as typed.
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (photo === "none") return;
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const file = fd.get("photo");
+    setPhotoError("");
+    if (file instanceof File && file.size > 0) {
+      if (file.size > MAX_SOURCE_BYTES) return setPhotoError("That file's too large. Choose a photo under 25MB.");
+      setPreparing(true);
+      fd.set("photo", await compressImage(file, 1600));
+      setPreparing(false);
+    } else fd.delete("photo");
+    startTransition(() => action(fd));
+  };
   if (state.ok && state.sent) return <p role="status" className="text-[15px] leading-[1.5] text-fg" data-entry-sent>{sent}</p>;
   return (
-    <form action={action} className="flex flex-col gap-4" data-entry-form>
+    <form action={action} onSubmit={submit} className="flex flex-col gap-4" data-entry-form>
       <input type="hidden" name="competition_id" value={competitionId} />
       <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="absolute left-[-9999px] h-px w-px" />
       <Field label={question}>
         <textarea name="answer" required maxLength={2000} rows={5} className={inputClass} />
       </Field>
+      {photo !== "none" && (
+        <Field label={photo === "required" ? "Your photo" : "A photo (optional)"}>
+          <input name="photo" type="file" accept="image/*" required={photo === "required"} className={inputClass} />
+        </Field>
+      )}
       <div className="grid gap-4 sm:grid-cols-[1fr_120px]">
         <Field label="Your name"><input name="name" required maxLength={80} autoComplete="name" className={inputClass} /></Field>
         <Field label="State">
@@ -55,8 +82,8 @@ export function CompetitionEntryForm({
           <span>{news.body}</span>
         </label>
       )}
-      {state.message && <p role="alert" className="text-[14px] text-danger">{state.message}</p>}
-      <Button type="submit" disabled={pending} className="h-12 w-full text-[15px]">{pending ? "Sending" : "Enter"}</Button>
+      {(photoError || state.message) && <p role="alert" className="text-[14px] text-danger">{photoError || state.message}</p>}
+      <Button type="submit" disabled={pending || preparing} className="h-12 w-full text-[15px]">{pending || preparing ? "Sending" : "Enter"}</Button>
     </form>
   );
 }

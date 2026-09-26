@@ -49,6 +49,8 @@ export default async function LeavingPage() {
         <section className={card} data-choice="pause">
           <h2 className="font-display text-[26px] leading-none text-ink">{w.pauseTitle}</h2>
           <p className="text-[14.5px] leading-[1.5] text-muted">{w.pauseBody}</p>
+          {/* A founding member still in their free period: the free period's end date doesn't move (Stripe's trial_end is fixed), so say so. */}
+          {status === "trialing" && <p className="text-[13.5px] leading-[1.5] text-subtle" data-pause-free-note>{w.pauseFreeNote}</p>}
           <form action={pauseSubscription} className="mt-auto flex flex-col gap-2">
             <select name="months" defaultValue="1" className={input} aria-label="How long">
               {Array.from({ length: max }, (_, i) => i + 1).map((m) => (

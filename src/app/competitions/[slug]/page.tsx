@@ -78,7 +78,7 @@ export default async function CompetitionPage({ params, searchParams }: Props) {
           <>
             <h2 className="text-[26px] leading-[1.1] text-ink">{w.enterHeading}</h2>
             <div className="mt-4">
-              <CompetitionEntryForm competitionId={c.id} question={c.question} ageLabel={w.ageLabel} parentLabel={w.parentLabel} sent={w.sent} news={news ? { id: news.id, body: news.body } : null} />
+              <CompetitionEntryForm competitionId={c.id} photo={c.entry_photo} question={c.question} ageLabel={w.ageLabel} parentLabel={w.parentLabel} sent={w.sent} news={news ? { id: news.id, body: news.body } : null} />
             </div>
           </>
         ) : (

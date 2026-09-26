@@ -216,6 +216,8 @@ export type CoachSearchResult = {
   isRemote?: boolean;
   /** The profession this provider matched the search on. */
   professionId?: string | null;
+  /** Published reviews: the average and how many. Null with none. */
+  rating?: { average: number; count: number } | null;
 };
 
 export type SearchFilters = {
@@ -269,11 +271,14 @@ export async function searchProviders(
 
   const ids = matches.map((m: { id: string }) => m.id);
 
-  const [{ data: termRows }, { data: photoRows }, { data: providerRows }] = await Promise.all([
+  const [{ data: termRows }, { data: photoRows }, { data: providerRows }, { data: ratingRows }] = await Promise.all([
     supabase.from("provider_terms").select("provider_id, sort_order, terms(name, kind)").in("provider_id", ids).order("sort_order"),
     supabase.from("provider_photos").select("provider_id, storage_path").in("provider_id", ids).order("sort_order"),
     supabase.from("providers").select("id, lat, long, availability, travel_radius_km").in("id", ids),
+    // Published reviews, as counts only: the rows themselves are admin-only.
+    supabase.rpc("review_stats", { p_ids: ids }),
   ]);
+  const ratingById = new Map(((ratingRows ?? []) as { provider_id: string; reviews: number; average: number }[]).map((r) => [r.provider_id, { count: r.reviews, average: Number(r.average) }]));
 
   const coachById = new Map((providerRows ?? []).map((c) => [c.id as string, c]));
   const namesByKindAndCoach: Record<TermKind, Map<string, string[]>> = {
@@ -316,6 +321,7 @@ export async function searchProviders(
     basedIn: m.based_in,
     isRemote: m.is_remote,
     professionId: m.profession_id,
+    rating: ratingById.get(m.id) ?? null,
   }));
 }
 

@@ -8,7 +8,7 @@ import { sendEmail } from "@/lib/email";
 import { fillVariables, getContent } from "@/lib/cms/read";
 import { absoluteUrl } from "@/lib/site-url";
 import { deviceHash } from "@/lib/reviews";
-import { phase, type Competition } from "@/lib/competitions";
+import { ENTRY_PHOTOS, phase, type Competition } from "@/lib/competitions";
 
 export type EntryResult = { ok: boolean; message: string; sent?: boolean };
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,6 +36,10 @@ export async function enterCompetition(_prev: EntryResult, fd: FormData): Promis
   if (answer.length > 2000) return { ok: false, message: "That's a bit long. Keep it under 2,000 characters." };
   if (age !== "adult" && age !== "parent") return { ok: false, message: "Say whether you're 18 or over, or a parent entering for your child." };
   if (age === "parent" && !parent) return { ok: false, message: "Add the parent or guardian's name." };
+  const photo = fd.get("photo");
+  const hasPhoto = photo instanceof File && photo.size > 0;
+  if (c.entry_photo === "required" && !hasPhoto) return { ok: false, message: "Add your photo to enter." };
+  if (hasPhoto && (!(photo as File).type.startsWith("image/") || (photo as File).size > 4 * 1024 * 1024)) return { ok: false, message: "The photo needs to be an image under 4MB." };
 
   const h = await headers();
   const device = deviceHash(h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "", h.get("user-agent") ?? "");
@@ -58,12 +62,18 @@ export async function enterCompetition(_prev: EntryResult, fd: FormData): Promis
       device_hash: device,
       flags: (sameDevice ?? 0) > 0 ? ["same_device"] : [],
     })
-    .select("confirm_token")
+    .select("id, confirm_token")
     .single();
   if (error || !entry) {
     if (error?.code === "23505") return { ok: false, message: "You've already entered this one. It's one entry each." };
     console.error("enterCompetition", error);
     return { ok: false, message: "Something went wrong saving that. Please try again shortly." };
+  }
+  // Kept private: only whoever judges sees it, through a signed link.
+  if (hasPhoto && c.entry_photo !== "none") {
+    const path = `${c.id}/${entry.id}.jpg`;
+    const { error: upErr } = await service.storage.from(ENTRY_PHOTOS).upload(path, photo as File, { contentType: (photo as File).type, upsert: true });
+    if (!upErr) await service.from("competition_entries").update({ photo_path: path }).eq("id", entry.id);
   }
   const copy = await getContent("email.competition_confirm");
   const vars = { competition: c.title as string, confirm_url: absoluteUrl(`/competitions/confirm?t=${entry.confirm_token}`) };

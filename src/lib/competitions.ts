@@ -13,6 +13,8 @@ import { CONTACT_EMAIL } from "@/lib/site-url";
  */
 export const DRAW_LIMIT_CENTS = 300_000;
 export const MARKETING_FILES = "marketing-files";
+/** Entrants' photos: a private bucket, seen through signed links by whoever judges. */
+export const ENTRY_PHOTOS = "entry-photos";
 
 export type Competition = {
   id: string;
@@ -35,6 +37,7 @@ export type Competition = {
   status: "draft" | "published" | "judged";
   judged_at: string | null;
   judging_note: string;
+  entry_photo: "none" | "optional" | "required";
   updated_at: string;
 };
 

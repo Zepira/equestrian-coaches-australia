@@ -14,7 +14,22 @@ export type CoachCardData = {
   distanceKm?: number | null;
   /** Where the card goes; a coach profile by default. Horse care professionals pass /profile/<slug>. */
   href?: string;
+  /** Published reviews (M5): the average and how many. Absent or null with none. */
+  rating?: { average: number; count: number } | null;
 };
+
+/** "★ 4.7 · 12 reviews" on a card: only with at least one published review. */
+export function RatingLine({ rating, className = "" }: { rating?: { average: number; count: number } | null; className?: string }) {
+  if (!rating || rating.count < 1) return null;
+  return (
+    <span className={`inline-flex items-center gap-1 text-[13px] text-subtle ${className}`} aria-label={`${rating.average.toFixed(1)} out of 5 from ${rating.count} ${rating.count === 1 ? "review" : "reviews"}`} data-rating>
+      <span aria-hidden className="text-accent">★</span>
+      <span aria-hidden>
+        <span className="font-medium text-fg">{rating.average.toFixed(1)}</span> · {rating.count} {rating.count === 1 ? "review" : "reviews"}
+      </span>
+    </span>
+  );
+}
 
 /**
  * The featured-coach card from canvas 1a: a 4:5 arch-topped photo with a
@@ -46,6 +61,7 @@ export function CoachCard({ coach, className = "" }: { coach: CoachCardData; cla
           {coach.name}
         </div>
         <div className="mt-[5px] text-[13px] font-medium text-accent">{coach.disciplineNames.join(" · ")}</div>
+        <RatingLine rating={coach.rating} className="mt-1" />
         <p className="mt-2 text-[14px] leading-[1.45] text-muted wide:text-[15px]">{coach.headline}</p>
       </div>
     </Link>

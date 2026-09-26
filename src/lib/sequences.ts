@@ -45,6 +45,8 @@ export type SequenceDef = {
   actions?: Record<number, (service: Service, run: Run) => Promise<string>>;
   /** Leave off the one-click stop line (where stopping would do the opposite of what the reader wants). */
   noFooter?: boolean;
+  /** May start again for the same person once the last run has finished and something newer triggers it. */
+  repeatable?: boolean;
 };
 
 // ── helpers ──────────────────────────────────────────────────────────────
@@ -381,6 +383,8 @@ SEQUENCES.push(
     stops: "They press the button, or anything else shows they're around. Otherwise the second step stops their alerts and round-up",
     delays: [0, 336],
     noFooter: true,
+    // Someone who pressed "keep" and went quiet again a year later is asked again.
+    repeatable: true,
     actions: {
       2: async (service, run) => {
         const { data: c } = await service.from("contacts").select("id").eq("profile_id", run.subject_id).maybeSingle();
@@ -459,10 +463,14 @@ export async function runSequences(service: Service, now = new Date()) {
   const tally = { started: 0, sent: 0, stopped: 0 };
 
   for (const def of SEQUENCES.filter((d) => active.has(d.key))) {
-    const { data: existing } = await service.from("sequence_runs").select("subject_id").eq("sequence_key", def.key);
-    const have = new Set((existing ?? []).map((r) => r.subject_id as string));
+    const { data: existing } = await service.from("sequence_runs").select("subject_id, started_at, stopped_at").eq("sequence_key", def.key);
+    const runsOf = new Map<string, { started_at: string; stopped_at: string | null }[]>();
+    for (const r of existing ?? []) runsOf.set(r.subject_id as string, [...(runsOf.get(r.subject_id as string) ?? []), r as { started_at: string; stopped_at: string | null }]);
     for (const c of await def.candidates(service, since)) {
-      if (have.has(c.subjectId)) continue;
+      const prior = runsOf.get(c.subjectId) ?? [];
+      // Once per person, unless the sequence repeats: then again only when the
+      // last run has finished and this trigger is newer than every earlier one.
+      if (prior.length && (!def.repeatable || prior.some((r) => !r.stopped_at || new Date(r.started_at) >= c.at))) continue;
       const first = nextStep(stepsOf(def.key), 0, c.at);
       if (!first) continue;
       const contact = await ensureContact(service, c.email);

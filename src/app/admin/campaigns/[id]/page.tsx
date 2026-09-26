@@ -77,6 +77,7 @@ export default async function CampaignPage({ params, searchParams }: { params: P
                 ["Clicked a link", results.clicked],
                 ["Stopped emails within 14 days", results.stopped],
                 ["Signed up from its links", results.signups],
+                ["Chose or changed a plan within 14 days of clicking", results.planChanges],
               ] as const
             ).map(([k, v]) => (
               <div key={k} className="rounded-[12px] bg-shade p-3">

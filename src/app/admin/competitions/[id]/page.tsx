@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { changeLog } from "@/lib/admin";
 import { getBusinessAbn } from "@/lib/settings";
-import { fileUrl, missingForPublish, money, phase, type Competition } from "@/lib/competitions";
+import { ENTRY_PHOTOS, fileUrl, missingForPublish, money, phase, type Competition } from "@/lib/competitions";
 import { HistoryList } from "../../history-list";
 import { TermImagePanel } from "../../term-image-panel";
 import {
@@ -50,6 +50,10 @@ export default async function AdminCompetitionPage({ params, searchParams }: { p
     changeLog(service, { table: "competitions", rowIds: [id] }),
   ]);
   const missing = missingForPublish(c, abn);
+  // Entrants' photos are private: signed links, good for an hour, for whoever judges.
+  const photoPaths = (entries ?? []).map((e) => e.photo_path as string | null).filter((p): p is string => Boolean(p));
+  const { data: signed } = photoPaths.length ? await service.storage.from(ENTRY_PHOTOS).createSignedUrls(photoPaths, 3600) : { data: [] };
+  const photoUrl = new Map((signed ?? []).filter((s) => s.path && s.signedUrl).map((s) => [s.path as string, s.signedUrl as string]));
   const locked = p !== "draft" && p !== "upcoming";
   const confirmed = (entries ?? []).filter((e) => e.confirmed_at);
   const input = "w-full rounded-[10px] border border-border bg-surface px-3 py-2 text-[14px] text-fg";
@@ -108,6 +112,13 @@ export default async function AdminCompetitionPage({ params, searchParams }: { p
               <label><span className={label}>Closes (Melbourne)</span><input type="datetime-local" name="closes_at" defaultValue={localValue(c.closes_at)} className={input} /></label>
               <label><span className={label}>Result by</span><input type="date" name="winners_by" defaultValue={c.winners_by ?? ""} className={input} /></label>
             </div>
+            <label><span className={label}>A photo with each entry</span>
+              <select name="entry_photo" defaultValue={c.entry_photo} className={input}>
+                <option value="none">No photo</option>
+                <option value="optional">Optional</option>
+                <option value="required">Required</option>
+              </select>
+            </label>
             <label><span className={label}>How winners are told</span><input name="how_winners_told" defaultValue={c.how_winners_told} placeholder="By email, within two days of the judging." className={input} /></label>
             <label><span className={label}>Photo description</span><input name="image_alt" defaultValue={c.image_alt} className={input} /></label>
             <div><Button type="submit">Save</Button></div>
@@ -140,6 +151,12 @@ export default async function AdminCompetitionPage({ params, searchParams }: { p
                 {e.disqualified && <span className="text-danger">set aside: {e.disqualified}</span>}
                 {e.winner_rank && <span className="font-medium text-accent">winner #{e.winner_rank}</span>}
               </div>
+              {e.photo_path && photoUrl.get(e.photo_path) && (
+                <a href={photoUrl.get(e.photo_path)} target="_blank" rel="noopener" data-entry-photo>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photoUrl.get(e.photo_path)} alt={`${e.name}'s photo`} className="mt-2 h-40 rounded-[10px] object-cover" />
+                </a>
+              )}
               <p className="mt-1.5 whitespace-pre-line text-fg">{e.answer}</p>
               {p === "closed" && e.confirmed_at && (
                 <div className="mt-2 flex flex-wrap items-center gap-3">

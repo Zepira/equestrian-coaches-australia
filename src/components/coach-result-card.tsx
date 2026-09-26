@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { CoachCardData } from "@/components/coach-card";
+import { RatingLine, type CoachCardData } from "@/components/coach-card";
 import { profilePath } from "@/lib/page-paths";
 
 export type CoachResultData = CoachCardData & {
@@ -73,6 +73,7 @@ export function CoachResultCard({
         </span>
         <span className="mt-[5px] text-[13px] font-medium text-accent wide:mt-1.5">{coach.disciplineNames.join(" · ")}</span>
         <span className="mt-1 text-[13px] text-subtle">{whereLine(coach, searchTown)}</span>
+        <RatingLine rating={coach.rating} className="mt-1" />
         <span className="mt-2 line-clamp-2 text-[14px] leading-[1.4] text-muted">{coach.headline}</span>
         {tags.length > 0 && (
           <span className="mt-auto flex flex-wrap gap-1.5 pt-2 wide:pt-2.5">

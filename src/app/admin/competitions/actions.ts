@@ -87,6 +87,7 @@ export async function saveCompetition(id: string, fd: FormData) {
       winners_by: /^\d{4}-\d{2}-\d{2}$/.test(formText(fd, "winners_by", 10)) ? formText(fd, "winners_by", 10) : null,
       how_winners_told: formText(fd, "how_winners_told", 300),
       winner_count: Number.isInteger(winners) && winners >= 1 && winners <= 20 ? winners : 1,
+      entry_photo: ["none", "optional", "required"].includes(formText(fd, "entry_photo", 10)) ? formText(fd, "entry_photo", 10) : "none",
       image_alt: formText(fd, "image_alt", 200),
       updated_at: new Date().toISOString(),
     })

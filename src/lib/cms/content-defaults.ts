@@ -357,6 +357,7 @@ export const CONTENT_DEFAULTS = {
     listedBody: "Stay listed for {listed_price} a month. Your profile, enquiries and contact details keep working.",
     pauseTitle: "Pause",
     pauseBody: "Nothing is charged and your profile is hidden. It comes back by itself when the pause ends, or sooner if you resume it.",
+    pauseFreeNote: "Your free period keeps counting down while you're paused. If it ends during the pause, nothing is charged until the pause ends.",
     cancelTitle: "Cancel",
     cancelBody: "Your listing stays live until {end_date}, and nothing you've added is deleted.",
     reasonLabel: "Why are you leaving? (optional)",
