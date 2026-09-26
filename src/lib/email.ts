@@ -72,7 +72,7 @@ export async function sendEmailWithId({ to, subject, text, replyTo, unsubscribe,
     return { result: "logged", id: null };
   }
   try {
-    const { data } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: NOTIFICATIONS_FROM,
       to: recipients,
       subject,
@@ -80,6 +80,16 @@ export async function sendEmailWithId({ to, subject, text, replyTo, unsubscribe,
       ...(replyTo ? { replyTo } : {}),
       ...(unsubscribe ? { headers: { "List-Unsubscribe": `<${unsubscribe}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } } : {}),
     });
+    // The SDK reports a rejected send by returning { data: null, error },
+    // not by throwing, so the catch below never sees it. Reading only `data`
+    // meant an unverified domain or a from address on the wrong one was
+    // recorded as sent and logged nowhere: mail silently vanished.
+    if (error) {
+      console.error(
+        `sendEmail rejected by Resend (${error.name}): ${error.message} — from "${NOTIFICATIONS_FROM}" to ${recipients.join(", ")}`
+      );
+      return { result: "failed", id: null };
+    }
     return { result: "sent", id: data?.id ?? null };
   } catch (err) {
     console.error("sendEmail failed", subject, err);

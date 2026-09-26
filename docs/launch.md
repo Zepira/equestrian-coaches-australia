@@ -47,12 +47,35 @@ records, they must permit `letsencrypt.org` or certificates will not issue.
 
 ### Email, at Resend
 
-Verify `equineprofessionals.com.au`, which is the domain
-`src/lib/resend.ts` already sends from. Resend generates the DKIM and SPF
-records per domain, so copy them from its dashboard; it will probably ask you to
-send from a subdomain such as `send.`, which needs its own MX and SPF TXT. Add a
-DMARC record yourself at `_dmarc`, starting at `v=DMARC1; p=none;`, so you get
-reports without anything bouncing while the domain is new.
+**Add `send.equineprofessionals.com.au` as the domain, not the apex.** Resend
+puts an MX and an SPF TXT on a sending subdomain and the DKIM on whatever domain
+you verified, so verifying the subdomain keeps all three clear of the mailbox
+records already on the apex. Two things that breaks otherwise:
+
+- **SPF.** A domain can hold only one SPF record. RFC 7208 makes two a permanent
+  error, and the usual symptom is mail quietly going to spam rather than an
+  error anyone sees. The apex already has Hostinger's SPF; on the subdomain,
+  Resend's stands alone and nothing needs merging.
+- **MX, which is worse.** The apex's MX is what delivers mail to the mailbox.
+  Adding Resend's MX there would take that over and inbound mail stops. On the
+  subdomain it only handles bounces, and the mailbox is untouched.
+
+Copy the three records from Resend's dashboard exactly, whole values, and give
+it up to 24 hours. Then set `NOTIFICATIONS_FROM` to an address on the domain you
+verified, or every send is rejected:
+
+```
+NOTIFICATIONS_FROM=Equine Professionals Australia <notifications@send.equineprofessionals.com.au>
+```
+
+Add a DMARC record yourself at `_dmarc` on the apex, starting at
+`v=DMARC1; p=none; rua=mailto:you@equineprofessionals.com.au`, which reports
+without anything bouncing while the domain is new. Subdomains inherit it, so one
+record covers both.
+
+**With no `RESEND_API_KEY` set, nothing is broken and nothing is sent**: every
+email is written to the server log and reported as "logged", which is why a
+waitlist sign-up saves but no confirmation arrives.
 
 ### Supabase Auth, for the test host
 
