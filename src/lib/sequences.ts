@@ -5,7 +5,7 @@ import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
 import type { ContentKey } from "@/lib/cms/content-defaults";
 import { profileCompleteness } from "@/lib/coach-stats";
 import { hasVideo } from "@/lib/tiers";
-import { absoluteUrl, CONTACT_EMAIL } from "@/lib/site-url";
+import { absoluteUrl, CONTACT_EMAIL, publicUrl } from "@/lib/site-url";
 import { addMonths, countWord, formatLongDate, getFoundingPrice, getOnboardingCompletePct, getPauseMaxMonths, getPlanCapabilities, getPlans, getQuietRiderDays } from "@/lib/settings";
 
 /**
@@ -413,7 +413,7 @@ SEQUENCES.push(
       const stop = new Date(Date.now() + ((step?.delay_hours as number | undefined) ?? 336) * HOUR);
       return {
         first_name: String(p?.name ?? "").trim().split(/\s+/)[0] || "there",
-        keep_url: absoluteUrl(`/email-preferences/keep?t=${run.stop_token}`),
+        keep_url: publicUrl(`/email-preferences/keep?t=${run.stop_token}`),
         stop_date: stop.toLocaleDateString("en-AU", { day: "numeric", month: "long", timeZone: "Australia/Melbourne" }),
       };
     },
@@ -512,7 +512,7 @@ export async function runSequences(service: Service, now = new Date()) {
       continue;
     }
     const copy = (await getContent(stepKey(def.key, step.position))) as { subject: string; body: string };
-    const all = { ...vars, stop_url: absoluteUrl(`/email-preferences/sequence?t=${run.stop_token}`) };
+    const all = { ...vars, stop_url: publicUrl(`/email-preferences/sequence?t=${run.stop_token}`) };
     const sent = await sendEmailWithId({
       to: email,
       subject: fillVariables(copy.subject, all),
