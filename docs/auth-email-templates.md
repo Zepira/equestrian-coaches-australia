@@ -27,9 +27,16 @@ open the email in Gmail's, and it failed.
 - **That address must match an entry in Redirect URLs** (Authentication → URL
   Configuration). If it doesn't, Supabase quietly swaps in the Site URL, the
   link loses `/auth/confirm` and it breaks. The entries are in `docs/launch.md`.
-- The `{{ if .RedirectTo }}` guard covers an email sent with no redirect at all
-  (a user invited or re-sent from the Supabase dashboard): it falls back to the
-  Site URL's `/auth/confirm`, which works once the public host serves it.
+- **No `{{ if }}` inside the link.** Supabase renders templates with Go's
+  `html/template`, which escapes by context and refuses an `if` whose branches
+  leave a URL in different states (a bare value in one, `…?next=` in the
+  other). The email then fails with "Error sending confirmation email" and
+  nothing goes out. That happened on 27 Sep 2026 with an earlier version of
+  these templates that fell back to `{{ .SiteURL }}`. So the link is only
+  `{{ .RedirectTo }}` plus the token, and every path that sends these emails
+  (sign-up, "send it again", forgot password) passes a redirect. An email sent
+  by hand from the Supabase dashboard has no redirect and its link won't work;
+  send those from the site instead.
 
 Checked against Supabase's docs on 27 Sep 2026: *Email Templates* (the
 variables, including that `{{ .RedirectTo }}` is the URL passed to `signUp` /
@@ -57,12 +64,12 @@ Confirm your email for Equine Professionals Australia
   <p>{{ if .Data.name }}Hi {{ .Data.name }},{{ else }}Hi,{{ end }}</p>
   <p>Thanks for signing up to Equine Professionals Australia. Tap the button to confirm this is your email address.</p>
   <p style="margin: 28px 0;">
-    <a href="{{ if .RedirectTo }}{{ .RedirectTo }}{{ else }}{{ .SiteURL }}/auth/confirm?next={{ end }}&token_hash={{ .TokenHash }}&type=email"
+    <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email"
        style="background: #b4553a; color: #f6f1e7; padding: 14px 24px; border-radius: 999px; text-decoration: none; font-weight: bold; display: inline-block;">Confirm my email</a>
   </p>
   <p>You can open this on a different phone or computer from the one you signed up on. The link works once.</p>
   <p>If the button doesn't work, copy this into your browser:<br>
-    <span style="word-break: break-all; font-size: 13px; color: #4a4842;">{{ if .RedirectTo }}{{ .RedirectTo }}{{ else }}{{ .SiteURL }}/auth/confirm?next={{ end }}&token_hash={{ .TokenHash }}&type=email</span>
+    <span style="word-break: break-all; font-size: 13px; color: #4a4842;">{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email</span>
   </p>
   <p>Didn't sign up? Ignore this email and nothing will happen.</p>
   <p style="margin-top: 28px; font-size: 14px; color: #4a4842;">Questions? Write to <a href="mailto:hello@equineprofessionals.com.au" style="color: #b4553a;">hello@equineprofessionals.com.au</a>. Replies to this email don't reach anyone.</p>
@@ -86,12 +93,12 @@ Set a new password for Equine Professionals Australia
   <p>{{ if .Data.name }}Hi {{ .Data.name }},{{ else }}Hi,{{ end }}</p>
   <p>Someone asked to reset the password for this email address on Equine Professionals Australia. If that was you, tap the button to choose a new one.</p>
   <p style="margin: 28px 0;">
-    <a href="{{ if .RedirectTo }}{{ .RedirectTo }}{{ else }}{{ .SiteURL }}/auth/confirm?next=/reset-password{{ end }}&token_hash={{ .TokenHash }}&type=recovery"
+    <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=recovery"
        style="background: #b4553a; color: #f6f1e7; padding: 14px 24px; border-radius: 999px; text-decoration: none; font-weight: bold; display: inline-block;">Set a new password</a>
   </p>
   <p>The link works once. If it has expired, ask for another on the log in page under "Forgot password?".</p>
   <p>If the button doesn't work, copy this into your browser:<br>
-    <span style="word-break: break-all; font-size: 13px; color: #4a4842;">{{ if .RedirectTo }}{{ .RedirectTo }}{{ else }}{{ .SiteURL }}/auth/confirm?next=/reset-password{{ end }}&token_hash={{ .TokenHash }}&type=recovery</span>
+    <span style="word-break: break-all; font-size: 13px; color: #4a4842;">{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=recovery</span>
   </p>
   <p>Didn't ask for this? Ignore it and your password stays as it is.</p>
   <p style="margin-top: 28px; font-size: 14px; color: #4a4842;">Questions? Write to <a href="mailto:hello@equineprofessionals.com.au" style="color: #b4553a;">hello@equineprofessionals.com.au</a>. Replies to this email don't reach anyone.</p>
