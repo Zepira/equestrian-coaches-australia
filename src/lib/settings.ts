@@ -69,6 +69,11 @@ export const DEFAULTS = {
   legal_approved: "false",
   /** The partnership's ABN, for the footer of every commercial email (Spam Act). Empty until registered. */
   business_abn: "",
+  /**
+   * A phone number people can ring when sign-up or log in goes wrong, shown in
+   * the catch-all error message. Empty means the message leaves it out.
+   */
+  support_phone: "",
   /** The gentle slide-in offering area alerts (The Marketing Engine M3): off until someone turns it on. */
   slide_in_enabled: "false",
   /** Seconds on a page before it slides in. */
@@ -229,6 +234,11 @@ export async function isSlideInEnabled(): Promise<boolean> {
 export async function getBusinessAbn(): Promise<string> {
   const d = (await getSetting("business_abn")).replace(/\D/g, "");
   return d.length === 11 ? `${d.slice(0, 2)} ${d.slice(2, 5)} ${d.slice(5, 8)} ${d.slice(8)}` : "";
+}
+
+/** The support phone number as entered, or "" when there isn't one. */
+export async function getSupportPhone(): Promise<string> {
+  return (await getSetting("support_phone")).trim();
 }
 
 export const getReferralRewardMonths = () => intSetting("referral_reward_months", ...SETTING_RANGES.referral_reward_months);

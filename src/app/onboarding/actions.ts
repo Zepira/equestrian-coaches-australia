@@ -27,6 +27,16 @@ const wholeNumber = (fd: FormData, key: string, max: number) => {
   return raw === "" ? null : Math.min(max, Number(raw));
 };
 
+/**
+ * A database error, logged for us and turned into a sentence for them. The
+ * raw message ("new row violates row-level security policy…") means nothing
+ * to a coach and can leak table names.
+ */
+function notSaved(error: { message?: string; code?: string }): SaveResult {
+  console.error("[onboarding] save failed:", error.code ?? "", error.message ?? error);
+  return { ok: false, message: "That didn't save. Try again in a moment." };
+}
+
 function done() {
   revalidatePath("/onboarding");
   revalidatePath("/dashboard");
@@ -56,7 +66,7 @@ export async function saveWhat(fd: FormData): Promise<SaveResult> {
     .map((r) => r.term_id as string);
   if (drop.length) {
     const { error } = await supabase.from("provider_terms").delete().eq("provider_id", providerId).in("term_id", drop);
-    if (error) return { ok: false, message: error.message };
+    if (error) return notSaved(error);
   }
 
   const { data: allowed } = await supabase.from("terms").select("id").eq("kind", "discipline").eq("parent_id", primary.id).in("id", termIds.length ? termIds : ["00000000-0000-0000-0000-000000000000"]);
@@ -67,7 +77,7 @@ export async function saveWhat(fd: FormData): Promise<SaveResult> {
     ...termIds.filter((id) => valid.has(id)).map((term_id, i) => ({ provider_id: providerId, term_id, sort_order: i })),
   ];
   const { error } = await supabase.from("provider_terms").insert(insert);
-  if (error) return { ok: false, message: error.message };
+  if (error) return notSaved(error);
   return done();
 }
 
@@ -98,7 +108,7 @@ export async function saveWhere(fd: FormData): Promise<SaveResult> {
       updated_at: new Date().toISOString(),
     })
     .eq("id", providerId);
-  if (error) return { ok: false, message: error.message };
+  if (error) return notSaved(error);
   done();
   if (place && !resolved) return { ok: true, warn: true, message: `We couldn't find "${place}". Try the suburb and state, or a postcode.` };
   return { ok: true, message: resolved ? `Based in ${titleCase(resolved.suburb)} ${resolved.state} ${resolved.postcode}` : undefined };
@@ -127,7 +137,7 @@ export async function saveYou(fd: FormData): Promise<SaveResult> {
       updated_at: new Date().toISOString(),
     })
     .eq("id", providerId);
-  if (error) return { ok: false, message: error.message };
+  if (error) return notSaved(error);
   return done();
 }
 
@@ -147,7 +157,7 @@ export async function saveContact(fd: FormData): Promise<SaveResult> {
       updated_at: new Date().toISOString(),
     })
     .eq("id", providerId);
-  if (error) return { ok: false, message: error.message };
+  if (error) return notSaved(error);
   return done();
 }
 

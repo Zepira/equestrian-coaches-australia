@@ -77,13 +77,21 @@ record covers both.
 email is written to the server log and reported as "logged", which is why a
 waitlist sign-up saves but no confirmation arrives.
 
+**Supabase's own auth emails (sign-up confirmation, password reset) also go
+through Resend**, by SMTP from the Supabase dashboard, done 27 Sep 2026. That is
+separate from `RESEND_API_KEY`: the site's code never sends those two. Details
+and the templates are under "Supabase Auth" below.
+
 ### Supabase Auth, for the test host
 
 Authentication → URL Configuration. Site URL stays the production domain. Add
 these to Redirect URLs, or sign-up confirmation and password reset will bounce
-people to the wrong host:
+people to the wrong host (or, worse, to a link with the token cut off):
 
 ```
+https://test.equineprofessionals.com.au/auth/confirm**
+https://equineprofessionals.com.au/auth/confirm**
+http://localhost:3000/auth/confirm**
 https://test.equineprofessionals.com.au/auth/callback
 https://test.equineprofessionals.com.au/auth/callback?next=*
 https://equineprofessionals.com.au/auth/callback
@@ -92,9 +100,27 @@ http://localhost:3000/auth/callback
 http://localhost:3000/auth/callback?next=*
 ```
 
-Both flows go through `/auth/callback` with a `next` parameter:
-`src/app/signup/signup-form.tsx` and `src/app/forgot-password/page.tsx` build it
-from `window.location.origin`, so each host sends people back to itself.
+**Both emails go through `/auth/confirm` now** (27 Sep 2026). The sign-up form,
+forgot password and the "send it again" buttons pass
+`https://<this host>/auth/confirm?next=<path>` (`confirmRedirect()` in
+`src/lib/site-url.ts`, built from `window.location.origin`), so each host sends
+people back to itself. The email templates read that as `{{ .RedirectTo }}` and
+add the hashed token; `/auth/confirm` verifies it on the server, so the link
+works in any browser, not only the one that signed up. `**` matters: the `next`
+value is URL-encoded and can hold dots and slashes, which a single `*` does not
+match. The `/auth/callback` entries stay for links sent before the switch.
+
+**Email templates:** paste both from `docs/auth-email-templates.md` into
+Authentication → Email Templates (Confirm signup, Reset password). Without them
+the emails still carry Supabase's default PKCE link, which fails when the email
+is opened in a different browser from the one that signed up.
+
+**Auth email goes out through Resend** (custom SMTP, set 27 Sep 2026, under
+Authentication → Emails → SMTP Settings): host `smtp.resend.com`, sender
+`notifications@send.equineprofessionals.com.au`, name "Equine Professionals
+Australia". Supabase's SMTP settings have no reply-to, so replies go nowhere;
+each template says to write to hello@ instead. Supabase's built-in sender is for
+testing only and sends a handful an hour, so this is what makes sign-up usable.
 
 ### Stripe, in test mode
 

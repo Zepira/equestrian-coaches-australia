@@ -3,6 +3,7 @@ import { createServiceSupabase } from "@/lib/supabase/service";
 import { SignupForm, type SignupInvite } from "./signup-form";
 import { cookies } from "next/headers";
 import { currentWording } from "@/lib/audience";
+import { getSupportPhone } from "@/lib/settings";
 import { FIRST_TOUCH, LAST_TOUCH, parseTouch } from "@/lib/touch";
 
 export const metadata = { title: "Sign up", robots: { index: false, follow: true } };
@@ -69,6 +70,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
       plan={sp.plan ?? sp.tier ?? ""}
       source={source}
       invite={invite}
+      supportPhone={await getSupportPhone()}
     />
   );
 }

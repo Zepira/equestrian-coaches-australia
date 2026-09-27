@@ -134,6 +134,22 @@ export default async function AdminSettingsPage({
         </form>
       </section>
 
+      <section className="border-t border-border pt-6" data-support-phone>
+        <h2 className="admin-title">Support phone</h2>
+        <p className="mt-1 max-w-[62ch] text-sm text-muted">
+          When sign-up or log in fails for a reason we can&apos;t explain, the message says &ldquo;ring us on&rdquo; this number. Leave it empty and that part is left out.
+        </p>
+        {notice("support_phone")}
+        <form action={saveSetting} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
+          <input type="hidden" name="key" value="support_phone" />
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-fg">Phone</span>
+            <input name="value" defaultValue={stored("support_phone")} inputMode="tel" placeholder="Empty" className={input} />
+          </label>
+          <Button type="submit">Save</Button>
+        </form>
+      </section>
+
       <section className="border-t border-border pt-6" data-legal>
         <h2 className="admin-title">Terms and privacy</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">

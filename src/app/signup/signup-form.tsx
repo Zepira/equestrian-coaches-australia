@@ -7,6 +7,9 @@ import { PasswordInput } from "@/components/password-input";
 import { AuthShell } from "@/components/auth-shell";
 import { inputClass, labelClass } from "@/components/ui/field";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { ResendLink } from "@/components/resend-link";
+import { friendlyAuthError } from "@/lib/friendly-error";
+import { confirmRedirect, safeNextPath } from "@/lib/site-url";
 
 export type SignupInvite = { token: string; name: string; email: string; profession: string | null; usable: boolean };
 type ProfessionOption = { slug: string; name: string; singular: string };
@@ -20,6 +23,13 @@ type ProfessionOption = { slug: string; name: string; singular: string };
  * token. Cohort is not sent: the trigger decides it from the founding
  * sign-up date, so a hand-made request can't claim it. Confirming the email
  * lands a professional in onboarding.
+ *
+ * The confirmation link goes to /auth/confirm, which works whichever browser
+ * opens it (a coach who signs up in Messenger's browser and opens the email
+ * in Gmail's). Two screens follow a send: "check your email", with a resend
+ * button and a way back to fix the address, and "you already have an
+ * account", because with confirmation on Supabase answers a sign-up for a
+ * registered address with success and sends nothing.
  */
 export function SignupForm({
   professional,
@@ -31,7 +41,10 @@ export function SignupForm({
   touch,
   news,
   codes = { referral: "", promo: "" },
+  supportPhone = "",
 }: {
+  /** The support_phone setting, for the catch-all error. */
+  supportPhone?: string;
   /** Codes from the link they came in on, checked by the sign-up trigger. */
   codes?: { referral: string; promo: string };
   /** Where they came from, as JSON strings for the sign-up trigger (or "null"). */
@@ -52,7 +65,7 @@ export function SignupForm({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [checkEmail, setCheckEmail] = useState(false);
+  const [screen, setScreen] = useState<"form" | "check" | "exists">("form");
   const [wantsNews, setWantsNews] = useState(false);
   const picked = professions.find((p) => p.slug === profession) ?? professions[0];
   const article = /^[aeiou]/i.test(picked?.singular ?? "") ? "an" : "a";
@@ -68,7 +81,7 @@ export function SignupForm({
       setError("Sign-up isn't connected yet.");
       return;
     }
-    const next = professional ? `/onboarding${plan ? `?plan=${encodeURIComponent(plan)}` : ""}` : "/account";
+    const next = nextPath();
 
     // A thrown exception (network, bad URL/key) rather than a returned
     // { error } would otherwise skip setLoading(false) and leave the form stuck.
@@ -93,16 +106,22 @@ export function SignupForm({
                 news_wording: wantsNews && news ? news.id : "",
               }
             : { role: "rider", name, touch_first: touch.first, touch_last: touch.last },
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+          emailRedirectTo: confirmRedirect(window.location.origin, next),
         },
       });
       if (signUpError) {
-        setError(signUpError.message);
+        setError(friendlyAuthError(signUpError, supportPhone));
+        return;
+      }
+      // With confirmation on, an address that already has an account comes
+      // back as a success with no identities, and no email is sent.
+      if (data.user && !data.session && (data.user.identities?.length ?? 0) === 0) {
+        setScreen("exists");
         return;
       }
       // Email confirmation is on: no session until they click the link.
       if (data.user && !data.session) {
-        setCheckEmail(true);
+        setScreen("check");
         return;
       }
       // A full page load, not router.push: the header prefetched this page
@@ -110,25 +129,67 @@ export function SignupForm({
       // redirect back to /login. A fresh request carries the new session.
       window.location.assign(next);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong making your account. Try again.");
+      setError(friendlyAuthError(err, supportPhone));
     } finally {
       setLoading(false);
     }
   }
 
-  if (checkEmail) {
+  function nextPath() {
+    return safeNextPath(professional ? `/onboarding${plan ? `?plan=${encodeURIComponent(plan)}` : ""}` : "/account");
+  }
+
+  if (screen === "check") {
     return (
       <AuthShell
         eyebrow="One more step"
         title="Check your email"
         lead={
           <>
-            We sent a link to <strong className="font-medium text-ink">{email}</strong>. Open it to confirm your address
+            We sent a link to <strong className="font-medium text-ink break-all">{email}</strong>. Open it to confirm your address
             {professional ? " and you'll go straight to setting up your profile." : " and you're in."}
           </>
         }
       >
-        <p className="text-[14px] leading-[1.5] text-muted">Nothing after a minute? Check your spam folder, or sign up again with the right address.</p>
+        <p className="mb-4 text-[14px] leading-[1.5] text-muted">
+          It&apos;s fine to open the email on your phone or in a different app from this one. Nothing after a minute? Check your spam folder, then send it again.
+        </p>
+        <ResendLink kind="signup" email={email} next={nextPath()} supportPhone={supportPhone} startWaiting />
+        <p className="mt-4 text-center text-[14px] text-muted">
+          Wrong address?{" "}
+          <button type="button" onClick={() => setScreen("form")} className="font-medium text-accent">
+            Start again
+          </button>
+        </p>
+      </AuthShell>
+    );
+  }
+
+  if (screen === "exists") {
+    return (
+      <AuthShell
+        eyebrow="Already signed up"
+        title="You already have an account with that email"
+        lead={
+          <>
+            <strong className="font-medium text-ink break-all">{email}</strong> is already signed up. Log in with it, or set a new password if you can&apos;t remember yours.
+          </>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <Link href="/login" className="inline-flex h-12 items-center justify-center rounded-[var(--radius-pill)] bg-accent px-5 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover">
+            Log in
+          </Link>
+          <Link href="/forgot-password" className="inline-flex h-12 items-center justify-center rounded-[var(--radius-pill)] border border-ink px-5 text-[15px] font-medium text-ink hover:bg-shade">
+            Reset your password
+          </Link>
+        </div>
+        <p className="mt-4 text-center text-[14px] text-muted">
+          Meant a different address?{" "}
+          <button type="button" onClick={() => setScreen("form")} className="font-medium text-accent">
+            Start again
+          </button>
+        </p>
       </AuthShell>
     );
   }

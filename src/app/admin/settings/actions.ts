@@ -91,6 +91,12 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     if (!/^\d{11}$/.test(d)) return { error: "An ABN is 11 digits." };
     return { value: d };
   },
+  support_phone(raw) {
+    const v = raw.replace(/\s+/g, " ").trim();
+    if (v === "") return { value: "" };
+    if (!/^\+?[\d ()]{8,20}$/.test(v)) return { error: "Enter a phone number, digits and spaces only (a leading + is fine)." };
+    return { value: v };
+  },
   slide_in_enabled(raw) {
     const v = raw.trim();
     if (v !== "true" && v !== "false") return { error: "Choose on or off." };
@@ -194,6 +200,7 @@ const SHOWN_ON: Record<SettingKey, string[]> = {
   show_sample_listings: ["/", "/coaches", "/horse-care", "/search"],
   legal_approved: ["/terms", "/privacy", "/sitemap.xml"],
   business_abn: [],
+  support_phone: ["/login", "/signup", "/forgot-password", "/reset-password"],
   referral_reward_months: [],
   enquiry_followup_days: [],
   onboarding_complete_pct: [],

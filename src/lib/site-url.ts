@@ -70,3 +70,43 @@ export async function requestOrigin(): Promise<string> {
  * without a deploy.
  */
 export const CONTACT_EMAIL = process.env.CONTACT_EMAIL ?? "hello@equineprofessionals.com.au";
+
+/**
+ * A `next` parameter made safe to redirect to: a path on this site, or the
+ * fallback.
+ *
+ * /auth/callback, /auth/confirm, /login and /signup all send people on to
+ * wherever `next` says once they're in. Trusting it as given is an open
+ * redirect: `next=//evil.example` is a protocol-relative URL, so a coach who
+ * logs in from a link like that lands on a look-alike site. Only a path that
+ * starts with exactly one "/" gets through. "//", "/\" (browsers read a
+ * backslash as a slash), anything with a scheme, and control characters are
+ * all refused.
+ */
+export function safeNextPath(raw: string | null | undefined, fallback = "/account"): string {
+  if (!raw) return fallback;
+  const next = raw.trim();
+  if (!next.startsWith("/")) return fallback;
+  if (next.startsWith("//") || next.startsWith("/\\")) return fallback;
+  if (/[\u0000-\u001f\u007f\\]/.test(next)) return fallback;
+  // What a browser would make of it has to stay on this origin too.
+  try {
+    const probe = "http://safe-next.invalid";
+    if (new URL(next, probe).origin !== probe) return fallback;
+  } catch {
+    return fallback;
+  }
+  return next;
+}
+
+/**
+ * The link Supabase puts in a sign-up confirmation or password reset email,
+ * before the email template adds `&token_hash=…&type=…` to it. Built from the
+ * browser's own origin, so the test host sends people back to the test host
+ * (the template reads it as {{ .RedirectTo }}; see docs/auth-email-templates.md).
+ * Always carries a query string, because the template appends with "&".
+ * An empty `next` lets /auth/confirm choose from the account's role.
+ */
+export function confirmRedirect(origin: string, next = ""): string {
+  return `${origin}/auth/confirm?next=${encodeURIComponent(next)}`;
+}
