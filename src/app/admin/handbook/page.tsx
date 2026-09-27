@@ -21,7 +21,7 @@ export default function AdminHandbookPage() {
   return (
     <div className="flex flex-col gap-6">
       <section>
-        <h2 className="font-display text-[26px] leading-none text-ink">
+        <h2 className="admin-title">
           {docs.length} documents
         </h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">

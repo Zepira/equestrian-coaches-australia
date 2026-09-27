@@ -109,10 +109,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const prefixes = horseCarePrefixes(professions);
   const header = {
     horseCareMenu: [
+      { href: "/horse-care/search", label: "Search all horse care" },
       ...horseCareOf(professions).map((p) => ({ href: sectionHref(p), label: p.name })),
-      { href: "/horse-care", label: "All horse care" },
     ],
     coachesMenu: [
+      { href: "/search", label: "Search all coaches" },
       ...featured.map((d) => ({ href: disciplinePath(d.slug), label: d.name })),
       { href: "/coaches#disciplines", label: "All disciplines" },
     ],

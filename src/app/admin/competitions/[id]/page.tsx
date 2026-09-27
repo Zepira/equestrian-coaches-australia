@@ -64,7 +64,7 @@ export default async function AdminCompetitionPage({ params, searchParams }: { p
       <p className="text-[14px]"><Link href="/admin/competitions" className="text-accent">← Competitions</Link></p>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="font-display text-[26px] leading-none text-ink">{c.title}</h2>
+          <h2 className="admin-title">{c.title}</h2>
           <p className="mt-1.5 text-[14px] text-muted" data-phase={p}>
             {p === "draft" ? <>Draft. <Link href={`/competitions/${c.slug}?preview=1`} className="text-accent">Preview the page</Link></> : <Link href={`/competitions/${c.slug}`} className="text-accent">/competitions/{c.slug}</Link>}
             {" · "}{confirmed.length} confirmed, {(entries ?? []).length - confirmed.length} not confirmed
@@ -135,7 +135,7 @@ export default async function AdminCompetitionPage({ params, searchParams }: { p
       </div>
 
       <section className="border-t border-border pt-6">
-        <h3 className="font-display text-[20px] leading-none text-ink">Entries</h3>
+        <h3 className="admin-section">Entries</h3>
         <p className="mt-1.5 text-[13px] text-subtle">Only confirmed entries count. Prize {money(c.prize_value_cents)}; {c.winner_count} {c.winner_count === 1 ? "winner" : "winners"}.</p>
         <ul className="mt-3 flex flex-col gap-2 text-[14px]" data-entries>
           {(entries ?? []).map((e) => (
@@ -180,7 +180,7 @@ export default async function AdminCompetitionPage({ params, searchParams }: { p
 
       {p === "closed" && (
         <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-judging>
-          <h3 className="font-display text-[20px] leading-none text-ink">The result</h3>
+          <h3 className="admin-section">The result</h3>
           {c.judging === "draw" && (
             <form action={drawWinners.bind(null, id)} className="mt-3"><Button type="submit" variant="secondary">Draw {c.winner_count === 1 ? "the winner" : "the winners"}</Button></form>
           )}

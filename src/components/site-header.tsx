@@ -13,6 +13,7 @@ import { NavDropdown, type NavDropdownItem } from "@/components/nav-dropdown";
 import { pathInPrefixes } from "@/lib/professions";
 import { createClient } from "@/lib/supabase/client";
 import { profilePath } from "@/lib/page-paths";
+import { AccountMenu } from "@/components/account-menu";
 
 /**
  * Header from the Golden Hour canvases. Three variants, resolved from the
@@ -58,9 +59,9 @@ function useScrolled(threshold = 8) {
   return scrolled;
 }
 
-type AuthState = { loggedIn: boolean; role: "rider" | "provider" | null; name: string | null; coachSlug: string | null; avatarUrl: string | null; isAdmin: boolean };
+type AuthState = { loggedIn: boolean; role: "rider" | "provider" | null; name: string | null; email: string | null; coachSlug: string | null; isAdmin: boolean };
 
-const SIGNED_OUT: AuthState = { loggedIn: false, role: null, name: null, coachSlug: null, avatarUrl: null, isAdmin: false };
+const SIGNED_OUT: AuthState = { loggedIn: false, role: null, name: null, email: null, coachSlug: null, isAdmin: false };
 
 function useAuthState(): AuthState {
   const [state, setState] = useState<AuthState>(SIGNED_OUT);
@@ -69,7 +70,7 @@ function useAuthState(): AuthState {
     const supabase = createClient();
     if (!supabase) return;
 
-    async function load(client: NonNullable<typeof supabase>, userId: string) {
+    async function load(client: NonNullable<typeof supabase>, userId: string, email: string | null) {
       // is_admin() reads admin_users (0007_taxonomy.sql) — the only way in
       // is a direct insert, so this is what surfaces the Admin link.
       const [{ data }, { data: isAdmin }] = await Promise.all([
@@ -78,31 +79,27 @@ function useAuthState(): AuthState {
       ]);
       const role = (data?.role as "rider" | "provider") ?? null;
       let coachSlug: string | null = null;
-      let avatarUrl: string | null = null;
       if (role === "provider") {
         // The profile this user edits, through their membership.
         const { data: member } = await client
           .from("provider_members")
-          .select("providers(id, slug, provider_photos(storage_path, sort_order))")
+          .select("providers(slug)")
           .eq("user_id", userId)
           .order("created_at")
           .limit(1)
           .maybeSingle();
-        const p = (member as unknown as { providers: { slug: string; provider_photos: { storage_path: string; sort_order: number }[] } | null } | null)?.providers;
-        coachSlug = p?.slug ?? null;
-        const photo = [...(p?.provider_photos ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0];
-        if (photo) avatarUrl = client.storage.from("provider-photos").getPublicUrl(photo.storage_path).data.publicUrl;
+        coachSlug = (member as unknown as { providers: { slug: string } | null } | null)?.providers?.slug ?? null;
       }
-      setState({ loggedIn: true, role, name: (data?.name as string | null) ?? null, coachSlug, avatarUrl, isAdmin: Boolean(isAdmin) });
+      setState({ loggedIn: true, role, name: (data?.name as string | null) ?? null, email, coachSlug, isAdmin: Boolean(isAdmin) });
     }
 
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) load(supabase, user.id);
+      if (user) load(supabase, user.id, user.email ?? null);
     });
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) load(supabase, session.user.id);
+      if (session?.user) load(supabase, session.user.id, session.user.email ?? null);
       else setState(SIGNED_OUT);
     });
     return () => subscription.unsubscribe();
@@ -154,47 +151,23 @@ function CoachRefineRail() {
   );
 }
 
-function Avatar({ name, src }: { name: string | null; src?: string | null }) {
-  const initial = (name ?? "?").trim().charAt(0).toUpperCase() || "?";
-  if (src) {
-    return (
-      <span aria-hidden className="block h-9 w-9 overflow-hidden rounded-full bg-shade">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="" className="h-full w-full object-cover object-[50%_25%]" />
-      </span>
-    );
-  }
-  return (
-    <span
-      aria-hidden
-      className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-[16px] text-ink-fg"
-    >
-      {initial}
-    </span>
-  );
-}
-
 /**
- * The coaches section's own navigation: /coaches and everything under it,
- * /search and /for-coaches.
- */
-const NAV = [
-  { href: "/search", label: "Find a coach" },
-  { href: "/coaches#disciplines", label: "Disciplines", match: "/coaches/" },
-  { href: "/for-coaches", label: "For coaches" },
-  { href: "/about", label: "About" },
-];
-
-/**
- * The parent brand's navigation, shown on the routes that belong to the
- * business as a whole rather than to the coaches section: the home page,
- * About, and every horse care page. It offers the two halves of the site,
- * horse care and coaches, and carries "List your business" instead of the
- * coaches section's "List your profile".
+ * One navigation on every public page: Horse care, Coaches, About. It used to
+ * be two, a parent nav on the home page and horse care and a coaches nav on
+ * the coaches pages, so a rider on /coaches had no way across to a farrier
+ * and the bar changed shape as you moved between the two halves of the site.
+ * Each menu now opens with a search of its whole section, which is what
+ * "Find a coach" used to be.
+ *
+ * The call to action is the same words everywhere; only where it goes
+ * depends on the section, because a coach arriving from Kim's link should
+ * land on the coaches sign-up rather than a page asking which kind of
+ * business they are.
  */
 const PARENT_ROUTES = ["/", "/about", "/list-your-business", "/signup", "/onboarding"];
 // Profiles hold every profession, so they wear the parent nav whoever's they are.
 const PARENT_PREFIXES = ["/profile/"];
+const COACHES_PREFIXES = ["/coaches", "/for-coaches", "/join/coaches"];
 
 /**
  * What the header needs from the CMS, read by the root layout (a server
@@ -243,21 +216,33 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
     else delete document.documentElement.dataset.door;
   }, [pathDoor, pathname]);
 
-  const firstName = auth.name?.split(" ")[0] ?? null;
-  const accountHref = auth.role === "provider" ? "/dashboard" : "/account";
   const isSearch = variant === "ink";
-  // Dashboard mode (canvas: Dashboards): "Your dashboard" tagline, a
-  // "View public profile" pill and the coach's avatar + first name instead
-  // of the public nav.
+  // Dashboard mode (canvas: Dashboards): "Your dashboard" tagline and a
+  // "View public profile" pill instead of the public nav.
   const isDashboard = pathname.startsWith("/dashboard");
-  // Rider account (canvas: Dashboards 1c/1d): desktop keeps the public nav
-  // + avatar and drops "Log out" (the page has Sign out); phones show
-  // "Find a coach" + the avatar instead of the burger.
-  const isAccount = pathname.startsWith("/account");
-  // The front door wears the parent brand's nav; every coaches-section
-  // route keeps NAV.
-  const parentNav = isParentRoute(pathname);
-  const profileHref = auth.coachSlug ? profilePath(auth.coachSlug) : "/dashboard/profile";
+  const inHorseCare = isHorseCarePath(pathname) || pathname === "/for-professionals";
+  const inCoaches = !inHorseCare && (COACHES_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`)) || isSearch);
+  const listHref = isParentRoute(pathname) ? "/list-your-business" : "/join/coaches";
+  // What a professional pays for, one slot in the bar that follows the
+  // section: a coach sees the coaching plans, anyone in horse care sees
+  // theirs, and the front door offers the page that asks which you are.
+  const pitch = inCoaches
+    ? { href: "/for-coaches", label: "For coaches" }
+    : inHorseCare
+      ? { href: "/for-professionals", label: "For professionals" }
+      : { href: "/list-your-business", label: "For professionals" };
+  const profileHref = auth.coachSlug ? profilePath(auth.coachSlug) : null;
+  const account = auth.loggedIn ? (
+    <AccountMenu
+      name={auth.name}
+      email={auth.email}
+      isProvider={auth.role === "provider"}
+      isAdmin={auth.isAdmin}
+      profileHref={profileHref}
+    />
+  ) : null;
+
+  const phoneLink = "block py-3.5 text-[16px] font-semibold text-ink";
 
   return (
     <header
@@ -298,123 +283,73 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
         )}
 
         {isDashboard ? (
-          <div className="flex items-center gap-2.5 md:gap-[22px]">
-            {auth.isAdmin && (
-              <Link href="/admin" className="site-header__link hidden text-[15px] font-medium md:inline">
-                Admin
+          <div className="flex items-center gap-3 md:gap-5">
+            {profileHref && (
+              <Link href={profileHref} className="site-header__outline whitespace-nowrap rounded-[var(--radius-pill)] px-3 py-[7px] text-[13px] font-medium md:px-4 md:py-2 md:text-[15px]">
+                <span className="md:hidden">View profile</span>
+                <span className="hidden md:inline">View public profile</span>
               </Link>
             )}
-            <Link href={profileHref} className="site-header__outline whitespace-nowrap rounded-[var(--radius-pill)] px-3 py-[7px] text-[13px] font-medium md:px-4 md:py-2 md:text-[15px]">
-              <span className="md:hidden">View profile</span>
-              <span className="hidden md:inline">View public profile</span>
-            </Link>
-            <Link href="/dashboard" className="site-header__link flex items-center gap-2.5 text-[15px] font-medium" aria-label={firstName ?? "Dashboard"}>
-              <Avatar name={auth.name} src={auth.avatarUrl} />
-              <span className="hidden md:inline">{firstName}</span>
-            </Link>
+            {account}
           </div>
-        ) : null}
+        ) : (
+          <>
+            {/* Desktop nav, from 1024px: with the "For …" link the bar needs
+                about 900px beside the wordmark, so tablets get the burger.
+                On /search the summary pill needs the room too, so the bar
+                waits for 1280px there and About and the pitch link go. */}
+            <nav className={`hidden items-center gap-7 whitespace-nowrap text-[15px] font-medium ${isSearch ? "xl:flex" : "lg:flex"}`} aria-label="Primary">
+              <div className="flex items-center gap-7">
+                <NavDropdown label="Horse care" href="/horse-care" items={HORSE_CARE_MENU} current={inHorseCare} />
+                <NavDropdown label="Coaches" href="/coaches" items={COACHES_MENU} current={inCoaches} />
+                {!isSearch && (
+                  <>
+                    <Link href="/about" className="site-header__link" aria-current={pathname === "/about" ? "page" : undefined}>
+                      About
+                    </Link>
+                    <Link href={pitch.href} className="site-header__link" aria-current={pathname === pitch.href ? "page" : undefined}>
+                      {pitch.label}
+                    </Link>
+                  </>
+                )}
+              </div>
+              {account ?? (
+                <>
+                  <Link href="/login" className="site-header__link">
+                    Log in
+                  </Link>
+                  {!isSearch && (
+                    <Link
+                      href={listHref}
+                      className="site-header__outline rounded-[var(--radius-pill)] px-[18px] py-2.5 hover:bg-ink hover:text-ink-fg"
+                    >
+                      List your business
+                    </Link>
+                  )}
+                </>
+              )}
+            </nav>
 
-        {/* Desktop nav */}
-        <nav className={`hidden items-center gap-7 text-[15px] font-medium md:flex ${isDashboard ? "md:hidden" : ""}`} aria-label="Primary">
-          {parentNav && (
-            <>
-              <NavDropdown label="Horse care" href="/horse-care" items={HORSE_CARE_MENU} current={pathname.startsWith("/horse-care")} />
-              <NavDropdown label="Coaches" href="/coaches" items={COACHES_MENU} />
-              <Link href="/about" className="site-header__link" aria-current={pathname === "/about" ? "page" : undefined}>
-                About
-              </Link>
-            </>
-          )}
-          {!parentNav &&
-            !isSearch &&
-            NAV.map((l) => {
-              const current = pathname === l.href || (l.match ? pathname.startsWith(l.match) : false);
-              return (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className="site-header__link"
-                  aria-current={current ? "page" : undefined}
-                >
-                  {l.label}
-                </Link>
-              );
-            })}
-          {isSearch && (
-            <Link href="/for-coaches" className="site-header__link">
-              For coaches
-            </Link>
-          )}
-          {auth.loggedIn ? (
-            <>
-              {auth.isAdmin && (
-                <Link href="/admin" className="site-header__link" aria-current={pathname.startsWith("/admin") ? "page" : undefined}>
-                  Admin
+            {/* Phone and tablet: account (or "Log in") beside the round burger. */}
+            <div className={`flex items-center gap-3 ${isSearch ? "xl:hidden" : "lg:hidden"}`}>
+              {account ?? (
+                <Link href="/login" className="site-header__link text-[14px] font-medium" onClick={close}>
+                  Log in
                 </Link>
               )}
-              <Link href={accountHref} className="site-header__link flex items-center gap-2.5">
-                <Avatar name={auth.name} />
-                {firstName ?? (auth.role === "provider" ? "Dashboard" : "My account")}
-              </Link>
-              {!isAccount && (
-                <form action="/auth/sign-out" method="post">
-                  <button type="submit" className="site-header__link">
-                    Log out
-                  </button>
-                </form>
-              )}
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="site-header__link">
-                Log in
-              </Link>
-              {!isSearch && (
-                <Link
-                  href={parentNav ? "/list-your-business" : "/join/coaches"}
-                  className="site-header__outline rounded-[var(--radius-pill)] px-[18px] py-2.5 hover:bg-ink hover:text-ink-fg"
-                >
-                  {parentNav ? "List your business" : "List your profile"}
-                </Link>
-              )}
-            </>
-          )}
-        </nav>
-
-        {isAccount && (
-          <div className="flex items-center gap-3 md:hidden">
-            <Link href="/search" className="site-header__link text-[14px] font-medium" onClick={close}>
-              Find a coach
-            </Link>
-            <Link href="/account" aria-label={firstName ?? "My account"}>
-              <Avatar name={auth.name} />
-            </Link>
-          </div>
+              <button
+                type="button"
+                className="site-header__burger"
+                aria-label={open ? "Close menu" : "Open menu"}
+                aria-expanded={open}
+                onClick={() => setOpen((v) => !v)}
+              >
+                <span />
+                <span />
+              </button>
+            </div>
+          </>
         )}
-
-        {/* Phone: "Log in" + round burger */}
-        <div className={`${isDashboard || isAccount ? "hidden" : "flex"} items-center gap-3.5 md:hidden`}>
-          {auth.loggedIn ? (
-            <Link href={accountHref} aria-label={firstName ?? "My account"} onClick={close}>
-              <Avatar name={auth.name} />
-            </Link>
-          ) : (
-            <Link href="/login" className="site-header__link text-[14px] font-medium" onClick={close}>
-              Log in
-            </Link>
-          )}
-          <button
-            type="button"
-            className="site-header__burger"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span />
-            <span />
-          </button>
-        </div>
       </div>
 
       {/* /search on phones: the summary pill and the filter chips live in
@@ -432,97 +367,53 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
         </div>
       )}
 
-      {open && (
-        <nav className="site-header__menu md:hidden" aria-label="Primary">
+      {open && !isDashboard && (
+        <nav className={`site-header__menu ${isSearch ? "xl:hidden" : "lg:hidden"}`} aria-label="Primary">
           <ul className="flex flex-col">
-            {/* The parent nav's two menus become flat labelled sections here:
-                a nested dropdown inside an already-open panel is a worse way
-                to reach the same links on a phone. */}
-            {parentNav ? (
-              <>
-                {[
-                  { heading: "Horse care", items: HORSE_CARE_MENU },
-                  { heading: "Coaches", items: COACHES_MENU },
-                ].map((group) => (
-                  <li key={group.heading} className="border-b border-border py-3.5">
-                    <span className="block text-[12px] font-medium uppercase tracking-[0.18em] text-accent">
-                      {group.heading}
-                    </span>
-                    <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5">
-                      {group.items.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          onClick={close}
-                          className="font-display text-[20px] text-ink"
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
-                    </span>
-                  </li>
-                ))}
-                <li>
-                  <Link
-                    href="/about"
-                    onClick={close}
-                    className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
-                  >
-                    About
-                  </Link>
-                </li>
-              </>
-            ) : (
-              NAV.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    onClick={close}
-                    className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))
-            )}
-            {auth.loggedIn ? (
-              <>
-                {auth.isAdmin && (
-                  <li>
+            {/* The two menus become flat labelled sections here: a nested
+                dropdown inside an already-open panel is a worse way to reach
+                the same links on a phone. */}
+            {[
+              { heading: "Horse care", href: "/horse-care", items: HORSE_CARE_MENU },
+              { heading: "Coaches", href: "/coaches", items: COACHES_MENU },
+            ].map((group) => (
+              <li key={group.heading} className="border-b border-border py-3.5">
+                <Link href={group.href} onClick={close} className="block text-[12px] font-medium uppercase tracking-[0.18em] text-accent">
+                  {group.heading}
+                </Link>
+                {/* The first item is the section's own search (layout.tsx puts it there), so it gets a row to itself. */}
+                <span className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-2.5">
+                  {group.items.map((item, i) => (
                     <Link
-                      href="/admin"
+                      key={item.href}
+                      href={item.href}
                       onClick={close}
-                      className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
+                      className={`text-[16px] leading-snug text-ink ${i === 0 ? "col-span-2 font-semibold" : ""}`}
                     >
-                      Admin
+                      {item.label}
                     </Link>
-                  </li>
-                )}
-                <li>
-                  <Link
-                    href={accountHref}
-                    onClick={close}
-                    className="block border-b border-border py-3.5 font-display text-[24px] text-ink"
-                  >
-                    {auth.role === "provider" ? "Dashboard" : "My account"}
-                  </Link>
-                </li>
-                <li>
-                  <form action="/auth/sign-out" method="post">
-                    <button type="submit" className="block w-full py-3.5 text-left text-[15px] font-medium text-subtle">
-                      Log out
-                    </button>
-                  </form>
-                </li>
-              </>
-            ) : (
+                  ))}
+                </span>
+              </li>
+            ))}
+            <li>
+              <Link href="/about" onClick={close} className={phoneLink}>
+                About
+              </Link>
+            </li>
+            <li className="border-t border-border">
+              <Link href={pitch.href} onClick={close} className={phoneLink}>
+                {pitch.label}
+              </Link>
+            </li>
+            {!auth.loggedIn && (
               <li className="pt-4">
                 <Link
-                  href={parentNav ? "/list-your-business" : "/join/coaches"}
+                  href={listHref}
                   onClick={close}
                   className="block rounded-[var(--radius-soft)] bg-ink py-[15px] text-center text-[16px] font-semibold text-ink-fg"
                 >
-                  {parentNav ? "List your business" : "List your profile"}
+                  List your business
                 </Link>
               </li>
             )}

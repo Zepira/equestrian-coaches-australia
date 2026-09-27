@@ -31,7 +31,7 @@ export default async function AdminDisciplineEditPage({ params }: { params: Prom
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <Link href={`/admin/disciplines?p=${parent.slug}`} className="text-[13px] text-subtle hover:text-fg">← {parent.name}</Link>
-          <h2 className="mt-2 font-display text-[30px] leading-none text-ink">{discipline.name}</h2>
+          <h2 className="mt-2 admin-title">{discipline.name}</h2>
           <p className="mt-1.5 text-[13px] text-subtle">
             Live at{" "}
             <Link href={livePath} target="_blank" className="text-accent underline-offset-2 hover:underline">

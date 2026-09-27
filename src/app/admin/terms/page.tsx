@@ -67,7 +67,7 @@ export default async function AdminTermsPage({ searchParams }: { searchParams: P
       </nav>
       {(Object.keys(byKind) as TermRow["kind"][]).map((kind) => (
         <section key={kind}>
-          <h2 className="font-display text-[26px] leading-none text-ink">{KIND_LABELS[kind]}</h2>
+          <h2 className="admin-title">{KIND_LABELS[kind]}</h2>
           <div className="mt-3 flex flex-col gap-2">
             {byKind[kind].map((term) => (
               <div
@@ -143,7 +143,7 @@ export default async function AdminTermsPage({ searchParams }: { searchParams: P
       ))}
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">Add a term</h2>
+        <h2 className="admin-title">Add a term</h2>
         <form action={createTerm} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium text-fg">Name</span>

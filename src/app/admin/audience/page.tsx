@@ -53,7 +53,7 @@ export default async function AdminAudiencePage({ searchParams }: { searchParams
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Audience</h2>
+        <h2 className="admin-title">Subscribers</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           Everyone we hold an email address for, and what each has agreed to. Consent is only ever added to, never edited, so the record shows what was agreed, when, where and in what words.
         </p>
@@ -78,7 +78,7 @@ export default async function AdminAudiencePage({ searchParams }: { searchParams
       </div>
 
       <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-launch>
-        <h3 className="font-display text-[20px] leading-none text-ink">The launch email</h3>
+        <h3 className="admin-section">The launch email</h3>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           {granted("waitlist")} {granted("waitlist") === 1 ? "person has" : "people have"} asked to hear when the site opens; {launchSent ?? 0} {launchSent === 1 ? "has" : "have"} been sent it. Each address gets it once, so pressing again only reaches people who asked since. The words are under Emails.
         </p>
@@ -96,7 +96,7 @@ export default async function AdminAudiencePage({ searchParams }: { searchParams
         {contact && (
           <div className="mt-4 flex flex-col gap-4 rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-contact>
             <div>
-              <div className="font-display text-[22px] leading-none text-ink">{contact.email}</div>
+              <div className="admin-section">{contact.email}</div>
               <p className="mt-1.5 text-[13px] text-subtle">
                 {profile ? `${profile.role === "provider" ? "Professional" : "Rider"} account${profile.name ? `, ${profile.name}` : ""}` : "No account"} · on the list since {when(contact.created_at)}
               </p>
@@ -108,7 +108,7 @@ export default async function AdminAudiencePage({ searchParams }: { searchParams
               </p>
             )}
             <div>
-              <h3 className="text-[15px] font-semibold text-fg">Consent record</h3>
+              <h3 className="admin-label">Consent record</h3>
               {(history ?? []).length === 0 ? (
                 <p className="mt-1 text-[13px] text-subtle">Nothing agreed to yet.</p>
               ) : (
@@ -156,7 +156,7 @@ export default async function AdminAudiencePage({ searchParams }: { searchParams
       </section>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[22px] leading-none text-ink">The words beside each box</h2>
+        <h2 className="admin-section">The words beside each box</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           What people agree to. Changing the words makes a new version; everyone who agreed before keeps the version they saw.
         </p>

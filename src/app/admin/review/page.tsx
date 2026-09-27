@@ -60,7 +60,7 @@ export default async function ReviewPage({ searchParams }: { searchParams: Promi
   return (
     <div className="flex flex-col gap-10">
       <section>
-        <h2 className="font-display text-[26px] leading-none text-ink">Waiting for a look</h2>
+        <h2 className="admin-title">Waiting for a look</h2>
         <p className="mt-1 text-sm text-muted">
           Oldest first. {reviewOn ? "Review is on." : "Review is off in Settings, so new profiles publish themselves and this list stays empty."}
         </p>
@@ -73,7 +73,7 @@ export default async function ReviewPage({ searchParams }: { searchParams: Promi
             {((waiting ?? []) as unknown as Row[]).map((r) => (
               <li key={r.id} className="rounded-[14px] border border-border bg-surface p-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <span className="font-display text-[22px] leading-none text-ink">{r.name}</span>
+                  <span className="admin-section">{r.name}</span>
                   <span className="text-xs text-muted">Sent {when(r.submitted_at)}</span>
                 </div>
                 <p className="mt-1 text-sm text-muted">
@@ -108,7 +108,7 @@ export default async function ReviewPage({ searchParams }: { searchParams: Promi
       </section>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">Waiting on them</h2>
+        <h2 className="admin-title">Waiting on them</h2>
         {(asked ?? []).length === 0 ? (
           <p className="mt-2 text-sm text-muted">Nobody.</p>
         ) : (
@@ -123,7 +123,7 @@ export default async function ReviewPage({ searchParams }: { searchParams: Promi
       </section>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">Recent changes to live profiles</h2>
+        <h2 className="admin-title">Recent changes to live profiles</h2>
         <p className="mt-1 text-sm text-muted">Names and photos, last 30 days. These went live without a review.</p>
         {(changes ?? []).length === 0 ? (
           <p className="mt-2 text-sm text-muted">None.</p>

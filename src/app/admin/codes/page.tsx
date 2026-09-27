@@ -35,7 +35,7 @@ export default async function AdminCodesPage({ searchParams }: { searchParams: P
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Codes and referrals</h2>
+        <h2 className="admin-title">Discount codes and referrals</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           Partner codes (Pony Club members get three months of Spotlight, say) and colleague referrals. {isStripeConfigured ? "Codes are made in Stripe too, and Stripe applies them at checkout." : "Payments are in test mode, so codes are kept here and made in Stripe once it's connected."}
         </p>
@@ -45,7 +45,7 @@ export default async function AdminCodesPage({ searchParams }: { searchParams: P
       {saved && <p role="status" className="rounded-[12px] bg-accent-soft px-3 py-2 text-[14px] text-fg">Saved.</p>}
 
       <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5">
-        <h3 className="font-display text-[20px] leading-none text-ink">Make a code</h3>
+        <h3 className="admin-section">Make a code</h3>
         <form action={createPromo} className="mt-3 grid gap-3 @[560px]/admin:grid-cols-2">
           <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Code</span><input name="code" required placeholder="PONYCLUB" className={`${input} uppercase`} /></label>
           <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Who it&rsquo;s for</span><input name="description" required placeholder="Pony Club members, three months of Spotlight" className={input} /></label>
@@ -59,7 +59,7 @@ export default async function AdminCodesPage({ searchParams }: { searchParams: P
       </section>
 
       <section>
-        <h3 className="font-display text-[20px] leading-none text-ink">Codes</h3>
+        <h3 className="admin-section">Codes</h3>
         <ul className="mt-3 flex flex-col gap-2 text-[14px]" data-codes>
           {(codes ?? []).map((c) => (
             <li key={c.id} className={`flex flex-col gap-1 rounded-[12px] border border-border bg-surface px-3 py-2.5 @[560px]/admin:flex-row @[560px]/admin:items-center ${c.active ? "" : "opacity-55"}`} data-code={c.code}>
@@ -84,7 +84,7 @@ export default async function AdminCodesPage({ searchParams }: { searchParams: P
       </section>
 
       <section className="border-t border-border pt-6">
-        <h3 className="font-display text-[20px] leading-none text-ink">Referrals</h3>
+        <h3 className="admin-section">Referrals</h3>
         <p className="mt-1.5 max-w-[66ch] text-[13px] text-subtle">
           Every professional has a code on their Promote tab. A colleague who joins with it gets their first month free (the Stripe coupon below); when they first pay, the referrer gets free months as credit, up to the yearly limit.
         </p>

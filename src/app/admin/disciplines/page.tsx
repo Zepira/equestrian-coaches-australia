@@ -55,7 +55,7 @@ export default async function AdminDisciplinesPage({ searchParams }: { searchPar
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h2 className="font-display text-[26px] leading-none text-ink">Specialities and disciplines</h2>
+        <h2 className="admin-title">Specialities and disciplines</h2>
         <nav aria-label="Profession" className="flex flex-wrap gap-1.5">
           {professions.map((x) => (
             <Link
@@ -76,7 +76,7 @@ export default async function AdminDisciplinesPage({ searchParams }: { searchPar
 
       {isCoaching && (
         <section className="rounded-[16px] border border-border bg-shade p-4" data-featured>
-          <h3 className="font-display text-[20px] leading-none text-ink">Featured</h3>
+          <h3 className="admin-section">Featured</h3>
           <p className="mt-1.5 text-[13px] text-subtle">In the Coaches menu and the home page chips, in this order. Star one below to add it.</p>
           {featured.length === 0 ? (
             <p className="mt-2 text-[14px] text-subtle">None picked, so the site uses its built-in list.</p>
@@ -105,7 +105,7 @@ export default async function AdminDisciplinesPage({ searchParams }: { searchPar
               <img src={img.src} alt="" className="h-14 w-14 shrink-0 rounded-t-[28px] rounded-b-[6px] object-cover" />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline gap-x-2.5">
-                  <span className="font-display text-[20px] leading-none text-ink">{d.name}</span>
+                  <span className="admin-section">{d.name}</span>
                   <span className="text-[12px] text-subtle">/{d.slug}</span>
                   {d.active === false && <span className="rounded-[var(--radius-pill)] bg-shade px-2 py-px text-[11px] font-medium uppercase tracking-[0.1em] text-subtle">Hidden</span>}
                 </div>
@@ -134,7 +134,7 @@ export default async function AdminDisciplinesPage({ searchParams }: { searchPar
       </ul>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[22px] leading-none text-ink">Add a {noun} to {profession.name.toLowerCase()}</h2>
+        <h2 className="admin-section">Add a {noun} to {profession.name.toLowerCase()}</h2>
         <p className="mt-1.5 text-[14px] text-muted">Starts as a name and an address; you land in its editor to add the rest. It shows on the site straight away, so add the blurb before you leave.</p>
         <form action={createDiscipline} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
           <input type="hidden" name="profession_id" value={profession.id} />

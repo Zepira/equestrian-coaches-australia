@@ -49,7 +49,7 @@ export default async function InvitesPage({ searchParams }: { searchParams: Prom
   return (
     <div className="flex flex-col gap-10">
       <section>
-        <h2 className="font-display text-[26px] leading-none text-ink">Invite someone</h2>
+        <h2 className="admin-title">Invite someone</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
           You get a link to put in your own message. It opens the sign-up with their name, email and work filled in. Nothing goes public until they finish their profile and it passes review.
         </p>
@@ -110,7 +110,7 @@ export default async function InvitesPage({ searchParams }: { searchParams: Prom
       </section>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">Sent</h2>
+        <h2 className="admin-title">Sent</h2>
         {(invites ?? []).length === 0 ? (
           <p className="mt-2 text-sm text-muted">None yet.</p>
         ) : (

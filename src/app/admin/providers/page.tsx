@@ -72,7 +72,7 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Providers</h2>
+        <h2 className="admin-title">Professionals</h2>
         <p className="mt-1.5 text-[14px] text-muted">
           Everyone with a profile. Profiles waiting for a look are on the <Link href="/admin/review" className="text-accent underline-offset-2 hover:underline">Review</Link> tab.
         </p>
@@ -122,7 +122,7 @@ export default async function AdminProvidersPage({ searchParams }: { searchParam
             <li key={r.id} className="flex flex-col gap-2 rounded-[14px] border border-border bg-surface p-3 @[560px]/admin:flex-row @[560px]/admin:items-center" data-provider={r.slug}>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline gap-x-2">
-                  <span className="font-display text-[19px] leading-none text-ink">{r.name}</span>
+                  <span className="admin-section">{r.name}</span>
                   <span className="text-[13px] text-muted">{profs.map((t) => t.name).join(", ") || "No profession"}</span>
                   {r.suburb && <span className="text-[13px] text-subtle">· {r.suburb} {r.state}</span>}
                 </div>

@@ -51,7 +51,7 @@ export function ContentEditor({
         const def = b.def as Record<string, Json>;
         return (
           <fieldset key={b.key} className="flex flex-col gap-4 rounded-[16px] border border-border bg-surface p-4 @[460px]/editor:p-5" data-block={b.key}>
-            {blocks.length > 1 && <legend className="px-1 font-display text-[20px] text-ink">{b.name}</legend>}
+            {blocks.length > 1 && <legend className="px-1 admin-section">{b.name}</legend>}
             {Object.keys(def).map((field) => (
               <Field
                 key={field}

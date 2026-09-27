@@ -80,7 +80,7 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
   return (
     <div className="flex flex-col gap-6">
       <p className="text-[14px]"><Link href="/admin/sponsors" className="text-accent">← Sponsors</Link></p>
-      <h2 className="font-display text-[26px] leading-none text-ink">{sponsor.name}</h2>
+      <h2 className="admin-title">{sponsor.name}</h2>
       {sp.done && <p role="status" className="rounded-[12px] bg-accent-soft px-3 py-2 text-[14px] text-fg">{sp.done}</p>}
       {sp.error && <p role="alert" className="rounded-[12px] bg-danger/10 px-3 py-2 text-[14px] text-danger">{sp.error}</p>}
 
@@ -94,7 +94,7 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
 
       <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-report>
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h3 className="font-display text-[20px] leading-none text-ink">Report</h3>
+          <h3 className="admin-section">Report</h3>
           <form className="flex items-end gap-2" method="get">
             <input type="month" name="month" defaultValue={month} className={input} aria-label="Month" />
             <Button type="submit" variant="secondary">Show</Button>
@@ -135,7 +135,7 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
       ))}
 
       <section className="rounded-[16px] border border-dashed border-border p-4 @[560px]/admin:p-5">
-        <h3 className="font-display text-[20px] leading-none text-ink">Book a slot</h3>
+        <h3 className="admin-section">Book a slot</h3>
         <form action={createSlot.bind(null, id)} className="@container/editor mt-3 flex flex-col gap-3" data-new-slot>
           {slotForm(null)}
           <div><Button type="submit">Book it</Button></div>

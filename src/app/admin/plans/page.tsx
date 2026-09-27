@@ -65,7 +65,7 @@ export default async function AdminPlansPage({ searchParams }: { searchParams: P
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Plans and prices</h2>
+        <h2 className="admin-title">Plans and prices</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           One set of plans for every profession (a profession can rename a plan on its own tab). Each price shown on the site sits beside the Stripe price that charges it.{" "}
           {isStripeConfigured
@@ -136,7 +136,7 @@ export default async function AdminPlansPage({ searchParams }: { searchParams: P
       </form>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[22px] leading-none text-ink">What each plan includes</h2>
+        <h2 className="admin-section">What each plan includes</h2>
         <p className="mt-1 max-w-[62ch] text-[14px] text-muted">
           How many live events a plan can have at once (empty for no limit), whether it can add an intro video, whether it takes turns in the featured spots, and whether the dashboard compares them with others in their profession.
         </p>

@@ -54,7 +54,7 @@ export default async function AdminSettingsPage({
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <h2 className="font-display text-[26px] leading-none text-ink">Founding offer</h2>
+        <h2 className="admin-title">Founding offer</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
           Founding members give their card at sign-up and aren&apos;t charged until {countWord(months)} months after launch.
           {firstCharge
@@ -65,7 +65,7 @@ export default async function AdminSettingsPage({
 
         <div className="mt-5 flex flex-col gap-6">
           <div>
-            <h3 className="text-[15px] font-semibold text-fg">Launch date</h3>
+            <h3 className="admin-label">Launch date</h3>
             {launch ? (
               <p className="mt-1 text-sm text-muted">
                 <strong className="font-medium text-fg">{formatLongDate(launch)}</strong>. Locked: it can only be changed in the database.
@@ -90,7 +90,7 @@ export default async function AdminSettingsPage({
           </div>
 
           <div>
-            <h3 className="text-[15px] font-semibold text-fg">Free months after launch</h3>
+            <h3 className="admin-label">Free months after launch</h3>
             {notice("founding_free_months")}
             <form action={saveSetting} className="mt-2 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
               <input type="hidden" name="key" value="founding_free_months" />
@@ -103,7 +103,7 @@ export default async function AdminSettingsPage({
           </div>
 
           <div>
-            <h3 className="text-[15px] font-semibold text-fg">Last day to join as a founding member</h3>
+            <h3 className="admin-label">Last day to join as a founding member</h3>
             <p className="mt-1 text-sm text-muted">Leave empty to keep the offer open.</p>
             {notice("founding_join_by")}
             <form action={saveSetting} className="mt-2 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
@@ -119,7 +119,7 @@ export default async function AdminSettingsPage({
       </section>
 
       <section className="border-t border-border pt-6" data-abn>
-        <h2 className="font-display text-[26px] leading-none text-ink">ABN</h2>
+        <h2 className="admin-title">ABN</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
           Goes in the footer of every marketing email, as the law asks. Empty until the partnership is registered.
         </p>
@@ -135,7 +135,7 @@ export default async function AdminSettingsPage({
       </section>
 
       <section className="border-t border-border pt-6" data-legal>
-        <h2 className="font-display text-[26px] leading-none text-ink">Terms and privacy</h2>
+        <h2 className="admin-title">Terms and privacy</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
           The words are on the Pages tab. Until the solicitor has checked them, both pages say they&apos;re a draft and stay out of search results.
         </p>
@@ -154,7 +154,7 @@ export default async function AdminSettingsPage({
       </section>
 
       <section className="border-t border-border pt-6" data-samples>
-        <h2 className="font-display text-[26px] leading-none text-ink">Sample listings</h2>
+        <h2 className="admin-title">Sample listings</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
           Made-up coaches and professionals that fill the site before real people join. A profession stops showing them as soon as it has one real, live profile. Switch them off everywhere on launch day.
         </p>
@@ -173,13 +173,13 @@ export default async function AdminSettingsPage({
       </section>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">Review</h2>
+        <h2 className="admin-title">Review</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
           With review on, a finished profile waits in the review queue until one of you publishes it. With it off, it goes live straight away and you get an email saying who joined.
         </p>
         <div className="mt-5 flex flex-col gap-6">
           <div>
-            <h3 className="text-[15px] font-semibold text-fg">Review new profiles</h3>
+            <h3 className="admin-label">Review new profiles</h3>
             {notice("review_required")}
             <form action={saveSetting} className="mt-2 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
               <input type="hidden" name="key" value="review_required" />
@@ -194,7 +194,7 @@ export default async function AdminSettingsPage({
             </form>
           </div>
           <div>
-            <h3 className="text-[15px] font-semibold text-fg">Who gets the email</h3>
+            <h3 className="admin-label">Who gets the email</h3>
             <p className="mt-1 max-w-[62ch] text-sm text-muted">One or more addresses, separated by commas. Empty means nobody is told, so fill this in before launch.</p>
             {notice("review_alert_emails")}
             <form action={saveSetting} className="mt-2 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
@@ -210,7 +210,7 @@ export default async function AdminSettingsPage({
       </section>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">Place pages, featured spots and event reach</h2>
+        <h2 className="admin-title">Place pages, featured spots and event reach</h2>
         <p className="mt-1 max-w-[62ch] text-sm text-muted">
           Counted per profession, so ten coaches in Geelong don&apos;t switch on a Geelong farriers page.
         </p>
@@ -226,7 +226,7 @@ export default async function AdminSettingsPage({
             ] as const
           ).map(([key, title, help]) => (
             <div key={key}>
-              <h3 className="text-[15px] font-semibold text-fg">{title}</h3>
+              <h3 className="admin-label">{title}</h3>
               <p className="mt-1 max-w-[62ch] text-sm text-muted">{help}</p>
               {notice(key)}
               <form action={saveSetting} className="mt-2 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
@@ -248,7 +248,7 @@ export default async function AdminSettingsPage({
       </p>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">History</h2>
+        <h2 className="admin-title">History</h2>
         {history.length === 0 ? (
           <p className="mt-1 text-sm text-muted">No changes yet.</p>
         ) : (

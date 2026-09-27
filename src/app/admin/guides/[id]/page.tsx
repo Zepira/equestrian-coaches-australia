@@ -43,7 +43,7 @@ export default async function AdminGuidePage({ params, searchParams }: { params:
       <p className="text-[14px]"><Link href="/admin/guides" className="text-accent">← Guides</Link></p>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="font-display text-[26px] leading-none text-ink">{g.title}</h2>
+          <h2 className="admin-title">{g.title}</h2>
           <p className="mt-1.5 text-[14px] text-muted">
             {live ? <>Live at <Link href={`/guides/${g.slug}`} className="text-accent">/guides/{g.slug}</Link></> : <>Draft. <Link href={`/guides/${g.slug}?preview=1`} className="text-accent">Preview the page</Link></>}
           </p>

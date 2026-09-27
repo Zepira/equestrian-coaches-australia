@@ -31,7 +31,7 @@ export default async function AdminAliasesPage() {
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <h2 className="font-display text-[26px] leading-none text-ink">
+        <h2 className="admin-title">
           {aliases.length} alias{aliases.length === 1 ? "" : "es"}
         </h2>
         <p className="mt-1 text-sm text-muted">
@@ -68,7 +68,7 @@ export default async function AdminAliasesPage() {
       </section>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[26px] leading-none text-ink">Add an alias</h2>
+        <h2 className="admin-title">Add an alias</h2>
         <form action={addAlias} className="mt-3 flex flex-col gap-3 @[560px]/admin:flex-row @[560px]/admin:items-end">
           <label className="block flex-1">
             <span className="mb-1 block text-sm font-medium text-fg">Term</span>

@@ -30,7 +30,7 @@ function Stat({ n, label }: { n: number; label: string }) {
 function Table({ title, rows }: { title: string; rows: [string, number][] }) {
   return (
     <div>
-      <h3 className="text-[15px] font-semibold text-fg">{title}</h3>
+      <h3 className="admin-label">{title}</h3>
       {rows.length === 0 ? (
         <p className="mt-1 text-[14px] text-subtle">None yet.</p>
       ) : (
@@ -86,7 +86,7 @@ export default async function AdminWaitlistPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Waitlist</h2>
+        <h2 className="admin-title">Waitlist</h2>
         <p className="mt-2 text-[15px] leading-[1.5] text-muted">
           People who put their name down on the coming soon page.{" "}
           {SITE_LAUNCHED
@@ -108,7 +108,7 @@ export default async function AdminWaitlistPage() {
       </div>
 
       <div className="rounded-[14px] border border-border bg-surface p-4">
-        <h3 className="text-[15px] font-semibold text-fg">Download the list</h3>
+        <h3 className="admin-label">Download the list</h3>
         <p className="mt-1 text-[14px] leading-[1.5] text-muted">
           Email address, who they are, what they do and when they signed up. Anyone who has unsubscribed is left out, so the file is safe to
           mail as it stands.

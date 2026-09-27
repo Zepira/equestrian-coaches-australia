@@ -8,7 +8,7 @@ export default function AdminEmailsPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Emails</h2>
+        <h2 className="admin-title">Emails</h2>
         <p className="mt-1.5 text-[14px] text-muted">
           The words of every email the site sends. The alerts that go to the two of you (a profile to review, the weekly SEO digest) aren&rsquo;t here: only you read them.
         </p>
@@ -17,7 +17,7 @@ export default function AdminEmailsPage() {
         {EMAILS.map((e) => (
           <li key={e.key}>
             <Link href={`/admin/emails/${e.key.slice("email.".length)}`} className="flex flex-col rounded-[14px] border border-border bg-surface p-4 hover:border-accent">
-              <span className="font-display text-[20px] leading-none text-ink">{e.name}</span>
+              <span className="admin-section">{e.name}</span>
               <span className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-subtle">{e.class}</span>
               <span className="mt-1 text-[13px] text-subtle">
                 To {e.to.charAt(0).toLowerCase() + e.to.slice(1)}. {e.when}

@@ -80,14 +80,14 @@ export default async function AdminLinksPage({ searchParams }: { searchParams: P
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Links and sources</h2>
+        <h2 className="admin-title">Tracked links</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           One link per place you share the site: each Facebook group, each partner, each poster. It counts the clicks, remembers where people came from, and the report below shows who joined through it.
         </p>
       </div>
 
       <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5">
-        <h3 className="font-display text-[20px] leading-none text-ink">Make a link</h3>
+        <h3 className="admin-section">Make a link</h3>
         {error && <p role="alert" className="mt-3 text-[14px] text-danger">{error}</p>}
         {made && <p role="status" className="mt-3 text-[14px] text-success">Made: {absoluteUrl(`/go/${made}`)}</p>}
         <form action={createLink} className="mt-3 grid gap-3 @[560px]/admin:grid-cols-2">
@@ -122,7 +122,7 @@ export default async function AdminLinksPage({ searchParams }: { searchParams: P
       </section>
 
       <section>
-        <h3 className="font-display text-[20px] leading-none text-ink">Links</h3>
+        <h3 className="admin-section">Links</h3>
         <ul className="mt-3 flex flex-col gap-2 text-[14px]" data-links>
           {((links ?? []) as LinkRow[]).map((l) => {
             const c = clickTotal.get(l.id) ?? { all: 0, recent: 0 };
@@ -150,7 +150,7 @@ export default async function AdminLinksPage({ searchParams }: { searchParams: P
       </section>
 
       <section>
-        <h3 className="font-display text-[20px] leading-none text-ink">Where people came from</h3>
+        <h3 className="admin-section">Where people came from</h3>
         <p className="mt-1.5 text-[13px] text-subtle">
           By the first source we saw for them, and the month it happened. &ldquo;Direct&rdquo; is anyone who arrived without a tracked link. Paying counts professionals on a paid plan now.
         </p>

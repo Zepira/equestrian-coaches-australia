@@ -34,7 +34,7 @@ export default async function AdminProfessionEdit({ params }: { params: Promise<
     <div className="flex flex-col gap-8">
       <div>
         <Link href="/admin/professions" className="text-[13px] text-subtle hover:text-fg">← All professions</Link>
-        <h2 className="mt-2 font-display text-[30px] leading-none text-ink">{row.name}</h2>
+        <h2 className="mt-2 admin-title">{row.name}</h2>
         <p className="mt-1.5 text-[13px] text-subtle">
           {live ? (
             <Link href={sectionPath(row.slug)} target="_blank" className="text-accent underline-offset-2 hover:underline">{sectionPath(row.slug)}</Link>

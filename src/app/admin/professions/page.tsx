@@ -33,7 +33,7 @@ export default async function AdminProfessionsPage({ searchParams }: { searchPar
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Professions</h2>
+        <h2 className="admin-title">Professions</h2>
         <p className="mt-1.5 text-[14px] text-muted">
           In menu order. A draft is seen only here; taking sign-ups lets people join through its pitch page while the section stays hidden; live puts it everywhere.
         </p>
@@ -46,7 +46,7 @@ export default async function AdminProfessionsPage({ searchParams }: { searchPar
               {d && hasGlyph(d.glyph_key) && <ProfessionGlyph slug={d.glyph_key} size={26} className="shrink-0 text-accent" />}
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline gap-x-2.5">
-                  <span className="font-display text-[20px] leading-none text-ink">{p.name}</span>
+                  <span className="admin-section">{p.name}</span>
                   <span className="text-[12px] text-subtle">/{p.slug}</span>
                 </div>
                 <div className="mt-1 text-[12px] text-subtle">
@@ -71,7 +71,7 @@ export default async function AdminProfessionsPage({ searchParams }: { searchPar
       </ol>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[22px] leading-none text-ink">Add a profession</h2>
+        <h2 className="admin-section">Add a profession</h2>
         <p className="mt-1.5 text-[14px] text-muted">It starts as a draft. You land in its editor to fill in the rest before setting it live.</p>
         {error && <p role="alert" className="mt-3 text-[14px] text-danger">{error}</p>}
         <form action={createProfession} className="mt-3 grid gap-3 @[560px]/admin:grid-cols-[1fr_1fr_auto_auto] @[560px]/admin:items-end">

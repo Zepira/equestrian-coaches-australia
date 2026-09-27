@@ -1,4 +1,5 @@
 import { AdminNav } from "./admin-nav";
+import { AdminEyebrow } from "./admin-eyebrow";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
@@ -32,12 +33,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // this check are what actually stop someone hitting the page directly.
   const { data: isAdmin } = await supabase.rpc("is_admin");
   if (!isAdmin) redirect("/");
-  const { count: waiting } = await supabase.from("providers").select("id", { count: "exact", head: true }).eq("status", "in_review");
+  const [{ count: waiting }, { count: reviewsWaiting }] = await Promise.all([
+    supabase.from("providers").select("id", { count: "exact", head: true }).eq("status", "in_review"),
+    supabase.from("reviews").select("id", { count: "exact", head: true }).eq("status", "pending"),
+  ]);
 
   return (
     <div className="mx-auto max-w-[1360px] px-4 py-6 min-[640px]:px-6 min-[900px]:grid min-[900px]:grid-cols-[224px_minmax(0,1fr)] min-[900px]:items-start min-[900px]:gap-10 min-[900px]:px-8 min-[900px]:py-9 min-[1200px]:gap-14">
-      <AdminNav waiting={waiting ?? 0} />
-      <div className="@container/admin min-w-0 pt-6 min-[900px]:pt-0">{children}</div>
+      <AdminNav waiting={waiting ?? 0} reviewsWaiting={reviewsWaiting ?? 0} />
+      <div data-admin className="@container/admin min-w-0 pt-6 min-[900px]:pt-0">
+        <AdminEyebrow />
+        {children}
+      </div>
     </div>
   );
 }

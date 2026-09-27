@@ -58,7 +58,7 @@ export function DisciplineForm({ discipline }: { discipline: DisciplineContent }
         </section>
 
         <section className="flex flex-col gap-4 border-t border-border pt-6">
-          <h3 className="font-display text-[22px] leading-none text-ink">Photo</h3>
+          <h3 className="admin-section">Photo</h3>
           <div className="grid gap-4 @[460px]/editor:grid-cols-2">
             <label className="block">
               <span className={labelCls}>Alt text</span>
@@ -74,7 +74,7 @@ export function DisciplineForm({ discipline }: { discipline: DisciplineContent }
         </section>
 
         <section className="flex flex-col gap-4 border-t border-border pt-6">
-          <h3 className="font-display text-[22px] leading-none text-ink">Search engines</h3>
+          <h3 className="admin-section">Search engines</h3>
           <label className="block">
             <span className={labelCls}>
               Page title <Counter value={(seoTitle || seo.title).length} max={SEO_TITLE_MAX} />

@@ -54,7 +54,7 @@ const CHECK_KEYS: { key: string; what: string }[] = [
 function Section({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
   return (
     <fieldset className="flex flex-col gap-4 rounded-[16px] border border-border bg-surface p-4 @[460px]/editor:p-5">
-      <legend className="px-1 font-display text-[20px] text-ink">{title}</legend>
+      <legend className="px-1 admin-section">{title}</legend>
       {note && <p className="-mt-2 text-[13px] text-subtle">{note}</p>}
       {children}
     </fieldset>

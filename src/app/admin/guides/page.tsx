@@ -18,7 +18,7 @@ export default async function AdminGuidesPage({ searchParams }: { searchParams: 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Guides</h2>
+        <h2 className="admin-title">Guides</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           Articles for riders and horse owners at /guides, ideally written with a listed professional. Each one lists professionals near its place and can offer a file by email.
         </p>

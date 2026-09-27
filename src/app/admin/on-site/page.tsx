@@ -43,19 +43,19 @@ export default async function AdminOnSitePage({ searchParams }: { searchParams: 
   return (
     <div className="flex flex-col gap-10">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">On the site</h2>
+        <h2 className="admin-title">Banners and pop-ups</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">Quiet ways to ask visitors to stay in touch. Everything here is off or empty until you fill it in.</p>
       </div>
       {error && <p role="alert" className="rounded-[12px] bg-danger/10 px-3 py-2 text-[14px] text-danger">{error}</p>}
 
       <section data-announcement-editor>
-        <h3 className="font-display text-[22px] leading-none text-ink">Announcement bar</h3>
+        <h3 className="admin-section">Announcement bar</h3>
         <p className="mt-1.5 mb-3 text-[13px] text-subtle">One line along the bottom of every page, between its dates. A visitor who closes it doesn&rsquo;t see it again. A deadline goes here with its real date, never a countdown.</p>
         <ContentEditor blocks={[block("site.announcement", "Announcement bar")]} hints={FIELD_HINTS} action={savePage.bind(null, "announcement")} />
       </section>
 
       <section data-slide-in-editor>
-        <h3 className="font-display text-[22px] leading-none text-ink">Slide-in</h3>
+        <h3 className="admin-section">Slide-in</h3>
         <p className="mt-1.5 mb-3 text-[13px] text-subtle">
           Offers alerts to visitors who aren&rsquo;t signed in or already subscribed, after a delay, never on a profile or private page, at most once every few days.
         </p>
@@ -93,7 +93,7 @@ export default async function AdminOnSitePage({ searchParams }: { searchParams: 
       </section>
 
       <section id="landing" className="scroll-mt-24">
-        <h3 className="font-display text-[22px] leading-none text-ink">Landing pages</h3>
+        <h3 className="admin-section">Landing pages</h3>
         <p className="mt-1.5 text-[13px] text-subtle">A page for one partner or event at /p/…, kept out of search results. Give it a tracked link on Links and sources.</p>
         <ul className="mt-3 flex flex-col gap-2 text-[14px]">
           {((landings ?? []) as Landing[]).map((l) => (
@@ -122,7 +122,7 @@ export default async function AdminOnSitePage({ searchParams }: { searchParams: 
           <form action={saveLanding.bind(null, editing.id)} className="mt-5 flex flex-col gap-3 rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-landing-editor>
             {saved && <p role="status" className="text-[14px] text-success">Saved.</p>}
             <div className="flex items-baseline justify-between gap-2">
-              <h4 className="font-display text-[20px] leading-none text-ink">/p/{editing.slug}</h4>
+              <h4 className="admin-section">/p/{editing.slug}</h4>
             </div>
             <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Name (for you)</span><input name="name" defaultValue={editing.name} className={input} /></label>
             <label className="block"><span className="mb-1 block text-[14px] font-medium text-fg">Small line above the headline</span><input name="eyebrow" defaultValue={editing.eyebrow} className={input} /></label>

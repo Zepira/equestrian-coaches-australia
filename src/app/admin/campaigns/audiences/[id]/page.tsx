@@ -42,7 +42,7 @@ export default async function AudiencePage({ params, searchParams }: { params: P
   return (
     <div className="flex max-w-[760px] flex-col gap-6">
       <p className="text-[14px]"><Link href="/admin/campaigns" className="text-accent">← Campaigns</Link></p>
-      <h2 className="font-display text-[26px] leading-none text-ink">{a.name}</h2>
+      <h2 className="admin-title">{a.name}</h2>
       {sp.done && <p role="status" className="rounded-[12px] bg-accent-soft px-3 py-2 text-[14px] text-fg">{sp.done}</p>}
       {(sp.error || placeError) && <p role="alert" className="rounded-[12px] bg-danger/10 px-3 py-2 text-[14px] text-danger">{sp.error || placeError}</p>}
       <div className="rounded-[14px] bg-shade p-4" data-audience-count>

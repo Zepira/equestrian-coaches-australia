@@ -40,7 +40,7 @@ export default async function AdminAreasPage({ searchParams }: { searchParams: P
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Areas</h2>
+        <h2 className="admin-title">Places</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           A short intro, written by hand, at the top of a profession&rsquo;s page for a place: the grounds, clubs and what riders there look for. About 150 words. Leave a page without one rather than write something generic.
         </p>
@@ -49,7 +49,7 @@ export default async function AdminAreasPage({ searchParams }: { searchParams: P
       {picked && profession ? (
         <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-area-editor>
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h3 className="font-display text-[22px] leading-none text-ink">
+            <h3 className="admin-section">
               {profession.name} in {picked.name}, {picked.state}
             </h3>
             <Link href={areaPagePath({ professionSlug: profession.slug, areaSlug: picked.slug })} target="_blank" className="text-[13px] text-accent underline-offset-2 hover:underline">
@@ -77,7 +77,7 @@ export default async function AdminAreasPage({ searchParams }: { searchParams: P
 
       <div className="grid gap-6 @[560px]/admin:grid-cols-2">
         <section>
-          <h3 className="text-[15px] font-semibold text-fg">Area pages on the site now</h3>
+          <h3 className="admin-label">Area pages on the site now</h3>
           {(eligible ?? []).length === 0 ? (
             <p className="mt-1 text-[14px] text-subtle">None yet: a place gets its page once enough people in one profession are there.</p>
           ) : (
@@ -96,7 +96,7 @@ export default async function AdminAreasPage({ searchParams }: { searchParams: P
           )}
         </section>
         <section>
-          <h3 className="text-[15px] font-semibold text-fg">Find a place</h3>
+          <h3 className="admin-label">Find a place</h3>
           <form className="mt-2 flex gap-2" role="search">
             <input name="q" defaultValue={q} placeholder="Bendigo" aria-label="Place name" className="w-full rounded-[10px] border border-border bg-surface px-3 py-2 text-fg" />
             {p && <input type="hidden" name="p" value={p} />}
@@ -109,7 +109,7 @@ export default async function AdminAreasPage({ searchParams }: { searchParams: P
               </li>
             ))}
           </ul>
-          <h3 className="mt-6 text-[15px] font-semibold text-fg">Written so far</h3>
+          <h3 className="mt-6 admin-label">Written so far</h3>
           {(intros ?? []).length === 0 ? (
             <p className="mt-1 text-[14px] text-subtle">None yet.</p>
           ) : (

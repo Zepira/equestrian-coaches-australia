@@ -95,7 +95,7 @@ export default async function AdminReviewsPage({ searchParams }: { searchParams:
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Reviews</h2>
+        <h2 className="admin-title">Reviews</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           Every genuine review goes up, bad ones too. One comes down only for a reason in the{" "}
           <Link href="/review-policy" className="text-accent">review policy</Link>, and every decision is logged. Paying for a plan changes nothing here.
@@ -107,7 +107,7 @@ export default async function AdminReviewsPage({ searchParams }: { searchParams:
       {saved && <p role="status" className="rounded-[12px] bg-accent-soft px-3 py-2 text-[14px] text-fg">Saved.</p>}
 
       <section>
-        <h3 className="font-display text-[20px] leading-none text-ink">Waiting ({(waiting ?? []).length})</h3>
+        <h3 className="admin-section">Waiting ({(waiting ?? []).length})</h3>
         <ul className="mt-3 flex flex-col gap-2.5" data-waiting>
           {((waiting ?? []) as unknown as Row[]).map((r) =>
             reviewCard(
@@ -125,7 +125,7 @@ export default async function AdminReviewsPage({ searchParams }: { searchParams:
       </section>
 
       <section>
-        <h3 className="font-display text-[20px] leading-none text-ink">Reports ({(reports ?? []).length})</h3>
+        <h3 className="admin-section">Reports ({(reports ?? []).length})</h3>
         <ul className="mt-3 flex flex-col gap-2.5" data-reports>
           {(reports ?? []).map((rep) => {
             const r = byId.get(rep.review_id as string);
@@ -152,7 +152,7 @@ export default async function AdminReviewsPage({ searchParams }: { searchParams:
       </section>
 
       <section>
-        <h3 className="font-display text-[20px] leading-none text-ink">Published, latest 30</h3>
+        <h3 className="admin-section">Published, latest 30</h3>
         <ul className="mt-3 flex flex-col gap-2.5" data-published>
           {((recent ?? []) as unknown as Row[]).map((r) => reviewCard(r, removeForm(r.id)))}
           {(recent ?? []).length === 0 && <li className="text-[14px] text-subtle">None yet.</li>}
@@ -161,7 +161,7 @@ export default async function AdminReviewsPage({ searchParams }: { searchParams:
 
       {(removed ?? []).length > 0 && (
         <section>
-          <h3 className="font-display text-[20px] leading-none text-ink">Taken down</h3>
+          <h3 className="admin-section">Taken down</h3>
           <ul className="mt-3 flex flex-col gap-2.5" data-removed>
             {((removed ?? []) as unknown as Row[]).map((r) =>
               reviewCard(
@@ -176,7 +176,7 @@ export default async function AdminReviewsPage({ searchParams }: { searchParams:
       )}
 
       <section className="border-t border-border pt-6">
-        <h3 className="font-display text-[20px] leading-none text-ink">How it runs</h3>
+        <h3 className="admin-section">How it runs</h3>
         <div className="mt-3 flex flex-wrap gap-4">
           <form action={saveSetting} className="flex items-end gap-2">
             <input type="hidden" name="key" value="reviews_hold_all" />
@@ -203,7 +203,7 @@ export default async function AdminReviewsPage({ searchParams }: { searchParams:
       </section>
 
       <section className="border-t border-border pt-6">
-        <h3 className="font-display text-[20px] leading-none text-ink">Decisions</h3>
+        <h3 className="admin-section">Decisions</h3>
         <ul className="mt-3 text-[13.5px]" data-review-log>
           {(log ?? []).map((l, i) => {
             const x = l as unknown as { reviews: { author_name: string; providers: { name: string } | null } | null };

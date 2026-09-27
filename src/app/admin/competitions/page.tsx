@@ -20,7 +20,7 @@ export default async function AdminCompetitionsPage({ searchParams }: { searchPa
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Competitions</h2>
+        <h2 className="admin-title">Competitions</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           Free to enter, judged on skill against criteria you publish, which needs no permit anywhere. A random draw is allowed only up to $3,000 in prizes, the lowest permit threshold in Australia. The full terms are written from the fields and shown on the page.
         </p>

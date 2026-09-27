@@ -81,7 +81,7 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
   await hcPanel.waitFor({ state: "visible", timeout: 3000 });
   const hcLinks = await hcPanel.locator("a").allTextContents();
   ok("horse care opens with 9 links", hcLinks.length === 9, hcLinks.join(", "));
-  ok("horse care includes Farriers + All horse care", hcLinks.includes("Farriers") && hcLinks.includes("All horse care"));
+  ok("horse care opens with its search, then Farriers", hcLinks[0] === "Search all horse care" && hcLinks.includes("Farriers"));
   ok("aria-expanded true when open", (await hc.getAttribute("aria-expanded")) === "true");
 
   // panel must be readable, not transparent over the hero photo
@@ -95,8 +95,8 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
   const panels = await header.locator(".site-header__subbar").count();
   const coLinks = await header.locator(".site-header__subbar a").allTextContents();
   ok("only one panel open at a time", panels === 1, `panels=${panels}`);
-  ok("coaches opens with 9 links", coLinks.length === 9, coLinks.join(", "));
-  ok("coaches lists disciplines + All disciplines", coLinks.includes("Dressage") && coLinks.includes("All disciplines"));
+  ok("coaches opens with 10 links", coLinks.length === 10, coLinks.join(", "));
+  ok("coaches opens with its search, then disciplines + All disciplines", coLinks[0] === "Search all coaches" && coLinks.includes("Dressage") && coLinks.includes("All disciplines"));
 
   // Escape closes and returns focus to the button
   await page.keyboard.press("Escape");
@@ -117,16 +117,18 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
   await page.waitForTimeout(120);
   await page.keyboard.press("Tab");
   const focusedHref = await page.evaluate(() => document.activeElement?.getAttribute("href"));
-  ok("Tab from button reaches first menu link", focusedHref === "/coaches/dressage", String(focusedHref));
+  ok("Tab from button reaches first menu link", focusedHref === "/search", String(focusedHref));
 
-  // a link actually navigates
+  // a link actually navigates (Tab once more, past the search, to Dressage)
+  await page.keyboard.press("Tab");
   await page.keyboard.press("Enter");
   await page.waitForURL("**/coaches/dressage", { timeout: 5000 });
   ok("menu link navigates", page.url().endsWith("/coaches/dressage"));
 
-  // and the coaches section gets its own nav back
+  // the coaches section wears the same nav, so horse care is one click away
   const navText = await page.locator("header.site-header").innerText();
-  ok("coach route shows coach nav, not parent nav", navText.includes("For coaches") && !navText.includes("Horse care"), navText.replace(/\n/g, " | "));
+  ok("coach route keeps the same nav, Horse care included", navText.includes("Horse care") && navText.includes("Coaches") && navText.includes("About"), navText.replace(/\n/g, " | "));
+  ok("coach route marks Coaches as current", (await page.locator('header.site-header a[href="/coaches"][aria-current="page"]').count()) === 1);
 
   ok("no console errors (desktop)", errors.length === 0, errors.slice(0, 2).join(" / "));
   await page.close();
@@ -156,7 +158,7 @@ const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_C
   const text = await menu.innerText();
   ok("phone menu has both headings", /HORSE CARE/i.test(text) && /COACHES/i.test(text), text.replace(/\n/g, " | ").slice(0, 160));
   ok("phone menu has About", /About/.test(text));
-  ok("phone menu drops the coach CTA", !/List your profile/.test(text));
+  ok("phone menu has one CTA wording", /List your business/.test(text) && !/List your profile/.test(text));
   const links = await menu.locator("a").allTextContents();
   ok("phone menu exposes every menu link", links.length >= 19, `${links.length} links`);
 

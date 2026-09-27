@@ -139,13 +139,14 @@ export function NavDropdown({
           setOpen((v) => (hovering.current ? true : !v));
         }}
       >
-        <span
+        <svg
           aria-hidden
-          className="text-[10px] leading-none transition-transform duration-200"
+          viewBox="0 0 12 12"
+          className="size-2.5 transition-transform duration-200"
           style={{ transform: open ? "rotate(180deg)" : undefined }}
         >
-          ▼
-        </span>
+          <path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
 
       {open && (

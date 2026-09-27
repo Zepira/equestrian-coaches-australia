@@ -23,7 +23,7 @@ export default async function AdminPagesPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Pages</h2>
+        <h2 className="admin-title">Page text</h2>
         <p className="mt-1.5 text-[14px] text-muted">
           The words on each page. A save is live straight away. Profession pages (each door&rsquo;s sections, pitches and questions) are on the Professions tab, and discipline pages on Specialities.
         </p>
@@ -32,7 +32,7 @@ export default async function AdminPagesPage() {
         {PAGES.filter((p) => !p.onSite).map((p) => (
           <li key={p.slug}>
             <Link href={`/admin/pages/${p.slug}`} className="flex h-full flex-col rounded-[14px] border border-border bg-surface p-4 hover:border-accent">
-              <span className="font-display text-[20px] leading-none text-ink">{p.name}</span>
+              <span className="admin-section">{p.name}</span>
               <span className="mt-1.5 text-[13px] text-subtle">{p.href === "/search" ? "Every profile" : p.href}</span>
             </Link>
           </li>

@@ -30,7 +30,7 @@ export default async function AdminCampaignsPage({ searchParams }: { searchParam
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Campaigns</h2>
+        <h2 className="admin-title">One-off emails</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           One-off emails to a group: the spring clinic season, a profession opening near someone, news for professionals. Only people who agreed to that kind of email get it, and every one carries the unsubscribe link.
         </p>
@@ -39,7 +39,7 @@ export default async function AdminCampaignsPage({ searchParams }: { searchParam
       {error && <p role="alert" className="rounded-[12px] bg-danger/10 px-3 py-2 text-[14px] text-danger">{error}</p>}
 
       <section>
-        <h3 className="font-display text-[20px] leading-none text-ink">Campaigns</h3>
+        <h3 className="admin-section">Campaigns</h3>
         <form action={createCampaign} className="mt-3 flex max-w-[520px] gap-2">
           <input name="name" required placeholder="Spring clinics, Victoria" className={input} aria-label="Campaign name" />
           <Button type="submit">New campaign</Button>
@@ -59,7 +59,7 @@ export default async function AdminCampaignsPage({ searchParams }: { searchParam
       </section>
 
       <section className="border-t border-border pt-6">
-        <h3 className="font-display text-[20px] leading-none text-ink">Audiences</h3>
+        <h3 className="admin-section">Audiences</h3>
         <form action={createAudience} className="mt-3 flex max-w-[520px] gap-2">
           <input name="name" required placeholder="Riders near Bendigo" className={input} aria-label="Audience name" />
           <Button type="submit" variant="secondary">New audience</Button>

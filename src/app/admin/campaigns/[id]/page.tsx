@@ -51,7 +51,7 @@ export default async function CampaignPage({ params, searchParams }: { params: P
     <div className="flex flex-col gap-6">
       <p className="text-[14px]"><Link href="/admin/campaigns" className="text-accent">← Campaigns</Link></p>
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">{c.name}</h2>
+        <h2 className="admin-title">{c.name}</h2>
         <p className="mt-1.5 text-[14px] text-muted" data-campaign-status>
           {c.status === "draft" && "Draft."}
           {c.status === "scheduled" && `Scheduled for ${when(c.scheduled_at)}.`}
@@ -65,7 +65,7 @@ export default async function CampaignPage({ params, searchParams }: { params: P
 
       {results && (
         <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-results>
-          <h3 className="font-display text-[20px] leading-none text-ink">Results</h3>
+          <h3 className="admin-section">Results</h3>
           <dl className="mt-3 grid grid-cols-2 gap-3 text-[14px] @[880px]/admin:grid-cols-4">
             {(
               [
@@ -148,7 +148,7 @@ export default async function CampaignPage({ params, searchParams }: { params: P
       </form>
 
       <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-preview>
-        <h3 className="font-display text-[20px] leading-none text-ink">Preview</h3>
+        <h3 className="admin-section">Preview</h3>
         <form className="mt-3 flex max-w-[520px] gap-2" method="get">
           <input name="as" type="email" defaultValue={as ?? ""} placeholder="Someone in the audience, by email" className={input} aria-label="Preview as" />
           <Button type="submit" variant="secondary">Preview as them</Button>
@@ -168,7 +168,7 @@ export default async function CampaignPage({ params, searchParams }: { params: P
 
       {!locked && (
         <section className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-send>
-          <h3 className="font-display text-[20px] leading-none text-ink">Send it</h3>
+          <h3 className="admin-section">Send it</h3>
           <div className="mt-3 flex flex-col gap-4">
             <form action={scheduleCampaign.bind(null, id)} className="flex flex-wrap items-end gap-2">
               <label><span className={label}>At (Melbourne time)</span><input type="datetime-local" name="at" required className={input} /></label>

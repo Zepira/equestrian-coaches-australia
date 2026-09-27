@@ -27,7 +27,7 @@ function Stat({ n, label }: { n: number; label: string }) {
 function Table({ title, rows }: { title: string; rows: [string, number][] }) {
   return (
     <div>
-      <h3 className="text-[15px] font-semibold text-fg">{title}</h3>
+      <h3 className="admin-label">{title}</h3>
       {rows.length === 0 ? (
         <p className="mt-1 text-[14px] text-subtle">None yet.</p>
       ) : (
@@ -85,7 +85,7 @@ export default async function AdminRidersPage({ searchParams }: { searchParams: 
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Riders and horse owners</h2>
+        <h2 className="admin-title">Riders and owners</h2>
         <p className="mt-1.5 text-[14px] text-muted">Counts from their accounts and alerts. An alert counts once for each profession it follows.</p>
       </div>
       <div className="grid gap-3 @[880px]/admin:grid-cols-4" data-rider-counts>
@@ -101,7 +101,7 @@ export default async function AdminRidersPage({ searchParams }: { searchParams: 
       </div>
 
       <section className="border-t border-border pt-6">
-        <h2 className="font-display text-[22px] leading-none text-ink">Remove someone who asks</h2>
+        <h2 className="admin-section">Remove someone who asks</h2>
         <p className="mt-1.5 max-w-[62ch] text-[14px] text-muted">
           Deletes their account, alerts and saved profiles for good. It can&rsquo;t be undone. Riders and horse owners only.
         </p>

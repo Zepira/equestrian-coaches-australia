@@ -19,7 +19,7 @@ export default async function AdminSponsorsPage({ searchParams }: { searchParams
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Sponsors</h2>
+        <h2 className="admin-title">Sponsors</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           Brands in the rider round-up, on guides, and on profession and area pages, sold by hand as fixed monthly packages. Every slot says &ldquo;Sponsored&rdquo;, sits outside any list of professionals, and is the same for everyone: no rider data goes into it. Each sponsor has a monthly report of showings and clicks.
         </p>

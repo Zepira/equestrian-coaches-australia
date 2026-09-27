@@ -30,7 +30,7 @@ export default async function AdminAwardsPage({ searchParams }: { searchParams: 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Riders&rsquo; choice</h2>
+        <h2 className="admin-title">Riders&rsquo; choice</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           Once a year, for each profession in each state, worked out from reviews and saves by the <Link href="/riders-choice" className="text-accent">published rules</Link>. Plans and payments never count. Check it, then publish it as it stands.
         </p>

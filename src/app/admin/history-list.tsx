@@ -11,7 +11,7 @@ const when = (iso: string) =>
 export function HistoryList({ rows, empty = "No changes recorded yet." }: { rows: HistoryRow[]; empty?: string }) {
   return (
     <section className="border-t border-border pt-6" data-history>
-      <h2 className="font-display text-[22px] leading-none text-ink">History</h2>
+      <h2 className="admin-section">History</h2>
       {rows.length === 0 ? (
         <p className="mt-2 text-[14px] text-subtle">{empty}</p>
       ) : (

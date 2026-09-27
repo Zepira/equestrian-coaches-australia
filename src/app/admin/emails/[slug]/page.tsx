@@ -40,7 +40,7 @@ export default async function AdminEmailEdit({ params }: { params: Promise<{ slu
     <div className="flex flex-col gap-6">
       <div>
         <Link href="/admin/emails" className="text-[13px] text-subtle hover:text-fg">← All emails</Link>
-        <h2 className="mt-2 font-display text-[30px] leading-none text-ink">{email.name}</h2>
+        <h2 className="mt-2 admin-title">{email.name}</h2>
         <p className="mt-1.5 text-[14px] text-muted">
           To {email.to.charAt(0).toLowerCase() + email.to.slice(1)}. {email.when}
         </p>
@@ -53,7 +53,7 @@ export default async function AdminEmailEdit({ params }: { params: Promise<{ slu
       <div className="grid gap-6 @[760px]/admin:grid-cols-[1fr_300px] @[760px]/admin:items-start">
         <ContentEditor blocks={[block]} hints={HINTS} action={saveEmail.bind(null, slug)} testAction={sendTestEmail.bind(null, slug)} />
         <aside className="rounded-[16px] border border-border bg-shade p-4 @[760px]/admin:sticky @[760px]/admin:top-24" data-variables>
-          <h3 className="font-display text-[18px] leading-none text-ink">Variables</h3>
+          <h3 className="admin-section">Variables</h3>
           <p className="mt-1.5 text-[13px] text-subtle">Written in curly brackets. The test fills them with these samples.</p>
           <dl className="mt-3 flex flex-col gap-2.5 text-[13px]">
             {email.vars.map((v) => (

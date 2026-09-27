@@ -33,7 +33,7 @@ export default async function AdminPageEdit({ params }: { params: Promise<{ slug
     <div className="flex flex-col gap-6">
       <div>
         <Link href="/admin/pages" className="text-[13px] text-subtle hover:text-fg">← All pages</Link>
-        <h2 className="mt-2 font-display text-[30px] leading-none text-ink">{page.name}</h2>
+        <h2 className="mt-2 admin-title">{page.name}</h2>
         <p className="mt-1.5 text-[13px] text-subtle">
           <Link href={page.href} target="_blank" className="text-accent underline-offset-2 hover:underline">View it</Link>
           {page.note && <> · {page.note}</>}

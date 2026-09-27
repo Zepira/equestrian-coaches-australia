@@ -38,7 +38,7 @@ export default async function AdminSequencesPage({ searchParams }: { searchParam
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="font-display text-[26px] leading-none text-ink">Sequences</h2>
+        <h2 className="admin-title">Automatic emails</h2>
         <p className="mt-1.5 max-w-[66ch] text-[14px] text-muted">
           Emails that go out over days after something happens, and stop when the job&rsquo;s done. What starts and stops each one is fixed; the waits, the switches and the words are yours. Each starts once per person, and only for things from the last two weeks, so switching one on never emails everyone who ever signed up. The ones that offer a plan only go to people who agreed to news for professionals; the rest are about the person&rsquo;s own account. Every email has a one-click stop, apart from the quiet rider check, where stopping would do the opposite of what the reader wants.
         </p>
@@ -56,7 +56,7 @@ export default async function AdminSequencesPage({ searchParams }: { searchParam
           <section key={s.key} className="rounded-[16px] border border-border bg-surface p-4 @[560px]/admin:p-5" data-sequence={s.key}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h3 className="font-display text-[22px] leading-none text-ink">{s.name}</h3>
+                <h3 className="admin-section">{s.name}</h3>
                 <p className="mt-1.5 text-[13.5px] text-muted">
                   To {s.to.toLowerCase()}. Starts: {s.starts.charAt(0).toLowerCase() + s.starts.slice(1)}. Stops: {s.stops.charAt(0).toLowerCase() + s.stops.slice(1)}.{s.purpose ? " Offers a plan, so only people who agreed to news get it, with the unsubscribe link." : ""}
                 </p>
