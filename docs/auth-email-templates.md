@@ -179,6 +179,81 @@ Set a new password for Equine Professionals Australia
 </html>
 ```
 
+
+---
+
+## Password changed (security notification)
+
+Sent after a password changes, whether through "Forgot password?" or anywhere
+else. Supabase only sends it once the notification is switched on for the
+project: **Authentication → Emails**, the security notifications list, turn on
+**Password changed**, then paste the subject and body below into its template.
+
+It has no button on purpose. Before launch, any link to the site lands on the
+coming soon page (the email has no `{{ .RedirectTo }}` to carry the host),
+so it points people to "Forgot password?" and the hello@ inbox instead.
+Variables used: `{{ .Email }}` and `{{ .Data.name }}`, both available to
+every security notification.
+
+The other security notifications (email changed, phone changed, sign-in method
+linked or removed, verification method added or removed) stay off: the site
+has no way to change any of those yet.
+
+**Subject**
+
+```
+Your Equine Professionals Australia password was changed
+```
+
+**Body**
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light only" />
+<meta name="supported-color-schemes" content="light only" />
+<title>Your password was changed</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f6f1e7;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your password was just changed. Nothing to do if it was you.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f6f1e7;">
+<tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#fffdf8;border:1px solid #e7dac6;border-radius:18px;overflow:hidden;">
+
+<tr><td style="background-color:#14281f;padding:22px 28px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+<td style="padding-right:12px;vertical-align:middle;"><img src="https://equineprofessionals.com.au/brand/horse-cream-small.png" width="34" height="34" alt="" style="display:block;width:34px;height:34px;border:0;" /></td>
+<td style="vertical-align:middle;">
+<div style="font-family:Georgia,'Times New Roman',serif;font-size:19px;line-height:1.1;color:#f6f1e7;">Equine Professionals</div>
+<div style="font-family:Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:2.4px;text-transform:uppercase;color:#e8b79a;padding-top:3px;">Australia</div>
+</td>
+</tr></table>
+</td></tr>
+
+<tr><td style="padding:32px 28px 8px;font-family:Helvetica,Arial,sans-serif;">
+<h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:30px;line-height:1.15;color:#14281f;">Your password was changed</h1>
+<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">{{ if .Data.name }}Hi {{ .Data.name }},{{ else }}Hi,{{ end }}</p>
+<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">The password for your Equine Professionals Australia account ({{ .Email }}) was just changed.</p>
+<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">If that was you, there's nothing else to do.</p>
+<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">If it wasn't, someone else may know your password. Set a new one straight away with "Forgot password?" on the log in page, then write to us at <a href="mailto:hello@equineprofessionals.com.au" style="color:#b4553a;text-decoration:underline;">hello@equineprofessionals.com.au</a> so we can check your account with you.</p>
+</td></tr>
+
+<tr><td style="padding:0 28px;"><div style="height:1px;background-color:#e7dac6;"></div></td></tr>
+<tr><td style="padding:18px 28px 24px;font-family:Helvetica,Arial,sans-serif;">
+<p style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#6c685e;">We send this whenever an account password changes, so you always know. Replies to this email don't reach anyone.</p>
+<p style="margin:0;font-size:13px;line-height:1.5;color:#6c685e;">Equine Professionals Australia · <a href="https://equineprofessionals.com.au" style="color:#6c685e;text-decoration:underline;">equineprofessionals.com.au</a></p>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>
+```
+
 ---
 
 Words written with the `site-copy` skill and checked with the humanizer pass.

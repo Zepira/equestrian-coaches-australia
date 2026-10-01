@@ -114,6 +114,9 @@ match. The `/auth/callback` entries stay for links sent before the switch.
 Authentication → Email Templates (Confirm signup, Reset password). Without them
 the emails still carry Supabase's default PKCE link, which fails when the email
 is opened in a different browser from the one that signed up.
+Also turn on the **Password changed** security notification (Authentication →
+Emails) and paste its template from the same file. Leave the other security
+notifications off: the site can't change email, phone or sign-in method.
 
 **Auth email goes out through Resend** (custom SMTP, set 27 Sep 2026, under
 Authentication → Emails → SMTP Settings): host `smtp.resend.com`, sender
