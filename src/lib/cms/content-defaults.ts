@@ -79,6 +79,7 @@ export const CONTENT_DEFAULTS = {
     outcome: "Did any of those enquiries turn into work? Mark them in your dashboard so your numbers show what actually happened: {dashboard_url}",
     searches: "What {audience} near you searched for:",
     nextStep: "Next on your profile checklist: {next_step}.",
+    testimonials: "On your profile: {testimonial_count} and {review_count}. A few words from someone you've worked with help the next person decide. Ask for one: {testimonial_url}",
     share: "Share your profile where your {audience} already are, like your local Facebook groups: {profile_url}",
     signOff: "Your dashboard has the full picture: {dashboard_url}",
   },
@@ -411,6 +412,12 @@ export const CONTENT_DEFAULTS = {
     body: "Thanks for reviewing {name}. To post it, confirm this is your email address: {confirm_url}\n\nIf you didn't write a review, ignore this email and nothing will be posted.",
   },
   // To the professional when a review of them goes up.
+  // To the professional when a client writes them a testimonial through
+  // their request link. Factual: it's about their own profile.
+  "email.testimonial_waiting": {
+    subject: "{author} wrote you a testimonial",
+    body: "Hi {first_name},\n\n{author} sent you this through your testimonial link:\n\n\"{quote}\"\n\nIt isn't on your profile yet. Show it, or leave it hidden, from your dashboard: {testimonials_url}",
+  },
   "email.review_published": {
     subject: "New review on your profile",
     body: "Hi {first_name},\n\n{author} reviewed you: {rating} out of 5.\n\n\"{review}\"\n\nYou can post one public reply under it from your dashboard: {reviews_url}\n\nWe don't take reviews down on request. If you think this one breaks our review policy, the policy says how to report it: {policy_url}",
@@ -508,6 +515,23 @@ export const CONTENT_DEFAULTS = {
     thanksNo: "Thanks for letting us know. That helps {name} see how their enquiries go.",
     thanksTalking: "Thanks. Good luck with it.",
   },
+  // /testimonial/<slug>: the page a client writes a testimonial on (Spotlight
+  // and up). {name} and {first_name} are the professional's, {audience} the
+  // profession's audience noun ("rider", "horse owner").
+  "testimonials.words": {
+    heading: "A few words for {first_name}",
+    intro: "{name} asked if you'd write a testimonial. Say what it was like working with them, in your own words. It goes to {first_name} first, and they decide whether to show it on their profile.",
+    quoteLabel: "Your testimonial",
+    quoteHint: "A few sentences is plenty. What did you go to them for, and how did it go?",
+    nameLabel: "Your name",
+    nameHint: "Shown as you write it. A first name is fine.",
+    placeLabel: "Your town",
+    placeHint: "Optional, like Bendigo or Geelong.",
+    consent: "I'm happy for {first_name} to show this on their profile on Equine Professionals Australia, with my name and town as written above.",
+    button: "Send to {first_name}",
+    sent: "Thanks. It's with {first_name} now, and they'll decide whether to show it.",
+    closed: "{first_name} isn't collecting testimonials through this link at the moment.",
+  },
   // /review-policy, linked from every review (The Marketing Engine §05.7, the ACCC's guidance for review platforms).
   review_policy: {
     title: "Our review policy",
@@ -558,6 +582,7 @@ export const CONTENT_DEFAULTS = {
     competition: "We use these details to run the competition and contact the winner, and delete them 12 months after the result. [Competition terms](#terms).",
     guide: "We'll email you the link now. [Privacy policy](/privacy).",
     pricing: "Charged in advance, monthly or yearly, and renews until you cancel. Cancel in two clicks from your dashboard. [Refunds](/refunds).",
+    testimonial: "This goes to {name}, who decides whether to show it. If they do, it shows with your name and town as you wrote them. We keep a copy. [Privacy policy](/privacy).",
   },
   "legal.terms": {
     title: "Terms of service",
@@ -589,7 +614,7 @@ export const CONTENT_DEFAULTS = {
     intro: "What we collect, why, where it's kept, who else handles it, and what you can ask us to do with it. We follow the Australian Privacy Principles in the Privacy Act 1988, whether or not the law requires a business our size to. We don't sell or rent anyone's details, and we don't show anyone ads based on who they are.",
     sections: [
       { title: "Who this covers", body: "Equine Professionals Australia (Alana La Bouchardiere and Kim Thompson in partnership, ABN {abn}). Privacy questions and requests go to {contact_email}." },
-      { title: "If you're looking for help", body: "To search, you don't need an account and we don't ask who you are. If you press \"Use my location\", your browser asks your permission, we turn the coordinates into the nearest suburb to run the search, and we don't keep the coordinates.\n\nIf you make an account we keep your name, email address, the professionals you save, and any alerts you set up: the suburb or postcode, how far to look, and what you follow.\n\nWhen you send an enquiry, your name, how to contact you (email, and phone if you give it), your suburb and your message go to that professional, and we keep a copy so you can both see where it's up to. A few weeks later we may email you once to ask whether you booked and whether you'd like to leave a review.\n\nIf you leave a review, we publish your first name, the first letter of your surname, your rating, your words and the date. We keep your email address and a scrambled code for your device so one person can't review the same professional twice; neither is ever shown.\n\nIf you enter a competition, we keep your name, email address, state, your answer and any photo you send, for the length of the competition and 12 months after, so we can run it and show we ran it fairly. A winner's first name, surname initial and state are published.\n\nIf you download a guide, join the waitlist or sign up to alerts, we keep your email address and a record of what you agreed to." },
+      { title: "If you're looking for help", body: "To search, you don't need an account and we don't ask who you are. If you press \"Use my location\", your browser asks your permission, we turn the coordinates into the nearest suburb to run the search, and we don't keep the coordinates.\n\nIf you make an account we keep your name, email address, the professionals you save, and any alerts you set up: the suburb or postcode, how far to look, and what you follow.\n\nWhen you send an enquiry, your name, how to contact you (email, and phone if you give it), your suburb and your message go to that professional, and we keep a copy so you can both see where it's up to. A few weeks later we may email you once to ask whether you booked and whether you'd like to leave a review.\n\nIf you leave a review, we publish your first name, the first letter of your surname, your rating, your words and the date. We keep your email address and a scrambled code for your device so one person can't review the same professional twice; neither is ever shown.\n\nIf you enter a competition, we keep your name, email address, state, your answer and any photo you send, for the length of the competition and 12 months after, so we can run it and show we ran it fairly. A winner's first name, surname initial and state are published.\n\nIf a professional sends you their testimonial link and you write one, your name, town and words go to them, and they decide whether to show it on their profile. We keep a copy, and the time you agreed to it being shown.\n\nIf you download a guide, join the waitlist or sign up to alerts, we keep your email address and a record of what you agreed to." },
       { title: "If you list with us", body: "We keep what you put on your profile: your name, business name, where you're based and how far you travel, what you do, qualifications, registration numbers and insurance details you choose to add, photos, video, testimonials and events. Your email address and phone number are only shown to visitors if you switch them on, and even then behind a click, not printed on the page.\n\nWe also keep your account email, your plan and its payment history, the enquiries sent to you, the reviews about you and your replies, referral codes you've shared, and which pages of the site your profile appeared on. Stripe handles your card and your billing details; we see what was charged, never the card number." },
       { title: "What we count, and why", body: "We count how often each profile appears in search, is opened, has a number revealed and gets an enquiry, so professionals can see their numbers and so we can tell them honestly whether the site is working. To count each visitor once a day we make a scrambled code from the visitor's connection details and a daily key; we don't store the connection details, and the code can't be reversed. We don't count a professional looking at their own profile, or us.\n\nWe record what people search for and how many results they got, without who searched, so we can see what the site is missing.\n\nWe use Google Search Console to see which searches bring people to the site. That's about pages, not people, and Google doesn't give us anyone's identity." },
       { title: "Cookies and your browser", body: "The site uses three cookies and nothing else. One keeps you signed in. Two remember which link brought you here (a poster, a partner, a post) for 90 days, so we can tell which ways of reaching people work. Your browser also keeps a few preferences of its own, like whether you hid the map. We don't use advertising cookies, analytics trackers, tracking pixels or any other company's trackers, and we don't need a cookie banner because nothing here tracks you. The full list is at /cookies." },

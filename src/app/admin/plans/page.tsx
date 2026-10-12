@@ -151,6 +151,8 @@ export default async function AdminPlansPage({ searchParams }: { searchParams: P
               <label className="flex items-center gap-2 pb-2.5 text-[14px] text-fg"><input type="checkbox" name={`${c.tier}.video`} defaultChecked={c.video} /> Intro video</label>
               <label className="flex items-center gap-2 pb-2.5 text-[14px] text-fg"><input type="checkbox" name={`${c.tier}.featured`} defaultChecked={c.featured} /> Featured spot</label>
               <label className="flex items-center gap-2 pb-2.5 text-[14px] text-fg"><input type="checkbox" name={`${c.tier}.benchmarks`} defaultChecked={c.benchmarks} /> Benchmarks</label>
+              <label className="flex items-center gap-2 pb-2.5 text-[14px] text-fg"><input type="checkbox" name={`${c.tier}.testimonial_tools`} defaultChecked={c.testimonialTools} /> Testimonial tools</label>
+              <label className="flex items-center gap-2 pb-2.5 text-[14px] text-fg">Locations <input type="number" name={`${c.tier}.locations`} min={1} max={3} defaultValue={c.locations} className="w-16 rounded-[8px] border border-border bg-surface px-2 py-1 text-[14px]" /></label>
             </div>
           ))}
           <div>

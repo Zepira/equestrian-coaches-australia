@@ -22,20 +22,23 @@ export const DEFAULT_PLANS: Plans = {
 /**
  * What a plan unlocks. `eventLimit` null = unlimited live events; `featured`
  * = a turn in the featured block; `benchmarks` = the dashboard's comparison
- * with others in the same profession.
+ * with others in the same profession; `testimonialTools` = the testimonial
+ * request link and pinning one testimonial (src/lib/testimonials.ts);
+ * `locations` = how many bases count, 1 to 3 (provider_locations, migration
+ * 0022; the database reads the same setting in provider_base_limit()).
  */
-export type PlanCapability = { eventLimit: number | null; video: boolean; featured: boolean; benchmarks: boolean };
+export type PlanCapability = { eventLimit: number | null; video: boolean; featured: boolean; benchmarks: boolean; testimonialTools: boolean; locations: number };
 export type PlanCapabilities = Record<Tier, PlanCapability>;
 
 export const DEFAULT_CAPABILITIES: PlanCapabilities = {
-  listed: { eventLimit: 1, video: false, featured: false, benchmarks: false },
-  spotlight: { eventLimit: null, video: true, featured: true, benchmarks: false },
-  clinic: { eventLimit: null, video: true, featured: true, benchmarks: true },
+  listed: { eventLimit: 1, video: false, featured: false, benchmarks: false, testimonialTools: false, locations: 1 },
+  spotlight: { eventLimit: null, video: true, featured: true, benchmarks: false, testimonialTools: true, locations: 1 },
+  clinic: { eventLimit: null, video: true, featured: true, benchmarks: true, testimonialTools: true, locations: 3 },
 };
 
 /** How a capability is stored in the plan_capabilities setting. */
 export function capabilityJson(c: PlanCapability) {
-  return { event_limit: c.eventLimit, video: c.video, featured: c.featured, benchmarks: c.benchmarks };
+  return { event_limit: c.eventLimit, video: c.video, featured: c.featured, benchmarks: c.benchmarks, testimonial_tools: c.testimonialTools, locations: c.locations };
 }
 
 /** The tiers whose plan includes a featured spot. */
@@ -63,6 +66,14 @@ export function canListClinics(tier: string | null | undefined, status: string |
 }
 export function clinicLimit(tier: string | null | undefined, caps: PlanCapabilities): number {
   return isTier(tier) ? (caps[tier].eventLimit ?? Number.POSITIVE_INFINITY) : 0;
+}
+/** How many bases count for this plan: 1 off a live plan, else the plan's number (1 to 3). */
+export function baseLimit(tier: string | null | undefined, status: string | null | undefined, caps: PlanCapabilities) {
+  return isLiveStatus(status) && isTier(tier) ? Math.min(3, Math.max(1, caps[tier].locations)) : 1;
+}
+/** The testimonial request link and pinning, where the plan includes them. */
+export function hasTestimonialTools(tier: string | null | undefined, status: string | null | undefined, caps: PlanCapabilities) {
+  return isLiveStatus(status) && isTier(tier) && caps[tier].testimonialTools;
 }
 /** Intro video, where the plan includes it. */
 export function hasVideo(tier: string | null | undefined, status: string | null | undefined, caps: PlanCapabilities) {

@@ -79,6 +79,14 @@ export const PAGES: PageEntry[] = [
   },
   { slug: "guides", name: "Guides pages", href: "/guides", keys: ["guides.words"], revalidate: ["/guides", ["/guides/[slug]", "page"]], note: "The guides themselves are on Admin → Guides. {plural} is a profession, like farriers." },
   {
+    slug: "testimonial-page",
+    name: "Testimonial request page",
+    href: "/dashboard/testimonials",
+    keys: ["testimonials.words"],
+    revalidate: [["/testimonial/[slug]", "page"]],
+    note: "The page a client writes a testimonial on, from a professional's request link. {name} and {first_name} are the professional's.",
+  },
+  {
     slug: "reviews",
     name: "Review pages",
     href: "/review-policy",
@@ -162,6 +170,8 @@ export const BLOCK_NAMES: Partial<Record<ContentKey, string>> = {
   "legal.cookies": "Cookies",
   "legal.refunds": "Cancelling and refunds",
   "legal.notices": "Privacy lines on forms",
+  "testimonials.words": "Page words",
+  "email.testimonial_waiting": "Testimonial waiting",
   footer: "Tagline",
 };
 
@@ -198,6 +208,7 @@ export const FIELD_HINTS: Record<string, string> = {
   competition: "Under the competition entry form. [Competition terms](#terms) jumps to the terms on the same page.",
   guide: "Under a guide's download form.",
   pricing: "Under the plans on the pitch pages and on the plan step of onboarding.",
+  testimonial: "Under the testimonial request form. {name} is the professional.",
   place: "The town after the ABN, in the footer and every marketing email.",
   credit: "The designer's credit, centred at the very bottom of every page. Empty: no credit.",
   creditUrl: "Where the credit links, a full https:// address. Empty: no link.",
@@ -377,6 +388,9 @@ export const EMAILS: EmailEntry[] = [
       v("enquiry_count", "Enquiries, for the quiet intro", "0 enquiries"),
       v("audience", "Who looks for them, plural", "horse owners"),
       v("next_step", "The next thing on their checklist", "A photo of you at work"),
+      v("testimonial_count", "Testimonials on their profile, counted", "2 testimonials"),
+      v("review_count", "Published reviews, counted", "1 review"),
+      v("testimonial_url", "Their testimonial request link, or their dashboard's Testimonials page on a plan without one", "https://equineprofessionals.com.au/testimonial/jane-smith"),
       v("dashboard_url", "Their dashboard", "https://equineprofessionals.com.au/dashboard"),
       v("profile_url", "Their profile", "https://equineprofessionals.com.au/profile/jane-smith"),
     ],
@@ -558,6 +572,19 @@ EMAILS.push(
     vars: [
       v("name", "The professional", "Jane Smith"),
       v("confirm_url", "The confirm page", "https://equineprofessionals.com.au/review/confirm?t=test"),
+    ],
+  },
+  {
+    key: "email.testimonial_waiting",
+    name: "Testimonial waiting",
+    class: "factual",
+    to: "The professional",
+    when: "A client writes them a testimonial through their request link.",
+    vars: [
+      v("first_name", "Their first name", "Jane"),
+      v("author", "The client's name, as they wrote it", "Megan"),
+      v("quote", "What they wrote", "Jane got my mare going forward again after a year of fighting about it."),
+      v("testimonials_url", "Their dashboard's testimonials page", "https://equineprofessionals.com.au/dashboard/testimonials"),
     ],
   },
   {

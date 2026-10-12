@@ -301,7 +301,8 @@ export async function searchProviders(
     }
   }
 
-  type Match = { id: string; slug: string; name: string; headline: string; suburb: string; state: string; distance_km: number | null; based_in: boolean; is_remote: boolean; profession_id: string | null };
+  // base_*: the base that matched (main or an extra location, migration 0022).
+  type Match = { id: string; slug: string; name: string; headline: string; suburb: string; state: string; distance_km: number | null; based_in: boolean; is_remote: boolean; profession_id: string | null; base_lat: number | null; base_long: number | null; travel_radius_km: number | null };
   return (matches as Match[]).map((m) => ({
     id: m.id,
     slug: m.slug,
@@ -314,10 +315,10 @@ export async function searchProviders(
     skillNames: sortByName(namesByKindAndCoach.skill.get(m.id)),
     attributeNames: sortByName(namesByKindAndCoach.attribute.get(m.id)),
     photoUrl: photoById.get(m.id) ?? null,
-    lat: (coachById.get(m.id)?.lat as number | null) ?? null,
-    long: (coachById.get(m.id)?.long as number | null) ?? null,
+    lat: m.base_lat ?? (coachById.get(m.id)?.lat as number | null) ?? null,
+    long: m.base_long ?? (coachById.get(m.id)?.long as number | null) ?? null,
     takingStudents: ((coachById.get(m.id)?.availability as "yes" | "waitlist" | "no" | undefined) ?? "yes"),
-    travelRadiusKm: (coachById.get(m.id)?.travel_radius_km as number | null) ?? null,
+    travelRadiusKm: m.travel_radius_km ?? (coachById.get(m.id)?.travel_radius_km as number | null) ?? null,
     basedIn: m.based_in,
     isRemote: m.is_remote,
     professionId: m.profession_id,

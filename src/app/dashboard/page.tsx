@@ -60,7 +60,7 @@ export default async function DashboardPage({
     supabase.from("enquiries").select("id, rider_name, want, message, status, created_at, redacted_at").eq("provider_id", providerId).order("created_at", { ascending: false }).limit(3),
     supabase.from("provider_photos").select("id").eq("provider_id", providerId).limit(1),
     supabase.from("provider_terms").select("terms(kind)").eq("provider_id", providerId),
-    supabase.from("testimonials").select("id").eq("provider_id", providerId),
+    supabase.from("testimonials").select("id").eq("provider_id", providerId).eq("status", "shown"),
     supabase.from("events").select("id, title, start_date, location_text, places_left").eq("provider_id", providerId).gte("start_date", now.toISOString().slice(0, 10)).order("start_date").limit(1),
     // Someone in two sections sees what each did for them (§08.5).
     professions.length > 1 ? Promise.all(professions.map(async (p) => ({ p, s: await monthStats(supabase, providerId, now, p.id) }))) : Promise.resolve([]),
@@ -166,6 +166,14 @@ export default async function DashboardPage({
         ))}
         {(enquiries ?? []).length === 0 && <p className="border-t border-shade pt-3 text-[14px] text-subtle">No enquiries yet. They land here the moment someone sends one.</p>}
       </div>
+      {/* The testimonial nudge: people are getting in touch, and the profile
+          has little to show them yet. */}
+      {(enquiries ?? []).length > 0 && (testimonials ?? []).length < 3 && (
+        <p className="mt-1 border-t border-shade pt-3 text-[13.5px] leading-[1.5] text-muted" data-testimonial-nudge>
+          Worked with someone lately who was happy with it? A few words from them helps the next person decide.{" "}
+          <Link href="/dashboard/testimonials" className="font-medium text-accent">Ask for a testimonial</Link>
+        </p>
+      )}
     </div>
   );
 

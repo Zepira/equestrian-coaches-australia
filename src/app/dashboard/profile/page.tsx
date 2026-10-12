@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDisciplines, getSkills, getAttributes, ensureProvider, PROVIDER_PHOTOS } from "@/lib/supabase/queries";
-import { getPlanCapabilities } from "@/lib/settings";
-import { hasVideo } from "@/lib/tiers";
+import { getPlanCapabilities, getPlans } from "@/lib/settings";
+import { baseLimit, hasVideo, TIERS } from "@/lib/tiers";
+import { OtherLocations } from "./other-locations";
 import { ProfileForm } from "./profile-form";
 import { getSectionTerms } from "@/lib/sections";
 import { getProfession } from "@/lib/cms/read";
@@ -64,7 +65,7 @@ export default async function ProfileEditPage({ searchParams }: { searchParams: 
     attributes = (shared ?? []) as typeof attributes;
   }
 
-  const [{ data: selected }, { data: photos }, { data: testimonials }, { data: sub }] = await Promise.all([
+  const [{ data: selected }, { data: photos }, { data: testimonials }, { data: sub }, { data: extraLocations }, caps, plans] = await Promise.all([
     supabase.from("provider_terms").select("term_id").eq("provider_id", providerId),
     supabase
       .from("provider_photos")
@@ -75,8 +76,12 @@ export default async function ProfileEditPage({ searchParams }: { searchParams: 
       .from("testimonials")
       .select("id, author_name, quote")
       .eq("provider_id", providerId)
+      .eq("status", "shown")
       .order("created_at", { ascending: false }),
     supabase.from("subscriptions").select("tier, status").eq("provider_id", providerId).maybeSingle(),
+    supabase.from("provider_locations").select("id, suburb, state, travel_radius_km").eq("provider_id", providerId).order("sort_order").order("created_at"),
+    getPlanCapabilities(),
+    getPlans(),
   ]);
   // The form still reads the plan off the profile object; it now comes from subscriptions.
   const coach = { ...provider, subscription_tier: sub?.tier ?? null, subscription_status: sub?.status ?? "inactive" } as unknown as Parameters<typeof ProfileForm>[0]["coach"];
@@ -108,8 +113,17 @@ export default async function ProfileEditPage({ searchParams }: { searchParams: 
       photos={photosWithUrls}
       testimonials={testimonials ?? []}
       coachSlug={provider.slug}
-      videoAllowed={hasVideo(sub?.tier, sub?.status, await getPlanCapabilities())}
+      videoAllowed={hasVideo(sub?.tier, sub?.status, caps)}
       nouns={{ audience: profession.audienceNoun, years: profession.yearsLabel }}
+      afterTestimonials={
+        <OtherLocations
+          configured
+          locations={(extraLocations ?? []).map((l) => ({ id: l.id as string, suburb: l.suburb as string, state: l.state as string, travelRadiusKm: l.travel_radius_km as number }))}
+          limit={baseLimit(sub?.tier, sub?.status, caps)}
+          upgradePlans={TIERS.filter((t) => caps[t].locations > 1).map((t) => plans[t].name)}
+          mainBase={[provider.suburb, provider.state].filter(Boolean).join(" ")}
+        />
+      }
     />
   );
 }

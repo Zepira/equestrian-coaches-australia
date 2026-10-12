@@ -315,8 +315,11 @@ export function readPlanCapability(v: unknown, fallback: PlanCapability): PlanCa
   const limit = "event_limit" in o ? o.event_limit : fallback.eventLimit;
   const limitOk = limit === null || (Number.isInteger(limit) && (limit as number) >= 0 && (limit as number) <= 100);
   const flag = (k: "video" | "featured" | "benchmarks") => (k in o ? o[k] : fallback[k]);
-  if (!limitOk || [flag("video"), flag("featured"), flag("benchmarks")].some((x) => typeof x !== "boolean")) return null;
-  return { eventLimit: limit as number | null, video: flag("video") as boolean, featured: flag("featured") as boolean, benchmarks: flag("benchmarks") as boolean };
+  const tools = "testimonial_tools" in o ? o.testimonial_tools : fallback.testimonialTools;
+  const locations = "locations" in o ? o.locations : fallback.locations;
+  if (!limitOk || [flag("video"), flag("featured"), flag("benchmarks"), tools].some((x) => typeof x !== "boolean")) return null;
+  if (typeof locations !== "number" || !Number.isInteger(locations) || locations < 1 || locations > 3) return null;
+  return { eventLimit: limit as number | null, video: flag("video") as boolean, featured: flag("featured") as boolean, benchmarks: flag("benchmarks") as boolean, testimonialTools: tools as boolean, locations };
 }
 
 /** Names, prices and taglines per plan; a malformed tier falls back to its default. */

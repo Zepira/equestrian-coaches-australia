@@ -161,7 +161,7 @@ const VALIDATORS: Record<SettingKey, (raw: string) => { value: string } | { erro
     const parsed = parseObject(raw);
     if (!parsed) return { error: "That isn't a valid set of plan features." };
     for (const t of TIERS) {
-      if (!readPlanCapability(parsed[t], DEFAULT_CAPABILITIES[t])) return { error: `Check ${t}: events is a whole number from 0 to 100, or blank for unlimited.` };
+      if (!readPlanCapability(parsed[t], DEFAULT_CAPABILITIES[t])) return { error: `Check ${t}: events is a whole number from 0 to 100, or blank for unlimited, and locations is 1, 2 or 3.` };
     }
     return {
       value: JSON.stringify(
@@ -314,7 +314,7 @@ export async function savePlanCapabilities(formData: FormData) {
   const next = Object.fromEntries(
     TIERS.map((t) => {
       const raw = String(formData.get(`${t}.event_limit`) ?? "").trim();
-      return [t, { event_limit: raw === "" ? null : Number(raw), video: formData.get(`${t}.video`) === "on", featured: formData.get(`${t}.featured`) === "on", benchmarks: formData.get(`${t}.benchmarks`) === "on" }];
+      return [t, { event_limit: raw === "" ? null : Number(raw), video: formData.get(`${t}.video`) === "on", featured: formData.get(`${t}.featured`) === "on", benchmarks: formData.get(`${t}.benchmarks`) === "on", testimonial_tools: formData.get(`${t}.testimonial_tools`) === "on", locations: Number(formData.get(`${t}.locations`) ?? 1) }];
     })
   );
   await writeSetting("plan_capabilities", JSON.stringify(next), "/admin/plans");

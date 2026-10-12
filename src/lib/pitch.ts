@@ -88,7 +88,7 @@ export function planFeatures(w: PitchWords) {
     "Intro video",
     "10 photos",
     "All contact methods, plus a link to your own website",
-    "Testimonial request link and reminders",
+    "Testimonial request link: clients write their own, you choose what shows",
     "Pin a testimonial",
     "Unlimited events",
   ];

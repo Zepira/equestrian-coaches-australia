@@ -78,7 +78,7 @@ async function completeness(service: Service, providerId: string) {
   if (!b) return null;
   const [{ count: photos }, { count: testimonials }, caps] = await Promise.all([
     service.from("provider_photos").select("id", { count: "exact", head: true }).eq("provider_id", providerId),
-    service.from("testimonials").select("id", { count: "exact", head: true }).eq("provider_id", providerId),
+    service.from("testimonials").select("id", { count: "exact", head: true }).eq("provider_id", providerId).eq("status", "shown"),
     getPlanCapabilities(),
   ]);
   const sub = (b.p as unknown as { subscriptions: { tier: string | null; status: string } | { tier: string | null; status: string }[] | null }).subscriptions;

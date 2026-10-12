@@ -107,7 +107,7 @@ const HREF: Record<string, string> = {
   bio: "/dashboard/profile#bio",
   terms: "/dashboard/profile#disciplines",
   location: "/dashboard/profile#location",
-  testimonials: "/dashboard/profile#testimonials",
+  testimonials: "/dashboard/testimonials",
   video: "/dashboard/profile#video",
 };
 

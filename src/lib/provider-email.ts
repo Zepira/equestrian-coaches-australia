@@ -3,7 +3,7 @@ import { sendEmail } from "@/lib/email";
 import { fillVariables, getContent, getProfessions } from "@/lib/cms/read";
 import { getPlanCapabilities } from "@/lib/settings";
 import { profileCompleteness } from "@/lib/coach-stats";
-import { hasVideo } from "@/lib/tiers";
+import { hasTestimonialTools, hasVideo } from "@/lib/tiers";
 import { absoluteUrl } from "@/lib/site-url";
 import { profilePath } from "@/lib/page-paths";
 import { canSend } from "@/lib/audience";
@@ -64,10 +64,11 @@ export async function sendProviderMonthly(service: Service, now = new Date()) {
     );
     const quiet = total.views + total.reveals + total.enquiries === 0;
 
-    const [{ count: photos }, { count: testimonials }, { data: searches }] = await Promise.all([
+    const [{ count: photos }, { count: testimonials }, { data: searches }, { count: reviews }] = await Promise.all([
       service.from("provider_photos").select("id", { count: "exact", head: true }).eq("provider_id", p.id),
-      service.from("testimonials").select("id", { count: "exact", head: true }).eq("provider_id", p.id),
+      service.from("testimonials").select("id", { count: "exact", head: true }).eq("provider_id", p.id).eq("status", "shown"),
       service.rpc("local_search_terms", { p_provider_id: p.id, p_from: monthStart.toISOString(), p_to: monthEnd.toISOString() }),
+      service.from("reviews").select("id", { count: "exact", head: true }).eq("provider_id", p.id).eq("status", "published"),
     ]);
     const sub = (p as unknown as { subscriptions: { tier: string | null; status: string } | { tier: string | null; status: string }[] | null }).subscriptions;
     const plan = Array.isArray(sub) ? sub[0] : sub;
@@ -95,6 +96,10 @@ export async function sendProviderMonthly(service: Service, now = new Date()) {
       enquiry_count: count(total.enquiries, "enquiry", "enquiries"),
       audience: `${profession.audienceNoun}s`,
       next_step: next?.label ?? "",
+      testimonial_count: count(testimonials ?? 0, "testimonial", "testimonials"),
+      review_count: count(reviews ?? 0, "review", "reviews"),
+      // The request link where the plan has one; otherwise where to add them by hand.
+      testimonial_url: absoluteUrl(hasTestimonialTools(plan?.tier, plan?.status, caps) ? `/testimonial/${p.slug}` : "/dashboard/testimonials"),
       // Plain numbers under the first version's names, so copy saved before
       // the counted variables existed still reads rather than showing {views}.
       impressions: String(total.impressions),
@@ -119,7 +124,12 @@ export async function sendProviderMonthly(service: Service, now = new Date()) {
     if (total.enquiries > 0) parts.push(f(copy.outcome));
     const terms3 = (searches ?? []) as { term: string; place: string; searches: number }[];
     if (terms3.length) parts.push(`${f(copy.searches)}\n${terms3.map((s) => `- ${s.term} near ${s.place} (${s.searches})`).join("\n")}`);
-    if (next) parts.push(f(copy.nextStep));
+    // The testimonials nudge (Trello "Testimonial collection tools"), while
+    // they have fewer than five; it stands in for the checklist line when
+    // that would say the same thing.
+    const askForTestimonials = (testimonials ?? 0) < 5;
+    if (askForTestimonials) parts.push(f(copy.testimonials));
+    if (next && !(askForTestimonials && next.key === "testimonials")) parts.push(f(copy.nextStep));
     if (quiet) parts.push(f(copy.share));
     parts.push(f(copy.signOff));
 

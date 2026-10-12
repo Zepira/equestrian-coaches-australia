@@ -235,30 +235,3 @@ export async function deleteVideo() {
   revalidatePath("/dashboard/profile");
 }
 
-export async function addTestimonial(formData: FormData) {
-  const { supabase, providerId } = await requireProvider();
-
-  const authorName = String(formData.get("author_name") ?? "").trim();
-  const quote = String(formData.get("quote") ?? "").trim();
-  if (!authorName || !quote) throw new Error("Both fields are required.");
-
-  const { error } = await supabase
-    .from("testimonials")
-    .insert({ provider_id: providerId, author_name: authorName, quote });
-  if (error) throw error;
-
-  revalidatePath("/dashboard/profile");
-}
-
-export async function deleteTestimonial(id: string) {
-  const { supabase, providerId } = await requireProvider();
-
-  const { error } = await supabase
-    .from("testimonials")
-    .delete()
-    .eq("id", id)
-    .eq("provider_id", providerId);
-  if (error) throw error;
-
-  revalidatePath("/dashboard/profile");
-}

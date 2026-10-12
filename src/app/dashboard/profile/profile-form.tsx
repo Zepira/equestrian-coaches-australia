@@ -2,7 +2,8 @@
 
 
 import { useState } from "react";
-import { saveProfile, addTestimonial, deleteTestimonial } from "./actions";
+import Link from "next/link";
+import { saveProfile } from "./actions";
 import { MediaUploadForm } from "./media-upload-form";
 import { LocationAutocomplete } from "@/components/location-autocomplete";
 import { profilePath } from "@/lib/page-paths";
@@ -157,7 +158,7 @@ function ContactRow({ label: text, value, name, showName, defaultShow, configure
  * skills, setup, qualifications, years and testimonials that sit further
  * down the same scroll.
  */
-export function ProfileForm({ error, registration = null, configured, coach, disciplines, skills, attributes, selectedTermIds, photos, testimonials, coachSlug, videoAllowed = false, nouns = { audience: "rider", years: "years coaching" } }: { error?: string; registration?: { number: string; checkedAt: string | null } | null; configured: boolean; coach: Coach; disciplines: Term[]; skills: Term[]; attributes: Term[]; selectedTermIds: string[]; photos: Photo[]; testimonials: Testimonial[]; coachSlug?: string | null; videoAllowed?: boolean; nouns?: { audience: string; years: string } }) {
+export function ProfileForm({ error, registration = null, configured, coach, disciplines, skills, attributes, selectedTermIds, photos, testimonials, coachSlug, videoAllowed = false, nouns = { audience: "rider", years: "years coaching" }, afterTestimonials }: { error?: string; registration?: { number: string; checkedAt: string | null } | null; configured: boolean; coach: Coach; disciplines: Term[]; skills: Term[]; attributes: Term[]; selectedTermIds: string[]; photos: Photo[]; testimonials: Testimonial[]; coachSlug?: string | null; videoAllowed?: boolean; nouns?: { audience: string; years: string }; /** Rendered under the testimonials card (the Other locations card). */ afterTestimonials?: React.ReactNode }) {
   const [suburb, setSuburb] = useState(coach?.suburb ?? "");
   const [state, setState] = useState(coach?.state ?? "");
   const [postcode, setPostcode] = useState(coach?.postcode ?? "");
@@ -284,36 +285,18 @@ export function ProfileForm({ error, registration = null, configured, coach, dis
             </div>
           </form>
 
-          <section className="mt-6 rounded-[16px] border border-border bg-surface p-[18px] wide:p-6" id="testimonials">
-            <div className="flex items-baseline justify-between">
+          <section className="mt-6 flex flex-col gap-3 rounded-[16px] border border-border bg-surface p-[18px] wide:flex-row wide:items-center wide:justify-between wide:p-6" id="testimonials">
+            <div>
               <h2 className="text-[22px] leading-none text-ink wide:text-[24px]">Testimonials</h2>
-              <span className="text-[13px] text-subtle">{testimonials.length} of 3 for a complete profile</span>
+              <p className="mt-1.5 text-[13px] text-subtle">
+                {testimonials.length === 0 ? "None on your profile yet." : `${testimonials.length} on your profile.`} Three or more for a complete profile.
+              </p>
             </div>
-            <div className="mt-3 flex flex-col gap-2.5">
-              {testimonials.map((t) => (
-                <div key={t.id} className="flex items-start justify-between gap-3 rounded-[12px] bg-shade p-3.5">
-                  <div>
-                    <p className="font-display text-[17px] leading-[1.3] text-fg">&ldquo;{t.quote}&rdquo;</p>
-                    <p className="mt-1 text-[13px] text-subtle">— {t.author_name}</p>
-                  </div>
-                  <form action={deleteTestimonial.bind(null, t.id)}>
-                    <button type="submit" className="text-[13px] text-subtle hover:text-danger"><PendingSpinner />Remove</button>
-                  </form>
-                </div>
-              ))}
-            </div>
-            <form action={addTestimonial} className="mt-3.5 flex flex-col gap-2.5 wide:flex-row wide:items-end">
-              <label className="block flex-1">
-                <span className={label}>{nouns.audience.charAt(0).toUpperCase() + nouns.audience.slice(1)}</span>
-                <input name="author_name" type="text" disabled={!configured} placeholder={`${nouns.audience.charAt(0).toUpperCase() + nouns.audience.slice(1)}, Bendigo`} className={input} />
-              </label>
-              <label className="block flex-[2]">
-                <span className={label}>Quote</span>
-                <input name="quote" type="text" disabled={!configured} className={input} />
-              </label>
-              <button type="submit" disabled={!configured} className="h-[50px] shrink-0 rounded-[var(--radius-pill)] border border-ink px-5 text-[15px] font-medium text-ink"><PendingSpinner />Add</button>
-            </form>
+            <Link href="/dashboard/testimonials" className="shrink-0 rounded-[var(--radius-pill)] border border-ink px-5 py-3 text-center text-[15px] font-medium text-ink hover:bg-shade">
+              Manage testimonials
+            </Link>
           </section>
+          {afterTestimonials}
         </div>
       </div>
     </div>

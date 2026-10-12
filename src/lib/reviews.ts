@@ -103,7 +103,7 @@ export async function reviewFlags(service: Service, providerId: string, device: 
 }
 
 /** The member addresses of a provider: who hears about their reviews. */
-async function memberEmails(service: Service, providerId: string): Promise<string[]> {
+export async function memberEmails(service: Service, providerId: string): Promise<string[]> {
   const { data } = await service.from("provider_members").select("profiles(email)").eq("provider_id", providerId);
   return (data ?? []).map((m) => (m as unknown as { profiles: { email: string | null } | null }).profiles?.email).filter((e): e is string => Boolean(e));
 }

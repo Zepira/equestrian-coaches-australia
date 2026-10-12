@@ -7,6 +7,7 @@
  * and where they link. A horse care provider gets that door's colours
  * through PageContext.
  */
+import { byline, getShownTestimonials, providerHasTools } from "@/lib/testimonials";
 import { IntroVideo } from "@/components/intro-video";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -36,6 +37,30 @@ import { ProfileReviews } from "@/components/profile-reviews";
 import { getReviewSummary } from "@/lib/reviews";
 import { createServiceSupabase } from "@/lib/supabase/service";
 
+/**
+ * Shown testimonials, the pinned one first while the plan still includes
+ * pinning. The plan check reads subscriptions, which aren't public, so it
+ * runs on the service role; the list itself is public.
+ */
+/**
+ * The other places a provider works from that their plan counts (the
+ * database's provider_base_limit), as "Ballarat VIC". Extras over the plan's
+ * number are dormant and not shown.
+ */
+async function otherBasesFor(client: Parameters<typeof getShownTestimonials>[0], providerId: string): Promise<string[]> {
+  const { data: limit } = await client.rpc("provider_base_limit", { p_provider: providerId });
+  const extras = Math.max(0, Number(limit ?? 1) - 1);
+  if (!extras) return [];
+  const { data } = await client.from("provider_locations").select("suburb, state").eq("provider_id", providerId).order("sort_order").order("created_at").limit(extras);
+  return (data ?? []).map((l) => `${l.suburb} ${l.state}`);
+}
+
+async function shownTestimonialsFor(client: Parameters<typeof getShownTestimonials>[0], providerId: string) {
+  const service = createServiceSupabase();
+  const pinCounts = service ? await providerHasTools(service, providerId) : false;
+  return { data: await getShownTestimonials(client, providerId, pinCounts) };
+}
+
 type CoachView = {
   id: string | null;
   /** The primary profession's slug (lowest sort_order); null for mock and placeholder coaches, which are all coaches. */
@@ -62,13 +87,15 @@ type CoachView = {
   qualifications: string[];
   /** Set only once an admin has checked it against the public register. */
   registration?: { number: string; checkedAt: string } | null;
-  testimonials: { quote: string; author: string }[];
+  testimonials: { id?: string; quote: string; author: string }[];
   clinics: { id: string | null; title: string; date: string; location: string; placesLeft: number | null }[];
   photoUrl: string | null;
   videoUrl: string | null;
   canListClinics: boolean;
   takingStudents: "yes" | "waitlist" | "no";
   travelRadiusKm: number | null;
+  /** Other places they work from that their plan counts ("Ballarat VIC"); provider_locations. */
+  otherBases?: string[];
   yearsCoaching: number | null;
   /** Attribute name → the coach's own one-line detail, when they wrote one. */
   setupDetails: Record<string, string>;
@@ -99,13 +126,13 @@ async function getCoachFromDb(slug: string, preview = false): Promise<CoachView 
     .maybeSingle();
   if (!coach) return null;
 
-  const [{ data: disciplineRows }, { data: testimonialRows }, { data: clinicRows }, { data: photoRows }] =
+  const [{ data: disciplineRows }, { data: testimonialRows }, { data: clinicRows }, { data: photoRows }, otherBases] =
     await Promise.all([
       supabase
         .from("provider_terms")
         .select("detail, sort_order, terms(slug, name, kind)")
         .eq("provider_id", coach.id),
-      supabase.from("testimonials").select("quote, author_name").eq("provider_id", coach.id),
+      shownTestimonialsFor(supabase, coach.id),
       supabase
         .from("events")
         .select("id, title, start_date, location_text, places_left")
@@ -117,6 +144,7 @@ async function getCoachFromDb(slug: string, preview = false): Promise<CoachView 
         .eq("provider_id", coach.id)
         .order("sort_order")
         .limit(1),
+      otherBasesFor(supabase, coach.id),
     ]);
 
   const primaryProfession = (disciplineRows ?? [])
@@ -159,7 +187,7 @@ async function getCoachFromDb(slug: string, preview = false): Promise<CoachView 
     ),
     qualifications: coach.qualifications ?? [],
     registration: coach.registration_checked_at && coach.registration_number ? { number: coach.registration_number, checkedAt: coach.registration_checked_at } : null,
-    testimonials: (testimonialRows ?? []).map((t) => ({ quote: t.quote, author: t.author_name })),
+    testimonials: (testimonialRows ?? []).map((t) => ({ id: t.id, quote: t.quote, author: byline(t) })),
     clinics: (clinicRows ?? []).map((c) => ({
       id: c.id,
       title: c.title,
@@ -176,6 +204,7 @@ async function getCoachFromDb(slug: string, preview = false): Promise<CoachView 
     canListClinics: (clinicRows ?? []).length > 0,
     takingStudents: (coach.availability as CoachView["takingStudents"]) ?? "yes",
     travelRadiusKm: coach.travel_radius_km ?? null,
+    otherBases,
     yearsCoaching: coach.years_experience ?? null,
     setupDetails: Object.fromEntries(
       (disciplineRows ?? [])
@@ -353,6 +382,13 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
       Based in <strong className="font-medium text-fg">{coach.suburb} {coach.state}</strong>
     </span>,
     ...(coach.travelRadiusKm && coach.travelRadiusKm > 0 ? [<span key="travel">travels up to {coach.travelRadiusKm} km</span>] : []),
+    ...(coach.otherBases?.length
+      ? [
+          <span key="also">
+            also works from <strong className="font-medium text-fg">{coach.otherBases.join(" and ")}</strong>
+          </span>,
+        ]
+      : []),
     ...(coach.yearsCoaching ? [<span key="years">{yearsText(coach.yearsCoaching)}</span>] : []),
   ];
   const nextClinic = coach.canListClinics
@@ -546,7 +582,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
 
           {/* ── testimonials ───────────────────────────────────────── */}
           {coach.testimonials.length > 0 && (
-            <section className="mt-9 bg-ink pt-10 text-ink-fg wide:mt-14 wide:rounded-[22px] wide:p-9">
+            <section id="testimonials" className="mt-9 scroll-mt-24 bg-ink pt-10 text-ink-fg wide:mt-14 wide:rounded-[22px] wide:p-9">
               <div className="px-[18px] wide:px-0">
                 <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-ink-fg/60">From {firstName}&rsquo;s {audiencePlural}</p>
                 <h2 className="mt-2.5 text-[34px] leading-none wide:text-[40px]">
@@ -557,7 +593,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
               </div>
               <div className="hs mt-[22px] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[18px] pb-9 wide:mt-6 wide:grid wide:grid-cols-3 wide:gap-3.5 wide:overflow-visible wide:px-0 wide:pb-0">
                 {coach.testimonials.map((t) => (
-                  <figure key={t.quote} className="flex w-[300px] shrink-0 snap-start flex-col gap-3.5 rounded-[18px] bg-ink-card p-[22px] wide:w-auto wide:rounded-[16px]">
+                  <figure key={t.id ?? t.quote} className="flex w-[300px] shrink-0 snap-start flex-col gap-3.5 rounded-[18px] bg-ink-card p-[22px] wide:w-auto wide:rounded-[16px]">
                     <span aria-hidden className="font-display text-[44px] leading-[0.5] text-peach">&ldquo;</span>
                     <blockquote className="font-display text-[20px] leading-[1.3] wide:text-[19px]">{t.quote}</blockquote>
                     <figcaption className="mt-auto text-[13px] text-ink-fg/65">{t.author}</figcaption>
