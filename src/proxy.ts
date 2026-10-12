@@ -47,6 +47,9 @@ function isPreLaunchPath(path: string): boolean {
   // entitled to read the privacy policy first. The layout leaves the header
   // and footer off on this host, so these pages link nowhere else.
   if (["/terms", "/privacy", "/cookies", "/refunds", "/review-policy"].includes(path)) return true;
+  // Error reports from the browser (Sentry's tunnel, next.config.ts), so a
+  // fault on the coming soon page still reaches us.
+  if (path === "/monitoring") return true;
   // Crawlers need these two to see that only the home page is on offer.
   if (path === "/robots.txt" || path === "/sitemap.xml") return true;
   // The page's own assets: the build output, the brand mark, the favicon.

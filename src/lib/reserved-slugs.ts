@@ -13,7 +13,7 @@ export const RESERVED_SLUGS = [
   "for-coaches", "for-professionals", "forgot-password", "horse-care", "icon.png", "apple-icon.png", "join",
   "list-your-business", "login", "profile", "reset-password", "riding-instructors", "robots.txt", "search",
   "signup", "sitemap.xml", "brand", "hero", "vendor", "_next", "onboarding", "unsubscribe", "terms", "privacy",
-  "go", "p", "email-preferences", "alerts", "how-we-list", "guides", "review", "reviews", "review-policy", "testimonial", "testimonials", "enquiry",
+  "go", "p", "email-preferences", "alerts", "how-we-list", "guides", "review", "reviews", "review-policy", "testimonial", "testimonials", "monitoring", "enquiry",
   "competitions", "riders-choice",
 ] as const;
 

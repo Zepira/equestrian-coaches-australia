@@ -171,3 +171,28 @@ Built 12 Oct 2026. A professional who works from two or three places can add up 
 - [ ] **Area pages:** after the nightly recompute (or ask Claude to run it), the extra town's area page counts the professional toward its three.
 - [ ] **Downgrade to Spotlight:** the extra location shows "Not showing on your current plan", the profile drops "also works from", and search near the extra town no longer finds them. Nothing is deleted; back on Clinic it all returns.
 - [ ] **Admin → Plans:** each plan has a "Locations" number (1 to 3). Set Spotlight to 2: Spotlight professionals can add one extra. Put it back to 1.
+
+## 13. Error pages and error alerts (Sentry)
+
+Built 12 Oct 2026. Sentry only switches on once `NEXT_PUBLIC_SENTRY_DSN` is set (Vercel, and `.env` to try it locally); until then error pages still show, nothing is reported.
+
+Setting it up (Alana, once):
+- [ ] Create a free Sentry account and a Next.js project. Copy its DSN.
+- [ ] In Vercel → Settings → Environment Variables: `NEXT_PUBLIC_SENTRY_DSN` (the DSN), and for readable stack traces `SENTRY_ORG`, `SENTRY_PROJECT` and `SENTRY_AUTH_TOKEN` (an auth token from Sentry with project:releases scope). Redeploy.
+- [ ] In Sentry → Alerts: check the default "new issue" alert emails both of you (add Kim as a member). That email is the alert.
+
+The pages:
+- [ ] **A broken page** shows "This page didn't load." inside the normal header and footer, with Try again, Go to the home page, the contact email and a reference number. (Ask Claude for a temporary broken page to look at it; one existed briefly at `/zz-error-test` and was removed.)
+- [ ] **In the dashboard** a broken tab says "That part of your dashboard didn't load." and keeps the dashboard menu, with "Back to the overview".
+- [ ] **In admin** a broken screen keeps the admin rail.
+- [ ] **Try again** reloads the part that broke.
+- [ ] **Phone width:** everything readable, buttons stack nicely.
+
+The alerts (after the setup above, on the test site):
+- [ ] Break something on purpose (Claude can add a temporary test page) and open it. Within a minute or two the error is in Sentry, with the page address and the reference number shown on the error page, and the alert email arrives.
+- [ ] The report has no email addresses, IP address or cookies in it.
+- [ ] An error in the browser (not just the server) also arrives; reports go through `/monitoring` on our own site, so an ad blocker doesn't stop them.
+- [ ] The Sentry environment says "preview" or "production", so test-site errors can be told apart.
+
+Privacy:
+- [ ] `/privacy` → "Who helps us run the site" mentions Sentry and what an error report contains.

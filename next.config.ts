@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const nextConfig: NextConfig = {
   // Pin the workspace root: an unrelated package-lock.json sits one level up
@@ -33,4 +34,20 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+/**
+ * Sentry (src/instrumentation.ts, src/instrumentation-client.ts). Source maps
+ * upload only when SENTRY_AUTH_TOKEN is set (on Vercel), so a build without
+ * it works the same; they're deleted from the deployment after upload, so
+ * the site's source isn't served publicly. Browser reports go through
+ * /monitoring on our own host, past ad blockers.
+ */
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  telemetry: false,
+  tunnelRoute: "/monitoring",
+  widenClientFileUpload: true,
+  sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN, deleteSourcemapsAfterUpload: true },
+});
