@@ -1,0 +1,446 @@
+<title>Before Coaches Sign Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --navy:#E7DAC6; --navy-2:#DDCFB6;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8; --claret-hi:#DE8B6C;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7; --band-accent:#1F3A2E;
+  --bar-good:#00794F; --bar-bad:#C0492A;
+  --pick:#9C4229; --pick-bg:#F7F0E1;
+  --code-bg:#FBF7EC; --code-ink:#33312B; --code-key:#1F3A2E; --code-com:#87816F;
+  --on-navy:#22201C; --on-navy-2:#4A4842; --on-navy-3:#5E5A50;
+  --navy-rule:#D3C1A4;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --wrap:1060px; --measure:70ch;
+  --ribbon:polygon(0 0,100% 0,100% 100%,0 100%);
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.7rem,8vw,5.2rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.8rem,4.3vw,2.8rem); line-height:1.03}
+h3{font-size:1.24rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+h4{font-family:var(--body); font-size:.72rem; font-weight:800; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 10px}
+
+code{font-family:var(--mono); font-size:.86em; background:var(--code-bg); color:var(--code-ink);
+  padding:1px 5px; border-radius:2px}
+pre{font-family:var(--mono); font-size:.8rem; line-height:1.6; background:var(--code-bg); color:var(--code-ink);
+  padding:18px 20px; margin:20px 0; overflow-x:auto; border:1px solid var(--line-strong)}
+pre code{background:none; padding:0; font-size:1em}
+pre .k{color:var(--code-key); font-weight:600}
+pre .c{color:var(--code-com); font-style:italic}
+
+.chip{display:inline-block; font-size:.66rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+.band{background:var(--navy); color:var(--on-navy); border-bottom:1px solid var(--line-strong)}
+.masthead{padding:64px 0 68px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:42px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--on-navy-2)}
+.masthead h1{margin-bottom:28px}
+.masthead .lede{font-size:1.14rem; line-height:1.5; color:var(--on-navy-2); max-width:58ch; margin:0}
+.mast-meta{margin-top:38px; padding-top:18px; border-top:1px solid var(--navy-rule);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.75rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--on-navy-3)}
+
+main.wrap{padding-top:70px}
+section{margin-bottom:80px}
+.sec-head{margin-bottom:28px}
+.sec-num{display:block; font-family:var(--display); font-size:.96rem; font-weight:600;
+  letter-spacing:.06em; color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+
+/* kind cards */
+.kinds{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:30px 0}
+.kind{border:1px solid var(--line-strong); background:var(--surface); padding:20px 20px 22px}
+.kind h3{margin:12px 0 8px}
+.kind p{margin:0 0 .7em; font-size:.9rem; line-height:1.5; color:var(--ink-2)}
+.kind p:last-child{margin-bottom:0}
+.kind .ex{font-family:var(--mono); font-size:.76rem; color:var(--ink-3); line-height:1.7}
+@media(max-width:800px){.kinds{grid-template-columns:1fr}}
+
+/* loop */
+.loop{border:1px solid var(--line-strong); background:var(--surface); margin:30px 0}
+.loop-head{padding:20px 22px 4px}
+.loop-head h3{margin-bottom:6px}
+.loop-head p{margin:0; font-size:.88rem; color:var(--ink-3)}
+.loop-steps{display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line);
+  border-top:1px solid var(--line-strong); margin-top:18px}
+.lstep{background:var(--surface); padding:18px 16px 20px}
+.lstep .n{font-family:var(--display); font-size:1.7rem; font-weight:500; color:var(--brass); line-height:1; display:block; margin-bottom:8px}
+.lstep b{display:block; font-size:.9rem; margin-bottom:5px}
+.lstep span{font-size:.82rem; line-height:1.45; color:var(--ink-2)}
+.loop-foot{padding:14px 22px; border-top:1px solid var(--line-strong); background:var(--surface-2);
+  font-size:.84rem; color:var(--ink-2)}
+.loop-foot b{color:var(--ink)}
+@media(max-width:860px){.loop-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.loop-steps{grid-template-columns:1fr}}
+
+/* tables */
+figure{margin:30px 0; border:1px solid var(--line-strong); background:var(--surface); overflow:hidden}
+figcaption{padding:14px 22px; border-top:1px solid var(--line-strong); font-size:.85rem;
+  line-height:1.5; color:var(--ink-2); background:var(--surface-2)}
+figcaption b{font-weight:700; color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:620px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.32rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:12px 22px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.5}
+thead th{font-size:.66rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px; white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code{font-size:.8rem; white-space:nowrap}
+td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
+
+/* steps */
+.steps{margin:28px 0 0}
+.step{display:grid; grid-template-columns:58px 1fr; gap:0 22px; padding:26px 0; border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.smark{font-family:var(--display); font-size:2rem; font-weight:500; letter-spacing:-.025em; color:var(--brass); line-height:1}
+.sbody h3{margin-bottom:9px}
+.sbody p,.sbody ul{max-width:64ch}
+.sbody > :last-child{margin-bottom:0}
+@media(max-width:620px){.step{grid-template-columns:1fr; gap:10px}}
+
+/* callouts */
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:18px 22px; margin:24px 0}
+.note{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:18px 22px; margin:24px 0}
+.flag p,.note p{margin:0; max-width:64ch; font-size:.94rem}
+.flag p + p,.note p + p{margin-top:.65em}
+.flag .chip,.note .chip{margin-bottom:11px}
+.flag ul,.note ul{margin:.6em 0 0; font-size:.94rem; max-width:64ch}
+
+/* vocabulary */
+.vocab{border:1px solid var(--line-strong); background:var(--surface); margin:24px 0}
+.vrow{display:grid; grid-template-columns:190px 1fr; gap:0 22px; padding:15px 22px; border-top:1px solid var(--line)}
+.vrow:first-of-type{border-top:0}
+.vname{font-weight:700; font-size:.95rem}
+.vname small{display:block; font-family:var(--mono); font-size:.72rem; font-weight:400; color:var(--ink-3); margin-top:3px}
+.vals{font-family:var(--mono); font-size:.79rem; line-height:1.85; color:var(--ink-2)}
+.vhead{padding:20px 22px 16px; background:var(--surface-2); border-bottom:1px solid var(--line-strong)}
+.vhead h3{margin-bottom:6px}
+.vhead p{margin:0; font-size:.88rem; color:var(--ink-2); max-width:66ch}
+@media(max-width:700px){.vrow{grid-template-columns:1fr; gap:6px}}
+
+.foot{border-top:1px solid var(--line-strong); padding:44px 0 52px; font-size:.8rem; line-height:1.75; color:var(--on-navy-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--on-navy-3); margin-bottom:10px}
+.foot p{max-width:80ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){
+  th,td,caption,figcaption,.vrow,.vhead,.loop-head,.loop-foot{padding-left:16px;padding-right:16px}
+  pre{padding:14px 16px}
+}
+.sbody{min-width:0}
+.sbody .tablewrap{margin-left:0;margin-right:0}
+</style>
+
+<div class="band">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="mast-top">
+        <span class="mast-mark">Handbook</span>
+        <span class="mast-org">Equine Professionals Australia</span>
+      </div>
+      <h1>Before coaches sign up</h1>
+      <p class="lede">What has to happen before the first real coach can join, in the order to do it, what can start this week, and what can safely wait until riders arrive.</p>
+      <div class="mast-meta">
+        <span>Launch checklist, revision 1</span>
+        <span>27 September 2026</span>
+        <span>Tracked on Trello: "Before coaches sign up"</span>
+        <span>Decisions for Kim, section 04</span>
+      </div>
+    </header>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>The short version</h2></div>
+  <div class="col">
+    <p><strong>The build is further along than Trello said, but four things stop a real coach signing up today.</strong> The public site can only show the coming soon page. There is no Stripe account. The sign-up email breaks when it's opened in a different browser from the one the coach signed up in. And the terms still have blanks in them.</p>
+    <p>Everything under "Must" below comes to roughly two weekends of build work, plus a Stripe application, a bank account and a solicitor booking. Everything in section 09 can wait for riders: most of it is already built and simply switched off.</p>
+    <p>Every item here also has a card in the Trello list "Before coaches sign up", in the same order. Tick things off there; this document is the reasoning.</p>
+  </div>
+  <div class="flag">
+    <span class="chip">Found in the Trello sweep</span>
+    <p><strong>The For Coaches page sells five features that aren't built yet:</strong> SMS enquiry alerts, Google search impressions and queries, the testimonial request link and reminders, and pinning a testimonial (all on Spotlight), and up to three locations (on Clinic). Charging for a feature that doesn't exist is a consumer-law problem. Take those lines off the page before anyone pays and add each one back when it ships.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>What can start this week</h2></div>
+  <div class="col">
+    <p>None of these wait on Stripe, on Kim's decisions or on each other. They're grouped by who does them.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>Unblocked now</caption>
+      <thead><tr><th>Who</th><th>What</th><th>Why now</th></tr></thead>
+      <tbody>
+        <tr><td>Both</td><td><strong>Sign the partnership agreement</strong> and <strong>open the business bank account</strong></td><td>Stripe can't activate without the bank account, and nobody should take money before the agreement is signed.</td></tr>
+        <tr><td>Both</td><td>Book the solicitor; ask for three public liability quotes</td><td>Both take a week or two to come back, so start the clock.</td></tr>
+        <tr><td>Alana</td><td><strong>Open the Stripe account and work in test mode</strong></td><td>Test mode works the moment the account exists, before any business checks. Products, prices, the webhook and every test in section 07 can be done now. Only going live waits.</td></tr>
+        <tr><td>Alana</td><td>Take the five unbuilt features off the For Coaches page</td><td>Ten minutes, and it removes the biggest legal risk on the site.</td></tr>
+        <tr><td>Alana</td><td>The sign-up email fixes (section 06)</td><td>The most likely reason a coach gives up. Pure code, testable on the test site today.</td></tr>
+        <tr><td>Alana</td><td>Supabase Auth email through Resend, with our own wording</td><td>A dashboard setting and two templates. Without it no coach gets a confirmation email at all.</td></tr>
+        <tr><td>Alana</td><td>The coaches-only stage and the mock-payments guard (section 03)</td><td>Stripe's website review needs it, so it has to exist before the live application.</td></tr>
+        <tr><td>Alana</td><td>Error pages, error alerts, video uploads, the wipe-script guard, the Admin net-price figure</td><td>Small, self-contained, no decisions needed.</td></tr>
+        <tr><td>Alana</td><td>Fill the terms' blanks and add a refund line</td><td>The ABN is known and the agreement already says Victoria. The solicitor then reviews a finished draft, which is cheaper.</td></tr>
+        <tr><td>Kim</td><td>The four decisions in section 04</td><td>The first one changes the onboarding code, so it's worth settling before that part is built.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p><strong>What has to wait:</strong> going live on Stripe (needs the bank account and the coaches stage public), the watched sign-up test with real people (needs the email fixes first), and the database wipe (needs the region decided, and should be the last thing before opening).</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>The switch the site doesn't have yet</h2></div>
+  <div class="col">
+    <p>Right now "launched" is one switch, <code>SITE_LAUNCHED</code>. Off, the public domain shows only the coming soon page, so a coach can only sign up on the password-protected test site. On, the whole site opens to riders and Google at once. A coaches-first launch needs a setting in between.</p>
+    <p>It matters for Stripe too. Stripe won't activate an account whose website is password protected or under construction. It needs to see, publicly, what we sell, the prices, a way to contact us, and the refund and cancellation policy. The coming soon page on its own fails that check.</p>
+    <p><strong>Recommended build, about half a day:</strong> a third stage, for example <code>SITE_STAGE=coaches</code>, that:</p>
+    <ul>
+      <li>opens the coach paths on the public domain: <code>/for-coaches</code>, <code>/for-professionals</code>, <code>/join/*</code>, <code>/signup</code>, <code>/login</code>, <code>/auth/*</code>, <code>/forgot-password</code>, <code>/reset-password</code>, <code>/onboarding</code>, <code>/dashboard/*</code>, <code>/terms</code>, <code>/privacy</code>, <code>/about</code> and the Stripe webhook</li>
+      <li>lets a coach's published profile be seen and shared at <code>/profile/[slug]</code>, kept <code>noindex</code> until riders open</li>
+      <li>keeps search, area pages, events and rider accounts behind the coming soon page</li>
+      <li>allows a live Stripe key in this stage (the guard in <code>src/lib/stripe.ts</code> refuses one unless the whole site is launched)</li>
+      <li>adds a "Coach or horse professional? Join now" link to the coming soon page</li>
+    </ul>
+    <p>One more guard while you're in there. With no Stripe key set, billing runs in mock mode and hands out a real active plan for free. That's right on the test site and dangerous on the public one, so make mock mode refuse to run on the public host.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Decide first</h2></div>
+  <div class="col">
+    <p>Four calls for Kim and Alana, one conversation. They change what gets built, so they come before the build list. The same four are on the top card in "Decide with Kim".</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Decision</th><th>What the site does now</th><th>Recommendation</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Card at founding sign-up?</strong></td><td>Every founding coach has to save a card before their profile can be sent for review.</td><td><strong>No card for the first 25</strong>, card from number 26, as <em>The First 100 Coaches</em> planned. A card form on a site a coach has never heard of is the biggest drop-off point, for exactly the people Kim is recruiting by hand. Make the number a setting.</td></tr>
+        <tr><td><strong>When does the free period start?</strong></td><td>When <code>launch_date</code> is set in Admin. Until then cards are saved and nothing is charged.</td><td><strong>When riders open, not coaches.</strong> Leave <code>launch_date</code> blank through the coach phase so nobody uses up free months while there are no riders. Change "six months after we launch" in the copy to "six months after the site opens to riders".</td></tr>
+        <tr><td><strong>Which professions can sign up?</strong></td><td>Any that aren't in draft. Draft professions are invite-only.</td><td><strong>Coaches open, every horse care profession invite-only</strong> until its pitch is written after the first ten conversations. The draft switch already does this.</td></tr>
+        <tr><td><strong>Are profiles public in the coach phase?</strong></td><td>Not decided.</td><td><strong>Yes, but noindex.</strong> Coaches will want to see and share their page, and that sharing is free marketing. Search and area pages stay closed, so nobody sees an empty directory.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>Confirming $24.95 and $49.95 has its own card. It needn't hold anything up: founding coaches never see those prices, and changing a Stripe price later is a new price ID, not a migration.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Must do before the first coach</h2></div>
+  <div class="col">
+    <p>In order. The business items gate Stripe, and Stripe's website review needs the coaches stage to be live.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="smark">1</div>
+      <div class="sbody">
+        <h3>The business (both of you)</h3>
+        <ul>
+          <li><strong>Sign the partnership agreement.</strong> Until it's signed, the Partnership Act's default split applies, not the one you agreed. Sign before any money moves.</li>
+          <li><strong>Open the business bank account</strong> in the partnership's name. Stripe pays out to it and won't activate without it.</li>
+          <li><strong>Move Vercel to Pro</strong> ($20 a month) before the first payment. Hobby is licensed for non-commercial use only, and taking coach payments is plainly commercial. The call was "at launch"; coaches paying is launch.</li>
+          <li><strong>Check the Supabase plan.</strong> Real coaches and payment records need backups you can restore. Pro ($25 a month) has daily backups; move to it if we're on Free.</li>
+          <li><strong>Public liability quotes, then decide.</strong> As a partnership there's no company between a claim and our personal assets. The Trello card said revisit "on launch day", and this is that day.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">2</div>
+      <div class="sbody">
+        <h3>Stripe (Alana)</h3>
+        <ul>
+          <li><strong>Apply as the partnership</strong> under ABN 74 931 177 211, not as a sole trader, or the income lands as Alana's. Add Kim as a team member. Set a statement descriptor a coach will recognise on a bank statement, such as EQUINE PROS, which heads off "what's this charge" disputes.</li>
+          <li><strong>Products and prices in test mode first:</strong> three products with a monthly and a yearly price each, plus the $9.99 founding price. Enter each pair in Admin, Plans and prices, which checks them against Stripe on save.</li>
+          <li><strong>The webhook</strong> at <code>/api/webhooks/stripe</code>, sending five events: <code>checkout.session.completed</code>, <code>customer.subscription.created</code>, <code>customer.subscription.updated</code>, <code>customer.subscription.deleted</code> and <code>invoice.paid</code>. Its signing secret goes in <code>STRIPE_WEBHOOK_SECRET</code>.</li>
+          <li><strong>The Customer Portal</strong> (a dashboard setting): card updates and invoices on; switching allowed between the three plans only, never to the founding price; upgrades immediate and prorated, downgrades at the end of the period.</li>
+          <li><strong>Smart Retries, failed-payment emails, card-expiry emails and receipts</strong> switched on. All dashboard settings.</li>
+          <li><strong>The 100%-off-once coupon</strong> for referrals, with its ID in Admin, Codes and referrals.</li>
+          <li><strong>No GST anywhere.</strong> We're not registered (turnover is under $75,000), so nothing should read like a tax invoice. Leave Stripe Tax off and ask John Saxon to check the invoice wording.</li>
+          <li><strong>Then repeat it all in live mode.</strong> Live products have different IDs, and test and live share one database, so swap the Admin price pairs to the live IDs in the same sitting as the keys.</li>
+          <li><strong>Fix the net-price figure in Admin.</strong> It uses 1.7% plus 30c but leaves out Stripe Billing's 0.7% of subscription volume, so $9.99 nets about $9.45, not $9.52.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">3</div>
+      <div class="sbody">
+        <h3>Build blockers (Alana)</h3>
+        <ul>
+          <li><strong>The coaches stage</strong> and the mock-payments guard, from section 03.</li>
+          <li><strong>The email confirmation fix</strong>, the first item in section 06. Without it a large share of coaches will fail to confirm.</li>
+          <li><strong>Supabase Auth email through Resend.</strong> Supabase's built-in mailer only delivers to our own team's addresses, two an hour. If custom SMTP isn't set in the Supabase dashboard, no coach gets a confirmation email. Set the production Site URL and redirect URLs at the same time.</li>
+          <li><strong>Wipe and rebuild the database before the first real coach</strong>, not on rider launch day as <code>docs/launch.md</code> has it. Export the waitlist CSV first. After this the wipe script must never run again, so make it refuse once a real provider exists.</li>
+          <li><strong>Video upload will fail.</strong> It allows 40 MB through a server action, but Next.js caps server-action bodies at 1 MB by default and Vercel caps request bodies at 4.5 MB. Founding coaches get Spotlight, which includes video, so they will try it. Upload straight to Supabase Storage with a signed upload URL. Photos are fine once resized, except an iPhone HEIC file the browser can't read, which falls back to the full-size original and hits the same cap.</li>
+          <li><strong>Friendly error pages.</strong> There's a 404 page but no <code>error.tsx</code> or <code>global-error.tsx</code>, so a crash shows Next's "Application error" screen.</li>
+          <li><strong>Error alerts.</strong> Nothing tells us when a coach hits an error; we'd hear from Kim a week later. Sentry's free tier or a Vercel log alert is enough.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="step">
+      <div class="smark">4</div>
+      <div class="sbody">
+        <h3>Legal and content</h3>
+        <ul>
+          <li><strong>Take the five unbuilt features off the For Coaches page</strong> (section 01).</li>
+          <li><strong>Fill the blanks in the terms:</strong> the partnership name and ABN, the governing law (Victoria, as in the agreement) and the liability wording.</li>
+          <li><strong>Add a refund line to the terms.</strong> They cover cancelling but never say "no refunds for part periods", and Stripe requires a stated refund policy.</li>
+          <li><strong>The solicitor on the terms and privacy policy.</strong> The draft banner says "our solicitor is checking it before the site opens", which stops being true the day coaches pay. Book them now; if the review lands after opening, reword the banner.</li>
+          <li><strong>Admin, Settings:</strong> the ABN, <code>review_alert_emails</code> (both of us, or new profiles sit unseen in review), <code>show_sample_listings</code> off, and <code>legal_approved</code> once the solicitor signs off.</li>
+          <li><strong>A phone number on every coach page.</strong> Stripe requires a public contact method, and a coach who gets stuck will ring rather than email. Kim's mobile, or a number we both answer, on For Coaches, the sign-up page and onboarding.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Sign-up fixes for coaches who aren't comfortable online</h2></div>
+  <div class="col">
+    <p>Found by reading the sign-up, onboarding and billing code. The first five are musts; the rest are worth doing before Kim's first invite.</p>
+    <p><strong>The path to design for:</strong> Kim messages a coach on Facebook. They tap the link, which opens inside Messenger's own browser. They sign up there, then open the confirmation email in the Gmail app, which opens a different browser.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Fix</th><th>What happens today</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Must.</strong> The confirmation link works in any browser</td><td>Sign-up uses Supabase's PKCE flow, which only completes in the browser that started it. On the path above, the link fails and drops the coach on the login page.</td><td>Switch the confirm and reset-password templates to the <code>token_hash</code> link and check it in a small <code>/auth/confirm</code> route with <code>verifyOtp</code>.</td></tr>
+        <tr><td><strong>Must.</strong> Say what went wrong</td><td>A failed link goes to <code>/login?error=auth-callback-failed</code>, but the login page never reads it, so the coach sees a blank form.</td><td>"That link didn't work, it may have expired", with a button to send a new one.</td></tr>
+        <tr><td><strong>Must.</strong> A "send it again" button</td><td>The check-your-email screen only says "sign up again".</td><td>A resend button there, and on login when Supabase says the email isn't confirmed.</td></tr>
+        <tr><td><strong>Must.</strong> Catch the existing account</td><td>Signing up with an email that already has an account returns success and sends nothing, so the coach waits for an email that never comes.</td><td>The response has an empty <code>identities</code> list in that case. Show "You already have an account" with log-in and reset links.</td></tr>
+        <tr><td><strong>Must.</strong> Close the open redirect</td><td><code>/auth/callback</code> and <code>/login</code> send people wherever <code>next</code> says, so a crafted link could land a coach on a look-alike site after logging in.</td><td>Accept only paths that start with a single <code>/</code>.</td></tr>
+        <tr><td>Plain-English errors</td><td>Supabase and database messages reach the screen as they are ("User already registered", Postgres errors from the onboarding saves).</td><td>Map the common ones to a sentence; fall back to "That didn't save. Try again, or ring us on ...".</td></tr>
+        <tr><td>Our own auth emails</td><td>Supabase's default confirmation email reads like spam.</td><td>Rewrite the confirm and reset templates in the site's voice, sent from the notifications address.</td></tr>
+        <tr><td>Coming back from Stripe</td><td>The page can load before Stripe's webhook arrives, so a coach who just saved a card sees "Save my card" again and does it twice.</td><td>Look up the Checkout session on return, or show "Confirming your card" and refresh.</td></tr>
+        <tr><td>Reassurance at the card step</td><td>If cards stay for founding coaches, the step is bare.</td><td>Name Stripe, give the date nothing is charged before, mention the 30, 14 and 3-day reminder emails, and say cancelling is one click.</td></tr>
+        <tr><td>The location box</td><td>"Where you're based" is free text that only complains after it autosaves.</td><td>Use the suburb autocomplete the search bar already has.</td></tr>
+        <tr><td>The travel distance box</td><td>Shows even when "I travel to riders" isn't ticked.</td><td>Hide it until it is.</td></tr>
+        <tr><td>A 60-second walkthrough</td><td>No help page.</td><td>Kim records herself joining on her phone. Link it from the sign-up page.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>The test plan</h2></div>
+  <div class="col">
+    <p>Two halves: break it on purpose with Stripe's test tools, then watch real people use it without helping. The real Stripe paths (saving a card, the founding free period, launch-day subscriptions) have only ever run in mock mode, so the first half isn't optional.</p>
+    <h3>On the test site, with Stripe in test mode</h3>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <caption>Stripe's test cards (any future expiry date, any CVC)</caption>
+      <thead><tr><th>Card number</th><th>What it tests</th></tr></thead>
+      <tbody>
+        <tr><td><code>4242 4242 4242 4242</code></td><td>Everything works</td></tr>
+        <tr><td><code>4000 0025 0000 3155</code></td><td>The bank asks the coach to approve the payment</td></tr>
+        <tr><td><code>4000 0000 0000 9995</code></td><td>Declined for insufficient funds</td></tr>
+        <tr><td><code>4000 0000 0000 0341</code></td><td>Saves fine, then fails when charged: a founding coach's free period ending on a dead card</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <ul>
+      <li>A founding coach saves a card, then a Stripe test clock jumps six months: the free period ends, $9.99 is charged and the plan drops to Listed.</li>
+      <li>The same with the 0341 card: the charge fails, the plan goes past due, the profile hides, and it comes back when the card is updated.</li>
+      <li>Listed up to Clinic mid-month and back down (the clinic-month case). Check Stripe's proration matches what the page said.</li>
+      <li>Cancel, undo the cancel, pause, resume, switch to yearly.</li>
+      <li>The back button and "cancel" on the Stripe page, mid-checkout.</li>
+      <li>The same email twice; a wrong password; forgot password; a confirmation link opened on another device; a link more than a day old.</li>
+      <li>Leave onboarding halfway and come back the next day on another device.</li>
+      <li>A photo straight from an iPhone camera, a HEIC file on a Windows PC, a 20 MB photo, a video.</li>
+      <li>Extend <code>scripts/launch/host-gate.mjs</code> for the coaches stage: coach pages open on the public domain, rider pages still show coming soon, profiles carry noindex.</li>
+    </ul>
+    <h3>Three to five real people, watched</h3>
+    <ul>
+      <li>Pick people who aren't comfortable online and haven't seen the site: two coaches Kim trusts and one other. Not Kim; she knows it too well.</li>
+      <li>Send each the exact message Kim will send, on their own phone. Watch in person or on a video call with screen sharing.</li>
+      <li>Don't help. Write down every pause, wrong tap and question. Aim for under 15 minutes from the message to a submitted profile.</li>
+      <li>Fix the three worst moments, then run it once more with someone new.</li>
+    </ul>
+    <p>Testers use the test site and the 4242 card, so nobody pays anything.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><h2>First month, while coaches arrive</h2></div>
+  <div class="col">
+    <p>Not blockers, but each gets harder or dearer the longer it waits.</p>
+    <ul>
+      <li><strong>Decide the database region before the wipe.</strong> Supabase is in Tokyo. The pre-opening wipe is the one free moment to rebuild in Sydney: faster pages for Australians, and simpler overseas-storage wording in the privacy policy. Once real coaches exist it's a migration.</li>
+      <li><strong>Verify Search Console</strong> the day coach pages go public. Google only reports from the day it knows us, and "you appeared in Google 89 times" is the strongest number in the month-eight email.</li>
+      <li><strong>Email the professionals on the waitlist</strong> that joining is open. Riders on the list agreed to one email at launch, so save theirs for when riders open. Check the waitlist's consent wording covers this first.</li>
+      <li><strong>Decide which scheduled emails run in the coach phase.</strong> <code>CRON_EMAILS_ENABLED</code> is all or nothing. On, the monthly numbers email would tell every coach they had zero riders, which reads as failure. Keep that email off until riders open and send a short hand-written update instead. The "finish your profile" nudges are worth having now, so either make the switch per job or nudge by hand.</li>
+      <li><strong>Review every profile within a day.</strong> Onboarding promises "usually within a day or two", and review alerts only arrive if <code>review_alert_emails</code> is set.</li>
+      <li><strong>On Vercel Pro, run the sequences and campaigns jobs hourly.</strong> They're daily now because Hobby allows nothing faster.</li>
+      <li><strong>Every account in the business's name,</strong> both of us as admins, one shared password manager: Stripe, Vercel, Supabase, Resend, GitHub, the registrar.</li>
+      <li><strong>The DMARC record and the Resend bounce webhook</strong>, if they weren't done when Resend was set up.</li>
+      <li><strong>The IP Australia trade mark search</strong> on "Equine Professionals Australia".</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">09</span><h2>Can wait until riders</h2></div>
+  <div class="col">
+    <p>Most of this is built and switched off. Leave it off; none of it touches a coach signing up.</p>
+    <ul>
+      <li>Setting <code>launch_date</code> (which starts every founding coach's free period), <code>SITE_LAUNCHED=true</code>, submitting the sitemap and emailing the rider waitlist: the launch-day list in <code>docs/launch.md</code>.</li>
+      <li>The rider monthly round-up, saved-search alerts, rider welcome emails and campaigns.</li>
+      <li>The weekly Search Console import and SEO digest. (Verifying the domain is in section 08.)</li>
+      <li>Written intros on the top 20 area pages; the twenty-query rank basket.</li>
+      <li>Featured slots (they need eight coaches in an area) and benchmarks (five with a month of numbers).</li>
+      <li>Competitions, sponsors, awards, guides and Riders' Choice.</li>
+      <li>The monthly numbers email to coaches, once there are riders to count.</li>
+      <li>Google and Facebook ads, the show stall and the QR cards. Agree the UTM scheme before anything is printed.</li>
+      <li>Pitch copy for each horse care profession, written after the first ten conversations.</li>
+      <li>Australia's subscription-trap rules, which start on 1 July 2027 and cover small-business subscriptions. The site already has one-click cancelling and renewal reminders; have the solicitor check the sign-up wording against them next year.</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="col">
+    <p>Written 27 September 2026 from a read of the repo (<code>docs/launch.md</code>, the host gate in <code>src/proxy.ts</code> and <code>src/lib/launch.ts</code>, the Stripe code, the webhook, billing, sign-up, onboarding, the auth callback, <code>next.config.ts</code>, the draft terms and the build checklists in <code>docs/</code>) and every open card on the Trello board. Outside sources: <a href="https://support.stripe.com/questions/business-website-for-account-activation-faq">Stripe's website requirements for activation</a>; <a href="https://stripe.com/au/billing/pricing">Stripe Billing pricing, Australia</a>; <a href="https://supabase.com/docs/guides/auth/auth-smtp">Supabase on custom SMTP and the default mailer's limits</a>; <a href="https://vercel.com/docs/cron-jobs/usage-and-pricing">Vercel cron limits by plan</a>; <a href="https://www.rba.gov.au/payments-and-infrastructure/review-of-retail-payments-regulation/2026-03/conclusions-paper/faqs/">RBA on card surcharges from 1 October 2026</a>; <a href="https://mk.com.au/unfair-trading-practices-reforms-passed-businesses-have-12-months-to-prepare/">Macpherson Kelley on the unfair trading and subscription reforms</a>. Also kept as a Claude doc, "Before Coaches Sign Up"; this handbook copy is the one to edit.</p>
+  </div>
+</footer>
+
+</main>

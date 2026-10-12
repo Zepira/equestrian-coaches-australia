@@ -46,6 +46,16 @@ export type HandbookDoc = {
 
 export const HANDBOOK_DOCS: HandbookDoc[] = [
   {
+    slug: "coach-signup-checklist",
+    file: "coach-signup-checklist.html",
+    title: "Before Coaches Sign Up",
+    kicker: "Launch checklist",
+    summary:
+      "What has to happen before the first real coach can join, what can start this week, the four calls for Kim, the sign-up fixes and the test plan, and what can wait until riders.",
+    audience: "Both",
+    updated: "2026-09-27",
+  },
+  {
     slug: "marketing-engine",
     file: "marketing-engine.html",
     title: "The Marketing Engine",
