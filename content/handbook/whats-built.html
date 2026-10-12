@@ -1,0 +1,297 @@
+<title>What&rsquo;s Been Built</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Work+Sans:ital,wght@0,300..700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  color-scheme:light;
+  --ground:#E7DAC6; --surface:#FFFDF8; --surface-2:#EFE9DC;
+  --navy:#E7DAC6; --navy-2:#DDCFB6;
+  --line:#D3C1A4; --line-strong:#BCA783;
+  --ink:#22201C; --ink-2:#4A4842; --ink-3:#5E5A50;
+  --claret:#9C4229; --claret-soft:#F8EAE2; --claret-line:#DFBBA8; --claret-hi:#DE8B6C;
+  --brass:#1F3A2E; --brass-soft:#EDEFE7; --brass-line:#CFD8C9;
+  --chip-ink:#F6F1E7; --band-accent:#1F3A2E;
+  --bar-good:#00794F; --bar-bad:#C0492A;
+  --pick:#9C4229; --pick-bg:#F7F0E1;
+  --code-bg:#FBF7EC; --code-ink:#33312B; --code-key:#1F3A2E; --code-com:#87816F;
+  --on-navy:#22201C; --on-navy-2:#4A4842; --on-navy-3:#5E5A50;
+  --navy-rule:#D3C1A4;
+  --display:Fraunces,Georgia,"Times New Roman",serif;
+  --body:"Work Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --wrap:1060px; --measure:70ch;
+  --ribbon:polygon(0 0,100% 0,100% 100%,0 100%);
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink); font-family:var(--body);
+  font-size:17px; line-height:1.65; margin:0; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap); margin:0 auto; padding:0 26px}
+.col{max-width:var(--measure)}
+p,ul,ol{margin:0 0 1.1em}
+ul,ol{padding-left:1.2em}
+li{margin-bottom:.5em}
+li::marker{color:var(--brass)}
+strong{font-weight:700}
+a{color:var(--claret); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--claret); outline-offset:3px}
+
+h1,h2,h3{font-family:var(--display); font-weight:400; letter-spacing:-.02em; line-height:1; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.7rem,8vw,5.2rem); line-height:.99; font-variation-settings:'SOFT' 0,'WONK' 0}
+h2{font-size:clamp(1.8rem,4.3vw,2.8rem); line-height:1.03}
+h3{font-size:1.24rem; font-weight:500; letter-spacing:-.015em; line-height:1.2}
+h4{font-family:var(--body); font-size:.72rem; font-weight:800; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); margin:0 0 10px}
+
+code{font-family:var(--mono); font-size:.86em; background:var(--code-bg); color:var(--code-ink);
+  padding:1px 5px; border-radius:2px}
+pre{font-family:var(--mono); font-size:.8rem; line-height:1.6; background:var(--code-bg); color:var(--code-ink);
+  padding:18px 20px; margin:20px 0; overflow-x:auto; border:1px solid var(--line-strong)}
+pre code{background:none; padding:0; font-size:1em}
+pre .k{color:var(--code-key); font-weight:600}
+pre .c{color:var(--code-com); font-style:italic}
+
+.chip{display:inline-block; font-size:.66rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 11px; background:var(--brass); color:var(--chip-ink); white-space:nowrap}
+.chip.claret{background:var(--claret); color:#FFF}
+.chip.ghost{background:var(--surface-2); color:var(--ink-2)}
+
+.band{background:var(--navy); color:var(--on-navy); border-bottom:1px solid var(--line-strong)}
+.masthead{padding:64px 0 68px}
+.mast-top{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; padding-bottom:42px}
+.mast-mark{font-family:var(--display); font-size:1.8rem; font-weight:500; letter-spacing:-.03em}
+.mast-org{font-size:.72rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--on-navy-2)}
+.masthead h1{margin-bottom:28px}
+.masthead .lede{font-size:1.14rem; line-height:1.5; color:var(--on-navy-2); max-width:58ch; margin:0}
+.mast-meta{margin-top:38px; padding-top:18px; border-top:1px solid var(--navy-rule);
+  display:flex; flex-wrap:wrap; gap:10px 30px; font-size:.75rem; letter-spacing:.06em;
+  text-transform:uppercase; font-weight:600; color:var(--on-navy-3)}
+
+main.wrap{padding-top:70px}
+section{margin-bottom:80px}
+.sec-head{margin-bottom:28px}
+.sec-num{display:block; font-family:var(--display); font-size:.96rem; font-weight:600;
+  letter-spacing:.06em; color:var(--brass); margin-bottom:10px}
+.sec-head h2{padding-bottom:15px; border-bottom:2px solid var(--claret)}
+
+/* kind cards */
+.kinds{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:30px 0}
+.kind{border:1px solid var(--line-strong); background:var(--surface); padding:20px 20px 22px}
+.kind h3{margin:12px 0 8px}
+.kind p{margin:0 0 .7em; font-size:.9rem; line-height:1.5; color:var(--ink-2)}
+.kind p:last-child{margin-bottom:0}
+.kind .ex{font-family:var(--mono); font-size:.76rem; color:var(--ink-3); line-height:1.7}
+@media(max-width:800px){.kinds{grid-template-columns:1fr}}
+
+/* loop */
+.loop{border:1px solid var(--line-strong); background:var(--surface); margin:30px 0}
+.loop-head{padding:20px 22px 4px}
+.loop-head h3{margin-bottom:6px}
+.loop-head p{margin:0; font-size:.88rem; color:var(--ink-3)}
+.loop-steps{display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line);
+  border-top:1px solid var(--line-strong); margin-top:18px}
+.lstep{background:var(--surface); padding:18px 16px 20px}
+.lstep .n{font-family:var(--display); font-size:1.7rem; font-weight:500; color:var(--brass); line-height:1; display:block; margin-bottom:8px}
+.lstep b{display:block; font-size:.9rem; margin-bottom:5px}
+.lstep span{font-size:.82rem; line-height:1.45; color:var(--ink-2)}
+.loop-foot{padding:14px 22px; border-top:1px solid var(--line-strong); background:var(--surface-2);
+  font-size:.84rem; color:var(--ink-2)}
+.loop-foot b{color:var(--ink)}
+@media(max-width:860px){.loop-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.loop-steps{grid-template-columns:1fr}}
+
+/* tables */
+figure{margin:30px 0; border:1px solid var(--line-strong); background:var(--surface); overflow:hidden}
+figcaption{padding:14px 22px; border-top:1px solid var(--line-strong); font-size:.85rem;
+  line-height:1.5; color:var(--ink-2); background:var(--surface-2)}
+figcaption b{font-weight:700; color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:620px}
+caption{text-align:left; padding:22px 22px 14px; font-family:var(--display); font-weight:500;
+  font-size:1.32rem; letter-spacing:-.02em}
+th,td{text-align:left; padding:12px 22px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.5}
+thead th{font-size:.66rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:2px solid var(--line-strong); padding-top:8px; padding-bottom:10px; white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code{font-size:.8rem; white-space:nowrap}
+td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
+
+/* steps */
+.steps{margin:28px 0 0}
+.step{display:grid; grid-template-columns:58px 1fr; gap:0 22px; padding:26px 0; border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.smark{font-family:var(--display); font-size:2rem; font-weight:500; letter-spacing:-.025em; color:var(--brass); line-height:1}
+.sbody h3{margin-bottom:9px}
+.sbody p,.sbody ul{max-width:64ch}
+.sbody > :last-child{margin-bottom:0}
+@media(max-width:620px){.step{grid-template-columns:1fr; gap:10px}}
+
+/* callouts */
+.flag{border:1px solid var(--claret-line); border-left:5px solid var(--claret); background:var(--claret-soft);
+  padding:18px 22px; margin:24px 0}
+.note{border:1px solid var(--brass-line); border-left:5px solid var(--brass); background:var(--brass-soft);
+  padding:18px 22px; margin:24px 0}
+.flag p,.note p{margin:0; max-width:64ch; font-size:.94rem}
+.flag p + p,.note p + p{margin-top:.65em}
+.flag .chip,.note .chip{margin-bottom:11px}
+.flag ul,.note ul{margin:.6em 0 0; font-size:.94rem; max-width:64ch}
+
+/* vocabulary */
+.vocab{border:1px solid var(--line-strong); background:var(--surface); margin:24px 0}
+.vrow{display:grid; grid-template-columns:190px 1fr; gap:0 22px; padding:15px 22px; border-top:1px solid var(--line)}
+.vrow:first-of-type{border-top:0}
+.vname{font-weight:700; font-size:.95rem}
+.vname small{display:block; font-family:var(--mono); font-size:.72rem; font-weight:400; color:var(--ink-3); margin-top:3px}
+.vals{font-family:var(--mono); font-size:.79rem; line-height:1.85; color:var(--ink-2)}
+.vhead{padding:20px 22px 16px; background:var(--surface-2); border-bottom:1px solid var(--line-strong)}
+.vhead h3{margin-bottom:6px}
+.vhead p{margin:0; font-size:.88rem; color:var(--ink-2); max-width:66ch}
+@media(max-width:700px){.vrow{grid-template-columns:1fr; gap:6px}}
+
+.foot{border-top:1px solid var(--line-strong); padding:44px 0 52px; font-size:.8rem; line-height:1.75; color:var(--on-navy-2)}
+.foot .fh{font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--on-navy-3); margin-bottom:10px}
+.foot p{max-width:80ch; margin:0 0 .9em}
+.foot p:last-child{margin-bottom:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){
+  th,td,caption,figcaption,.vrow,.vhead,.loop-head,.loop-foot{padding-left:16px;padding-right:16px}
+  pre{padding:14px 16px}
+}
+.sbody{min-width:0}
+.sbody .tablewrap{margin-left:0;margin-right:0}
+</style>
+
+<div class="band">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="mast-top">
+        <span class="mast-mark">Handbook</span>
+        <span class="mast-org">Equine Professionals Australia</span>
+      </div>
+      <h1>What&rsquo;s been built</h1>
+      <p class="lede">The features added to the site since 12 October 2026, what each one does, where to find it, and how to try it yourself. Newest additions go at the top of each section as they land.</p>
+      <div class="mast-meta">
+        <span>Kept up to date as we build</span>
+        <span>Last updated 12 October 2026</span>
+        <span>Alana&rsquo;s step-by-step checks: docs/test-plan.md</span>
+      </div>
+    </header>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>How to try things</h2></div>
+  <div class="col">
+    <p><strong>Everything here is on the test site</strong>, the password-protected copy of the whole site. Alana has the address and the password. The public address still shows only the coming soon page.</p>
+    <p><strong>To see the professional side</strong>, you need a professional login. Alana keeps a test coach account (Tess Coachman, in Bendigo, on Spotlight) and a test rider account, and can give you the logins. Or sign up yourself with any email you can open.</p>
+    <p>Words you change in Admin can take a minute to show. Reload after that.</p>
+    <p>We&rsquo;re building first and going back to test and polish after, so if something looks rough, note it and we&rsquo;ll pick it up in that pass.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Extra locations on the Clinic plan</h2></div>
+  <div class="col">
+    <p><strong>What it is.</strong> Some professionals work from more than one place: a coach who teaches at home and at an agistment centre an hour away, a farrier with two regular rounds. On the Clinic plan they can add up to two more places, so three in all, each with its own travel distance.</p>
+    <p>Riders searching near any of those places find them, and the result shows the nearest one (someone searching near Ballarat sees &ldquo;Ballarat&rdquo;, not the main base). Each place counts toward its own area page. The profile says &ldquo;also works from&rdquo; the other places.</p>
+    <p>On a smaller plan the extra places are kept but don&rsquo;t show, and they come back if the professional moves up again. How many places each plan allows is a number in Admin, Plans and prices.</p>
+  </div>
+  <div class="note">
+    <span class="chip ghost">Try it</span>
+    <p>Ask Alana to put the test coach on Clinic, then open Dashboard, Profile and scroll to &ldquo;Other locations&rdquo;. Add a town and look at the profile preview.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Testimonials</h2></div>
+  <div class="col">
+    <p><strong>What it is.</strong> Testimonials are the quotes a professional chooses to show on their profile. They&rsquo;re labelled &ldquo;Provided by the business&rdquo; and never count toward the star rating. Reviews are different: riders write those, every genuine one goes up, and professionals can&rsquo;t pick or pin them. That split is deliberate, and it&rsquo;s what the ACCC expects.</p>
+    <p><strong>On every plan</strong>, a professional can add testimonials themselves, edit their own, put them in order, hide them and delete them, as many as they like. There&rsquo;s a new Testimonials tab on the dashboard for it.</p>
+    <p><strong>On Spotlight and Clinic</strong> they also get:</p>
+    <ul>
+      <li><strong>A request link</strong> to send a client. The client writes it in their own words, adds their name and town, and ticks that it can be shown. It waits on the dashboard until the professional chooses to show it, and they get an email when one arrives. A client&rsquo;s words can&rsquo;t be edited.</li>
+      <li><strong>Pin a favourite</strong> to the top of their profile.</li>
+    </ul>
+    <p><strong>Reminders.</strong> The monthly numbers email now has a line with their testimonial and review counts and the link to ask for more, until they have five. The dashboard also suggests asking once enquiries start coming in.</p>
+    <p><strong>Which plans</strong> get the link and pinning is a tick box in Admin, Plans and prices (&ldquo;Testimonial tools&rdquo;). Moving down a plan never deletes anything.</p>
+  </div>
+  <div class="note">
+    <span class="chip ghost">Try it</span>
+    <p>Log in as the test coach and open Dashboard, Testimonials. Add one, then copy the request link, open it in a private window and write one as if you were a rider. Back in the dashboard, show it and pin it. Then look at the profile with <code>?preview=1</code> on the end of the address.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Photos and intro videos</h2></div>
+  <div class="col">
+    <p><strong>Photos upload properly now.</strong> Big phone photos used to fail on the live site because of a size limit on the way through our server. Photos now go straight to storage, which fixes it for profile photos and every photo upload in Admin. Storage refuses anything over 25MB or that isn&rsquo;t an image.</p>
+    <p><strong>Intro videos are YouTube or Vimeo links</strong> instead of uploaded files, as the plan for Spotlight always said. The professional pastes a link (unlisted videos work too). Their profile shows a still with a play button, and nothing loads from YouTube or Vimeo until a visitor presses play, which keeps our &ldquo;no tracking&rdquo; promise.</p>
+  </div>
+  <div class="note">
+    <span class="chip ghost">Try it</span>
+    <p>As the test coach: Dashboard, Profile. Add a photo from your phone, then paste a YouTube link into the Intro video box and press play on the preview.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Legal pages</h2></div>
+  <div class="col">
+    <p>The terms of service and privacy policy are now draft 2, and there are two new pages: <strong>Cookies</strong> (the whole list of what the site stores, which is very little) and <strong>Cancelling and refunds</strong> (how billing, cancelling, pausing and refunds work). The review policy has two new sections: what happens when someone says a review is false, and the rules on incentives. Competition terms have a proper &ldquo;Your details&rdquo; section and the fine print.</p>
+    <p>All of them still say &ldquo;draft&rdquo; at the top and stay out of Google until the solicitor has checked them and we switch &ldquo;legal approved&rdquo; on in Admin, Settings. The prices, ABN and dates in them fill themselves in from settings, and the words can be edited in Admin, Pages.</p>
+    <p><strong>Every form that takes someone&rsquo;s details</strong> now has a short line saying who gets them and why, with a link to the privacy policy: the enquiry form, both sign-ups, reviews, competitions, guides and the new testimonial page. The plans have a line about billing and cancelling, with a link to the refunds page.</p>
+    <p><strong>Marketing emails</strong> now carry the business name, ABN and Buln Buln, Victoria, and say why the person is getting them (&ldquo;you asked for ... on [date]&rdquo;). The tick-box wording on the forms is the new version from the legal draft.</p>
+    <p><strong>Stripe needs to see these pages</strong> without a password, so the legal pages open on the public address even before launch, and the coming soon page links to them.</p>
+  </div>
+  <div class="note">
+    <span class="chip ghost">Try it</span>
+    <p>Read through /terms, /privacy, /cookies and /refunds. They&rsquo;re linked at the bottom of every page.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>The For Professionals page</h2></div>
+  <div class="col">
+    <p><strong>/for-professionals is now as complete as /for-coaches</strong>: the honest monthly numbers promise, the founding offer, what we do to bring horse owners to them, the plans side by side, &ldquo;we never take a percentage of a job&rdquo;, and questions. It&rsquo;s in the horse care steel blue, written for horse owners and jobs rather than riders and lessons. Both pages share the same building blocks, so a change to the plans shows on both.</p>
+    <p>Arriving with a profession in the address (/for-professionals?p=farriers) makes the page about farriers and sends every button straight to farrier sign-up.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Smaller changes</h2></div>
+  <div class="col">
+    <ul>
+      <li><strong>Nothing looks frozen any more.</strong> Buttons show a spinner while they&rsquo;re working, logging in keeps spinning until the dashboard appears, and a thin bar runs across the top of the screen while a page loads.</li>
+      <li><strong>The footer</strong> is tidier: the policy links, the ABN and Buln Buln, and &ldquo;Site by Daiquiri Creative&rdquo;.</li>
+      <li><strong>The menus</strong> in the header have a cleaner drop-down bar, and &ldquo;Search all&rdquo; is in bold.</li>
+      <li><strong>Riders</strong> now see &ldquo;Close my account&rdquo; on their account page.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Still to build</h2></div>
+  <div class="col">
+    <p>The plan comparison promises a few things that don&rsquo;t exist yet. We build them or take them off the page before anyone pays:</p>
+    <ul>
+      <li>Text message alerts when an enquiry arrives (email alerts already work).</li>
+      <li>Showing a professional how often they appeared in Google, and for what searches.</li>
+      <li>A waitlist on Clinic events, for when they&rsquo;re full.</li>
+      <li>The fuller statistics on Spotlight (every plan sees the same chart today).</li>
+      <li>A link to the professional&rsquo;s own website on Spotlight and Clinic.</li>
+    </ul>
+    <p>Also waiting: a professional closing their own account (riders can already), and moving the database to Sydney before the legal pages go public, because the privacy policy says that&rsquo;s where it is.</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="col">
+    <p>Kept by Alana and Claude as features land. The step-by-step version, with every check to run, is <code>docs/test-plan.md</code> in the repo.</p>
+  </div>
+</footer>
+
+</main>

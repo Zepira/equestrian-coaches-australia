@@ -46,6 +46,16 @@ export type HandbookDoc = {
 
 export const HANDBOOK_DOCS: HandbookDoc[] = [
   {
+    slug: "whats-built",
+    file: "whats-built.html",
+    title: "What's Been Built",
+    kicker: "Kept up to date",
+    summary:
+      "Every feature added since 12 October 2026 in plain words: what it does, where to find it and how to try it. Updated as each one lands.",
+    audience: "Both",
+    updated: "2026-10-12",
+  },
+  {
     slug: "coach-signup-checklist",
     file: "coach-signup-checklist.html",
     title: "Before Coaches Sign Up",
