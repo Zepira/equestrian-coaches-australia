@@ -141,6 +141,7 @@ export default async function GuidePage({ params, searchParams }: Props) {
           guideId={g.id}
           heading={fillVariables(w.downloadHeading, { download_title: g.download_title || "file" })}
           lead={w.downloadLead}
+          notice={(await getContent("legal.notices")).guide}
         />
       )}
 

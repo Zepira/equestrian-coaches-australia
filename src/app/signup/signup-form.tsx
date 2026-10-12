@@ -8,6 +8,7 @@ import { AuthShell } from "@/components/auth-shell";
 import { inputClass, labelClass } from "@/components/ui/field";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { ResendLink } from "@/components/resend-link";
+import { LegalText } from "@/components/legal-text";
 import { friendlyAuthError } from "@/lib/friendly-error";
 import { confirmRedirect, safeNextPath } from "@/lib/site-url";
 
@@ -42,9 +43,12 @@ export function SignupForm({
   news,
   codes = { referral: "", promo: "" },
   supportPhone = "",
+  notice,
 }: {
   /** The support_phone setting, for the catch-all error. */
   supportPhone?: string;
+  /** The line under the button (legal.notices riderSignup / providerSignup). */
+  notice: string;
   /** Codes from the link they came in on, checked by the sign-up trigger. */
   codes?: { referral: string; promo: string };
   /** Where they came from, as JSON strings for the sign-up trigger (or "null"). */
@@ -85,6 +89,7 @@ export function SignupForm({
 
     // A thrown exception (network, bad URL/key) rather than a returned
     // { error } would otherwise skip setLoading(false) and leave the form stuck.
+    let leaving = false;
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
@@ -127,11 +132,13 @@ export function SignupForm({
       // A full page load, not router.push: the header prefetched this page
       // while signed out, and a client navigation would reuse that cached
       // redirect back to /login. A fresh request carries the new session.
+      leaving = true;
       window.location.assign(next);
     } catch (err) {
       setError(friendlyAuthError(err, supportPhone));
     } finally {
-      setLoading(false);
+      // Not when leaving: the button spins until the next page arrives.
+      if (!leaving) setLoading(false);
     }
   }
 
@@ -292,13 +299,11 @@ export function SignupForm({
           </p>
         )}
 
-        <Button type="submit" disabled={loading} className="mt-1 h-12 w-full text-[15px]">
+        <Button type="submit" loading={loading} className="mt-1 h-12 w-full text-[15px]">
           {loading ? "Making your account…" : "Create account"}
         </Button>
         <p className="text-center text-[13px] leading-[1.5] text-subtle">
-          By creating an account you agree to our{" "}
-          <Link href="/terms" className="underline underline-offset-2 hover:text-fg">terms</Link> and{" "}
-          <Link href="/privacy" className="underline underline-offset-2 hover:text-fg">privacy policy</Link>.
+          <LegalText text={notice} linkClassName="underline underline-offset-2 hover:text-fg" />
         </p>
       </form>
     </AuthShell>

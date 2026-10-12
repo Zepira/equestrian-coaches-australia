@@ -4,7 +4,7 @@
  * `marquee` loop — 45s on phones, 60s on desktop. Decorative; the claims
  * are all made properly further down the page.
  */
-const CLAIMS = [
+export const COACH_CLAIMS = [
   "No commission",
   "Cancel any time",
   "Real numbers every month",
@@ -13,10 +13,10 @@ const CLAIMS = [
   "Testimonials are yours",
 ];
 
-function Run() {
+function Run({ claims }: { claims: string[] }) {
   return (
     <span className="inline-flex items-center gap-7 pr-7 text-[12px] font-medium uppercase tracking-[0.16em] text-ink-fg wide:gap-10 wide:pr-10 wide:text-[13px]">
-      {CLAIMS.map((c) => (
+      {claims.map((c) => (
         <span key={c} className="contents">
           <span>{c}</span>
           <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-peach" />
@@ -26,12 +26,12 @@ function Run() {
   );
 }
 
-export function PromiseTicker() {
+export function PromiseTicker({ claims = COACH_CLAIMS }: { claims?: string[] }) {
   return (
     <div aria-hidden className="overflow-hidden whitespace-nowrap border-t border-ink-fg/14 bg-ink py-4 wide:py-5">
       <div className="marquee marquee--slow inline-flex">
-        <Run />
-        <Run />
+        <Run claims={claims} />
+        <Run claims={claims} />
       </div>
     </div>
   );

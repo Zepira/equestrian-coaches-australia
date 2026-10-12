@@ -51,6 +51,7 @@ export function ResetPasswordForm({ supportPhone = "" }: { supportPhone?: string
       return;
     }
 
+    let leaving = false;
     try {
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) {
@@ -71,11 +72,13 @@ export function ResetPasswordForm({ supportPhone = "" }: { supportPhone?: string
       // A full page load, not router.push: the header prefetched this page
       // while signed out, and a client navigation would reuse that cached
       // redirect back to /login. A fresh request carries the new session.
+      leaving = true;
       window.location.assign(next);
     } catch (err) {
       setError(friendlyAuthError(err, supportPhone));
     } finally {
-      setLoading(false);
+      // Not when leaving: the button spins until the next page arrives.
+      if (!leaving) setLoading(false);
     }
   }
 
@@ -112,7 +115,7 @@ export function ResetPasswordForm({ supportPhone = "" }: { supportPhone?: string
 
         {error && <p role="alert" className="text-[13.5px] text-accent">{error}</p>}
 
-        <Button type="submit" disabled={loading || done} className="mt-1 h-12 w-full text-[15px]">
+        <Button type="submit" loading={loading || done} className="mt-1 h-12 w-full text-[15px]">
           {loading ? "Saving…" : "Set new password"}
         </Button>
       </form>

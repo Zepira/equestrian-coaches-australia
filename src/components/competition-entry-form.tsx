@@ -3,6 +3,7 @@
 import { startTransition, useActionState, useState } from "react";
 import { compressImage, MAX_SOURCE_BYTES } from "@/lib/compress-image";
 import { Button } from "@/components/ui/button";
+import { LegalText } from "@/components/legal-text";
 import { Field, inputClass } from "@/components/ui/field";
 import { enterCompetition, type EntryResult } from "@/app/competitions/actions";
 
@@ -17,6 +18,7 @@ export function CompetitionEntryForm({
   sent,
   news,
   photo = "none",
+  notice,
 }: {
   /** Whether entries include a photo: none, optional or required (M10). */
   photo?: "none" | "optional" | "required";
@@ -26,6 +28,8 @@ export function CompetitionEntryForm({
   parentLabel: string;
   sent: string;
   news: { id: string; body: string } | null;
+  /** The collection notice (legal.notices.competition). */
+  notice?: string;
 }) {
   const [state, action, pending] = useActionState<EntryResult, FormData>(enterCompetition, { ok: false, message: "" });
   const [age, setAge] = useState("");
@@ -83,7 +87,12 @@ export function CompetitionEntryForm({
         </label>
       )}
       {(photoError || state.message) && <p role="alert" className="text-[14px] text-danger">{photoError || state.message}</p>}
-      <Button type="submit" disabled={pending || preparing} className="h-12 w-full text-[15px]">{pending || preparing ? "Sending" : "Enter"}</Button>
+      <Button type="submit" loading={pending || preparing} className="h-12 w-full text-[15px]">{pending || preparing ? "Sending" : "Enter"}</Button>
+      {notice && (
+        <p className="text-[12.5px] leading-[1.5] text-subtle">
+          <LegalText text={notice} />
+        </p>
+      )}
     </form>
   );
 }

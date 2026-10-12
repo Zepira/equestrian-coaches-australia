@@ -16,12 +16,14 @@ export function EnquirySheet({
   firstName,
   takingStudents,
   kind = "coach",
+  notice,
 }: {
   coachId: string | null;
   coachName: string;
   firstName: string;
   takingStudents: "yes" | "waitlist" | "no";
   kind?: "coach" | "professional";
+  notice?: string;
 }) {
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -93,7 +95,7 @@ export function EnquirySheet({
               </button>
             </div>
             <div className="mt-4">
-              <ContactForm coachId={coachId} coachName={coachName} firstName={firstName} kind={kind} />
+              <ContactForm coachId={coachId} coachName={coachName} firstName={firstName} kind={kind} notice={notice} />
             </div>
           </div>
         </div>

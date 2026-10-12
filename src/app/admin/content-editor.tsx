@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 /**
  * One form for a set of content blocks (Pages, Emails). The fields come from
@@ -72,7 +73,7 @@ export function ContentEditor({
           {pending ? "Saving…" : saveLabel}
         </Button>
         {testAction && (
-          <button type="submit" formAction={testFormAction} disabled={testPending} className="rounded-[var(--radius-pill)] border border-border px-4 py-2 text-[14px] font-medium text-fg hover:bg-shade">
+          <button type="submit" formAction={testFormAction} disabled={testPending} className="rounded-[var(--radius-pill)] border border-border px-4 py-2 text-[14px] font-medium text-fg hover:bg-shade"><PendingSpinner />
             {testPending ? "Sending…" : "Send me a test"}
           </button>
         )}

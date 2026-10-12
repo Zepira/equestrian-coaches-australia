@@ -1,5 +1,7 @@
 "use server";
 
+import { assertUploaded, imageExt, signUpload, type SignedUpload } from "@/lib/storage-upload";
+import { createServiceSupabase } from "@/lib/supabase/service";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { CMS_TAG } from "@/lib/cms/read";
 import { reservedSlugError } from "@/lib/reserved-slugs";
@@ -111,24 +113,24 @@ export async function createDiscipline(formData: FormData) {
 // Images go to the admin-only term-images bucket under the discipline's
 // slug; the previous upload is removed so the bucket never accumulates
 // orphans. The client resizes to 1600px before this runs.
-export async function uploadDisciplineImage(termId: string, formData: FormData) {
+/** A discipline's photo, uploaded straight to storage (src/lib/storage-upload.ts). */
+export async function startDisciplineImage(termId: string, fileName: string): Promise<SignedUpload> {
   const supabase = await requireAdmin();
-  const file = formData.get("image") as File | null;
-  if (!file || file.size === 0) throw new Error("No file provided.");
-  if (!file.type.startsWith("image/")) throw new Error("That isn't an image.");
+  const { data: term, error } = await supabase.from("terms").select("slug").eq("id", termId).single();
+  if (error) throw error;
+  return signUpload(createServiceSupabase()!, "term-images", `discipline/${term.slug}/${Date.now()}.${imageExt(fileName)}`);
+}
 
+export async function finishDisciplineImage(termId: string, path: string) {
+  const supabase = await requireAdmin();
   const { data: term, error: termError } = await supabase.from("terms").select("slug, image_path, parent:parent_id(slug)").eq("id", termId).single();
   if (termError) throw termError;
-
-  const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
-  const path = `discipline/${term.slug}/${Date.now()}.${ext}`;
-  const { error: uploadError } = await supabase.storage.from("term-images").upload(path, file, { contentType: file.type, cacheControl: "31536000" });
-  if (uploadError) throw uploadError;
+  await assertUploaded(createServiceSupabase()!, "term-images", path, `discipline/${term.slug}/`);
 
   const { error } = await supabase.from("terms").update({ image_path: path, updated_at: new Date().toISOString() }).eq("id", termId);
   if (error) throw error;
 
-  if (term.image_path) await supabase.storage.from("term-images").remove([term.image_path]);
+  if (term.image_path && term.image_path !== path) await supabase.storage.from("term-images").remove([term.image_path]);
   revalidateDiscipline(term.slug, parentSlug(term));
 }
 

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { LegalBody, fillLegal } from "@/components/legal-page";
 import { getContent } from "@/lib/cms/read";
+import { getLegalVars } from "@/lib/legal";
 
 export const metadata: Metadata = {
   title: "Our review policy",
@@ -12,7 +14,7 @@ export const metadata: Metadata = {
  * in the review_policy block (Admin → Pages).
  */
 export default async function ReviewPolicyPage() {
-  const doc = await getContent("review_policy");
+  const [doc, vars] = await Promise.all([getContent("review_policy"), getLegalVars()]);
   return (
     <article className="mx-auto max-w-[760px] px-[18px] pb-20 pt-12 wide:px-0 wide:pb-[120px] wide:pt-20">
       <h1 className="text-[46px] leading-[0.98] -tracking-[0.02em] text-ink wide:text-[72px]">{doc.title}</h1>
@@ -21,7 +23,9 @@ export default async function ReviewPolicyPage() {
         {doc.sections.map((s) => (
           <section key={s.title}>
             <h2 className="text-[26px] leading-[1.1] text-ink wide:text-[30px]">{s.title}</h2>
-            <p className="mt-3 text-[16px] leading-[1.6] text-muted wide:text-[17px]">{s.body}</p>
+            <div className="mt-3 flex flex-col gap-3 text-[16px] leading-[1.6] text-muted wide:text-[17px]">
+              <LegalBody text={fillLegal(s.body, vars)} />
+            </div>
           </section>
         ))}
       </div>

@@ -7,6 +7,7 @@
  * and where they link. A horse care provider gets that door's colours
  * through PageContext.
  */
+import { IntroVideo } from "@/components/intro-video";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -324,7 +325,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
   if (coach.id && !preview) await logView(coach.id); // real coaches only; deduped per visitor per day
   const profession = (await getProfession(coach.professionSlug ?? "coaches")) ?? FALLBACK_PROFESSIONS[0];
   const horseCare = profession.door === "horse_care";
-  const mention = await getContent("mention");
+  const [mention, notices] = await Promise.all([getContent("mention"), getContent("legal.notices")]);
   // Riders' reviews (M5): real, published providers only, never in a preview.
   const reviewService = coach.id && !preview ? createServiceSupabase() : null;
   const reviewSummary = reviewService && coach.id ? await getReviewSummary(reviewService, coach.id) : null;
@@ -478,7 +479,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
             <p className="mt-3.5 text-[16px] leading-[1.55] text-muted wide:mt-[18px] wide:max-w-[64ch] wide:text-[17px]">{coach.bio}</p>
 
             {coach.videoUrl && (
-              <video src={coach.videoUrl} controls className="mt-6 w-full max-w-lg rounded-[16px]" />
+              <IntroVideo url={coach.videoUrl} title={`${coach.name}'s intro video`} className="mt-6 max-w-lg" />
             )}
 
             {/* ── skills / setup / qualifications ──────────────────── */}
@@ -626,7 +627,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
           </p>
           <div className="mt-[18px]">
             {enquiryId ? (
-              <ContactForm coachId={enquiryId} coachName={coach.name} firstName={firstName} kind={horseCare ? "professional" : undefined} />
+              <ContactForm coachId={enquiryId} coachName={coach.name} firstName={firstName} kind={horseCare ? "professional" : undefined} notice={fillVariables(notices.enquiry, { name: firstName })} />
             ) : (
               <p className="rounded-[12px] bg-shade p-4 text-[14px] text-subtle">
                 {coach.takingStudents === "no" ? `${firstName} isn't taking new ${who} right now.` : `This ${profession.singular} isn't taking enquiries through the site right now.`}
@@ -644,7 +645,7 @@ export async function CoachProfile({ slug, preview = false }: { slug: string; pr
         </aside>
       </div>
 
-      <EnquirySheet coachId={enquiryId} coachName={coach.name} firstName={firstName} takingStudents={coach.takingStudents} kind={horseCare ? "professional" : undefined} />
+      <EnquirySheet coachId={enquiryId} coachName={coach.name} firstName={firstName} takingStudents={coach.takingStudents} kind={horseCare ? "professional" : undefined} notice={fillVariables(notices.enquiry, { name: firstName })} />
     </div>
   );
 }

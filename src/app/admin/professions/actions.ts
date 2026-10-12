@@ -1,5 +1,7 @@
 "use server";
 
+import { assertUploaded, imageExt, signUpload, type SignedUpload } from "@/lib/storage-upload";
+import { createServiceSupabase } from "@/lib/supabase/service";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { CMS_TAG } from "@/lib/cms/read";
@@ -210,17 +212,21 @@ export async function moveProfession(termId: string, direction: "up" | "down") {
   revalidatePath("/admin/professions");
 }
 
-export async function uploadTermImage(termId: string, fd: FormData) {
+/** A profession's (or speciality's) photo, uploaded straight to storage (src/lib/storage-upload.ts). */
+export async function startTermImage(termId: string, fileName: string): Promise<SignedUpload> {
   const { supabase } = await requireAdmin();
-  const file = fd.get("image") as File | null;
-  if (!file || file.size === 0 || !file.type.startsWith("image/")) throw new Error("That isn't an image.");
+  const { data: term } = await supabase.from("terms").select("slug, kind").eq("id", termId).single();
+  if (!term) throw new Error("Not found.");
+  return signUpload(createServiceSupabase()!, "term-images", `${term.kind}/${term.slug}/${Date.now()}.${imageExt(fileName)}`);
+}
+
+export async function finishTermImage(termId: string, path: string) {
+  const { supabase } = await requireAdmin();
   const { data: term } = await supabase.from("terms").select("slug, kind, image_path").eq("id", termId).single();
   if (!term) throw new Error("Not found.");
-  const path = `${term.kind}/${term.slug}/${Date.now()}.${(file.name.split(".").pop() ?? "jpg").toLowerCase()}`;
-  const { error: upErr } = await supabase.storage.from("term-images").upload(path, file, { contentType: file.type, cacheControl: "31536000" });
-  if (upErr) throw upErr;
+  await assertUploaded(createServiceSupabase()!, "term-images", path, `${term.kind}/${term.slug}/`);
   await supabase.from("terms").update({ image_path: path, updated_at: new Date().toISOString() }).eq("id", termId);
-  if (term.image_path) await supabase.storage.from("term-images").remove([term.image_path]);
+  if (term.image_path && term.image_path !== path) await supabase.storage.from("term-images").remove([term.image_path]);
   everywhere();
 }
 

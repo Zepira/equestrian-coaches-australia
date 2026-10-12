@@ -7,13 +7,15 @@ import { SITE_LAUNCHED, showsComingSoon } from "@/lib/launch";
 import "./globals.css";
 import { BootScript } from "@/components/boot-script";
 import { SiteHeader } from "@/components/site-header";
+import { NavProgress } from "@/components/nav-progress";
+import { Suspense } from "react";
 import { SiteFooter } from "@/components/site-footer";
 import { Parallax } from "@/components/hero-parallax";
 import { disciplinePath } from "@/lib/page-paths";
 import { SITE_URL } from "@/lib/site-url";
 import { SiteNudges } from "@/components/site-nudges";
 import { getAlertWordings } from "@/components/subscribe-card";
-import { getSlideInDelaySeconds, getSlideInEveryDays, isSlideInEnabled } from "@/lib/settings";
+import { getBusinessAbn, getSlideInDelaySeconds, getSlideInEveryDays, isSlideInEnabled } from "@/lib/settings";
 
 // Golden Hour type: Instrument Serif (display, regular + italic — the face
 // has no other weights) and Hanken Grotesk (body).
@@ -95,7 +97,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const comingSoon = !SITE_LAUNCHED && showsComingSoon((await headers()).get("host"));
 
   // The CMS reads are cached and cookie-free, so the layout stays static.
-  const [professions, featured, footer, announcement, slideCopy, slideOn, slideDelay, slideEvery, wordings] = await Promise.all([
+  const [professions, featured, footer, announcement, slideCopy, slideOn, slideDelay, slideEvery, wordings, abn] = await Promise.all([
     getProfessions(),
     getFeaturedDisciplines(),
     getContent("footer"),
@@ -105,6 +107,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     getSlideInDelaySeconds(),
     getSlideInEveryDays(),
     getAlertWordings(),
+    getBusinessAbn(),
   ]);
   const prefixes = horseCarePrefixes(professions);
   const header = {
@@ -150,7 +153,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             next-themes' own FOUC-prevention script uses). */}
         <BootScript
           id="overlay-route"
-          code={`document.documentElement.dataset.overlayRoute = String(["/", "/coaches", "/horse-care", "/for-coaches"].includes(location.pathname));
+          code={`document.documentElement.dataset.overlayRoute = String(["/", "/coaches", "/horse-care", "/for-coaches", "/for-professionals"].includes(location.pathname));
 if (${JSON.stringify(prefixes)}.some(function (p) { return location.pathname === p || location.pathname.indexOf(p + "/") === 0; })) document.documentElement.dataset.door = "horse-care";`}
         />
         {/* .reveal (src/app/globals.css) fades real content in as it scrolls
@@ -178,12 +181,18 @@ if (${JSON.stringify(prefixes)}.some(function (p) { return location.pathname ===
         >
           Skip to content
         </a>
+        {/* useSearchParams, so it sits in its own Suspense and the pages stay static. */}
+        {!comingSoon && (
+          <Suspense fallback={null}>
+            <NavProgress />
+          </Suspense>
+        )}
         {!comingSoon && <SiteHeader {...header} />}
         {!comingSoon && <Parallax />}
         <main id="main-content" className="flex-1">
           {children}
         </main>
-        {!comingSoon && <SiteFooter tagline={footer.tagline} />}
+        {!comingSoon && <SiteFooter tagline={footer.tagline} abn={abn} place={footer.place} credit={{ text: footer.credit, url: footer.creditUrl }} />}
         {/* The coming soon page has its own sign-up; the announcement bar and
             slide-in would be a second, competing one. */}
         {!comingSoon && (

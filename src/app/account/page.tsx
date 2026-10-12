@@ -9,6 +9,7 @@ import { AlertForm, type AlertConsent, type AlertDefaults, type AlertProfession 
 import { consentStatus, currentWording } from "@/lib/audience";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { eventPath, profilePath } from "@/lib/page-paths";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export const metadata = { title: "My account", robots: { index: false, follow: false } };
 
@@ -271,7 +272,7 @@ export default async function AccountPage({
                       ))}
                     </div>
                     <form action={removeFavourite.bind(null, f.coachId)}>
-                      <button type="submit" title="Remove" aria-label={`Remove ${f.name} from saved`} className="p-1.5 text-[20px] leading-none text-accent wide:text-[22px]">
+                      <button type="submit" title="Remove" aria-label={`Remove ${f.name} from saved`} className="p-1.5 text-[20px] leading-none text-accent wide:text-[22px]"><PendingSpinner />
                         ♥
                       </button>
                     </form>
@@ -333,12 +334,12 @@ export default async function AccountPage({
                     </p>
                     <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13.5px]">
                       <form action={setAlertActive.bind(null, a.id, Boolean(a.unsubscribed_at))}>
-                        <button type="submit" className="font-medium text-accent">
+                        <button type="submit" className="font-medium text-accent"><PendingSpinner />
                           {a.unsubscribed_at ? "Turn back on" : "Turn off"}
                         </button>
                       </form>
                       <form action={deleteAlert.bind(null, a.id)}>
-                        <button type="submit" className="text-subtle">
+                        <button type="submit" className="text-subtle"><PendingSpinner />
                           Delete
                         </button>
                       </form>
@@ -395,12 +396,12 @@ export default async function AccountPage({
               Email &amp; password<span className="text-subtle">→</span>
             </Link>
             <form action="/auth/sign-out" method="post" className="contents">
-              <button type="submit" className={`${rowLink} w-full text-left`}>
+              <button type="submit" className={`${rowLink} w-full text-left`}><PendingSpinner />
                 Sign out<span className="text-subtle">→</span>
               </button>
             </form>
             <Link href="/account/delete" className="py-3 text-[14px] leading-[1.5] text-subtle">
-              Delete my account
+              Close my account
             </Link>
           </nav>
         </div>

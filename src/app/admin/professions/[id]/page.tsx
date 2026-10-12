@@ -9,7 +9,7 @@ import { sectionPath } from "@/lib/page-paths";
 import { getSectionTerms } from "@/lib/sections";
 import { HistoryList } from "../../history-list";
 import { TermImagePanel } from "../../term-image-panel";
-import { removeTermImage, uploadTermImage } from "../actions";
+import { finishTermImage, removeTermImage, startTermImage } from "../actions";
 import { ProfessionForm, type ProfessionRow } from "./profession-form";
 
 export const metadata = { title: "Edit profession" };
@@ -54,7 +54,8 @@ export default async function AdminProfessionEdit({ params }: { params: Promise<
             src={uploaded ?? professionPhoto(row.slug, 800)}
             uploaded={Boolean(uploaded)}
             note="Shown on the Horse care page's list and at the top of the profession's section. Landscape, at least 1200px wide."
-            upload={uploadTermImage.bind(null, id)}
+            start={startTermImage.bind(null, id)}
+            finish={finishTermImage.bind(null, id)}
             remove={removeTermImage.bind(null, id)}
           />
         </div>

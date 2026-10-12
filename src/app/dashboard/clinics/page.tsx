@@ -6,6 +6,7 @@ import { canListClinics, clinicLimit } from "@/lib/tiers";
 import { countWord, getPlanCapabilities } from "@/lib/settings";
 import { createClinic, deleteClinic } from "./actions";
 import { eventPath } from "@/lib/page-paths";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export const metadata = { title: "Clinics" };
 const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -92,7 +93,7 @@ export default async function ClinicsPage() {
                     View page
                   </Link>
                   <form action={deleteClinic.bind(null, c.id)} className="ml-auto">
-                    <button type="submit" className="text-subtle hover:text-danger">
+                    <button type="submit" className="text-subtle hover:text-danger"><PendingSpinner />
                       Delete
                     </button>
                   </form>
@@ -147,7 +148,7 @@ export default async function ClinicsPage() {
                 <input name="capacity" type="number" min={0} placeholder="e.g. 12" className={input} />
               </label>
             </div>
-            <button type="submit" className="self-start rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg">
+            <button type="submit" className="self-start rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg"><PendingSpinner />
               List clinic
             </button>
           </form>

@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { subscribeToAlerts, type SubscribeResult } from "@/app/alerts/actions";
 import { createClient } from "@/lib/supabase/client";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export type SubscribeCardProps = {
   heading: string;
@@ -86,7 +87,7 @@ export function SubscribeCardForm(p: SubscribeCardProps) {
             </label>
           )}
           {state && !state.ok && <p role="alert" className="text-[14px] text-danger">{state.message}</p>}
-          <button type="submit" disabled={pending} className="h-11 rounded-[var(--radius-pill)] bg-ink px-5 text-[15px] font-semibold text-ink-fg hover:bg-ink-card disabled:opacity-60 sm:w-fit">
+          <button type="submit" disabled={pending} className="h-11 rounded-[var(--radius-pill)] bg-ink px-5 text-[15px] font-semibold text-ink-fg hover:bg-ink-card disabled:opacity-60 sm:w-fit"><PendingSpinner />
             {pending ? "Just a moment…" : "Email me"}
           </button>
         </form>

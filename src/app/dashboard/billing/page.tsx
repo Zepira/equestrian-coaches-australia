@@ -8,6 +8,7 @@ import { startCheckout, changePlan, openBillingPortal, saveFoundingCardFromBilli
 import { fillVariables, getContent } from "@/lib/cms/read";
 import { chargeWording } from "@/lib/founding";
 import { isLiveStatus } from "@/lib/tiers";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export const metadata = { title: "Billing" };
 
@@ -80,23 +81,23 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       {notice && <p role="status" className="mt-4 rounded-[12px] bg-shade p-3 text-[14px] text-fg" data-billing-notice={notice}>{NOTICE[notice]}</p>}
       {paused && (
         <form action={resumeSubscription} className="mt-4">
-          <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover">Resume now</button>
+          <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover"><PendingSpinner />Resume now</button>
         </form>
       )}
       {cancelling && (
         <form action={undoCancel} className="mt-4">
-          <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover">Keep my plan</button>
+          <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover"><PendingSpinner />Keep my plan</button>
         </form>
       )}
       {yearlyOffer && tier && (
         <form action={switchToYearly} className="mt-4 flex flex-wrap items-center gap-3 rounded-[12px] border border-border bg-surface p-3" data-yearly>
           <span className="text-[14px] text-fg">{fillVariables(leaving.yearlyLine, { yearly: plans[tier].yearly })}</span>
-          <button type="submit" className="rounded-[var(--radius-pill)] border border-ink px-4 py-2 text-[14px] font-medium text-ink">Switch to yearly</button>
+          <button type="submit" className="rounded-[var(--radius-pill)] border border-ink px-4 py-2 text-[14px] font-medium text-ink"><PendingSpinner />Switch to yearly</button>
         </form>
       )}
       {foundingNoCard && (
         <form action={saveFoundingCardFromBilling} className="mt-4">
-          <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover">
+          <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-6 py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover"><PendingSpinner />
             Save my card
           </button>
         </form>
@@ -120,10 +121,10 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           {active && (
             <div className="mt-[22px] hidden flex-wrap gap-2.5 wide:flex">
               <form action={openBillingPortal}>
-                <button type="submit" className="rounded-[var(--radius-pill)] border border-ink-fg/40 px-4 py-2.5 text-[14px] font-medium text-ink-fg">Invoices</button>
+                <button type="submit" className="rounded-[var(--radius-pill)] border border-ink-fg/40 px-4 py-2.5 text-[14px] font-medium text-ink-fg"><PendingSpinner />Invoices</button>
               </form>
               <form action={openBillingPortal}>
-                <button type="submit" className="rounded-[var(--radius-pill)] border border-ink-fg/40 px-4 py-2.5 text-[14px] font-medium text-ink-fg">Update card</button>
+                <button type="submit" className="rounded-[var(--radius-pill)] border border-ink-fg/40 px-4 py-2.5 text-[14px] font-medium text-ink-fg"><PendingSpinner />Update card</button>
               </form>
             </div>
           )}
@@ -147,7 +148,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                     data-plan={t}
                     aria-current={current ? "true" : undefined}
                     className={`flex w-full items-center justify-between gap-2.5 rounded-[14px] border px-4 py-3.5 text-left wide:px-[18px] wide:py-4 ${current ? "border-ink bg-shade" : "border-border bg-surface"}`}
-                  >
+                  ><PendingSpinner />
                     <span>
                       <span className="block font-display text-[20px] leading-none text-ink wide:text-[22px]">{plans[t].name}</span>
                       <span className="mt-0.5 block text-[13px] text-subtle wide:text-[13.5px]">{plans[t].tagline}</span>
@@ -163,13 +164,13 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
             <>
               <div className="mt-[22px] flex flex-col gap-2 wide:hidden">
                 <form action={openBillingPortal}>
-                  <button type="submit" className="flex w-full justify-between rounded-[12px] border border-border bg-surface px-4 py-3.5 text-[15px] font-medium text-fg">
+                  <button type="submit" className="flex w-full justify-between rounded-[12px] border border-border bg-surface px-4 py-3.5 text-[15px] font-medium text-fg"><PendingSpinner />
                     <span>Invoices</span>
                     <span className="text-subtle">→</span>
                   </button>
                 </form>
                 <form action={openBillingPortal}>
-                  <button type="submit" className="flex w-full justify-between rounded-[12px] border border-border bg-surface px-4 py-3.5 text-[15px] font-medium text-fg">
+                  <button type="submit" className="flex w-full justify-between rounded-[12px] border border-border bg-surface px-4 py-3.5 text-[15px] font-medium text-fg"><PendingSpinner />
                     <span>Update card</span>
                     <span className="text-subtle">→</span>
                   </button>

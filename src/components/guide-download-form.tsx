@@ -2,10 +2,11 @@
 
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
+import { LegalText } from "@/components/legal-text";
 import { requestDownload, type DownloadResult } from "@/app/guides/actions";
 
 /** "Get the calendar by email" on a guide (M9). */
-export function GuideDownloadForm({ guideId, heading, lead }: { guideId: string; heading: string; lead: string }) {
+export function GuideDownloadForm({ guideId, heading, lead, notice }: { guideId: string; heading: string; lead: string; notice?: string }) {
   const [state, action, pending] = useActionState<DownloadResult, FormData>(requestDownload, { ok: false, message: "" });
   return (
     <section className="mt-10 rounded-[18px] border border-border bg-surface p-5 wide:p-6" data-guide-download>
@@ -22,6 +23,11 @@ export function GuideDownloadForm({ guideId, heading, lead }: { guideId: string;
             <Button type="submit" disabled={pending} className="h-11 shrink-0">{pending ? "Sending" : "Send it"}</Button>
           </form>
           {state.message && <p role="alert" className="mt-2 text-[14px] text-danger">{state.message}</p>}
+          {notice && (
+            <p className="mt-2 text-[12.5px] leading-[1.5] text-subtle">
+              <LegalText text={notice} />
+            </p>
+          )}
         </>
       )}
     </section>

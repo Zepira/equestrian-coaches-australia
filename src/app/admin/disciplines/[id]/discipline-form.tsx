@@ -4,7 +4,8 @@ import { useActionState, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { compressImage, MAX_SOURCE_BYTES } from "@/lib/compress-image";
 import { disciplineImage, disciplineSeo, SEO_DESCRIPTION_MAX, SEO_TITLE_MAX, type DisciplineContent } from "@/lib/discipline-content";
-import { removeDisciplineImage, saveDiscipline, uploadDisciplineImage, type SaveState } from "../actions";
+import { finishDisciplineImage, removeDisciplineImage, saveDiscipline, startDisciplineImage, type SaveState } from "../actions";
+import { uploadDirect } from "@/lib/upload-direct";
 
 const field = "w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[15px] text-fg outline-none focus-visible:ring-2 focus-visible:ring-accent";
 const labelCls = "mb-1 block text-sm font-medium text-fg";
@@ -131,12 +132,10 @@ function ImagePanel({ discipline }: { discipline: DisciplineContent }) {
     }
     setStatus("processing");
     const processed = await compressImage(file, 1600);
-    const fd = new FormData();
-    fd.set("image", processed);
     setStatus("uploading");
     startTransition(async () => {
       try {
-        await uploadDisciplineImage(discipline.id, fd);
+        await uploadDirect(processed, startDisciplineImage.bind(null, discipline.id), finishDisciplineImage.bind(null, discipline.id));
       } catch (err) {
         setError(err instanceof Error ? err.message : "Upload failed — please try again.");
       } finally {
@@ -164,7 +163,7 @@ function ImagePanel({ discipline }: { discipline: DisciplineContent }) {
       </p>
       <input ref={inputRef} type="file" accept="image/*" className="hidden" disabled={busy} onChange={onPick} />
       <div className="flex items-center gap-3">
-        <Button type="button" variant="secondary" disabled={busy} onClick={() => inputRef.current?.click()}>
+        <Button type="button" variant="secondary" loading={busy} onClick={() => inputRef.current?.click()}>
           {status === "processing" ? "Preparing…" : busy ? "Uploading…" : image.uploaded ? "Replace photo" : "Upload photo"}
         </Button>
         {image.uploaded && (

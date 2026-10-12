@@ -23,7 +23,7 @@ export default async function EnquiryFollowupPage({ params }: { params: Promise<
   if (!e) notFound();
   const target = await reviewTarget(service, { id: e.provider_id as string });
   if (!target) notFound();
-  const w = await getContent("reviews.words");
+  const [w, notices] = await Promise.all([getContent("reviews.words"), getContent("legal.notices")]);
   const f = (s: string) => fillVariables(s, { name: target.name, audience_plural: target.audiencePlural });
   const { data: mine } = await service.from("reviews").select("status").eq("enquiry_id", e.id).neq("status", "removed").maybeSingle();
   const reviewed = Boolean(mine);
@@ -67,6 +67,7 @@ export default async function EnquiryFollowupPage({ params }: { params: Promise<
             sent={f(w.sent)}
             confirmedLive={f(w.confirmedLive)}
             confirmedHeld={f(w.confirmedHeld)}
+            notice={notices.review}
           />
         )}
       </AuthShell>

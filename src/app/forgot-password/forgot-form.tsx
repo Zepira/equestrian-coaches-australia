@@ -91,7 +91,7 @@ export function ForgotPasswordForm({ supportPhone = "" }: { supportPhone?: strin
 
             {error && <p role="alert" className="text-[13.5px] text-accent">{error}</p>}
 
-            <Button type="submit" disabled={loading} className="mt-1 h-12 w-full text-[15px]">
+            <Button type="submit" loading={loading} className="mt-1 h-12 w-full text-[15px]">
               {loading ? "Sending…" : "Send reset link"}
             </Button>
           </form>

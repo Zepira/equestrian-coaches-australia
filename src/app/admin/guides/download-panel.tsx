@@ -46,7 +46,7 @@ export function DownloadPanel({ guideId, current, currentUrl }: { guideId: strin
       </p>
       <input ref={input} type="file" accept="application/pdf" className="hidden" disabled={pending} onChange={onPick} />
       <div className="flex items-center gap-3">
-        <Button type="button" variant="secondary" disabled={pending} onClick={() => input.current?.click()}>{pending ? "Uploading…" : current ? "Replace the PDF" : "Upload a PDF"}</Button>
+        <Button type="button" variant="secondary" loading={pending} onClick={() => input.current?.click()}>{pending ? "Uploading…" : current ? "Replace the PDF" : "Upload a PDF"}</Button>
         {current && (
           <button type="button" disabled={pending} onClick={() => start(async () => { await removeGuideDownload(guideId); })} className="text-[13px] text-subtle hover:text-danger">
             Remove

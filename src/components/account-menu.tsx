@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export type AccountMenuProps = {
   name: string | null;
@@ -112,7 +113,7 @@ export function AccountMenu({ name, email, isProvider, isAdmin, profileHref }: A
             )}
           </ul>
           <form action="/auth/sign-out" method="post" className="border-t border-border pt-1.5">
-            <button type="submit" className={`${item} w-full text-left text-muted`}>
+            <button type="submit" className={`${item} w-full text-left text-muted`}><PendingSpinner />
               Log out
             </button>
           </form>

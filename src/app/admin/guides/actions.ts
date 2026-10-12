@@ -1,5 +1,6 @@
 "use server";
 
+import { assertUploaded, imageExt, signUpload, type SignedUpload } from "@/lib/storage-upload";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { formText, requireAdmin } from "@/lib/admin";
@@ -108,18 +109,19 @@ export async function deleteGuide(id: string) {
 
 // ── files ────────────────────────────────────────────────────────────────
 
-export async function uploadGuideHero(id: string, fd: FormData) {
+/** The guide's top photo, uploaded straight to storage (src/lib/storage-upload.ts). */
+export async function startGuideHero(id: string, fileName: string): Promise<SignedUpload> {
   await requireAdmin();
-  const file = fd.get("image") as File | null;
-  if (!file || file.size === 0) throw new Error("No file provided.");
-  if (!file.type.startsWith("image/")) throw new Error("That isn't an image.");
+  return signUpload(createServiceSupabase()!, GUIDE_FILES, `guides/${id}/hero-${Date.now()}.${imageExt(fileName)}`);
+}
+
+export async function finishGuideHero(id: string, path: string) {
+  await requireAdmin();
   const service = createServiceSupabase()!;
+  await assertUploaded(service, GUIDE_FILES, path, `guides/${id}/hero-`);
   const { data: g } = await service.from("guides").select("slug, hero_path").eq("id", id).single();
-  const path = `guides/${id}/hero-${Date.now()}.${(file.name.split(".").pop() ?? "jpg").toLowerCase()}`;
-  const { error } = await service.storage.from(GUIDE_FILES).upload(path, file, { contentType: file.type, cacheControl: "31536000" });
-  if (error) throw error;
   await service.from("guides").update({ hero_path: path }).eq("id", id);
-  if (g?.hero_path) await service.storage.from(GUIDE_FILES).remove([g.hero_path]);
+  if (g?.hero_path && g.hero_path !== path) await service.storage.from(GUIDE_FILES).remove([g.hero_path]);
   refresh(g?.slug);
   revalidatePath(`/admin/guides/${id}`);
 }

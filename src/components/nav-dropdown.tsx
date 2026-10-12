@@ -152,13 +152,14 @@ export function NavDropdown({
       {open && (
         <div id={panelId} className="site-header__subbar" role="group" aria-label={label}>
           <ul className="site-header__subbar-inner">
-            {items.map((item) => (
+            {/* The first item is the section's own search (layout.tsx puts it there), so it stands out, as in the phone menu. */}
+            {items.map((item, i) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
                   aria-current={pathname === item.href ? "page" : undefined}
-                  className="site-header__subbar-link"
+                  className={`site-header__subbar-link${i === 0 ? " site-header__subbar-link--search" : ""}`}
                 >
                   {item.label}
                 </Link>

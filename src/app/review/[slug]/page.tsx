@@ -18,7 +18,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
   const service = createServiceSupabase();
   const target = service ? await reviewTarget(service, { slug }) : null;
   if (!target) notFound();
-  const w = await getContent("reviews.words");
+  const [w, notices] = await Promise.all([getContent("reviews.words"), getContent("legal.notices")]);
   const f = (s: string) => fillVariables(s, { name: target.name, audience_plural: target.audiencePlural });
   return (
     <AuthShell
@@ -32,7 +32,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
         </>
       }
     >
-      <ReviewForm providerId={target.id} declaration={f(w.declaration)} sent={f(w.sent)} confirmedLive={f(w.confirmedLive)} confirmedHeld={f(w.confirmedHeld)} />
+      <ReviewForm providerId={target.id} declaration={f(w.declaration)} sent={f(w.sent)} confirmedLive={f(w.confirmedLive)} confirmedHeld={f(w.confirmedHeld)} notice={notices.review} />
     </AuthShell>
   );
 }

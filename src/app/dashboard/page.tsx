@@ -12,6 +12,7 @@ import { hasVideo, isTier } from "@/lib/tiers";
 import { optInToNumbers } from "./actions";
 import { consentStatus, currentWording } from "@/lib/audience";
 import { createServiceSupabase } from "@/lib/supabase/service";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export const metadata = { title: "Dashboard" };
 
@@ -206,7 +207,7 @@ export default async function DashboardPage({
           <div className="font-display text-[22px] text-ink">Complete your subscription</div>
           <p className="mt-1 text-[14px] text-fg">One step left — subscribe to publish your profile and appear in search.</p>
           <form action={startCheckout.bind(null, pendingTier as "listed")} className="mt-4">
-            <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-5 py-3 text-[15px] font-semibold text-accent-fg">Continue to payment</button>
+            <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-5 py-3 text-[15px] font-semibold text-accent-fg"><PendingSpinner />Continue to payment</button>
           </form>
         </div>
       )}

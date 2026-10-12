@@ -6,6 +6,7 @@ import type { DisciplineContent } from "@/lib/discipline-content";
 import { DisciplineForm } from "./discipline-form";
 import { deleteDiscipline, setDisciplineActive } from "../actions";
 import { termPath } from "@/lib/page-paths";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export const metadata = { title: "Edit discipline" };
 
@@ -45,13 +46,13 @@ export default async function AdminDisciplineEditPage({ params }: { params: Prom
         </div>
         <div className="flex items-center gap-3 text-[14px]">
           <form action={setDisciplineActive.bind(null, discipline.id, !active)}>
-            <button type="submit" className={`rounded-[var(--radius-pill)] border px-3.5 py-1.5 font-medium ${active ? "border-border text-danger hover:bg-shade" : "border-accent bg-accent text-accent-fg"}`}>
+            <button type="submit" className={`rounded-[var(--radius-pill)] border px-3.5 py-1.5 font-medium ${active ? "border-border text-danger hover:bg-shade" : "border-accent bg-accent text-accent-fg"}`}><PendingSpinner />
               {active ? "Hide from site" : "Show on site"}
             </button>
           </form>
           {!referenced && (
             <form action={deleteDiscipline.bind(null, discipline.id)}>
-              <button type="submit" className="text-subtle underline-offset-2 hover:text-danger hover:underline" title="Nothing references this discipline, so it can be deleted outright">
+              <button type="submit" className="text-subtle underline-offset-2 hover:text-danger hover:underline" title="Nothing references this discipline, so it can be deleted outright"><PendingSpinner />
                 Delete
               </button>
             </form>

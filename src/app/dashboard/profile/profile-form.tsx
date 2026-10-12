@@ -6,6 +6,7 @@ import { saveProfile, addTestimonial, deleteTestimonial } from "./actions";
 import { MediaUploadForm } from "./media-upload-form";
 import { LocationAutocomplete } from "@/components/location-autocomplete";
 import { profilePath } from "@/lib/page-paths";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 type Term = { id: string; slug: string; name: string; blurb?: string };
 type Coach = {
@@ -277,7 +278,7 @@ export function ProfileForm({ error, registration = null, configured, coach, dis
 
             <div className="flex gap-2.5 wide:justify-end">
               <button type="reset" disabled={!configured} className="hidden h-[50px] rounded-[var(--radius-pill)] border border-border px-5 text-[15px] font-medium text-muted wide:block">Discard</button>
-              <button type="submit" disabled={!configured} className="h-[54px] w-full rounded-[var(--radius-pill)] bg-accent text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover disabled:opacity-60 wide:h-[50px] wide:w-auto wide:px-[26px] wide:text-[15px]">
+              <button type="submit" disabled={!configured} className="h-[54px] w-full rounded-[var(--radius-pill)] bg-accent text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover disabled:opacity-60 wide:h-[50px] wide:w-auto wide:px-[26px] wide:text-[15px]"><PendingSpinner />
                 Save changes
               </button>
             </div>
@@ -296,7 +297,7 @@ export function ProfileForm({ error, registration = null, configured, coach, dis
                     <p className="mt-1 text-[13px] text-subtle">— {t.author_name}</p>
                   </div>
                   <form action={deleteTestimonial.bind(null, t.id)}>
-                    <button type="submit" className="text-[13px] text-subtle hover:text-danger">Remove</button>
+                    <button type="submit" className="text-[13px] text-subtle hover:text-danger"><PendingSpinner />Remove</button>
                   </form>
                 </div>
               ))}
@@ -310,7 +311,7 @@ export function ProfileForm({ error, registration = null, configured, coach, dis
                 <span className={label}>Quote</span>
                 <input name="quote" type="text" disabled={!configured} className={input} />
               </label>
-              <button type="submit" disabled={!configured} className="h-[50px] shrink-0 rounded-[var(--radius-pill)] border border-ink px-5 text-[15px] font-medium text-ink">Add</button>
+              <button type="submit" disabled={!configured} className="h-[50px] shrink-0 rounded-[var(--radius-pill)] border border-ink px-5 text-[15px] font-medium text-ink"><PendingSpinner />Add</button>
             </form>
           </section>
         </div>

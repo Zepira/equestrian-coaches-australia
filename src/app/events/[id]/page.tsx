@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/json-ld";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbSchema, clinicEventSchema } from "@/lib/structured-data";
 import { SubscribeCard } from "@/components/subscribe-card";
-import { getProfession } from "@/lib/cms/read";
+import { fillVariables, getContent, getProfession } from "@/lib/cms/read";
 import { ShareButton } from "@/components/share-button";
 
 const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -170,7 +170,7 @@ export default async function ClinicPage({ params }: { params: Promise<{ id: str
             <>
               <p className="mt-2 text-[14px] leading-[1.5] text-muted">Goes straight to {coachName.split(" ")[0]}. Free, no account needed.</p>
               <div className="mt-4">
-                <ContactForm coachId={coach.id} firstName={coachName.split(" ")[0]} defaultWant="clinic" />
+                <ContactForm coachId={coach.id} firstName={coachName.split(" ")[0]} defaultWant="clinic" notice={fillVariables((await getContent("legal.notices")).enquiry, { name: coachName.split(" ")[0] })} />
               </div>
             </>
           ) : (

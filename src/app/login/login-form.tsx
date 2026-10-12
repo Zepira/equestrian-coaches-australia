@@ -48,7 +48,11 @@ export function LoginForm({ supportPhone = "" }: { supportPhone?: string }) {
     // URL/key, CORS) rather than resolve with an { error } field — without
     // this try/catch that left setLoading/setError never called at all: no
     // error, no spinner reset, the form just silently sits there looking
-    // like nothing happened. Every exit path below always runs setLoading.
+    // like nothing happened. Every exit path below always runs setLoading,
+    // except the one that leaves: the next page takes a moment to arrive, and
+    // the button keeps spinning until it does rather than flicking back to
+    // "Log in" as if nothing happened.
+    let leaving = false;
     try {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -72,11 +76,12 @@ export function LoginForm({ supportPhone = "" }: { supportPhone?: string }) {
       // A full page load, not router.push: the header prefetched this page
       // while signed out, and a client navigation would reuse that cached
       // redirect back to /login. A fresh request carries the new session.
+      leaving = true;
       window.location.assign(next);
     } catch (err) {
       setError(friendlyAuthError(err, supportPhone));
     } finally {
-      setLoading(false);
+      if (!leaving) setLoading(false);
     }
   }
 
@@ -138,7 +143,7 @@ export function LoginForm({ supportPhone = "" }: { supportPhone?: string }) {
 
         {error && <p role="alert" className="text-[13.5px] leading-[1.5] text-accent">{error}</p>}
 
-        <Button type="submit" disabled={loading} className="mt-1 h-12 w-full text-[15px]">
+        <Button type="submit" loading={loading} className="mt-1 h-12 w-full text-[15px]">
           {loading ? "Logging in…" : "Log in"}
         </Button>
       </form>

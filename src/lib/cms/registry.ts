@@ -21,6 +21,9 @@ export type PageEntry = {
   onSite?: boolean;
 };
 
+const LEGAL_NOTE =
+  "For the solicitor to check; square brackets are notes for them. {abn}, {contact_email}, {founding_price}, {free_months}, {enquiry_months} and {pause_max_months} fill themselves in from settings. In a body, a line starting \"- \" is a bullet, and /refunds, /privacy and the other legal paths become links. Mark them approved on the Settings tab.";
+
 export const PAGES: PageEntry[] = [
   { slug: "home", name: "Home page", href: "/", keys: ["home.hero", "home.principles"], revalidate: ["/"] },
   {
@@ -45,9 +48,9 @@ export const PAGES: PageEntry[] = [
     slug: "for-professionals",
     name: "Professionals pitch",
     href: "/for-professionals",
-    keys: ["door.horse_care.pitch"],
+    keys: ["door.horse_care.pitch", "for_professionals.faq"],
     revalidate: ["/for-professionals", "/horse-care"],
-    note: "Shared with the Horse care door. Each profession's own pitch and FAQ are on the Professions tab, and replace this when filled in.",
+    note: "The pitch is shared with the Horse care door; a profession's own pitch (Professions tab) replaces it when someone arrives from that profession. A profession's own questions show above these.",
   },
   { slug: "for-coaches", name: "Coaches pitch: questions", href: "/for-coaches", keys: ["for_coaches.faq"], revalidate: ["/for-coaches"] },
   {
@@ -59,7 +62,7 @@ export const PAGES: PageEntry[] = [
     note: "The photos stay in code; ask for a change.",
   },
   { slug: "profiles", name: "Every profile", href: "/search", keys: ["mention"], revalidate: [["/profile/[slug]", "page"]] },
-  { slug: "footer", name: "Footer", href: "/", keys: ["footer"], revalidate: [["/", "layout"]] },
+  { slug: "footer", name: "Footer", href: "/", keys: ["footer"], revalidate: [["/", "layout"]], note: "The tagline, the town after the ABN, and the designer's credit at the very bottom." },
   { slug: "announcement", name: "Announcement bar", href: "/", keys: ["site.announcement"], revalidate: [["/", "layout"]], onSite: true },
   { slug: "slide-in", name: "Slide-in", href: "/", keys: ["site.slide_in"], revalidate: [["/", "layout"]], onSite: true },
   { slug: "how-we-list", name: "How the list is ordered", href: "/how-we-list", keys: ["how_we_list"], revalidate: ["/how-we-list"] },
@@ -89,7 +92,7 @@ export const PAGES: PageEntry[] = [
     href: "/terms",
     keys: ["legal.terms"],
     revalidate: ["/terms"],
-    note: "For the solicitor to check. {founding_price}, {free_months} and {contact_email} fill themselves in. Mark it approved on the Settings tab.",
+    note: LEGAL_NOTE,
   },
   {
     slug: "privacy",
@@ -97,7 +100,31 @@ export const PAGES: PageEntry[] = [
     href: "/privacy",
     keys: ["legal.privacy"],
     revalidate: ["/privacy"],
-    note: "For the solicitor to check. {contact_email} and {enquiry_months} (a setting) fill themselves in. Mark it approved on the Settings tab.",
+    note: LEGAL_NOTE,
+  },
+  {
+    slug: "cookies",
+    name: "Cookies",
+    href: "/cookies",
+    keys: ["legal.cookies"],
+    revalidate: ["/cookies"],
+    note: `${LEGAL_NOTE} If the site ever adds analytics, open tracking or another company's cookie, this page changes first.`,
+  },
+  {
+    slug: "refunds",
+    name: "Cancelling and refunds",
+    href: "/refunds",
+    keys: ["legal.refunds"],
+    revalidate: ["/refunds"],
+    note: `${LEGAL_NOTE} Stripe needs this page reachable without a password.`,
+  },
+  {
+    slug: "legal-notices",
+    name: "Privacy lines on forms",
+    href: "/signup",
+    keys: ["legal.notices"],
+    revalidate: ["/signup", "/onboarding", "/for-coaches", "/for-professionals", ["/profile/[slug]", "page"], ["/review/[slug]", "page"], ["/competitions/[slug]", "page"], ["/guides/[slug]", "page"], ["/events/[id]", "page"]],
+    note: "The short line beside each form that collects details: who gets them, why, and the policy link. [label](/path) is a link; {name} is the professional, on the enquiry form.",
   },
 ];
 
@@ -111,6 +138,7 @@ export const BLOCK_NAMES: Partial<Record<ContentKey, string>> = {
   "door.horse_care.pitch": "The pitch to professionals",
   list_your_business: "Page words",
   "for_coaches.faq": "Questions",
+  "for_professionals.faq": "Questions",
   "about.opening": "Opening",
   "about.why": "Why we built it",
   "about.rider": "The rider",
@@ -131,12 +159,16 @@ export const BLOCK_NAMES: Partial<Record<ContentKey, string>> = {
   "riders_choice.rules": "Riders' choice rules",
   "legal.terms": "Terms of service",
   "legal.privacy": "Privacy policy",
+  "legal.cookies": "Cookies",
+  "legal.refunds": "Cancelling and refunds",
+  "legal.notices": "Privacy lines on forms",
   footer: "Tagline",
 };
 
 /** Fields a block may leave empty (everything else must have words in it). */
 export const OPTIONAL_FIELDS: Partial<Record<ContentKey, string[]>> = {
   "site.announcement": ["message", "linkLabel", "linkHref", "starts", "ends"],
+  footer: ["credit", "creditUrl"],
 };
 
 /** Words a factual email mustn't contain: any promotion makes it commercial (§05.2). Checked with variables taken out. */
@@ -159,6 +191,16 @@ export const FIELD_HINTS: Record<string, string> = {
   audience: "everyone, logged_out, riders, coaches or horse_care.",
   message: "Empty turns the bar off.",
   linkHref: "Where the link goes: /coaches, or a full https:// address.",
+  enquiry: "Under the enquiry form. {name} is the professional's first name.",
+  riderSignup: "Under the rider sign-up button.",
+  providerSignup: "Under the professional sign-up button.",
+  review: "Under the review form.",
+  competition: "Under the competition entry form. [Competition terms](#terms) jumps to the terms on the same page.",
+  guide: "Under a guide's download form.",
+  pricing: "Under the plans on the pitch pages and on the plan step of onboarding.",
+  place: "The town after the ABN, in the footer and every marketing email.",
+  credit: "The designer's credit, centred at the very bottom of every page. Empty: no credit.",
+  creditUrl: "Where the credit links, a full https:// address. Empty: no link.",
 };
 
 export type EmailVar = { name: string; what: string; sample: string };

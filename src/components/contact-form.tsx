@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { LegalText } from "@/components/legal-text";
 import { sendCoachEnquiry, type EnquiryResult, type EnquiryWant } from "@/app/profile/[slug]/actions";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 const WANTS: Record<"coach" | "professional", { value: EnquiryWant; label: string }[]> = {
   coach: [
@@ -29,6 +31,7 @@ export function ContactForm({
   onSent,
   defaultWant = "regular",
   kind = "coach",
+  notice,
 }: {
   coachId: string;
   coachName?: string;
@@ -37,6 +40,8 @@ export function ContactForm({
   defaultWant?: EnquiryWant;
   /** Which chip set to offer: lessons for a coach, visits for a horse care professional. */
   kind?: "coach" | "professional";
+  /** The collection notice (legal.notices.enquiry), filled in by the page. */
+  notice?: string;
 }) {
   const [state, formAction, pending] = useActionState<EnquiryResult | null, FormData>(sendCoachEnquiry, null);
   const [want, setWant] = useState<EnquiryWant>(defaultWant);
@@ -101,10 +106,12 @@ export function ContactForm({
         type="submit"
         disabled={pending}
         className="h-[54px] rounded-[var(--radius-pill)] bg-accent text-[16px] font-semibold text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover disabled:opacity-60 wide:h-[52px] wide:text-[15px]"
-      >
+      ><PendingSpinner />
         {pending ? "Sending…" : "Send enquiry"}
       </button>
-      <p className="text-center text-[12px] text-subtle">Goes straight to {firstName}. We never share your details.</p>
+      <p className="text-center text-[12px] leading-[1.5] text-subtle">
+        {notice ? <LegalText text={notice} /> : `Goes straight to ${firstName}. We never share your details.`}
+      </p>
     </form>
   );
 }

@@ -1,6 +1,8 @@
 import { getResend, isResendConfigured, DEFAULT_REPLY_TO, NOTIFICATIONS_FROM } from "@/lib/resend";
 import { renderEmailHtml } from "@/lib/email-layout";
-import { commercialFooter, oneClickUrl, type Purpose } from "@/lib/audience";
+import { commercialFooter, expressGrantDate, oneClickUrl, type Purpose } from "@/lib/audience";
+import { businessLine } from "@/lib/legal";
+import { getContent } from "@/lib/cms/read";
 import { getBusinessAbn } from "@/lib/settings";
 import { createServiceSupabase } from "@/lib/supabase/service";
 
@@ -64,7 +66,13 @@ export async function sendEmailWithId({ to, subject, text, replyTo, unsubscribe,
   }
   if (recipients.length === 0) return { result: "logged", id: null };
   if (commercial) {
-    text = `${text}\n\n--\n${commercialFooter(commercial.token, await getBusinessAbn())}`;
+    const [abn, footer, at] = await Promise.all([
+      getBusinessAbn(),
+      getContent("footer"),
+      service ? expressGrantDate(service, commercial.token, commercial.purpose) : null,
+    ]);
+    const asked = at ? { purpose: commercial.purpose, at } : null;
+    text = `${text}\n\n--\n${commercialFooter(commercial.token, businessLine(abn, footer.place), asked)}`;
     unsubscribe = unsubscribe ?? oneClickUrl(commercial.token, commercial.purpose);
   }
   const resend = getResend();

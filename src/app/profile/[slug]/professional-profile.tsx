@@ -52,7 +52,7 @@ export async function ProfessionalProfile({ slug }: { slug: string }) {
   if (!profession) notFound();
 
   const firstName = pro.name.split(" ")[0];
-  const mention = await getContent("mention");
+  const [mention, notices] = await Promise.all([getContent("mention"), getContent("legal.notices")]);
   const [nameFirst, ...nameRest] = pro.name.split(" ");
   const contactId = `mock:${pro.slug}`;
   const singular = profession.singular.charAt(0).toUpperCase() + profession.singular.slice(1);
@@ -212,7 +212,7 @@ export async function ProfessionalProfile({ slug }: { slug: string }) {
             Free, and you don&apos;t need an account. Say what your horse needs and where it&apos;s kept.
           </p>
           <div className="mt-[18px]">
-            <ContactForm coachId={contactId} coachName={pro.name} firstName={firstName} kind="professional" />
+            <ContactForm coachId={contactId} coachName={pro.name} firstName={firstName} kind="professional" notice={fillVariables(notices.enquiry, { name: firstName })} />
           </div>
           {(pro.contact.phone || pro.contact.email) && (
             <div className="mt-4 flex items-center justify-between gap-3 border-t border-border pt-4">
@@ -230,7 +230,7 @@ export async function ProfessionalProfile({ slug }: { slug: string }) {
         </aside>
       </div>
 
-      <EnquirySheet coachId={contactId} coachName={pro.name} firstName={firstName} takingStudents={pro.taking} kind="professional" />
+      <EnquirySheet coachId={contactId} coachName={pro.name} firstName={firstName} takingStudents={pro.taking} kind="professional" notice={fillVariables(notices.enquiry, { name: firstName })} />
     </div>
   );
 }

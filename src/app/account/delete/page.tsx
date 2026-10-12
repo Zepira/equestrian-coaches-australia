@@ -2,8 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { deleteAccount } from "../actions";
+import { PendingSpinner } from "@/components/ui/spinner";
 
-export const metadata = { title: "Delete my account", robots: { index: false, follow: false } };
+export const metadata = { title: "Close my account", robots: { index: false, follow: false } };
 
 /**
  * Confirmation step for the rider account's one destructive action. The
@@ -18,7 +19,7 @@ export default async function DeleteAccountPage({ searchParams }: { searchParams
   return (
     <div className="mx-auto max-w-[520px] px-[18px] py-6 wide:px-12 wide:py-11">
       <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-subtle">My account</p>
-      <h1 className="mt-1.5 font-display text-[40px] leading-none -tracking-[0.02em] text-ink wide:mt-2 wide:text-[56px] wide:leading-[0.98] wide:-tracking-[0.025em]">Delete my account</h1>
+      <h1 className="mt-1.5 font-display text-[40px] leading-none -tracking-[0.02em] text-ink wide:mt-2 wide:text-[56px] wide:leading-[0.98] wide:-tracking-[0.025em]">Close my account</h1>
       <p className="mt-2.5 text-[15px] leading-[1.5] text-muted">
         This removes your login, saved coaches and clinic alerts straight away. Enquiries you have already sent stay with the coach so they can still reply to you by email or phone.
       </p>
@@ -38,8 +39,8 @@ export default async function DeleteAccountPage({ searchParams }: { searchParams
           </p>
         )}
         <div className="mt-4 flex flex-col gap-2.5 wide:flex-row-reverse wide:justify-start">
-          <button type="submit" className="h-12 rounded-[var(--radius-pill)] bg-accent px-5 text-[15px] font-semibold text-accent-fg transition-colors duration-200 hover:bg-accent-hover">
-            Delete my account
+          <button type="submit" className="h-12 rounded-[var(--radius-pill)] bg-accent px-5 text-[15px] font-semibold text-accent-fg transition-colors duration-200 hover:bg-accent-hover"><PendingSpinner />
+            Close my account
           </button>
           <Link href="/account" className="flex h-12 items-center justify-center rounded-[var(--radius-pill)] border border-border px-5 text-[15px] font-medium text-muted">
             Keep my account

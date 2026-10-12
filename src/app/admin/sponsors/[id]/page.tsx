@@ -7,7 +7,7 @@ import { changeLog } from "@/lib/admin";
 import { PLACEMENTS, slotImage, sponsorReport, type Placement } from "@/lib/sponsors";
 import { HistoryList } from "../../history-list";
 import { TermImagePanel } from "../../term-image-panel";
-import { createSlot, removeSlotImage, saveSponsor, updateSlot, uploadSlotImage } from "../actions";
+import { createSlot, removeSlotImage, saveSponsor, updateSlot, startSlotImage, finishSlotImage } from "../actions";
 
 export const metadata = { title: "Sponsor" };
 
@@ -127,7 +127,8 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
               uploaded={Boolean(s.image_path)}
               placeholderLabel="No picture"
               note="Optional. Shown on pages, not in emails."
-              upload={uploadSlotImage.bind(null, id, s.id)}
+              start={startSlotImage.bind(null, id, s.id)}
+              finish={finishSlotImage.bind(null, id, s.id)}
               remove={removeSlotImage.bind(null, id, s.id)}
             />
           </div>

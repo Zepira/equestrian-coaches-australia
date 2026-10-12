@@ -42,7 +42,7 @@ export function LocateButton({ onLocated, className = "" }: { onLocated: (loc: L
         onClick={go}
         disabled={state === "busy"}
         aria-label="Use my current location"
-        title="Use my current location"
+        title="Use my current location. Used once to find your suburb, not stored."
         data-state={state}
         className="locate-btn grid h-8 w-8 place-items-center rounded-[var(--radius-pill)] text-subtle transition-colors duration-200 hover:bg-shade hover:text-accent disabled:opacity-60"
       >

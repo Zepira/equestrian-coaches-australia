@@ -33,7 +33,7 @@ import { AccountMenu } from "@/components/account-menu";
  */
 type Variant = "overlay" | "ink" | "light";
 
-const OVERLAY_ROUTES = ["/", "/coaches", "/horse-care", "/for-coaches"];
+const OVERLAY_ROUTES = ["/", "/coaches", "/horse-care", "/for-coaches", "/for-professionals"];
 
 /**
  * Coach profiles: on phones the page paints its own "← Results / ♡" bar

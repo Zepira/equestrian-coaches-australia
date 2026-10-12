@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { changeLog } from "@/lib/admin";
 import { HistoryList } from "../history-list";
 import { addAlias, removeAlias } from "./actions";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export const metadata = { title: "Aliases" };
 
@@ -57,7 +58,7 @@ export default async function AdminAliasesPage() {
               <div className="flex shrink-0 items-center gap-3">
                 <span className="text-xs uppercase tracking-wide text-muted">{a.source}</span>
                 <form action={removeAlias.bind(null, a.id)}>
-                  <button type="submit" className="text-sm text-danger">
+                  <button type="submit" className="text-sm text-danger"><PendingSpinner />
                     Remove
                   </button>
                 </form>

@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { SaveResult } from "./actions";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 /**
  * One onboarding step's form. Saves itself a moment after the last change
@@ -68,7 +69,7 @@ export function AutosaveForm({
           type="submit"
           disabled={moving}
           className="rounded-[var(--radius-pill)] bg-accent px-[26px] py-3 text-[15px] font-semibold text-accent-fg transition-colors duration-200 hover:bg-accent-hover disabled:opacity-60"
-        >
+        ><PendingSpinner />
           {moving ? "Saving…" : continueLabel}
         </button>
         <span aria-live="polite" className={`text-[13.5px] ${state.kind === "error" || state.warn ? "text-accent" : "text-subtle"}`}>

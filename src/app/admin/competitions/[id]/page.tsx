@@ -16,7 +16,8 @@ import {
   saveCompetition,
   setWinnerRank,
   unpublishCompetition,
-  uploadCompetitionImage,
+  startCompetitionImage,
+  finishCompetitionImage,
 } from "../actions";
 
 export const metadata = { title: "Competition" };
@@ -129,7 +130,8 @@ export default async function AdminCompetitionPage({ params, searchParams }: { p
           uploaded={Boolean(c.image_path)}
           placeholderLabel="No photo yet"
           note="Shown on the competition and in the list."
-          upload={uploadCompetitionImage.bind(null, id)}
+          start={startCompetitionImage.bind(null, id)}
+          finish={finishCompetitionImage.bind(null, id)}
           remove={removeCompetitionImage.bind(null, id)}
         />
       </div>

@@ -1,5 +1,8 @@
 "use server";
 
+import { videoEmbed } from "@/lib/video-embed";
+import { createServiceSupabase } from "@/lib/supabase/service";
+import { assertUploaded, imageExt, signUpload, type SignedUpload } from "@/lib/storage-upload";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireProvider } from "@/lib/provider-session";
@@ -129,19 +132,19 @@ export async function saveProfile(formData: FormData) {
   revalidatePath("/dashboard");
 }
 
-export async function uploadPhoto(formData: FormData) {
+/**
+ * A profile photo goes straight from the browser to storage
+ * (src/lib/storage-upload.ts): a phone photo the browser couldn't shrink
+ * (an iPhone HEIC, say) is far over what an action can carry on Vercel.
+ */
+export async function startPhotoUpload(fileName: string): Promise<SignedUpload> {
+  const { providerId } = await requireProvider();
+  return signUpload(serviceOrThrow(), PROVIDER_PHOTOS, `${providerId}/${Date.now()}.${imageExt(fileName)}`);
+}
+
+export async function finishPhotoUpload(path: string) {
   const { supabase, providerId, userId } = await requireProvider();
-
-  const file = formData.get("photo") as File | null;
-  if (!file || file.size === 0) throw new Error("No file provided.");
-
-  const ext = file.name.split(".").pop() ?? "jpg";
-  const path = `${providerId}/${Date.now()}.${ext}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from(PROVIDER_PHOTOS)
-    .upload(path, file, { contentType: file.type });
-  if (uploadError) throw uploadError;
+  await assertUploaded(serviceOrThrow(), PROVIDER_PHOTOS, path, `${providerId}/`);
 
   const { count } = await supabase
     .from("provider_photos")
@@ -157,6 +160,12 @@ export async function uploadPhoto(formData: FormData) {
   await logChange(supabase, providerId, userId, "photo added", null, path);
   revalidatePath("/dashboard/profile");
   revalidatePath("/onboarding");
+}
+
+function serviceOrThrow() {
+  const service = createServiceSupabase();
+  if (!service) throw new Error("Storage isn't connected.");
+  return service;
 }
 
 export async function deletePhoto(photoId: string, storagePath: string) {
@@ -175,35 +184,33 @@ export async function deletePhoto(photoId: string, storagePath: string) {
   revalidatePath("/onboarding");
 }
 
-export async function uploadVideo(formData: FormData) {
-  const { supabase, providerId, existingVideoPath } = await requireVideoTierCoach();
+export type VideoLinkState = { ok: boolean; message: string } | null;
 
-  const file = formData.get("video") as File | null;
-  if (!file || file.size === 0) throw new Error("No file provided.");
-
-  // One video per coach — replace, don't accumulate. Remove the old object
-  // first so a re-upload never leaves an orphaned file behind in storage.
-  if (existingVideoPath) {
-    await supabase.storage.from(PROVIDER_VIDEOS).remove([existingVideoPath]);
+/**
+ * The intro video is a YouTube or Vimeo link (src/lib/video-embed.ts), saved
+ * in its tidy form. A file uploaded before links replaced uploads is removed
+ * from storage when a link takes its place.
+ */
+export async function saveVideoLink(_prev: VideoLinkState, formData: FormData): Promise<VideoLinkState> {
+  let ctx: Awaited<ReturnType<typeof requireVideoTierCoach>>;
+  try {
+    ctx = await requireVideoTierCoach();
+  } catch (err) {
+    return { ok: false, message: err instanceof Error ? err.message : "Video isn't on your plan." };
   }
-
-  const ext = file.name.split(".").pop() ?? "mp4";
-  const path = `${providerId}/${Date.now()}.${ext}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from(PROVIDER_VIDEOS)
-    .upload(path, file, { contentType: file.type });
-  if (uploadError) throw uploadError;
-
-  const { data: publicUrl } = supabase.storage.from(PROVIDER_VIDEOS).getPublicUrl(path);
+  const { supabase, providerId, existingVideoPath } = ctx;
+  const embed = videoEmbed(String(formData.get("video_url") ?? ""));
+  if (!embed) return { ok: false, message: "Paste the link to a YouTube or Vimeo video, like https://youtu.be/… or https://vimeo.com/…" };
 
   const { error } = await supabase
     .from("providers")
-    .update({ video_url: publicUrl.publicUrl, video_storage_path: path, updated_at: new Date().toISOString() })
+    .update({ video_url: embed.canonical, video_storage_path: null, updated_at: new Date().toISOString() })
     .eq("id", providerId);
-  if (error) throw error;
+  if (error) return { ok: false, message: "That didn't save. Try again in a minute." };
+  if (existingVideoPath) await supabase.storage.from(PROVIDER_VIDEOS).remove([existingVideoPath]);
 
   revalidatePath("/dashboard/profile");
+  return { ok: true, message: "Saved. It's on your profile now." };
 }
 
 export async function deleteVideo() {

@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { LegalText } from "@/components/legal-text";
 import { Field, inputClass } from "@/components/ui/field";
 import { submitReview, type ReviewResult } from "@/app/review/actions";
 
@@ -21,6 +22,7 @@ export function ReviewForm({
   confirmedHeld,
   enquiryToken,
   defaultName = "",
+  notice,
 }: {
   providerId: string;
   declaration: string;
@@ -29,6 +31,8 @@ export function ReviewForm({
   confirmedHeld: string;
   enquiryToken?: string;
   defaultName?: string;
+  /** The collection notice (legal.notices.review). */
+  notice?: string;
 }) {
   const [state, action, pending] = useActionState<ReviewResult, FormData>(submitReview, { ok: false, message: "" });
   const [rating, setRating] = useState(0);
@@ -81,6 +85,11 @@ export function ReviewForm({
       <Button type="submit" disabled={pending} className="h-12 w-full text-[15px]">
         {pending ? "Sending" : "Send my review"}
       </Button>
+      {notice && (
+        <p className="text-[12.5px] leading-[1.5] text-subtle">
+          <LegalText text={notice} />
+        </p>
+      )}
     </form>
   );
 }

@@ -42,6 +42,11 @@ function isPreLaunchPath(path: string): boolean {
   // is sent before launch. It checks its own signature and refuses everything
   // without RESEND_WEBHOOK_SECRET.
   if (path === "/api/webhooks/resend") return true;
+  // The policies. Stripe's website review needs the refunds page reachable
+  // without a password, and anyone handing over details (the waitlist) is
+  // entitled to read the privacy policy first. The layout leaves the header
+  // and footer off on this host, so these pages link nowhere else.
+  if (["/terms", "/privacy", "/cookies", "/refunds", "/review-policy"].includes(path)) return true;
   // Crawlers need these two to see that only the home page is on offer.
   if (path === "/robots.txt" || path === "/sitemap.xml") return true;
   // The page's own assets: the build output, the brand mark, the favicon.

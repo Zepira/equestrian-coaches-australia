@@ -1,5 +1,6 @@
 "use server";
 
+import { assertUploaded, imageExt, signUpload, type SignedUpload } from "@/lib/storage-upload";
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -136,17 +137,19 @@ export async function updateSlot(sponsorId: string, slotId: string, fd: FormData
   go(path, "Saved.");
 }
 
-export async function uploadSlotImage(sponsorId: string, slotId: string, fd: FormData) {
+/** A sponsor slot's picture, uploaded straight to storage (src/lib/storage-upload.ts). */
+export async function startSlotImage(sponsorId: string, slotId: string, fileName: string): Promise<SignedUpload> {
   await requireAdmin();
-  const file = fd.get("image") as File | null;
-  if (!file || !file.type.startsWith("image/")) throw new Error("That isn't an image.");
+  return signUpload(createServiceSupabase()!, MARKETING_FILES, `sponsors/${sponsorId}/${slotId}-${Date.now()}.${imageExt(fileName)}`);
+}
+
+export async function finishSlotImage(sponsorId: string, slotId: string, path: string) {
+  await requireAdmin();
   const service = createServiceSupabase()!;
+  await assertUploaded(service, MARKETING_FILES, path, `sponsors/${sponsorId}/${slotId}-`);
   const { data: slot } = await service.from("sponsor_slots").select("image_path").eq("id", slotId).single();
-  const path = `sponsors/${sponsorId}/${slotId}-${Date.now()}.${(file.name.split(".").pop() ?? "jpg").toLowerCase()}`;
-  const { error } = await service.storage.from(MARKETING_FILES).upload(path, file, { contentType: file.type, cacheControl: "31536000" });
-  if (error) throw error;
   await service.from("sponsor_slots").update({ image_path: path }).eq("id", slotId);
-  if (slot?.image_path) await service.storage.from(MARKETING_FILES).remove([slot.image_path]);
+  if (slot?.image_path && slot.image_path !== path) await service.storage.from(MARKETING_FILES).remove([slot.image_path]);
   refreshPages();
   revalidatePath(`/admin/sponsors/${sponsorId}`);
 }

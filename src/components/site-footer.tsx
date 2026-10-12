@@ -31,12 +31,38 @@ const columns = [
   },
 ];
 
+const LEGAL_LINKS = [
+  { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/cookies", label: "Cookies" },
+  { href: "/refunds", label: "Refunds" },
+  { href: "/review-policy", label: "Review policy" },
+];
+
+/** The designer's credit (footer block): a visible link when it has an https:// address. */
+function Credit({ text, url }: { text: string; url: string }) {
+  if (!/^https:\/\//.test(url)) return <p>{text}</p>;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener"
+      className="underline decoration-ink-fg/25 underline-offset-[3px] transition-colors hover:text-peach hover:decoration-peach"
+    >
+      {text}
+    </a>
+  );
+}
+
 /**
- * Footer from the 1a canvases: deep-ink ground, EPA wordmark (40px phone /
- * 48px desktop), the tagline, link columns (two on phones, brand + three on
- * desktop) and the copyright line.
+ * Footer from the 1a canvases: deep-ink ground, the wordmark, the tagline,
+ * link columns (two on phones, brand + three on desktop), then the bottom:
+ * copyright and policy links, and under them the ABN and town (the footer
+ * block's `place`) and the designer's credit. The terms carry the full
+ * who-we-are, so this stays short.
  */
-export function SiteFooter({ tagline }: { tagline: string }) {
+export function SiteFooter({ tagline, abn, place, credit }: { tagline: string; abn: string; place: string; credit: { text: string; url: string } }) {
+  const details = [abn && `ABN ${abn}`, place.trim()].filter(Boolean).join(" · ");
   const year = new Date().getFullYear();
   return (
     <footer className="mt-auto bg-ink-deep text-ink-fg">
@@ -69,11 +95,22 @@ export function SiteFooter({ tagline }: { tagline: string }) {
             ))}
           </div>
         </div>
-        <div className="mt-8 border-t border-ink-fg/18 pb-7 pt-4 text-[12px] text-ink-fg/50 md:mt-10 md:border-0 md:pt-0 md:text-[13px]">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
-            <span>© {year} Equine Professionals Australia</span>
-            <Link href="/terms" className="hover:text-peach">Terms</Link>
-            <Link href="/privacy" className="hover:text-peach">Privacy</Link>
+        {/* Two rows, each split left and right: who we are and the policies,
+            then the small print and the credit. Stacked on phones. */}
+        <div className="mt-9 border-t border-ink-fg/15 md:mt-12">
+          <div className="flex flex-col gap-3 py-5 md:flex-row md:items-center md:justify-between md:gap-8">
+            <p className="text-[13px] text-ink-fg/75">© {year} Equine Professionals Australia</p>
+            <nav aria-label="Policies" className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px] text-ink-fg/75">
+              {LEGAL_LINKS.map((l) => (
+                <Link key={l.href} href={l.href} className="transition-colors hover:text-peach">
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <div className="flex flex-col gap-1.5 border-t border-ink-fg/10 pb-8 pt-4 text-[12px] text-ink-fg/45 md:flex-row md:items-center md:justify-between md:gap-8">
+            {details ? <p>{details}</p> : <span />}
+            {credit.text && <Credit text={credit.text} url={credit.url} />}
           </div>
         </div>
       </div>

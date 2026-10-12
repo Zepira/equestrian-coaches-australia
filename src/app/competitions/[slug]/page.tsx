@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LegalBody } from "@/components/legal-page";
 import { notFound } from "next/navigation";
 import { CompetitionEntryForm } from "@/components/competition-entry-form";
 import { createClient } from "@/lib/supabase/server";
@@ -47,7 +48,7 @@ export default async function CompetitionPage({ params, searchParams }: Props) {
   if (!loaded) notFound();
   const { service, c } = loaded;
   const p = phase(c);
-  const [w, termsBlock, abn, news] = await Promise.all([getContent("competitions.words"), getContent("competitions.terms"), getBusinessAbn(), currentWording(service, "rider_news")]);
+  const [w, termsBlock, abn, news, notices] = await Promise.all([getContent("competitions.words"), getContent("competitions.terms"), getBusinessAbn(), currentWording(service, "rider_news"), getContent("legal.notices")]);
   const { data: winners } = p === "judged" ? await service.from("competition_entries").select("name, state, winner_rank").eq("competition_id", c.id).not("winner_rank", "is", null).order("winner_rank") : { data: [] };
   const terms = termsFor(c, abn, termsBlock.sections);
 
@@ -78,7 +79,7 @@ export default async function CompetitionPage({ params, searchParams }: Props) {
           <>
             <h2 className="text-[26px] leading-[1.1] text-ink">{w.enterHeading}</h2>
             <div className="mt-4">
-              <CompetitionEntryForm competitionId={c.id} photo={c.entry_photo} question={c.question} ageLabel={w.ageLabel} parentLabel={w.parentLabel} sent={w.sent} news={news ? { id: news.id, body: news.body } : null} />
+              <CompetitionEntryForm competitionId={c.id} photo={c.entry_photo} question={c.question} ageLabel={w.ageLabel} parentLabel={w.parentLabel} sent={w.sent} news={news ? { id: news.id, body: news.body } : null} notice={notices.competition} />
             </div>
           </>
         ) : (
@@ -86,13 +87,15 @@ export default async function CompetitionPage({ params, searchParams }: Props) {
         )}
       </section>
 
-      <section className="mt-10" data-terms>
+      <section id="terms" className="mt-10 scroll-mt-24" data-terms>
         <h2 className="text-[26px] leading-[1.1] text-ink">{w.termsHeading}</h2>
         <div className="mt-4 flex flex-col gap-5">
           {terms.map((t) => (
             <div key={t.title}>
               <h3 className="text-[18px] leading-[1.2] text-ink">{t.title}</h3>
-              <p className="mt-1.5 text-[15px] leading-[1.6] text-muted">{t.body}</p>
+              <div className="mt-1.5 flex flex-col gap-2 text-[15px] leading-[1.6] text-muted">
+                <LegalBody text={t.body} />
+              </div>
             </div>
           ))}
         </div>

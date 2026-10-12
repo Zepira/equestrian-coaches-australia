@@ -3,6 +3,10 @@ import { Wordmark } from "@/components/wordmark";
 import { WaitlistForm } from "@/components/waitlist-form";
 import { getContent, getProfessions } from "@/lib/cms/read";
 import { horseCareOf } from "@/lib/professions";
+import Link from "next/link";
+import { businessLine } from "@/lib/legal";
+import { getBusinessAbn } from "@/lib/settings";
+import { CONTACT_EMAIL } from "@/lib/site-url";
 
 /**
  * The whole public site until SITE_LAUNCHED is true (src/lib/launch.ts): the
@@ -16,7 +20,7 @@ import { horseCareOf } from "@/lib/professions";
  * change it from /admin/pages without a deploy.
  */
 export async function ComingSoon() {
-  const [copy, professions] = await Promise.all([getContent("coming_soon"), getProfessions()]);
+  const [copy, professions, footer, abn] = await Promise.all([getContent("coming_soon"), getProfessions(), getContent("footer"), getBusinessAbn()]);
   const horseCare = horseCareOf(professions).map((p) => ({ slug: p.slug, name: p.name }));
 
   return (
@@ -41,6 +45,17 @@ export async function ComingSoon() {
           <WaitlistForm copy={copy} professions={horseCare} />
         </div>
       </div>
+
+      {/* Who we are and the policies, reachable before launch (Stripe's
+          website review needs the refunds page and a contact without a
+          password; isPreLaunchPath in src/proxy.ts lets these through). */}
+      <p className="mt-8 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] leading-[1.6] text-subtle">
+        <span>{businessLine(abn, footer.place)}</span>
+        <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-accent">{CONTACT_EMAIL}</a>
+        <Link href="/terms" className="hover:text-accent">Terms</Link>
+        <Link href="/privacy" className="hover:text-accent">Privacy</Link>
+        <Link href="/refunds" className="hover:text-accent">Refunds</Link>
+      </p>
     </div>
   );
 }

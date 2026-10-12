@@ -3,17 +3,21 @@
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { compressImage, MAX_SOURCE_BYTES } from "@/lib/compress-image";
+import { uploadDirect } from "@/lib/upload-direct";
+import type { SignedUpload } from "@/lib/storage-upload";
 
 /**
  * A photo for a term (a profession, say): uploads on pick, resized to 1600px
- * in the browser first, with a remove link. The actions come bound to the
- * term from the page.
+ * in the browser first and sent straight to storage (src/lib/storage-upload.ts),
+ * with a remove link. The start/finish actions come bound to the record from
+ * the page.
  */
 export function TermImagePanel({
   src,
   uploaded,
   note,
-  upload,
+  start,
+  finish,
   remove,
   placeholderLabel = "Stock placeholder",
 }: {
@@ -22,7 +26,8 @@ export function TermImagePanel({
   src: string;
   uploaded: boolean;
   note: string;
-  upload: (fd: FormData) => Promise<void>;
+  start: (fileName: string) => Promise<SignedUpload>;
+  finish: (path: string) => Promise<void>;
   remove: () => Promise<void>;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,12 +46,11 @@ export function TermImagePanel({
       return;
     }
     setPreparing(true);
-    const fd = new FormData();
-    fd.set("image", await compressImage(file, 1600));
+    const image = await compressImage(file, 1600);
     setPreparing(false);
     startTransition(async () => {
       try {
-        await upload(fd);
+        await uploadDirect(image, start, finish);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Upload failed. Try again.");
       } finally {
@@ -65,7 +69,7 @@ export function TermImagePanel({
       <p className="text-[13px] leading-[1.45] text-muted">{note}</p>
       <input ref={inputRef} type="file" accept="image/*" className="hidden" disabled={busy} onChange={onPick} />
       <div className="flex items-center gap-3">
-        <Button type="button" variant="secondary" disabled={busy} onClick={() => inputRef.current?.click()}>
+        <Button type="button" variant="secondary" loading={busy} onClick={() => inputRef.current?.click()}>
           {preparing ? "Preparing…" : pending ? "Uploading…" : uploaded ? "Replace photo" : "Upload photo"}
         </Button>
         {uploaded && (

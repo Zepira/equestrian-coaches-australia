@@ -133,12 +133,37 @@ export const preferencesUrl = (token: string) => publicUrl(`/email-preferences?t
 export const oneClickUrl = (token: string, purpose: Purpose | "all") => publicUrl(`/api/unsubscribe?t=${token}&p=${purpose}`);
 
 /**
- * What the law asks every commercial email to carry (Spam Act; The
- * Marketing Engine §05.4): who we are, how to reach us, and how to stop.
+ * When this contact last said yes to this purpose themselves (an express
+ * grant), for the "you asked for this on..." line. Null for anything they
+ * didn't ask for in so many words, like an invitation to list.
  */
-export function commercialFooter(token: string, abn: string) {
+export async function expressGrantDate(service: Service, token: string, purpose: Purpose): Promise<Date | null> {
+  const { data: contact } = await service.from("contacts").select("id").eq("token", token).maybeSingle();
+  if (!contact) return null;
+  const { data } = await service
+    .from("consents")
+    .select("action, type, created_at")
+    .eq("contact_id", contact.id)
+    .eq("purpose", purpose)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data && data.action === "grant" && data.type === "express" ? new Date(data.created_at as string) : null;
+}
+
+/**
+ * What the law asks every commercial email to carry (Spam Act; The
+ * Marketing Engine §05.4): who we are, how to reach us, why you're getting it, and how to stop.
+ * `business` is businessLine() from src/lib/legal.ts.
+ */
+export function commercialFooter(token: string, business: string, asked?: { purpose: Purpose; at: Date } | null) {
+  const label = asked ? PURPOSE_LABELS[asked.purpose] : "";
+  const when = asked?.at.toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric", timeZone: "Australia/Melbourne" });
   return [
-    `Equine Professionals Australia${abn ? `, ABN ${abn}` : ""}. Write to us at ${CONTACT_EMAIL}.`,
+    `${business}. Write to us at ${CONTACT_EMAIL}.`,
+    asked && `You're getting this because you asked for ${label.charAt(0).toLowerCase()}${label.slice(1)} on ${when}.`,
     `Choose what we send you, or stop it all: ${preferencesUrl(token)}`,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }

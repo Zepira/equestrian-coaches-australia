@@ -35,7 +35,7 @@ export default async function RidersChoicePage() {
               <li key={`${r.profession_id}${r.state}`} className="rounded-[14px] border border-border bg-surface p-4">
                 <p className="text-[12.5px] text-subtle">{name(r.profession_id)}, {r.state}</p>
                 <Link href={profilePath(r.providers.slug)} className="font-display text-[22px] leading-[1.1] text-ink hover:text-accent">{r.providers.name}</Link>
-                <p className="mt-1 text-[13.5px] text-muted">{Number(r.average).toFixed(1)} out of 5 from {r.reviews} reviews</p>
+                <p className="mt-1 text-[13.5px] text-muted">{Number(r.average).toFixed(1)} out of 5 from {r.reviews} {Number(r.reviews) === 1 ? "review" : "reviews"}</p>
               </li>
             ))}
           </ul>

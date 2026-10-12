@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LocationAutocomplete } from "@/components/location-autocomplete";
 import { saveAlert } from "./actions";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export type AlertProfession = {
   id: string;
@@ -118,7 +119,7 @@ export function AlertForm({ professions, defaults, submitLabel, consent }: { pro
           <span>{consent.news.body}</span>
         </label>
       )}
-      <button type="submit" className="h-12 w-full rounded-[var(--radius-pill)] bg-ink text-[15px] font-semibold text-ink-fg transition-colors duration-200 hover:bg-ink-card">
+      <button type="submit" className="h-12 w-full rounded-[var(--radius-pill)] bg-ink text-[15px] font-semibold text-ink-fg transition-colors duration-200 hover:bg-ink-card"><PendingSpinner />
         {submitLabel}
       </button>
     </form>

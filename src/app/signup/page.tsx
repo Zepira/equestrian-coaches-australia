@@ -1,4 +1,4 @@
-import { getProfessions } from "@/lib/cms/read";
+import { getContent, getProfessions } from "@/lib/cms/read";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { SignupForm, type SignupInvite } from "./signup-form";
 import { cookies } from "next/headers";
@@ -71,6 +71,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
       source={source}
       invite={invite}
       supportPhone={await getSupportPhone()}
+      notice={(await getContent("legal.notices"))[professional ? "providerSignup" : "riderSignup"]}
     />
   );
 }

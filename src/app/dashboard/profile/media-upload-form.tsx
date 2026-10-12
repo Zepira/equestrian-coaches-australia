@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { deletePhoto, deleteVideo } from "./actions";
 import { PhotoUploadForm } from "./photo-upload-form";
-import { VideoUploadForm } from "./video-upload-form";
+import { VideoLinkForm } from "./video-link-form";
+import { IntroVideo } from "@/components/intro-video";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 type Photo = { id: string; url: string; storage_path: string };
 
@@ -48,7 +50,7 @@ export function MediaUploadForm({
                   disabled={!configured}
                   aria-label="Remove photo"
                   className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-fg text-sm font-bold text-bg"
-                >
+                ><PendingSpinner />
                   ×
                 </button>
               </form>
@@ -71,17 +73,20 @@ export function MediaUploadForm({
             </Link>{" "}
             to add one.
           </p>
-        ) : videoUrl ? (
-          <div className="max-w-sm">
-            <video src={videoUrl} controls className="w-full rounded-[var(--radius-tile)]" />
-            <form action={deleteVideo} className="mt-2">
-              <Button type="submit" variant="danger-ghost">
-                Remove video
-              </Button>
-            </form>
-          </div>
         ) : (
-          <VideoUploadForm configured={configured} />
+          <div className="flex flex-col gap-4">
+            {videoUrl && (
+              <div className="max-w-sm">
+                <IntroVideo url={videoUrl} title="Your intro video" />
+                <form action={deleteVideo} className="mt-2">
+                  <Button type="submit" variant="danger-ghost">
+                    Remove video
+                  </Button>
+                </form>
+              </div>
+            )}
+            <VideoLinkForm configured={configured} current={videoUrl} />
+          </div>
         )}
       </div>
     </div>

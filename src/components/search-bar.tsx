@@ -10,6 +10,7 @@ import { parseState } from "@/lib/au-states";
 import { LocateButton } from "@/components/locate-button";
 import { Caret } from "@/components/ui/caret";
 import type { LocationSuggestion } from "@/app/api/location-suggest/route";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 // The two setup terms riders reach for most — worth a one-tap pill on the
 // card rather than two clicks into the panel. Slugs, matched against the
@@ -346,7 +347,7 @@ export function SearchBar({
     <button
       type="submit"
       className="order-4 flex min-h-12 w-[150px] shrink-0 items-center justify-center rounded-[9px] bg-accent px-[18px] text-center text-[16px] font-semibold leading-tight text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:order-3 wide:w-[206px] wide:rounded-[10px] wide:px-[18px]"
-    >
+    ><PendingSpinner />
       <span className="wide:hidden">{findLabel}</span>
       <span className="hidden wide:inline">{cta}</span>
     </button>

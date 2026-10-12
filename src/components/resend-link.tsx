@@ -91,7 +91,7 @@ export function ResendLink({
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} autoComplete="email" required />
         </label>
       )}
-      <Button type="submit" variant="secondary" disabled={sending || waiting} className="h-12 w-full text-[15px]" aria-live="polite">
+      <Button type="submit" variant="secondary" loading={sending} disabled={waiting} className="h-12 w-full text-[15px]" aria-live="polite">
         {buttonText}
       </Button>
       {sentOnce && !error && (

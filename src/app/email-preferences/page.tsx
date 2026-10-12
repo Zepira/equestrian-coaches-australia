@@ -5,6 +5,7 @@ import { AuthShell } from "@/components/auth-shell";
 import { Button } from "@/components/ui/button";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { consentStatus, currentWording, PURPOSE_LABELS, recordConsent, stopEverything, type Purpose } from "@/lib/audience";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export const metadata = { title: "Email preferences", robots: { index: false, follow: false } };
 
@@ -116,7 +117,7 @@ export default async function EmailPreferencesPage({ searchParams }: { searchPar
       <form action={stopAll} className="mt-6 border-t border-border pt-5">
         <input type="hidden" name="t" value={t} />
         <p className="text-[14px] text-muted">Or stop every email that isn&rsquo;t about your own account.</p>
-        <button type="submit" className="mt-2 text-[14px] font-medium text-danger underline-offset-2 hover:underline">Stop everything</button>
+        <button type="submit" className="mt-2 text-[14px] font-medium text-danger underline-offset-2 hover:underline"><PendingSpinner />Stop everything</button>
       </form>
     </AuthShell>
   );

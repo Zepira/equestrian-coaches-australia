@@ -2,18 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { LegalText } from "@/components/legal-text";
 
-export type Tier = {
-  key: string;
-  name: string;
-  monthly: string;
-  yearly: string;
-  tagline: string;
-  summary: string;
-  cta: string;
-  featured?: boolean;
-};
-export type ComparisonRow = { label: string; listed: boolean; spotlight: boolean; clinic: boolean };
+import type { ComparisonRow, TierCard } from "@/lib/pitch";
+
+export type Tier = TierCard;
 
 /**
  * "Pick a plan" (canvas 2a/2b): a Monthly / Yearly toggle pill that flips
@@ -23,7 +16,25 @@ export type ComparisonRow = { label: string; listed: boolean; spotlight: boolean
  * the full comparison — a table on desktop, folded away behind "Full
  * comparison, all N features" on phones.
  */
-export function Plans({ tiers, rows }: { tiers: Tier[]; rows: ComparisonRow[] }) {
+export function Plans({
+  tiers,
+  rows,
+  joinBase,
+  planExample,
+  provider,
+  billingNote,
+}: {
+  tiers: Tier[];
+  rows: ComparisonRow[];
+  /** "/join/coaches" gets "?plan=<key>"; an "#anchor" is used as it is. */
+  joinBase: string;
+  planExample: string;
+  provider: string;
+  /** legal.notices.pricing: how billing and cancelling work, and the refunds link. */
+  billingNote?: string;
+}) {
+  const joinHref = (key: string) => (joinBase.startsWith("#") ? joinBase : `${joinBase}?plan=${key}`);
+  const note = `Annual is ten months’ price. Change plan any time, both directions: ${planExample}.`;
   const [yearly, setYearly] = useState(false);
   // Plan names come from settings; the phone table abbreviates a long one.
   const nameOf = (key: string) => tiers.find((t) => t.key === key)?.name ?? key;
@@ -56,13 +67,13 @@ export function Plans({ tiers, rows }: { tiers: Tier[]; rows: ComparisonRow[] })
         <div>
           <h2 className="text-[38px] leading-none -tracking-[0.02em] text-ink wide:text-[64px] wide:leading-[0.98] wide:-tracking-[0.025em]">Pick a plan</h2>
           <p className="mt-3 hidden max-w-[62ch] text-[17px] leading-[1.5] text-muted wide:mt-4 wide:block">
-            Annual is ten months&rsquo; price. Change plan any time, both directions — a coach running a clinic in March goes up for March and back down in April.
+            {note}
           </p>
         </div>
         {toggle}
       </div>
       <p className="mt-3 text-[15px] leading-[1.5] text-muted wide:hidden">
-        Annual is ten months&rsquo; price. Change plan any time, both directions — a coach running a clinic in March goes up for March and back down in April.
+        {note}
       </p>
 
       <div className="mt-6 flex flex-col gap-3 wide:mt-11 wide:grid wide:grid-cols-3 wide:items-stretch wide:gap-4">
@@ -89,7 +100,7 @@ export function Plans({ tiers, rows }: { tiers: Tier[]; rows: ComparisonRow[] })
               </div>
               <p className="mt-3.5 text-[14.5px] leading-[1.5] opacity-85 wide:mt-[18px] wide:flex-1 wide:text-[15px]">{t.summary}</p>
               <Link
-                href={`/join/coaches?plan=${t.key}`}
+                href={joinHref(t.key)}
                 className={`mt-[18px] block rounded-[10px] border py-3.5 text-center text-[15px] font-semibold transition-colors duration-[250ms] wide:mt-6 wide:py-[15px] ${
                   f ? "border-accent bg-accent text-accent-fg hover:bg-accent-hover" : "border-ink bg-transparent text-ink hover:bg-shade"
                 }`}
@@ -101,8 +112,13 @@ export function Plans({ tiers, rows }: { tiers: Tier[]; rows: ComparisonRow[] })
         })}
       </div>
       <p className="mt-4 text-[14px] leading-[1.5] text-muted wide:mt-5 wide:text-center wide:text-[15px]">
-        {nameOf("listed")} comes with everything a coach needs to be found and reached — it isn&rsquo;t a cut-down plan. Travel radius is the same on every tier, not a paid feature.
+        {nameOf("listed")} comes with everything a {provider} needs to be found and reached. It isn&rsquo;t a cut-down plan, and travel radius is the same on every tier.
       </p>
+      {billingNote && (
+        <p className="mt-2 text-[14px] leading-[1.5] text-muted wide:text-center wide:text-[15px]" data-billing-note>
+          <LegalText text={billingNote} />
+        </p>
+      )}
 
       {/* phones: folded comparison */}
       <div id="plan-comparison-fold" className="wide:hidden">

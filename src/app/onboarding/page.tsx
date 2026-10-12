@@ -3,7 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProvider, PROVIDER_PHOTOS } from "@/lib/supabase/queries";
-import { getProfessions } from "@/lib/cms/read";
+import { getContent, getProfessions } from "@/lib/cms/read";
+import { LegalText } from "@/components/legal-text";
 import { getSectionTerms } from "@/lib/sections";
 import { formatLongDate, getFirstChargeDate, getFoundingPrice, getPlans, isReviewRequired } from "@/lib/settings";
 import { chargeWording } from "@/lib/founding";
@@ -16,6 +17,7 @@ import { saveFoundingCard, startCheckoutFromOnboarding } from "@/app/dashboard/b
 import { AutosaveForm } from "./autosave-form";
 import { WhatStep } from "./what-step";
 import { saveContact, saveWhat, saveWhere, saveYou, submitProfile } from "./actions";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export const metadata: Metadata = { title: "Set up your profile", robots: { index: false, follow: false } };
 
@@ -265,11 +267,14 @@ export default async function OnboardingPage({
                 ) : (
                   <form action={saveFoundingCard} className="mt-5">
                     <p className="mb-4 text-[15px] text-ink-fg/85">We take your card now. {charge}</p>
-                    <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-[26px] py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover">
+                    <button type="submit" className="rounded-[var(--radius-pill)] bg-accent px-[26px] py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover"><PendingSpinner />
                       Save my card
                     </button>
                   </form>
                 )}
+                <p className="mt-4 text-[13.5px] leading-[1.5] text-ink-fg/70">
+                  <LegalText text={(await getContent("legal.notices")).pricing} linkClassName="border-b border-current text-peach" />
+                </p>
               </div>
             ) : planLive ? (
               <p className="mt-8 text-[16px] text-fg">
@@ -282,7 +287,7 @@ export default async function OnboardingPage({
                     <button
                       type="submit"
                       className={`flex w-full items-center justify-between gap-3 rounded-[14px] border bg-surface px-5 py-4 text-left transition-colors hover:border-accent ${sp.plan === t ? "border-accent" : "border-border"}`}
-                    >
+                    ><PendingSpinner />
                       <span>
                         <span className="block font-display text-[22px] leading-none text-ink">{plans[t].name}</span>
                         <span className="mt-1 block text-[14px] text-muted">{plans[t].tagline}</span>
@@ -291,7 +296,9 @@ export default async function OnboardingPage({
                     </button>
                   </form>
                 ))}
-                <p className="text-[14px] text-muted">Change plan or cancel whenever you like.</p>
+                <p className="text-[14px] leading-[1.5] text-muted">
+                  <LegalText text={(await getContent("legal.notices")).pricing} />
+                </p>
               </div>
             )}
             <div className="mt-8 border-t border-border pt-5">
@@ -358,7 +365,7 @@ export default async function OnboardingPage({
                       type="submit"
                       disabled={!isComplete(checklist)}
                       className="rounded-[var(--radius-pill)] bg-accent px-[26px] py-3 text-[15px] font-semibold text-accent-fg hover:bg-accent-hover disabled:opacity-50"
-                    >
+                    ><PendingSpinner />
                       {reviewRequired ? "Send for review" : "Publish my profile"}
                     </button>
                   </form>

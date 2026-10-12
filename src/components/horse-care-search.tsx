@@ -7,6 +7,7 @@ import { LocateButton } from "@/components/locate-button";
 import { Caret } from "@/components/ui/caret";
 import { sectionHref, type Profession } from "@/lib/professions";
 import { termPath } from "@/lib/page-paths";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 /**
  * The Horse care door's search card: the coach card's shell and fields
@@ -108,7 +109,7 @@ export function HorseCareSearch({
         <button
           type="submit"
           className="order-4 flex min-h-12 w-[150px] shrink-0 items-center justify-center rounded-[9px] bg-accent px-[18px] text-center text-[16px] font-semibold leading-tight text-accent-fg transition-colors duration-[250ms] hover:bg-accent-hover wide:order-3 wide:w-[206px] wide:rounded-[10px]"
-        >
+        ><PendingSpinner />
           <span className="wide:hidden">Search</span>
           <span className="hidden wide:inline">Search horse care</span>
         </button>

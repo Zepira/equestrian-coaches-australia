@@ -9,7 +9,7 @@ import { fileUrl, type Guide } from "@/lib/guides";
 import { HistoryList } from "../../history-list";
 import { TermImagePanel } from "../../term-image-panel";
 import { DownloadPanel } from "../download-panel";
-import { deleteGuide, removeGuideHero, saveGuide, setGuidePublished, uploadGuideHero } from "../actions";
+import { deleteGuide, removeGuideHero, saveGuide, setGuidePublished, startGuideHero, finishGuideHero } from "../actions";
 
 export const metadata = { title: "Guide" };
 
@@ -112,7 +112,8 @@ export default async function AdminGuidePage({ params, searchParams }: { params:
             uploaded={Boolean(g.hero_path)}
             placeholderLabel="No photo yet"
             note="The photo at the top of the guide and in lists. It's resized to 1600px before it uploads."
-            upload={uploadGuideHero.bind(null, id)}
+            start={startGuideHero.bind(null, id)}
+            finish={finishGuideHero.bind(null, id)}
             remove={removeGuideHero.bind(null, id)}
           />
           <DownloadPanel guideId={id} current={g.download_path} currentUrl={g.download_path ? fileUrl(service, g.download_path) : null} />

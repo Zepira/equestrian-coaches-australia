@@ -4,6 +4,7 @@ import Link from "next/link";
 import { changeLog } from "@/lib/admin";
 import { HistoryList } from "../history-list";
 import { createTerm, renameTerm, changeTermSlug, setTermProfession, toggleTermActive, toggleGeneratesPages } from "./actions";
+import { PendingSpinner } from "@/components/ui/spinner";
 
 export const metadata = { title: "Terms" };
 
@@ -83,7 +84,7 @@ export default async function AdminTermsPage({ searchParams }: { searchParams: P
                       defaultValue={term.name}
                       className="w-full rounded-[12px] border border-border bg-bg px-2 py-1.5 text-sm text-fg @[560px]/admin:max-w-xs"
                     />
-                    <button type="submit" className="shrink-0 text-sm font-medium text-accent">
+                    <button type="submit" className="shrink-0 text-sm font-medium text-accent"><PendingSpinner />
                       Save
                     </button>
                   </form>
@@ -100,7 +101,7 @@ export default async function AdminTermsPage({ searchParams }: { searchParams: P
                       defaultValue={term.slug}
                       className="w-32 rounded-[12px] border border-border bg-bg px-2 py-1 text-xs text-fg"
                     />
-                    <button type="submit" className="shrink-0 font-medium text-danger" title="Old URL will 301 here">
+                    <button type="submit" className="shrink-0 font-medium text-danger" title="Old URL will 301 here"><PendingSpinner />
                       Change slug
                     </button>
                   </form>
@@ -115,7 +116,7 @@ export default async function AdminTermsPage({ searchParams }: { searchParams: P
                           <option key={x.id} value={x.id}>{x.name}</option>
                         ))}
                       </select>
-                      <button type="submit" className="text-xs font-medium text-accent">Move</button>
+                      <button type="submit" className="text-xs font-medium text-accent"><PendingSpinner />Move</button>
                     </form>
                   )}
                   {kind === "discipline" && (
@@ -125,13 +126,13 @@ export default async function AdminTermsPage({ searchParams }: { searchParams: P
                   )}
                   {kind !== "discipline" && (
                     <form action={toggleGeneratesPages.bind(null, term.id, !term.generates_pages)}>
-                      <button type="submit" className="text-muted hover:text-fg">
+                      <button type="submit" className="text-muted hover:text-fg"><PendingSpinner />
                         pages: {term.generates_pages ? "on" : "off"}
                       </button>
                     </form>
                   )}
                   <form action={toggleTermActive.bind(null, term.id, !term.active)}>
-                    <button type="submit" className={term.active ? "text-danger" : "text-accent"}>
+                    <button type="submit" className={term.active ? "text-danger" : "text-accent"}><PendingSpinner />
                       {term.active ? "Deactivate" : "Reactivate"}
                     </button>
                   </form>

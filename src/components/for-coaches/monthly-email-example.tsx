@@ -8,7 +8,14 @@ const STATS = [
   { value: "4", label: "Enquiries" },
 ];
 
-export function MonthlyEmailExample() {
+/** `searches`: two example search phrases; `customers`: "riders", "horse owners". */
+export function MonthlyEmailExample({
+  searches = ["dressage lessons Geelong", "flatwork coach Bellarine"],
+  customers = "riders",
+}: {
+  searches?: [string, string];
+  customers?: string;
+}) {
   return (
     <div className="overflow-hidden rounded-[16px] border border-border bg-surface shadow-[0_20px_50px_rgba(31,58,46,.1)] wide:shadow-[0_24px_60px_rgba(31,58,46,.12)]">
       <div className="flex items-center justify-between bg-shade px-[18px] py-3 text-[11px] font-medium uppercase tracking-[0.14em] text-subtle wide:px-[22px]">
@@ -27,7 +34,7 @@ export function MonthlyEmailExample() {
           ))}
         </div>
         <p className="mt-5 text-[15px] leading-[1.55] text-fg">
-          You came up most often for &ldquo;dressage lessons Geelong&rdquo; and &ldquo;flatwork coach Bellarine&rdquo;. Nine riders tapped to see your number, up from five in July <span className="text-subtle">(example figures)</span>.
+          You came up most often for &ldquo;{searches[0]}&rdquo; and &ldquo;{searches[1]}&rdquo;. Nine {customers} tapped to see your number, up from five in July <span className="text-subtle">(example figures)</span>.
         </p>
         <p className="mt-2.5 text-[15px] leading-[1.55] text-fg">Two of your four enquiries are still marked as no response.</p>
       </div>

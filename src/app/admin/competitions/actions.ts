@@ -1,5 +1,6 @@
 "use server";
 
+import { assertUploaded, imageExt, signUpload, type SignedUpload } from "@/lib/storage-upload";
 import { randomInt } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -170,16 +171,19 @@ export async function publishResult(competitionId: string, fd: FormData) {
   go(competitionId, `Result published, and ${winners!.length === 1 ? "the winner has" : `${winners!.length} winners have`} been emailed.`);
 }
 
-export async function uploadCompetitionImage(id: string, fd: FormData) {
+/** The competition's photo, uploaded straight to storage (src/lib/storage-upload.ts). */
+export async function startCompetitionImage(id: string, fileName: string): Promise<SignedUpload> {
   await requireAdmin();
-  const file = fd.get("image") as File | null;
-  if (!file || !file.type.startsWith("image/")) throw new Error("That isn't an image.");
+  const { service } = await load(id);
+  return signUpload(service, MARKETING_FILES, `competitions/${id}/${Date.now()}.${imageExt(fileName)}`);
+}
+
+export async function finishCompetitionImage(id: string, path: string) {
+  await requireAdmin();
   const { service, c } = await load(id);
-  const path = `competitions/${id}/${Date.now()}.${(file.name.split(".").pop() ?? "jpg").toLowerCase()}`;
-  const { error } = await service.storage.from(MARKETING_FILES).upload(path, file, { contentType: file.type, cacheControl: "31536000" });
-  if (error) throw error;
+  await assertUploaded(service, MARKETING_FILES, path, `competitions/${id}/`);
   await service.from("competitions").update({ image_path: path }).eq("id", id);
-  if (c.image_path) await service.storage.from(MARKETING_FILES).remove([c.image_path]);
+  if (c.image_path && c.image_path !== path) await service.storage.from(MARKETING_FILES).remove([c.image_path]);
   refresh(c.slug);
   revalidatePath(`/admin/competitions/${id}`);
 }

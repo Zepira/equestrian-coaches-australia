@@ -2,7 +2,8 @@
 
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { uploadPhoto } from "./actions";
+import { finishPhotoUpload, startPhotoUpload } from "./actions";
+import { uploadDirect } from "@/lib/upload-direct";
 import { compressImage, MAX_SOURCE_BYTES } from "@/lib/compress-image";
 
 // Resize/re-encode lives in src/lib/compress-image.ts (shared with the
@@ -35,13 +36,10 @@ export function PhotoUploadForm({ configured }: { configured: boolean }) {
     setStatus("processing");
     const processed = await compressImage(file);
 
-    const formData = new FormData();
-    formData.set("photo", processed);
-
     setStatus("uploading");
     startTransition(async () => {
       try {
-        await uploadPhoto(formData);
+        await uploadDirect(processed, startPhotoUpload, finishPhotoUpload);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Upload failed — please try again.");
       } finally {
@@ -70,7 +68,8 @@ export function PhotoUploadForm({ configured }: { configured: boolean }) {
         <Button
           type="button"
           variant="secondary"
-          disabled={!configured || busy}
+          disabled={!configured}
+          loading={busy}
           onClick={() => inputRef.current?.click()}
         >
           {label}
