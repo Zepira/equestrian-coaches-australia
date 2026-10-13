@@ -3,7 +3,7 @@ import { Hanken_Grotesk, Instrument_Serif } from "next/font/google";
 import { headers } from "next/headers";
 import { horseCareOf, horseCarePrefixes, sectionHref } from "@/lib/professions";
 import { getContent, getFeaturedDisciplines, getProfessions } from "@/lib/cms/read";
-import { SITE_LAUNCHED, showsComingSoon } from "@/lib/launch";
+import { COACH_STAGE_HEADER, SITE_LAUNCHED, showsComingSoon } from "@/lib/launch";
 import "./globals.css";
 import { BootScript } from "@/components/boot-script";
 import { SiteHeader } from "@/components/site-header";
@@ -94,7 +94,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // so headers() is never called once the site has launched and the layout
   // goes back to being static. The cost lands on the one page that has no
   // traffic yet, and disappears on launch day.
-  const comingSoon = !SITE_LAUNCHED && showsComingSoon((await headers()).get("host"));
+  //
+  // In the coaches stage the proxy marks the coach pages it opened
+  // (COACH_STAGE_HEADER): those get the header and footer, trimmed to what's
+  // open, and everything else on the public host is the coming soon page.
+  const requestHeaders = SITE_LAUNCHED ? null : await headers();
+  const coachesOnly = requestHeaders?.get(COACH_STAGE_HEADER) === "1";
+  const comingSoon = !SITE_LAUNCHED && !coachesOnly && showsComingSoon(requestHeaders?.get("host"));
 
   // The CMS reads are cached and cookie-free, so the layout stays static.
   const [professions, featured, footer, announcement, slideCopy, slideOn, slideDelay, slideEvery, wordings, abn] = await Promise.all([
@@ -187,12 +193,12 @@ if (${JSON.stringify(prefixes)}.some(function (p) { return location.pathname ===
             <NavProgress />
           </Suspense>
         )}
-        {!comingSoon && <SiteHeader {...header} />}
+        {!comingSoon && <SiteHeader {...header} coachesOnly={coachesOnly} />}
         {!comingSoon && <Parallax />}
         <main id="main-content" className="flex-1">
           {children}
         </main>
-        {!comingSoon && <SiteFooter tagline={footer.tagline} abn={abn} place={footer.place} credit={{ text: footer.credit, url: footer.creditUrl }} />}
+        {!comingSoon && <SiteFooter tagline={footer.tagline} abn={abn} place={footer.place} credit={{ text: footer.credit, url: footer.creditUrl }} coachesOnly={coachesOnly} />}
         {/* The coming soon page has its own sign-up; the announcement bar and
             slide-in would be a second, competing one. */}
         {!comingSoon && (

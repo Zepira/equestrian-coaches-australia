@@ -37,11 +37,67 @@ export function normaliseHost(host: string): string {
 export const PUBLIC_HOST = normaliseHost(process.env.PUBLIC_HOST ?? "");
 
 /**
- * True only for the exact string "true". Anything else, including unset, a
- * typo or the string "1", means the site has not launched: the coming soon
- * page is what the public sees until someone deliberately sets this.
+ * How open the public host is, in three steps (Trello "Build the coaches-only
+ * stage", 12 Oct 2026):
+ *
+ *   soon      the coming soon page and the policies, nothing else (default)
+ *   coaches   professionals can join, set up and pay: the coach paths below
+ *             open on the public host, everything a rider would use still
+ *             shows the coming soon page, and nothing new is indexed
+ *   launched  the whole site, indexable
+ *
+ * SITE_STAGE=coaches or SITE_STAGE=launched sets it. SITE_LAUNCHED="true"
+ * still means launched, so a deployment set up before stages existed keeps
+ * working. Anything else, unset included, is "soon": fails closed.
  */
-export const SITE_LAUNCHED = process.env.SITE_LAUNCHED === "true";
+export type SiteStage = "soon" | "coaches" | "launched";
+export const SITE_STAGE: SiteStage =
+  process.env.SITE_LAUNCHED === "true" || process.env.SITE_STAGE === "launched" ? "launched" : process.env.SITE_STAGE === "coaches" ? "coaches" : "soon";
+
+/** The whole site is open (the old single switch, kept for its many readers). */
+export const SITE_LAUNCHED = SITE_STAGE === "launched";
+
+/**
+ * What a professional needs before riders arrive: the pitch, joining,
+ * signing in, onboarding, the dashboard (billing included), their public
+ * profile to check and share, collecting reviews and testimonials, and what
+ * those pages call. Search, area and profession pages, events and rider
+ * accounts stay behind the coming soon page. Admin stays on the test host.
+ */
+const COACH_STAGE_EXACT = new Set([
+  "/for-coaches",
+  "/for-professionals",
+  "/list-your-business",
+  "/signup",
+  "/login",
+  "/forgot-password",
+  "/reset-password",
+  "/onboarding",
+  "/about",
+  "/how-we-list",
+]);
+const COACH_STAGE_PREFIXES = ["/join/", "/auth/", "/onboarding/", "/dashboard", "/profile/", "/review/", "/testimonial/", "/go/", "/api/"];
+
+export function isCoachStagePath(path: string): boolean {
+  return COACH_STAGE_EXACT.has(path) || COACH_STAGE_PREFIXES.some((p) => path === p.replace(/\/$/, "") || path.startsWith(p));
+}
+
+/**
+ * Set by the proxy on a coach page the coaches stage opened, so the root
+ * layout shows the header and footer (trimmed) rather than treating it as
+ * the coming soon page.
+ */
+export const COACH_STAGE_HEADER = "x-coach-stage";
+
+/**
+ * Mock payments hand out a real active plan without a card, so they must
+ * never run where the public can reach them. Fine on localhost and the
+ * password-protected test hosts; refused on the public host.
+ */
+export function mockPaymentsAllowed(host: string | null | undefined): boolean {
+  if (host && isLocalHost(host)) return true;
+  return isGatedHost(host);
+}
 
 /** Local development, where no password or launch gate applies. */
 export function isLocalHost(host: string): boolean {
@@ -78,6 +134,7 @@ export function isGatedHost(host: string | null | undefined): boolean {
  * coming soon page at "/" and reasonably concludes the home page is broken.
  */
 export function showsComingSoon(host: string | null | undefined): boolean {
+  // Still true in the coaches stage: "/" and every rider path show it there.
   if (SITE_LAUNCHED) return false;
   if (host && isLocalHost(host)) return PUBLIC_HOST !== "" && isLocalHost(PUBLIC_HOST);
   return isPublicHost(host);

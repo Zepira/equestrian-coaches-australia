@@ -31,6 +31,29 @@ const columns = [
   },
 ];
 
+/** The coaches stage's columns: only pages that are open. */
+const COACH_STAGE_COLUMNS = [
+  {
+    heading: "Professionals",
+    links: [
+      { href: "/list-your-business", label: "List your business" },
+      { href: "/for-coaches", label: "For coaches" },
+      { href: "/for-professionals", label: "For professionals" },
+      { href: "/dashboard", label: "Dashboard" },
+    ],
+    desktopOnly: false,
+  },
+  {
+    heading: "About",
+    links: [
+      { href: "/about", label: "About us" },
+      { href: "/login", label: "Log in" },
+      { href: `mailto:${CONTACT_EMAIL}`, label: "Contact" },
+    ],
+    desktopOnly: false,
+  },
+];
+
 const LEGAL_LINKS = [
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
@@ -61,7 +84,21 @@ function Credit({ text, url }: { text: string; url: string }) {
  * block's `place`) and the designer's credit. The terms carry the full
  * who-we-are, so this stays short.
  */
-export function SiteFooter({ tagline, abn, place, credit }: { tagline: string; abn: string; place: string; credit: { text: string; url: string } }) {
+export function SiteFooter({
+  tagline,
+  abn,
+  place,
+  credit,
+  coachesOnly = false,
+}: {
+  tagline: string;
+  abn: string;
+  place: string;
+  credit: { text: string; url: string };
+  /** The coaches stage (src/lib/launch.ts): no "Find" column, since the rider side isn't open yet. */
+  coachesOnly?: boolean;
+}) {
+  const shownColumns = coachesOnly ? COACH_STAGE_COLUMNS : columns;
   const details = [abn && `ABN ${abn}`, place.trim()].filter(Boolean).join(" · ");
   const year = new Date().getFullYear();
   return (
@@ -78,7 +115,7 @@ export function SiteFooter({ tagline, abn, place, credit }: { tagline: string; a
             </p>
           </div>
           <div className="grid grid-cols-2 gap-5 md:contents">
-            {columns.map((col) => (
+            {shownColumns.map((col) => (
               <div
                 key={col.heading}
                 className={`text-[15px] leading-[1.9] text-ink-fg/85 md:leading-[2] ${col.desktopOnly ? "hidden md:block" : ""}`}

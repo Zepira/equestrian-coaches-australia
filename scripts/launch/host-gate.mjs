@@ -13,6 +13,8 @@
 // Modes, each matching how the server it talks to was started:
 //   --mode prelaunch   (default) SITE_LAUNCHED=false, password set
 //   --mode nopassword  SITE_LAUNCHED=false, TEST_AUTH_* unset
+//   --mode coaches     SITE_STAGE=coaches, password set (professionals can
+//                      join on the public host; riders still see coming soon)
 //   --mode launched    SITE_LAUNCHED=true
 //   --mode dev         started with no environment at all, the way a
 //                      developer or a local agent runs it
@@ -150,6 +152,51 @@ if (mode === "prelaunch") {
   //     from the coming soon gate.
   const hook = await get("/api/webhooks/resend", { method: "POST" });
   row(hook.status === 401 || hook.status === 503, "public host passes Resend's webhook to its route, which refuses it unsigned", `status ${hook.status}`);
+}
+
+if (mode === "coaches") {
+  // 1. "/" is still the coming soon page, still the one indexable page, and
+  //    now invites professionals to join.
+  const home = await get("/");
+  row(home.status === 200 && home.body.includes(COMING_SOON), "public host / is still the coming soon page", `status ${home.status}`);
+  row(!noindex(home), "public host / is still indexable");
+  row(home.body.includes("data-coach-stage-join"), "the coming soon page invites professionals to join");
+  row(!home.body.includes("<footer"), "the coming soon page still has no site footer");
+
+  // 2. The coach paths open: real pages, never indexed, with the trimmed
+  //    header (no menus into the rider side).
+  for (const path of ["/for-coaches", "/for-professionals", "/list-your-business", "/signup", "/login", "/forgot-password", "/about", "/terms"]) {
+    const r = await get(path);
+    row(r.status === 200 && !r.body.includes(COMING_SOON), `public host ${path} is open`, `status ${r.status}`);
+    // The legal pages are on the pre-launch allowlist and say noindex in
+    // their own meta tag while they're a draft (legal_approved off).
+    row(noindex(r) || (path === "/terms" && /<meta name="robots" content="noindex/.test(r.body)), `public host ${path} is noindex`);
+    if (path !== "/terms") row(r.body.includes("<footer") && !r.body.includes('href="/horse-care/search"'), `public host ${path} has the trimmed header and footer`);
+  }
+  const join = await get("/join/coaches");
+  row(join.status >= 300 && join.status < 400 && (join.headers.get("location") ?? "").includes("/signup"), "public host /join/coaches goes to sign-up", `status ${join.status} ${join.headers.get("location") ?? ""}`);
+  const dash = await get("/dashboard");
+  row(dash.status >= 300 && dash.status < 400 && (dash.headers.get("location") ?? "").includes("/login"), "public host /dashboard sends a signed-out visitor to log in", `status ${dash.status}`);
+  const api = await get("/api/terms");
+  row(api.status === 200, "public host /api/terms answers (the pages need it)", `status ${api.status}`);
+
+  // 3. Everything a rider would use is still the coming soon page.
+  for (const path of ["/coaches", "/search", "/horse-care", "/farriers", "/coaches/dressage", "/events/anything", "/account", "/admin"]) {
+    const r = await get(path);
+    row(r.status === 200 && r.body.includes(COMING_SOON) && noindex(r), `public host ${path} still shows the coming soon page`, `status ${r.status}`);
+  }
+
+  // 4. Crawlers are still offered the home page only.
+  const robots = await get("/robots.txt");
+  row(robots.body.includes("Allow: /$") && robots.body.includes("Disallow: /"), "public robots.txt still allows only /");
+  const sitemap = await get("/sitemap.xml");
+  row((sitemap.body.match(/<url>/g) ?? []).length === 1, "public sitemap.xml still lists one page");
+
+  // 5. The test host is untouched by the stage.
+  const test = await get("/", { host: TEST_HOST });
+  row(test.status === 401, "test host still asks for a password", `status ${test.status}`);
+  const authed = await get("/coaches", { host: TEST_HOST, auth: `${user}:${password}` });
+  row(authed.status === 200 && !authed.body.includes(COMING_SOON), "test host still serves the whole site", `status ${authed.status}`);
 }
 
 if (mode === "nopassword") {

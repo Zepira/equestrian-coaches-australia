@@ -179,7 +179,8 @@ Built 12 Oct 2026. Sentry only switches on once `NEXT_PUBLIC_SENTRY_DSN` is set 
 Setting it up (Alana, once):
 - [ ] Create a free Sentry account and a Next.js project. Copy its DSN.
 - [ ] In Vercel → Settings → Environment Variables: `NEXT_PUBLIC_SENTRY_DSN` (the DSN), and for readable stack traces `SENTRY_ORG`, `SENTRY_PROJECT` and `SENTRY_AUTH_TOKEN` (an auth token from Sentry with project:releases scope). Redeploy.
-- [ ] In Sentry → Alerts: check the default "new issue" alert emails both of you (add Kim as a member). That email is the alert.
+- [ ] Sign up as yourself, ideally with the business inbox (hello@equineprofessionals.com.au), and name the organisation "Equine Professionals Australia". Sentry's free plan allows one user (check when signing up), so using the shared inbox is how the alerts reach you both.
+- [ ] In Sentry → Alerts: check the default "new issue" alert emails that user. That email is the alert.
 
 The pages:
 - [ ] **A broken page** shows "This page didn't load." inside the normal header and footer, with Try again, Go to the home page, the contact email and a reference number. (Ask Claude for a temporary broken page to look at it; one existed briefly at `/zz-error-test` and was removed.)
@@ -196,3 +197,19 @@ The alerts (after the setup above, on the test site):
 
 Privacy:
 - [ ] `/privacy` → "Who helps us run the site" mentions Sentry and what an error report contains.
+
+## 14. The coaches-only stage
+
+Built 12 Oct 2026. A middle step between the coming soon page and full launch: professionals can join, set up and pay on the real domain while riders still see coming soon. Set on Vercel with `SITE_STAGE=coaches` (see `docs/launch.md`, "The three stages").
+
+Automated check first (no browser needed): `npm run build`, start the `gate-coaches` preview (port 3130), then `node scripts/launch/host-gate.mjs --mode coaches --base http://localhost:3130`. All checks should pass. Also run `--mode prelaunch` against the `gate-prelaunch` preview (port 3120) to confirm the old stage is unchanged.
+
+By hand, once `SITE_STAGE=coaches` is set on the real deployment:
+- [ ] **The domain's home page** is still the coming soon page, now with a dark "Coaches and horse care professionals… List your business" box under the waitlist form.
+- [ ] **That button** goes to `/list-your-business`, which opens normally, with a header showing only For coaches, For professionals, About, Log in and List your business (no Horse care or Coaches menus), and a footer without the "Find" column.
+- [ ] **Joining works end to end on the real domain:** `/join/coaches` → sign up → confirmation email → onboarding → dashboard. (With real Stripe keys, billing too; without them, billing says "Billing isn't switched on yet" rather than giving a free plan.)
+- [ ] **A published profile** opens at `/profile/<slug>` on the domain.
+- [ ] **Rider pages stay closed:** `/coaches`, `/search`, `/horse-care`, `/farriers`, an event, `/account` and `/admin` all show the coming soon page.
+- [ ] **Nothing new in Google:** in the browser's dev tools, Network tab, `/for-coaches` comes back with `X-Robots-Tag: noindex`. `robots.txt` still allows only `/`.
+- [ ] **Test site** is unchanged: the whole site behind the password.
+- [ ] **Admin → Pages → Coming soon** has "Join now (coaches stage only)" to edit the box's words.

@@ -6,6 +6,7 @@ import { horseCareOf } from "@/lib/professions";
 import Link from "next/link";
 import { businessLine } from "@/lib/legal";
 import { getBusinessAbn } from "@/lib/settings";
+import { SITE_STAGE } from "@/lib/launch";
 import { CONTACT_EMAIL } from "@/lib/site-url";
 
 /**
@@ -20,7 +21,7 @@ import { CONTACT_EMAIL } from "@/lib/site-url";
  * change it from /admin/pages without a deploy.
  */
 export async function ComingSoon() {
-  const [copy, professions, footer, abn] = await Promise.all([getContent("coming_soon"), getProfessions(), getContent("footer"), getBusinessAbn()]);
+  const [copy, professions, footer, abn, pros] = await Promise.all([getContent("coming_soon"), getProfessions(), getContent("footer"), getBusinessAbn(), getContent("coming_soon.professionals")]);
   const horseCare = horseCareOf(professions).map((p) => ({ slug: p.slug, name: p.name }));
 
   return (
@@ -45,6 +46,19 @@ export async function ComingSoon() {
           <WaitlistForm copy={copy} professions={horseCare} />
         </div>
       </div>
+
+      {/* The coaches stage: professionals can sign up now (src/lib/launch.ts). */}
+      {SITE_STAGE === "coaches" && (
+        <div className="mt-5 flex flex-col gap-3 rounded-[18px] bg-ink p-4 text-ink-fg wide:flex-row wide:items-center wide:justify-between wide:p-6" data-coach-stage-join>
+          <div>
+            <h2 className="font-display text-[22px] leading-[1.1]">{pros.title}</h2>
+            <p className="mt-1.5 text-[14.5px] leading-[1.5] text-ink-fg/80">{pros.body}</p>
+          </div>
+          <Link href="/list-your-business" className="shrink-0 rounded-[var(--radius-pill)] bg-accent px-5 py-3 text-center text-[15px] font-semibold text-accent-fg hover:bg-accent-hover">
+            {pros.button}
+          </Link>
+        </div>
+      )}
 
       {/* Who we are and the policies, reachable before launch (Stripe's
           website review needs the refunds page and a contact without a

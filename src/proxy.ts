@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
-import { PUBLIC_HOST, isGatedHost, normaliseHost, showsComingSoon } from "@/lib/launch";
+import { COACH_STAGE_HEADER, PUBLIC_HOST, SITE_STAGE, isCoachStagePath, isGatedHost, normaliseHost, showsComingSoon } from "@/lib/launch";
 import { FIRST_TOUCH, setTouchCookies, touchFromParams } from "@/lib/touch";
 
 /**
@@ -114,6 +114,8 @@ async function serveSite(request: NextRequest): Promise<NextResponse> {
 export async function proxy(request: NextRequest) {
   const host = normaliseHost(request.headers.get("host") ?? "");
   const path = request.nextUrl.pathname;
+  // Only this proxy sets it, so a visitor can't send their own.
+  request.headers.delete(COACH_STAGE_HEADER);
 
   // 1. One address for the site. www and any other name in REDIRECT_HOSTS
   //    move to the public host with the path and query kept, so an old link
@@ -147,6 +149,14 @@ export async function proxy(request: NextRequest) {
       }
       if (!hasValidCredentials(request, user, password)) return unauthorised();
     }
+    return markNoindex(await serveSite(request));
+  }
+
+  // 3a. The coaches stage: professionals can join, set up and pay on the
+  //     public host. Their pages open, never indexed, with the layout told
+  //     to show the trimmed header and footer.
+  if (SITE_STAGE === "coaches" && showsComingSoon(host) && isCoachStagePath(path)) {
+    request.headers.set(COACH_STAGE_HEADER, "1");
     return markNoindex(await serveSite(request));
   }
 

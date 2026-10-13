@@ -178,9 +178,22 @@ export type HeaderData = {
   horseCareMenu: NavDropdownItem[];
   coachesMenu: NavDropdownItem[];
   horseCarePrefixes: string[];
+  /**
+   * The coaches stage on the public host (src/lib/launch.ts): no menus into
+   * the rider side, which still shows the coming soon page, only the pages a
+   * professional can use.
+   */
+  coachesOnly?: boolean;
 };
 
-export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHES_MENU, horseCarePrefixes }: HeaderData) {
+/** The whole nav in the coaches stage. */
+const COACH_STAGE_LINKS = [
+  { href: "/for-coaches", label: "For coaches" },
+  { href: "/for-professionals", label: "For professionals" },
+  { href: "/about", label: "About" },
+];
+
+export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHES_MENU, horseCarePrefixes, coachesOnly = false }: HeaderData) {
   const isHorseCarePath = (pathname: string) => pathInPrefixes(pathname, horseCarePrefixes);
   const isParentRoute = (pathname: string) =>
     PARENT_ROUTES.includes(pathname) || PARENT_PREFIXES.some((p) => pathname.startsWith(p)) || isHorseCarePath(pathname);
@@ -299,6 +312,15 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
                 On /search the summary pill needs the room too, so the bar
                 waits for 1280px there and About and the pitch link go. */}
             <nav className={`hidden items-center gap-7 whitespace-nowrap text-[15px] font-medium ${isSearch ? "xl:flex" : "lg:flex"}`} aria-label="Primary">
+              {coachesOnly ? (
+                <div className="flex items-center gap-7">
+                  {COACH_STAGE_LINKS.map((l) => (
+                    <Link key={l.href} href={l.href} className="site-header__link" aria-current={pathname === l.href ? "page" : undefined}>
+                      {l.label}
+                    </Link>
+                  ))}
+                </div>
+              ) : (
               <div className="flex items-center gap-7">
                 <NavDropdown label="Horse care" href="/horse-care" items={HORSE_CARE_MENU} current={inHorseCare} />
                 <NavDropdown label="Coaches" href="/coaches" items={COACHES_MENU} current={inCoaches} />
@@ -313,6 +335,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
                   </>
                 )}
               </div>
+              )}
               {account ?? (
                 <>
                   <Link href="/login" className="site-header__link">
@@ -320,7 +343,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
                   </Link>
                   {!isSearch && (
                     <Link
-                      href={listHref}
+                      href={coachesOnly ? "/list-your-business" : listHref}
                       className="site-header__outline rounded-[var(--radius-pill)] px-[18px] py-2.5 hover:bg-ink hover:text-ink-fg"
                     >
                       List your business
@@ -373,7 +396,15 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
             {/* The two menus become flat labelled sections here: a nested
                 dropdown inside an already-open panel is a worse way to reach
                 the same links on a phone. */}
-            {[
+            {coachesOnly &&
+              COACH_STAGE_LINKS.map((l) => (
+                <li key={l.href} className="border-b border-border">
+                  <Link href={l.href} onClick={close} className={phoneLink}>
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            {!coachesOnly && [
               { heading: "Horse care", href: "/horse-care", items: HORSE_CARE_MENU },
               { heading: "Coaches", href: "/coaches", items: COACHES_MENU },
             ].map((group) => (
@@ -396,20 +427,24 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
                 </span>
               </li>
             ))}
-            <li>
-              <Link href="/about" onClick={close} className={phoneLink}>
-                About
-              </Link>
-            </li>
-            <li className="border-t border-border">
-              <Link href={pitch.href} onClick={close} className={phoneLink}>
-                {pitch.label}
-              </Link>
-            </li>
+            {!coachesOnly && (
+              <>
+                <li>
+                  <Link href="/about" onClick={close} className={phoneLink}>
+                    About
+                  </Link>
+                </li>
+                <li className="border-t border-border">
+                  <Link href={pitch.href} onClick={close} className={phoneLink}>
+                    {pitch.label}
+                  </Link>
+                </li>
+              </>
+            )}
             {!auth.loggedIn && (
               <li className="pt-4">
                 <Link
-                  href={listHref}
+                  href={coachesOnly ? "/list-your-business" : listHref}
                   onClick={close}
                   className="block rounded-[var(--radius-soft)] bg-ink py-[15px] text-center text-[16px] font-semibold text-ink-fg"
                 >

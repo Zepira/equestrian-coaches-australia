@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { getStripe, isMockPayments } from "@/lib/stripe";
+import { getStripe, isMockPayments, refuseMockOnPublicHost } from "@/lib/stripe";
 import { sendEmail } from "@/lib/email";
 import { addMonths, countWord, formatLongDate, getFirstChargeDate, getFoundingFreeMonths, getPlans, getFoundingPrice, getStripePrices } from "@/lib/settings";
 import { absoluteUrl } from "@/lib/site-url";
@@ -57,6 +57,7 @@ async function ensureCustomer(service: Service, providerId: string, email: strin
  */
 export async function startFoundingCard(service: Service, providerId: string, email: string | undefined, returnPath: string): Promise<string | null> {
   const first = await getFirstChargeDate();
+  await refuseMockOnPublicHost();
   if (isMockPayments) {
     await saveSub(service, providerId, {
       tier: "spotlight",

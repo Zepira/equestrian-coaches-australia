@@ -195,7 +195,16 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
 </section>
 
 <section>
-  <div class="sec-head"><span class="sec-num">02</span><h2>Extra locations on the Clinic plan</h2></div>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Opening to professionals before riders</h2></div>
+  <div class="col">
+    <p><strong>What it is.</strong> A middle step between the coming soon page and the full launch. When we switch it on, coaches and horse care professionals can join, set up their profile and pay on the real address, while riders and horse owners still see the coming soon page. That&rsquo;s also what Stripe needs to see before it will switch on real payments.</p>
+    <p>The coming soon page gets a box inviting professionals to list their business. Their pages show a simpler menu with only what&rsquo;s open. Nothing new shows up in Google until the full launch.</p>
+    <p>It&rsquo;s built but not switched on: it&rsquo;s one setting on Vercel, flipped when we&rsquo;re ready for the first coaches (after the database move to Sydney and the Stripe account).</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Extra locations on the Clinic plan</h2></div>
   <div class="col">
     <p><strong>What it is.</strong> Some professionals work from more than one place: a coach who teaches at home and at an agistment centre an hour away, a farrier with two regular rounds. On the Clinic plan they can add up to two more places, so three in all, each with its own travel distance.</p>
     <p>Riders searching near any of those places find them, and the result shows the nearest one (someone searching near Ballarat sees &ldquo;Ballarat&rdquo;, not the main base). Each place counts toward its own area page. The profile says &ldquo;also works from&rdquo; the other places.</p>
@@ -208,7 +217,7 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
 </section>
 
 <section>
-  <div class="sec-head"><span class="sec-num">03</span><h2>Testimonials</h2></div>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Testimonials</h2></div>
   <div class="col">
     <p><strong>What it is.</strong> Testimonials are the quotes a professional chooses to show on their profile. They&rsquo;re labelled &ldquo;Provided by the business&rdquo; and never count toward the star rating. Reviews are different: riders write those, every genuine one goes up, and professionals can&rsquo;t pick or pin them. That split is deliberate, and it&rsquo;s what the ACCC expects.</p>
     <p><strong>On every plan</strong>, a professional can add testimonials themselves, edit their own, put them in order, hide them and delete them, as many as they like. There&rsquo;s a new Testimonials tab on the dashboard for it.</p>
@@ -227,7 +236,7 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
 </section>
 
 <section>
-  <div class="sec-head"><span class="sec-num">04</span><h2>Photos and intro videos</h2></div>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Photos and intro videos</h2></div>
   <div class="col">
     <p><strong>Photos upload properly now.</strong> Big phone photos used to fail on the live site because of a size limit on the way through our server. Photos now go straight to storage, which fixes it for profile photos and every photo upload in Admin. Storage refuses anything over 25MB or that isn&rsquo;t an image.</p>
     <p><strong>Intro videos are YouTube or Vimeo links</strong> instead of uploaded files, as the plan for Spotlight always said. The professional pastes a link (unlisted videos work too). Their profile shows a still with a play button, and nothing loads from YouTube or Vimeo until a visitor presses play, which keeps our &ldquo;no tracking&rdquo; promise.</p>
@@ -239,7 +248,7 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
 </section>
 
 <section>
-  <div class="sec-head"><span class="sec-num">05</span><h2>Legal pages</h2></div>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Legal pages</h2></div>
   <div class="col">
     <p>The terms of service and privacy policy are now draft 2, and there are two new pages: <strong>Cookies</strong> (the whole list of what the site stores, which is very little) and <strong>Cancelling and refunds</strong> (how billing, cancelling, pausing and refunds work). The review policy has two new sections: what happens when someone says a review is false, and the rules on incentives. Competition terms have a proper &ldquo;Your details&rdquo; section and the fine print.</p>
     <p>All of them still say &ldquo;draft&rdquo; at the top and stay out of Google until the solicitor has checked them and we switch &ldquo;legal approved&rdquo; on in Admin, Settings. The prices, ABN and dates in them fill themselves in from settings, and the words can be edited in Admin, Pages.</p>
@@ -254,7 +263,7 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
 </section>
 
 <section>
-  <div class="sec-head"><span class="sec-num">06</span><h2>The For Professionals page</h2></div>
+  <div class="sec-head"><span class="sec-num">07</span><h2>The For Professionals page</h2></div>
   <div class="col">
     <p><strong>/for-professionals is now as complete as /for-coaches</strong>: the honest monthly numbers promise, the founding offer, what we do to bring horse owners to them, the plans side by side, &ldquo;we never take a percentage of a job&rdquo;, and questions. It&rsquo;s in the horse care steel blue, written for horse owners and jobs rather than riders and lessons. Both pages share the same building blocks, so a change to the plans shows on both.</p>
     <p>Arriving with a profession in the address (/for-professionals?p=farriers) makes the page about farriers and sends every button straight to farrier sign-up.</p>
@@ -262,7 +271,7 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
 </section>
 
 <section>
-  <div class="sec-head"><span class="sec-num">07</span><h2>Smaller changes</h2></div>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Smaller changes</h2></div>
   <div class="col">
     <ul>
       <li><strong>Friendly error pages, and we hear about errors.</strong> If a page breaks, people now see a plain &ldquo;this page didn&rsquo;t load&rdquo; page with a Try again button, a way home and our email, instead of a technical error. Every error is also reported to a service called Sentry, which emails us, so we know before a professional has to tell us. It switches on once Alana has set up the Sentry account.</li>
@@ -275,7 +284,7 @@ td .sub{display:block; font-size:.82rem; color:var(--ink-3); margin-top:3px}
 </section>
 
 <section>
-  <div class="sec-head"><span class="sec-num">08</span><h2>Still to build</h2></div>
+  <div class="sec-head"><span class="sec-num">09</span><h2>Still to build</h2></div>
   <div class="col">
     <p>The plan comparison promises a few things that don&rsquo;t exist yet. We build them or take them off the page before anyone pays:</p>
     <ul>

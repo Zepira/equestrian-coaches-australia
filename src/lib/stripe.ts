@@ -1,5 +1,6 @@
 import Stripe from "stripe";
-import { SITE_LAUNCHED } from "@/lib/launch";
+import { headers } from "next/headers";
+import { SITE_STAGE, mockPaymentsAllowed } from "@/lib/launch";
 
 export const isStripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY);
 
@@ -9,12 +10,14 @@ export const isStripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY);
  * request fails loudly, which is recoverable, where a quiet acceptance means
  * finding out from a coach's bank statement.
  *
- * Launch order is therefore: set SITE_LAUNCHED=true, then swap in the live
- * keys. docs/launch.md says so too.
+ * Live keys are allowed from the coaches stage on, because that's when
+ * professionals start paying (src/lib/launch.ts). Order: set
+ * SITE_STAGE=coaches (or launched) first, then swap in the live keys.
+ * docs/launch.md says so too.
  */
-if (!SITE_LAUNCHED && process.env.STRIPE_SECRET_KEY?.startsWith("sk_live")) {
+if (SITE_STAGE === "soon" && process.env.STRIPE_SECRET_KEY?.startsWith("sk_live")) {
   throw new Error(
-    "A live Stripe secret key is set but SITE_LAUNCHED is not true. Use a test key (sk_test_…) until launch, or set SITE_LAUNCHED=true first. See docs/launch.md."
+    "A live Stripe secret key is set but the site is still at the coming soon stage. Use a test key (sk_test_…), or set SITE_STAGE=coaches first. See docs/launch.md."
   );
 }
 
@@ -23,6 +26,20 @@ if (!SITE_LAUNCHED && process.env.STRIPE_SECRET_KEY?.startsWith("sk_live")) {
 // in mock mode: real DB writes, real UI, no real card ever charged.
 // Flip off automatically the moment real keys land in .env.
 export const isMockPayments = !isStripeConfigured;
+
+/**
+ * Mock payments give out a real active plan with no card, so a billing
+ * action refuses them on the public host: there, no Stripe key means
+ * billing isn't set up, not "free plans for everyone". Localhost and the
+ * password-protected test hosts keep mock mode. Call at the top of any
+ * billing action a person triggers.
+ */
+export async function refuseMockOnPublicHost() {
+  if (!isMockPayments) return;
+  if (!mockPaymentsAllowed((await headers()).get("host"))) {
+    throw new Error("Billing isn't switched on yet. Please try again soon, or email us.");
+  }
+}
 
 // Returns null until STRIPE_SECRET_KEY is set (see .env.example) — every
 // caller must handle that case rather than assume Stripe is live, same

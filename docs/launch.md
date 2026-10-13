@@ -132,9 +132,10 @@ Create a **test mode** webhook endpoint at
 events `src/app/api/webhooks/stripe/route.ts` handles, and put its signing
 secret in `STRIPE_WEBHOOK_SECRET` on the deployment.
 
-Keep `STRIPE_SECRET_KEY` on a test key until launch. `src/lib/stripe.ts` throws
-on startup if a live key is set while `SITE_LAUNCHED` is not true, so the swap
-has to happen in the order below.
+Keep `STRIPE_SECRET_KEY` on a test key until professionals start paying.
+`src/lib/stripe.ts` throws on startup if a live key is set while the site is
+still at the coming soon stage, so set `SITE_STAGE=coaches` first, then swap
+the keys (see "Opening to professionals" below).
 
 ### Environment variables on Vercel
 
@@ -242,6 +243,27 @@ schema cache"**, PostgREST has not noticed the new table yet. It usually picks
 it up within a few seconds; if not, reload the schema from the Supabase
 dashboard (API → Reload schema) or run `notify pgrst, 'reload schema';`.
 
+## The three stages
+
+`SITE_STAGE` on Vercel decides how open the public host is (`src/lib/launch.ts`):
+
+| Stage | Public host serves | Indexed |
+|---|---|---|
+| `soon` (unset, the default) | the coming soon page and the policies | only `/` |
+| `coaches` | the coach paths (pitch pages, `/list-your-business`, `/join/*`, sign-up, log in, password reset, onboarding, the dashboard and billing, `/about`, profiles, review and testimonial links, `/go/*`, the API), with a trimmed header and footer; every rider path (search, areas, professions, events, accounts, admin) still shows the coming soon page, which gains a "List your business" box | only `/` |
+| `launched` | everything | everything |
+
+`SITE_LAUNCHED=true` still means launched. The test host is the whole site behind the password at every stage. Mock payments (no Stripe key) refuse to run on the public host at any stage, because they hand out real plans for free. Check a running build with `node scripts/launch/host-gate.mjs --mode coaches` (or the `gate-coaches` preview in `.claude/launch.json`, port 3130).
+
+## Opening to professionals (the coaches stage), in order
+
+1. **Wipe and rebuild in Sydney first** (the build plan, Phase 1), so the first real professional isn't on the test database. Export the waitlist before.
+2. **Stripe live account ready**: business details, the public contact Stripe asks for, live Price IDs entered on Admin, Plans, a live webhook to `https://equineprofessionals.com.au/api/webhooks/stripe` with its secret in `STRIPE_WEBHOOK_SECRET`.
+3. **Set `SITE_STAGE=coaches`** on Vercel and redeploy. Check with the host-gate script against the public host.
+4. **Swap in the live Stripe keys** and redeploy. (The order matters: a live key at the `soon` stage refuses to start.)
+5. **Admin, Settings**: `review_alert_emails`, `support_phone`, founding dates. Leave `launch_date` blank until riders open.
+6. Send Kim's first `/join/coaches` links.
+
 ## Launch day, in order
 
 1. **Wipe and rebuild the database** if the test data is not worth keeping:
@@ -252,7 +274,7 @@ dashboard (API → Reload schema) or run `notify pgrst, 'reload schema';`.
    included, so the table comes back. Its **rows do not**: `rebuild.mjs` only
    restores accounts, admins and providers, so the CSV from step 1 is the only
    copy of the list.
-3. **Set `SITE_LAUNCHED=true`** and change `NEXT_PUBLIC_SITE_URL` to
+3. **Set `SITE_STAGE=launched`** (or `SITE_LAUNCHED=true`) and change `NEXT_PUBLIC_SITE_URL` to
    `https://equineprofessionals.com.au`.
 4. **Swap Stripe to live**: live `STRIPE_SECRET_KEY`, a new **live mode**
    webhook at `https://equineprofessionals.com.au/api/webhooks/stripe`, and its

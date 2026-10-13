@@ -211,6 +211,13 @@ export const CONTENT_DEFAULTS = {
    * is true (src/lib/launch.ts). Deliberately plain: no counts, no promises
    * about when, nothing that stops being true.
    */
+  // The coaches stage's extra line on the coming soon page (src/lib/launch.ts):
+  // professionals can join before riders arrive.
+  "coming_soon.professionals": {
+    title: "Coaches and horse care professionals",
+    body: "You can join now, before riders and horse owners arrive, and have your profile ready for opening day.",
+    button: "List your business",
+  },
   "coming_soon": {
     eyebrow: "Coming soon",
     title: "Coaches and *horse care* near you.",

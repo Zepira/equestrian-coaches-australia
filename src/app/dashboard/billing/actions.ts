@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getStripe, isMockPayments } from "@/lib/stripe";
+import { getStripe, isMockPayments, refuseMockOnPublicHost } from "@/lib/stripe";
 import { requireProvider } from "@/lib/provider-session";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { isTier, type Tier } from "@/lib/tiers";
@@ -20,6 +20,7 @@ import { checkoutDiscounts, recordPromoUse, rewardOnFirstPayment } from "@/lib/r
  * plan that lapses hides a reviewed profile, and resuming shows it again.
  */
 async function requireBilling() {
+  await refuseMockOnPublicHost();
   const session = await requireProvider();
   const service = createServiceSupabase();
   if (!service) throw new Error("Billing needs SUPABASE_SERVICE_ROLE_KEY.");
