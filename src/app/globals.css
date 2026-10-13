@@ -1496,6 +1496,16 @@ html:has(.hero--horse-care) {
     box-sizing: content-box;
     padding-top: var(--runway);
   }
+  /* Safari hit-tests just below the top edge, and any position: fixed
+     element it finds there (our transparent header) makes it paint a flat
+     colour instead of the page. So on the runway the transparent header is
+     part of the page, sitting at the runway's end; once it turns solid
+     (scrolled past, or the menu open) it is the usual fixed bar, whose
+     cream Safari copies into the status bar. */
+  html[data-ios-runway="true"][data-overlay-route="true"]:has(.hero) .site-header[data-variant="overlay"][data-solid="false"] {
+    position: absolute;
+    top: var(--runway);
+  }
 }
 
 /* Touch screens: the scrolled header is solid cream, not frosted glass.
