@@ -123,7 +123,7 @@ try {
     const api = (s) => async (method, path, body, raw) => {
       const res = await fetch(`${s.url}/storage/v1/${path}`, {
         method,
-        headers: { Authorization: `Bearer ${s.key}`, apikey: s.key, ...(raw ? { "Content-Type": raw.type } : { "Content-Type": "application/json" }) },
+        headers: { Authorization: `Bearer ${s.key}`, apikey: s.key, ...(raw ? { "Content-Type": raw.type, "x-upsert": "true" } : { "Content-Type": "application/json" }) },
         body: raw ? raw.data : body ? JSON.stringify(body) : undefined,
       });
       if (!res.ok && res.status !== 409) throw new Error(`${method} ${path}: ${res.status} ${await res.text()}`);
