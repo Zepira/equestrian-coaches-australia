@@ -194,7 +194,7 @@ export default async function DashboardPage({
           </div>
         ))}
       </div>
-      <div className="mt-2 grid grid-cols-12 gap-[5px] text-center text-[10px] text-ink-fg/65 wide:gap-2 wide:text-[11px]">
+      <div className="mt-2 grid grid-cols-12 gap-[5px] text-center text-[11px] text-ink-fg/65 wide:gap-2">
         {trend.map((t) => (
           <span key={t.key}>{MONTH_SHORT[Number(t.key.slice(5, 7)) - 1].charAt(0)}</span>
         ))}

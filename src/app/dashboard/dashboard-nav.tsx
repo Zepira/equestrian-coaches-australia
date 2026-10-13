@@ -36,7 +36,7 @@ export function DashboardNav({
   const active = (href: string) => (href === "/dashboard" ? pathname === href : pathname.startsWith(href));
   const badge = (href: string) =>
     href === "/dashboard/enquiries" && newEnquiries > 0 ? (
-      <span className="rounded-[var(--radius-pill)] bg-accent px-1.5 py-[3px] text-[10px] font-semibold leading-none text-accent-fg">{newEnquiries}</span>
+      <span className="rounded-[var(--radius-pill)] bg-accent px-1.5 py-[3px] text-[11px] font-semibold leading-none text-accent-fg">{newEnquiries}</span>
     ) : null;
 
   return (

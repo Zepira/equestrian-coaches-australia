@@ -54,3 +54,4 @@ next-env.d.ts
 
 # Throwaway test and query scripts, never committed.
 scripts/_tmp-*
+docs/design-reference/mobile/

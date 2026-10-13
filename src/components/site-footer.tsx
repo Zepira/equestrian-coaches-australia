@@ -139,7 +139,7 @@ export function SiteFooter({
             <p className="text-[13px] text-ink-fg/75">© {year} Equine Professionals Australia</p>
             <nav aria-label="Policies" className="flex flex-wrap gap-x-5 gap-y-1.5 text-[13px] text-ink-fg/75">
               {LEGAL_LINKS.map((l) => (
-                <Link key={l.href} href={l.href} className="transition-colors hover:text-peach">
+                <Link key={l.href} href={l.href} className="py-1.5 transition-colors hover:text-peach">
                   {l.label}
                 </Link>
               ))}

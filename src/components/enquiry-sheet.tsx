@@ -70,8 +70,13 @@ export function EnquirySheet({
           onClick={() => setOpen(true)}
           className="flex h-14 w-full items-center justify-between rounded-[var(--radius-pill)] bg-accent px-[22px] text-[16px] font-semibold text-accent-fg shadow-[0_16px_40px_color-mix(in_srgb,var(--color-accent)_35%,transparent)] transition-colors duration-[250ms] hover:bg-accent-hover disabled:bg-shade disabled:text-subtle disabled:shadow-none"
         >
-          <span>{closed ? (kind === "coach" ? "Not taking students right now" : "Not taking new clients right now") : `Enquire with ${firstName}`}</span>
-          {!closed && <span className="text-[14px] font-normal opacity-85">Free · no account needed</span>}
+          <span className="min-w-0 truncate">{closed ? (kind === "coach" ? "Not taking students right now" : "Not taking new clients right now") : `Enquire with ${firstName}`}</span>
+          {/* Below 420px the full line wrapped the button into four lines, so it shortens to "Free". */}
+          {!closed && (
+            <span className="ml-3 shrink-0 whitespace-nowrap text-[14px] font-normal opacity-85">
+              Free<span className="hidden min-[420px]:inline"> · no account needed</span>
+            </span>
+          )}
         </button>
       </div>
 

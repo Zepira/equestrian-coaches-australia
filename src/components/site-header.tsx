@@ -298,7 +298,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
         {isDashboard ? (
           <div className="flex items-center gap-3 md:gap-5">
             {profileHref && (
-              <Link href={profileHref} className="site-header__outline whitespace-nowrap rounded-[var(--radius-pill)] px-3 py-[7px] text-[13px] font-medium md:px-4 md:py-2 md:text-[15px]">
+              <Link href={profileHref} className="site-header__outline hidden whitespace-nowrap rounded-[var(--radius-pill)] px-3 py-[7px] text-[13px] font-medium min-[420px]:inline-block md:px-4 md:py-2 md:text-[15px]">
                 <span className="md:hidden">View profile</span>
                 <span className="hidden md:inline">View public profile</span>
               </Link>
@@ -356,7 +356,7 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
             {/* Phone and tablet: account (or "Log in") beside the round burger. */}
             <div className={`flex items-center gap-3 ${isSearch ? "xl:hidden" : "lg:hidden"}`}>
               {account ?? (
-                <Link href="/login" className="site-header__link text-[14px] font-medium" onClick={close}>
+                <Link href="/login" className="site-header__link -my-2 py-2 text-[14px] font-medium" onClick={close}>
                   Log in
                 </Link>
               )}

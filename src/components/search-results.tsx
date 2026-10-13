@@ -279,6 +279,8 @@ export function SearchResults({
         ) : (
           <div className="h-[calc(100dvh-60px-160px)] min-h-[520px]">{!wide && mapPanel}</div>
         )}
+        {/* No map of nothing: with no results the button would only sit over the sign-up form. */}
+        {(results.length > 0 || featured.length > 0 || view === "map") && (
         <div className="pointer-events-none sticky bottom-[18px] z-20 -mt-[72px] flex h-[54px] justify-center">
           <button
             type="button"
@@ -289,6 +291,7 @@ export function SearchResults({
             {view === "list" ? "Map" : "List"}
           </button>
         </div>
+        )}
       </div>
 
       {/* ── desktop ─────────────────────────────────────────────────── */}

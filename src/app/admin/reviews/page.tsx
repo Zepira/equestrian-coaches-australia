@@ -57,7 +57,7 @@ export default async function AdminReviewsPage({ searchParams }: { searchParams:
   const byId = new Map(((reported ?? []) as unknown as Row[]).map((r) => [r.id, r]));
   const names = await whoNames(supabase, (log ?? []).map((l) => l.created_by as string | null));
   const setting = (k: "reviews_hold_all" | "enquiry_followup_days") => settingRows?.find((r) => r.key === k)?.value ?? DEFAULTS[k];
-  const input = "rounded-[10px] border border-border bg-surface px-3 py-2 text-[14px] text-fg";
+  const input = "max-w-full rounded-[10px] border border-border bg-surface px-3 py-2 text-[14px] text-fg";
 
   const removeForm = (id: string) => (
     <form action={adminRemoveReview.bind(null, id)} className="flex flex-wrap items-center gap-2">
@@ -178,10 +178,10 @@ export default async function AdminReviewsPage({ searchParams }: { searchParams:
       <section className="border-t border-border pt-6">
         <h3 className="admin-section">How it runs</h3>
         <div className="mt-3 flex flex-wrap gap-4">
-          <form action={saveSetting} className="flex items-end gap-2">
+          <form action={saveSetting} className="flex min-w-0 max-w-full flex-wrap items-end gap-2">
             <input type="hidden" name="key" value="reviews_hold_all" />
             <input type="hidden" name="back" value="/admin/reviews" />
-            <label className="block">
+            <label className="block min-w-0 max-w-full">
               <span className="mb-1 block text-[13px] font-medium text-fg">New reviews</span>
               <select name="value" defaultValue={setting("reviews_hold_all")} className={input}>
                 <option value="true">Wait for one of us, every time</option>
@@ -190,7 +190,7 @@ export default async function AdminReviewsPage({ searchParams }: { searchParams:
             </label>
             <Button type="submit" variant="secondary">Save</Button>
           </form>
-          <form action={saveSetting} className="flex items-end gap-2">
+          <form action={saveSetting} className="flex min-w-0 max-w-full flex-wrap items-end gap-2">
             <input type="hidden" name="key" value="enquiry_followup_days" />
             <input type="hidden" name="back" value="/admin/reviews" />
             <label className="block">

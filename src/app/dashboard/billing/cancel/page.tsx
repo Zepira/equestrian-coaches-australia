@@ -30,8 +30,8 @@ export default async function LeavingPage() {
   const end = isMockPayments ? null : (sub?.current_period_end ?? sub?.trial_ends_at) as string | null;
   const f = (t: string) => fillVariables(t, { listed: plans.listed.name, listed_price: listedPrice, end_date: end ? formatLongDate(new Date(end)) : "today" });
   const showListed = status === "active" && tier !== "listed";
-  const card = "flex flex-col gap-3 rounded-[18px] border border-border bg-surface p-5";
-  const input = "rounded-[10px] border border-border bg-surface px-3 py-2 text-[14px] text-fg";
+  const card = "flex min-w-0 flex-col gap-3 rounded-[18px] border border-border bg-surface p-5";
+  const input = "w-full min-w-0 rounded-[10px] border border-border bg-surface px-3 py-2 text-[14px] text-fg";
 
   return (
     <div className="fade-in" style={{ animationDuration: "0.5s" }}>

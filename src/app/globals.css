@@ -1427,3 +1427,15 @@ form:has(#role-horse-care:checked) .waitlist-profession {
     transform 400ms cubic-bezier(0.16, 1, 0.3, 1),
     opacity 300ms ease;
 }
+
+/* Phones and tablets: iOS Safari zooms the whole page into any field whose
+   text is under 16px when it's tapped, and doesn't zoom back out. Unlayered,
+   so it beats the text-[14px]/text-[15px] utilities on the fields themselves
+   (mobile audit, 13 Oct 2026). No field on the site is set larger than 16px. */
+@media (pointer: coarse), (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

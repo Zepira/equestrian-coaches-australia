@@ -158,7 +158,7 @@ export default async function Home() {
               <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-peach wide:tracking-[0.2em]">Open now</p>
               <h3 className="mt-2 text-[34px] leading-none wide:text-[46px]">Riding coaches</h3>
               <p className="mt-3 max-w-[46ch] text-[15px] leading-[1.5] text-ink-fg/80 wide:text-[17px]">
-                {coachCount} coaches across {disciplines.length} disciplines. Search by what you ride and the town
+                {coachCount} {coachCount === 1 ? "coach" : "coaches"} across {disciplines.length} disciplines. Search by what you ride and the town
                 you&apos;re in, read their profiles, and contact the ones you like yourself.
               </p>
               <ul className="mt-5 flex flex-wrap gap-2">
@@ -187,7 +187,7 @@ export default async function Home() {
             <p className={eyebrow}>Horse care</p>
             <h3 className="mt-2 text-[34px] leading-none text-ink wide:text-[46px]">The rest of the team</h3>
             <p className="mt-3 max-w-[46ch] text-[15px] leading-[1.5] text-muted wide:text-[16px]">
-              {proCount} professionals across {horseCare.length} professions. Search by what your horse needs and where it lives.
+              {proCount} {proCount === 1 ? "professional" : "professionals"} across {horseCare.length} professions. Search by what your horse needs and where it lives.
             </p>
             <ul className="mt-5 divide-y divide-border border-y border-border">
               {horseCare.map((p) => (

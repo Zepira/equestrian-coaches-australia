@@ -245,3 +245,14 @@ Built 13 Oct 2026. Works once `TEST_HOST_OPEN=true` is added in Vercel (Producti
 - [ ] https://equineprofessionals.com.au still shows the coming soon page.
 - [ ] As the test coach on the test site, try changing plan in Dashboard, Billing: it says billing isn't switched on yet (no free plans while the site is open). Plan changes still work on localhost.
 - [ ] Taking the password back: remove `TEST_HOST_OPEN` (or set it to anything but `true`), redeploy, and the password box returns.
+
+## 18. Phones (mobile pass)
+
+Done 13 Oct 2026. Every page was measured at four phone and tablet widths, and the problems fixed. Worth a look on your own phone:
+- [ ] **Typing doesn't zoom:** on an iPhone, tap the suburb box on the home page, the log in fields, and a field in Dashboard, Profile. The page shouldn't zoom in.
+- [ ] **Profile:** on a coach's profile the orange "Enquire with …" bar is one line ("Free" on the right; on a wider phone, "Free · no account needed").
+- [ ] **Search with no results:** search somewhere empty (Vaulting near Broome WA). No floating "Map" button over the email form. A search with results still has it.
+- [ ] **Dashboard on a small phone:** the header shows the logo and your initial with nothing cut off; "View my public profile" is in the initial's menu. From about 420px wide the "View profile" button shows too.
+- [ ] **Cancel page** (Dashboard, Billing, cancel) on a small phone: the three option cards fit the screen.
+- [ ] **Footer links** (Terms, Privacy...) and "Log in" are easy to tap with a thumb.
+- [ ] **Home page** says "1 coach", not "1 coaches", while there's only one.
