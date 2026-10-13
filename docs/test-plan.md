@@ -256,3 +256,11 @@ Done 13 Oct 2026. Every page was measured at four phone and tablet widths, and t
 - [ ] **Cancel page** (Dashboard, Billing, cancel) on a small phone: the three option cards fit the screen.
 - [ ] **Footer links** (Terms, Privacy...) and "Log in" are easy to tap with a thumb.
 - [ ] **Home page** says "1 coach", not "1 coaches", while there's only one.
+
+## 19. iPhone status bar over the photos
+
+Built 13 Oct 2026. Only testable on a real iPhone, after the push deploys.
+- [ ] Open the home page on your iPhone (fresh tab, or reload): the strip behind the clock and battery is dark like the top of the photo, not grey.
+- [ ] Same on /coaches, /horse-care, /for-coaches and /for-professionals (horse care is a slightly lighter dark).
+- [ ] Scroll down until the header turns cream, then reload partway down: the status bar is light, not dark over a light header.
+- [ ] Look closely at the very top edge of the photo: no visible band.

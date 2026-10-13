@@ -258,6 +258,12 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
   const phoneLink = "block py-3.5 text-[16px] font-semibold text-ink";
 
   return (
+    <>
+    {/* iOS Safari 26 colours its status bar from a fixed element at the top
+        edge, not from theme-color; the transparent header gives it nothing,
+        so it showed grey above the hero. This strip is that colour (CSS:
+        .status-tint), shown only while the header is transparent. */}
+    <div className="status-tint" aria-hidden />
     <header
       className="site-header"
       data-variant={variant}
@@ -456,5 +462,6 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
         </nav>
       )}
     </header>
+    </>
   );
 }

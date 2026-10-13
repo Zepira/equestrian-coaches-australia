@@ -1439,3 +1439,39 @@ form:has(#role-horse-care:checked) .waitlist-profession {
     font-size: 16px;
   }
 }
+
+/* iOS Safari 26 status bar (13 Oct 2026). Safari 26 ignores theme-color and
+   never shows page content behind the status bar at the top of the page: it
+   fills that strip with one colour, copied from the background-color of a
+   position: fixed element touching the top edge (falling back to the page
+   background). The overlay header is fixed but transparent, so Safari got no
+   colour and painted grey. This 6px strip is the donor: solid, fixed, above
+   the header, coloured like each hero photo's top edge under the header's
+   shading, so it reads as the photo carrying on into the status bar. Shown
+   only while the header is transparent; once it turns solid, Safari takes
+   the header's own colour. Colours measured from assets/hero/*.jpg (top 4%
+   averaged, composited with the plate's rgb(13 24 18 / .55)). */
+.status-tint {
+  display: none;
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 41;
+  height: 6px;
+  pointer-events: none;
+  background-color: var(--status-tint, #1d1e14);
+}
+html[data-overlay-route="true"]:has(.site-header[data-variant="overlay"][data-solid="false"]) .status-tint {
+  display: block;
+}
+/* An open sub-menu turns the header solid. Separate rule: :has() can't nest,
+   and a selector that tries is dropped whole. */
+html:has(.site-header__subbar) .status-tint {
+  display: none !important;
+}
+html:has(.hero--coaches) {
+  --status-tint: #1c1f15;
+}
+html:has(.hero--horse-care) {
+  --status-tint: #292a23;
+}
