@@ -1519,3 +1519,18 @@ html:has(.hero--horse-care) {
     -webkit-backdrop-filter: none;
   }
 }
+
+/* Hero pages: the page background behind everything is the photo's dark top
+   colour, and the content column is cream as before (iPhone, 13 Oct 2026).
+   Safari 26 tints two things from the body's background: the fade where the
+   page meets the status bar (it was a white haze over the photo) and the
+   flat colour it falls back to at the very top of the page (it was grey).
+   Nothing on screen changes elsewhere: main covers the body down to the
+   footer, which is ink anyway, and the overscroll above the hero is dark. */
+html[data-overlay-route="true"],
+html[data-overlay-route="true"] body {
+  background: var(--status-tint, #1d1e14);
+}
+html[data-overlay-route="true"] #main-content {
+  background: var(--color-bg);
+}
