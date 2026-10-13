@@ -48,15 +48,54 @@ function variantFor(pathname: string): { variant: Variant; coachProfile?: boolea
   return { variant: "light" };
 }
 
-function useScrolled(threshold = 8) {
-  const [scrolled, setScrolled] = useState(false);
+/** Whether the page has scrolled past `from` + 8px, and whether it sits above `from`. */
+function useScrolled(from: number) {
+  const [state, setState] = useState({ scrolled: false, aboveRunway: true });
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > threshold);
+    const onScroll = () => {
+      const y = window.scrollY;
+      const next = { scrolled: y > from + 8, aboveRunway: y < from - 1 };
+      setState((s) => (s.scrolled === next.scrolled && s.aboveRunway === next.aboveRunway ? s : next));
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [threshold]);
-  return scrolled;
+  }, [from]);
+  return state;
+}
+
+/**
+ * The iPhone "runway" (13 Oct 2026). Safari 26 only shows the page itself
+ * behind the status bar once the page has scrolled; at the very top it
+ * paints a flat colour. So on iPhones the hero pages are --runway (72px)
+ * taller at the top and open scrolled down by that much: what shows is the
+ * same, and the 72px of photo above sits behind the clock. --runway is set
+ * in globals.css from data-ios-runway (layout.tsx's boot script) and is 0
+ * everywhere else, so nothing changes off iOS. Everything that keyed off
+ * "scrollY = 0" (the header going solid, the hero parallax, the status
+ * colour strip) counts from the runway instead.
+ */
+function useRunway(pathname: string) {
+  const [runway, setRunway] = useState(0);
+  useEffect(() => {
+    const read = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--runway")) || 0;
+    // A frame later: after the effect below sets data-overlay-route (which
+    // --runway depends on) and after Next's own scroll-to-top.
+    const frame = requestAnimationFrame(() => {
+      const r = read();
+      setRunway(r);
+      // A fresh arrival (not a back/forward restore further down, not a
+      // #link) starts at the runway's end.
+      if (r > 0 && !location.hash && window.scrollY < r) window.scrollTo({ top: r, left: 0, behavior: "instant" });
+    });
+    const onResize = () => setRunway(read());
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [pathname]);
+  return runway;
 }
 
 type AuthState = { loggedIn: boolean; role: "rider" | "provider" | null; name: string | null; email: string | null; coachSlug: string | null; isAdmin: boolean };
@@ -200,8 +239,9 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
   const [open, setOpen] = useState(false);
   const auth = useAuthState();
   const pathname = usePathname();
-  const scrolled = useScrolled();
   const { variant, coachProfile } = variantFor(pathname);
+  const runway = useRunway(pathname);
+  const { scrolled, aboveRunway } = useScrolled(runway);
   const solid = scrolled || open;
   const close = () => setOpen(false);
 
@@ -263,7 +303,10 @@ export function SiteHeader({ horseCareMenu: HORSE_CARE_MENU, coachesMenu: COACHE
         edge, not from theme-color; the transparent header gives it nothing,
         so it showed grey above the hero. This strip is that colour (CSS:
         .status-tint), shown only while the header is transparent. */}
-    <div className="status-tint" aria-hidden />
+    {/* With a runway the photo itself shows behind the status bar, which
+        Safari only does with no solid fixed element up there: the strip is
+        for when someone scrolls back above the runway. */}
+    <div className="status-tint" aria-hidden data-show={variant === "overlay" && !solid && (runway === 0 || aboveRunway) ? "true" : undefined} />
     <header
       className="site-header"
       data-variant={variant}

@@ -264,3 +264,7 @@ Built 13 Oct 2026. Only testable on a real iPhone, after the push deploys.
 - [ ] Same on /coaches, /horse-care, /for-coaches and /for-professionals (horse care is a slightly lighter dark).
 - [ ] Scroll down until the header turns cream, then reload partway down: the status bar is light, not dark over a light header.
 - [ ] Look closely at the very top edge of the photo: no visible band.
+- [ ] **The photo behind the clock (runway, added later the same day):** open the home page fresh on your iPhone. The photo itself should carry on behind the clock and battery, not a flat dark colour. The page looks the same as before; it has quietly opened scrolled down a little.
+- [ ] Pull the page down to the very top: a little more photo appears above, and the status bar turns flat dark (Safari's rule at the very top). Scroll back and the photo returns behind the clock.
+- [ ] Scroll down until the header turns cream: header and status bar are now the same solid cream, no seam.
+- [ ] Go to About, then tap the logo back to home: it opens the same way (photo behind the clock).

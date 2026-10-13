@@ -37,7 +37,9 @@ export function Parallax() {
     const apply = () => {
       raf = 0;
       const vh = window.innerHeight;
-      const heroY = Math.min(window.scrollY * 0.28, 260);
+      // On iPhones the hero pages open scrolled down by --runway (site-header.tsx).
+      const runway = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--runway")) || 0;
+      const heroY = Math.min(Math.max(0, window.scrollY - runway) * 0.28, 260);
       for (const el of els) {
         if (el.dataset.parallax === "drift") {
           // Measure the frame around the element, not the element: its own

@@ -1461,7 +1461,7 @@ form:has(#role-horse-care:checked) .waitlist-profession {
   pointer-events: none;
   background-color: var(--status-tint, #1d1e14);
 }
-html[data-overlay-route="true"]:has(.site-header[data-variant="overlay"][data-solid="false"]) .status-tint {
+.status-tint[data-show="true"] {
   display: block;
 }
 /* An open sub-menu turns the header solid. Separate rule: :has() can't nest,
@@ -1474,4 +1474,38 @@ html:has(.hero--coaches) {
 }
 html:has(.hero--horse-care) {
   --status-tint: #292a23;
+}
+
+/* The iPhone runway (see useRunway in site-header.tsx): the hero pages are
+   --runway taller at the top and open scrolled down by it, so Safari 26 shows
+   the photo itself behind the status bar instead of a flat colour. iPhones
+   only (data-ios-runway, set by layout.tsx's boot script), phone widths only,
+   hero pages only; 0 everywhere else. 72px clears the tallest status bar
+   (Dynamic Island, 59px). */
+:root {
+  --runway: 0px;
+}
+@media (max-width: 767px) {
+  html[data-ios-runway="true"][data-overlay-route="true"]:has(.hero) {
+    --runway: 72px;
+  }
+  /* The runway is padding the hero's height doesn't include, so every hero
+     variant keeps its own height rule; the photo and the text layer are
+     absolutely placed against the padding box, so the photo fills it. */
+  html[data-ios-runway="true"][data-overlay-route="true"] .hero {
+    box-sizing: content-box;
+    padding-top: var(--runway);
+  }
+}
+
+/* Touch screens: the scrolled header is solid cream, not frosted glass.
+   Safari 26 fills the status bar with one flat colour copied from the
+   header, and can't copy a see-through blur, so a frosted bar always showed
+   a seam against it. Desktop keeps the glass. */
+@media (pointer: coarse) {
+  .site-header {
+    --hdr-bg: var(--color-bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }

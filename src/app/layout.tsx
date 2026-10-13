@@ -160,6 +160,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <BootScript
           id="overlay-route"
           code={`document.documentElement.dataset.overlayRoute = String(["/", "/coaches", "/horse-care", "/for-coaches", "/for-professionals"].includes(location.pathname));
+if (/iPhone|iPod/.test(navigator.userAgent)) document.documentElement.dataset.iosRunway = "true";
 if (${JSON.stringify(prefixes)}.some(function (p) { return location.pathname === p || location.pathname.indexOf(p + "/") === 0; })) document.documentElement.dataset.door = "horse-care";`}
         />
         {/* .reveal (src/app/globals.css) fades real content in as it scrolls
