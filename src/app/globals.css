@@ -1505,6 +1505,29 @@ html:has(.hero--horse-care) {
   html[data-ios-runway="true"][data-overlay-route="true"]:has(.hero) .site-header[data-variant="overlay"][data-solid="false"] {
     position: absolute;
     top: var(--runway);
+    background-image: none;
+  }
+  /* The header's shading moves onto the photo. Safari draws the photo behind
+     the status bar but not the header's own background, so a shaded header
+     left a hard line at the foot of the status bar, with the photo above it
+     unshaded. As a layer of the hero's scrim it covers the runway and fades
+     out where the header ends, exactly where the header's gradient did. */
+  html[data-ios-runway="true"][data-overlay-route="true"] .hero__scrim {
+    background:
+      linear-gradient(
+        180deg,
+        rgb(13 24 18 / 0.55) 0,
+        rgb(13 24 18 / 0.55) var(--runway),
+        rgb(13 24 18 / 0) calc(var(--runway) + var(--header-h) + var(--safe-top))
+      ),
+      linear-gradient(
+        180deg,
+        rgb(13 24 18 / 0.25) 0%,
+        rgb(13 24 18 / 0.05) 22%,
+        rgb(13 24 18 / 0.55) 42%,
+        rgb(13 24 18 / 0.9) 58%,
+        rgb(20 40 31 / 1) 100%
+      );
   }
 }
 

@@ -266,5 +266,6 @@ Built 13 Oct 2026. Only testable on a real iPhone, after the push deploys.
 - [ ] Look closely at the very top edge of the photo: no visible band.
 - [ ] **The photo behind the clock (runway, added later the same day):** open the home page fresh on your iPhone. The photo itself should carry on behind the clock and battery, not a flat dark colour. The page looks the same as before; it has quietly opened scrolled down a little.
 - [ ] Pull the page down to the very top: a little more photo appears above, and the status bar turns flat dark (Safari's rule at the very top). Scroll back and the photo returns behind the clock.
+- [ ] **No line under the status bar, and no gap after scrolling back up (13 Oct, later):** on the home page, /coaches and /horse-care, the photo behind the clock is shaded the same as just below it, with no line where the status bar ends. Scroll down, then back up to the top and let go: the page glides back to where it opened, photo behind the clock, no flat dark band. Tap the status bar to jump to the top: same result.
 - [ ] Scroll down until the header turns cream: header and status bar are now the same solid cream, no seam.
 - [ ] Go to About, then tap the logo back to home: it opens the same way (photo behind the clock).

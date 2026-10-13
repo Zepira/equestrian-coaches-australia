@@ -90,9 +90,40 @@ function useRunway(pathname: string) {
     });
     const onResize = () => setRunway(read());
     window.addEventListener("resize", onResize);
+    // Scrolling back up comes to rest at the runway's end, not above it. At
+    // the very top Safari paints a flat band behind the status bar instead of
+    // the photo, which read as a gap. Only once the finger is up and the
+    // scroll has stopped, so it never fights a drag or a fling.
+    let touching = false;
+    let settle = 0;
+    const check = () => {
+      const r = read();
+      if (r > 0 && !touching && window.scrollY < r - 1) window.scrollTo({ top: r, left: 0, behavior: "smooth" });
+    };
+    const onScroll = () => {
+      clearTimeout(settle);
+      settle = window.setTimeout(check, 140);
+    };
+    const onTouchStart = () => {
+      touching = true;
+      clearTimeout(settle);
+    };
+    const onTouchEnd = () => {
+      touching = false;
+      onScroll();
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
     return () => {
       cancelAnimationFrame(frame);
+      clearTimeout(settle);
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchcancel", onTouchEnd);
     };
   }, [pathname]);
   return runway;
