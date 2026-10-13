@@ -43,7 +43,7 @@ if (!URL_ || !env.SUPABASE_SERVICE_ROLE_KEY || !env.DATABASE_PASSWORD) {
   process.exit(2);
 }
 const ref = new URL(URL_).hostname.split(".")[0];
-const db = new pg.Client({ connectionString: `postgresql://postgres.${ref}:${encodeURIComponent(env.DATABASE_PASSWORD)}@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres`, ssl: { rejectUnauthorized: false } });
+const db = new pg.Client({ connectionString: `postgresql://postgres.${ref}:${encodeURIComponent(env.DATABASE_PASSWORD)}@${env.SUPABASE_POOLER_HOST || "aws-0-ap-southeast-2.pooler.supabase.com"}:5432/postgres`, ssl: { rejectUnauthorized: false } });
 await db.connect();
 const service = createClient(URL_, env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
 const base = process.argv.includes("--base") ? process.argv[process.argv.indexOf("--base") + 1] : "http://localhost:3110";

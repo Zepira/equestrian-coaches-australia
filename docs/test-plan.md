@@ -222,3 +222,17 @@ Built 13 Oct 2026. `scripts/db/rebuild.mjs` (which drops every table) now refuse
 - [ ] With a fake real customer on the test coach (ask Claude, or set `subscriptions.stripe_customer_id` to `cus_TEST…` by hand), `--check` refuses and names the profile. Put it back to `mock_epa_test_coach` after.
 - [ ] Running it with no flag refuses to start.
 - [ ] After the first real coach joins, `--check` refuses on its own.
+
+## 16. The database in Sydney
+
+Done 13 Oct 2026. The whole database (logins, every table, photos) was copied from the Tokyo project to a new one in Sydney. Local development already uses Sydney; the test site switches when the Vercel keys change.
+
+After the Vercel keys and the Auth settings are switched (see the steps in the build plan):
+- [ ] **Log in** on the test site as yourself, the test coach and the test rider, with your existing passwords.
+- [ ] **Your edits survived:** the footer credit, the legal pages, a discipline's words, Admin → Settings all show what they did before.
+- [ ] **Photos** on Alana's and the test coach's profiles load.
+- [ ] **Sign up** a new account on the test site: the confirmation email arrives (needs the SMTP setting) and its link works (needs the Redirect URLs).
+- [ ] **Password reset** email arrives and its link works.
+- [ ] **Save something** (a profile edit, an admin setting) and reload: it stuck.
+- [ ] **Search and area pages** still list the right people (sample listings, and the test coach once published).
+- [ ] **A week later,** with nothing missing: pause the Tokyo project, then delete it, and remove the `TOKYO_*` lines from `.env`.

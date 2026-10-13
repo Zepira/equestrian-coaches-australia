@@ -63,7 +63,7 @@ const storage = async (method, path, body) => {
 };
 
 const client = new pg.Client({
-  connectionString: `postgresql://postgres.${ref}:${encodeURIComponent(env.DATABASE_PASSWORD)}@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres`,
+  connectionString: `postgresql://postgres.${ref}:${encodeURIComponent(env.DATABASE_PASSWORD)}@${env.SUPABASE_POOLER_HOST || "aws-0-ap-southeast-2.pooler.supabase.com"}:5432/postgres`,
   ssl: { rejectUnauthorized: false },
 });
 await client.connect();

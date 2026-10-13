@@ -25,7 +25,7 @@ const env = Object.fromEntries(
 );
 const ref = new URL(env.NEXT_PUBLIC_SUPABASE_URL).hostname.split(".")[0];
 const client = new pg.Client({
-  connectionString: `postgresql://postgres.${ref}:${encodeURIComponent(env.DATABASE_PASSWORD)}@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres`,
+  connectionString: `postgresql://postgres.${ref}:${encodeURIComponent(env.DATABASE_PASSWORD)}@${env.SUPABASE_POOLER_HOST || "aws-0-ap-southeast-2.pooler.supabase.com"}:5432/postgres`,
   ssl: { rejectUnauthorized: false },
 });
 
