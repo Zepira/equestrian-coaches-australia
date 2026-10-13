@@ -26,7 +26,7 @@ type Params = {
 /**
  * /signup (The Site as a CMS §06.1–2). Every way in lands here with the
  * profession already known: /join/[profession], /for-coaches, the plans
- * table, /for-professionals, and Kim's invites. The link also carries the
+ * table, /for-professionals, and the admins' invites. The link also carries the
  * plan (`plan`; `tier` from older links is read too), where they came from
  * (`ref`, utm tags, which become acquisition_source) and an invite token.
  *

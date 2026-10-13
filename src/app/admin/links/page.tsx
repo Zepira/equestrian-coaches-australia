@@ -93,7 +93,7 @@ export default async function AdminLinksPage({ searchParams }: { searchParams: P
         <form action={createLink} className="mt-3 grid gap-3 @[560px]/admin:grid-cols-2">
           <label className="block @[560px]/admin:col-span-2">
             <span className="mb-1 block text-[14px] font-medium text-fg">Name</span>
-            <input name="label" required maxLength={80} placeholder="Kim's post in Western Riders Victoria" className={input} />
+            <input name="label" required maxLength={80} placeholder="Post in Western Riders Victoria" className={input} />
           </label>
           <label className="block">
             <span className="mb-1 block text-[14px] font-medium text-fg">Address after /go/</span>
@@ -188,7 +188,7 @@ export default async function AdminLinksPage({ searchParams }: { searchParams: P
       </section>
 
       <p className="text-[13px] text-subtle">
-        Any address with <code>?utm_source=</code> or <code>?ref=</code> counts too, so the <Link href="/admin/invites" className="underline">invite</Link> and <code>/join/</code> links Kim already sends show up here.
+        Any address with <code>?utm_source=</code> or <code>?ref=</code> counts too, so the <Link href="/admin/invites" className="underline">invite</Link> and <code>/join/</code> links already going out show up here.
       </p>
 
       <HistoryList rows={history} />

@@ -230,7 +230,7 @@ function CoachRefineRail() {
  * "Find a coach" used to be.
  *
  * The call to action is the same words everywhere; only where it goes
- * depends on the section, because a coach arriving from Kim's link should
+ * depends on the section, because a coach arriving from an invite link should
  * land on the coaches sign-up rather than a page asking which kind of
  * business they are.
  */

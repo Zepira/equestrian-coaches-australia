@@ -203,8 +203,8 @@ export function NoCommission({ work, customer }: { work: string; customer: strin
 }
 
 /* ── Questions + "tell us what to fix" ────────────────────────────────── */
-export function PitchQuestions({ items, provider, before }: { items: { title: string; body: string }[]; provider: string; before?: ReactNode }) {
-  const feedback = `This site is new and we'd rather hear what's not working from you than guess. If something's confusing, missing or just annoying, tell Kim or Alana directly. Every founding ${provider} gets a direct line to us, not a support ticket.`;
+export function PitchQuestions({ items, before }: { items: { title: string; body: string }[]; before?: ReactNode }) {
+  const feedback = `This site is new and we'd rather hear what's not working from you than guess. If something's confusing, missing or just annoying, email us and a person who runs the site reads it, not a ticket queue. Founding members get a reply within two business days.`;
   return (
     <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] py-14 wide:grid wide:grid-cols-[1fr_1.6fr] wide:items-start wide:gap-16 wide:px-12 wide:py-[88px]">
       <div className="wide:sticky wide:top-[100px]">

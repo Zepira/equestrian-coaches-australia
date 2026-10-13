@@ -90,7 +90,7 @@ export function isCoachStagePath(path: string): boolean {
 export const COACH_STAGE_HEADER = "x-coach-stage";
 
 /**
- * TEST_HOST_OPEN=true takes the password off the test hosts (Alana and Kim,
+ * TEST_HOST_OPEN=true takes the password off the test hosts (the site owners,
  * 13 Oct 2026: people they show it to shouldn't need one). They stay
  * noindex, and mock payments stop there (see below), because the test host
  * shares the one real database: an open host plus mock billing would let a

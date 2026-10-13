@@ -8,7 +8,7 @@ import { safeNextPath } from "@/lib/site-url";
  * browser.
  *
  * /auth/callback exchanges a PKCE code, and the verifier that exchange needs is
- * a cookie in the browser that started the sign-up. Kim sends a coach a link
+ * a cookie in the browser that started the sign-up. An admin sends a coach a link
  * on Facebook, it opens in Messenger's own browser, the coach signs up there,
  * then opens the email in the Gmail app, which uses a different browser: no
  * cookie, no session, and they were sent to a blank log in page. Verifying the

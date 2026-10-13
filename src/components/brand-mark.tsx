@@ -1,6 +1,6 @@
 /**
  * The horse head from the Equine Professionals Australia logo, without the
- * lettering. Traced to a single vector path from Alana's Canva artwork (the
+ * lettering. Traced to a single vector path from the original Canva artwork (the
  * head there is an embedded 338px bitmap mask, upscaled 6x before tracing),
  * so it stays sharp at any size.
  *

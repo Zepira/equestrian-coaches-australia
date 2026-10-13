@@ -106,45 +106,13 @@ export const CONTENT_DEFAULTS = {
     closing: "We built this so that finding a coach is a search, not a stroke of luck.",
   },
   "about.why": {
-    eyebrow: "Why we built it",
-    title: "Alana found her coach *by accident.*",
+    eyebrow: "Why it exists",
+    title: "Most riders find their coach *by accident.*",
     paragraphs: [
-      "Kim's posts turned up on Instagram, and that was it. No directory, no search, no recommendation. There are very few coaches in Australia teaching what Kim teaches, and there was no way to go looking for one on purpose.",
+      "A post turns up in a feed, a friend mentions a name, someone at a clinic points across the arena. It works if you already know people. If you're new, you've moved, or you want something more specific than general ridden work, it mostly doesn't. For some disciplines there are only a handful of coaches in the country, and no way to go looking for one on purpose.",
     ],
     pullQuote: "Somewhere a rider is looking for a liberty coach, or a Western coach, or a dressage coach who works with nervous riders. Somewhere near them is exactly that person. *And neither of them will ever hear about the other.*",
     closing: "A directory is an unglamorous fix for that. But it is the fix.",
-  },
-  "about.rider": {
-    eyebrow: "The rider",
-    title: "I came to horses *late.*",
-    paragraphs: [
-      "My first lesson was at fifteen, which in pony-club terms is close to a mature-age student, and I bought my first horse at eighteen.",
-      "My mare now is Rosie, a grey Australian Andalusian who would much rather learn a trick than do another twenty-metre circle. She is clever, opinionated and genuinely willing, which is a combination that doesn't let you get away with anything. Most of what I know about working *with* a horse rather than *at* one, I know because she made it clear when I'd asked badly.",
-    ],
-    closing: "I build software for a living. So I built this.",
-    signature: "Alana",
-    facts: [
-      { title: "First lesson", body: "Fifteen" },
-      { title: "First horse", body: "Eighteen" },
-      { title: "Rides", body: "Rosie, a grey Australian Andalusian" },
-      { title: "Day job", body: "Builds software" },
-    ] as Items,
-  },
-  "about.coach": {
-    eyebrow: "The coach",
-    title: "What I'm after is *harmony.*",
-    paragraphs: [
-      "I coach foundational connection, lightness and body feel: the things that sit underneath every discipline, whether you're jumping, doing dressage or riding bridleless in an open paddock.",
-      "I've been working with horses for most of my life, and teaching for a good part of it. I work with youngsters through to advanced horses, and with riders from their first lessons through to competition. My specialties are liberty, bridleless riding, classical dressage, showjumping and the transition to bitless, and a lot of what I teach is confidence, biomechanics and mindset as much as it is technique.",
-      "What I'm actually after, in all of it, is a horse and rider who understand each other well enough that the aids stop being instructions and start being a conversation. Bridleless riding is the clearest test of that, but it isn't the point. The point is the partnership that makes it possible.",
-    ],
-    signature: "Kim",
-    facts: [
-      { title: "Teaches", body: "Connection, lightness and body feel" },
-      { title: "Specialties", body: "Liberty, bridleless, classical dressage, showjumping, going bitless" },
-      { title: "Works with", body: "Youngsters to advanced horses; first lessons to competition" },
-      { title: "Listed here as", body: "A coach like any other" },
-    ] as Items,
   },
   "about.principles": {
     eyebrow: "How we do things",
@@ -159,16 +127,16 @@ export const CONTENT_DEFAULTS = {
     ] as Items,
   },
   "about.record": {
-    recordEyebrow: "Who we are, for the record",
-    recordTitle: "We're Alana and Kim, based in south-east Victoria, registering as a partnership.",
-    recordBody: "Kim coaches, and she's listed on this site like any other coach. She gets no ranking advantage, no editorial preference and no discount. If that ever changes, we'll say so here.",
+    recordEyebrow: "Who runs it, for the record",
+    recordTitle: "An independent Australian business, run by people who ride.",
+    recordBody: "Equine Professionals Australia is a small partnership based in regional Victoria. It isn't owned by a publisher, a governing body or a coaching business. One of the people behind it coaches, and is listed here like any other coach: no ranking advantage, no editorial preference, no discount. If that ever changes, we'll say so here.",
     newEyebrow: "We're new, and we'd rather say so",
     newTitle: "The coach list is still filling out.",
     newBody: "If there's nobody in your area yet, that's because we haven't reached them, not because they don't exist. Tell us who's missing, or tell your coach we're here.",
     email: "hello@equineprofessionals.com.au",
   },
   "about.cta": {
-    title: "Two of us built it. *Riders and coaches* are what make it work.",
+    title: "Built by riders. *Riders and professionals* are what make it work.",
     ridersLabel: "Riders",
     ridersButton: "Find a coach",
     coachesLabel: "Coaches",
@@ -596,7 +564,7 @@ export const CONTENT_DEFAULTS = {
     updated: "Updated 12 October 2026",
     intro: "These terms cover everyone who uses Equine Professionals Australia: riders and horse owners looking for help, and the coaches and horse care professionals who list here. By using the site, or by making an account, you agree to them. If you list with us, the sections headed \"If you list with us\" and \"Plans, payment and cancelling\" are the contract for your listing.",
     sections: [
-      { title: "Who we are", body: "Equine Professionals Australia is a partnership between Alana La Bouchardiere and Kim Thompson, trading as Equine Professionals Australia, ABN {abn}, based in Victoria. When these terms say \"we\" or \"us\", that's who they mean. You can reach us at {contact_email}. We answer email within two business days." },
+      { title: "Who we are", body: "Equine Professionals Australia is a partnership registered in Victoria, trading as Equine Professionals Australia, ABN {abn}. When these terms say \"we\" or \"us\", that's who they mean. You can reach us at {contact_email}. We answer email within two business days." },
       { title: "What the site is", body: "A directory. Riders and horse owners search it for free. Coaches, farriers, vets, dentists, bodyworkers and other horse care professionals pay a monthly or yearly fee to have a profile on it.\n\nWe don't book lessons or visits, take payment for them, or take a cut of what you pay a professional. We don't employ, represent or act for anyone listed here." },
       { title: "Who can use it", body: "You can search without an account. To make an account, send an enquiry, write a review or enter a competition you need to be 18 or over, or have a parent or guardian do it for you. A parent can enquire about lessons for a child under 18; please don't put a child's own contact details into a form." },
       { title: "We don't vet anyone", body: "Every profile is written by the person it's about. We don't check qualifications, registration numbers, insurance, working with children checks, facilities or the quality of anyone's work, and we don't accredit, endorse or recommend anyone. Anything a profile says about those things is shown as the professional supplied it.\n\nIf a professional needs to be registered to do their work (vets and some other health professionals do), check their registration with the board that keeps it. If they'll be working with a child, ask to see their working with children check. Ask a professional the questions you'd ask anyone new before they work with you or your horse." },
@@ -620,7 +588,7 @@ export const CONTENT_DEFAULTS = {
     updated: "Updated 12 October 2026",
     intro: "What we collect, why, where it's kept, who else handles it, and what you can ask us to do with it. We follow the Australian Privacy Principles in the Privacy Act 1988, whether or not the law requires a business our size to. We don't sell or rent anyone's details, and we don't show anyone ads based on who they are.",
     sections: [
-      { title: "Who this covers", body: "Equine Professionals Australia (Alana La Bouchardiere and Kim Thompson in partnership, ABN {abn}). Privacy questions and requests go to {contact_email}." },
+      { title: "Who this covers", body: "Equine Professionals Australia, a partnership registered in Victoria, ABN {abn}. Privacy questions and requests go to {contact_email}." },
       { title: "If you're looking for help", body: "To search, you don't need an account and we don't ask who you are. If you press \"Use my location\", your browser asks your permission, we turn the coordinates into the nearest suburb to run the search, and we don't keep the coordinates.\n\nIf you make an account we keep your name, email address, the professionals you save, and any alerts you set up: the suburb or postcode, how far to look, and what you follow.\n\nWhen you send an enquiry, your name, how to contact you (email, and phone if you give it), your suburb and your message go to that professional, and we keep a copy so you can both see where it's up to. A few weeks later we may email you once to ask whether you booked and whether you'd like to leave a review.\n\nIf you leave a review, we publish your first name, the first letter of your surname, your rating, your words and the date. We keep your email address and a scrambled code for your device so one person can't review the same professional twice; neither is ever shown.\n\nIf you enter a competition, we keep your name, email address, state, your answer and any photo you send, for the length of the competition and 12 months after, so we can run it and show we ran it fairly. A winner's first name, surname initial and state are published.\n\nIf a professional sends you their testimonial link and you write one, your name, town and words go to them, and they decide whether to show it on their profile. We keep a copy, and the time you agreed to it being shown.\n\nIf you download a guide, join the waitlist or sign up to alerts, we keep your email address and a record of what you agreed to." },
       { title: "If you list with us", body: "We keep what you put on your profile: your name, business name, where you're based and how far you travel, what you do, qualifications, registration numbers and insurance details you choose to add, photos, video, testimonials and events. Your email address and phone number are only shown to visitors if you switch them on, and even then behind a click, not printed on the page.\n\nWe also keep your account email, your plan and its payment history, the enquiries sent to you, the reviews about you and your replies, referral codes you've shared, and which pages of the site your profile appeared on. Stripe handles your card and your billing details; we see what was charged, never the card number." },
       { title: "What we count, and why", body: "We count how often each profile appears in search, is opened, has a number revealed and gets an enquiry, so professionals can see their numbers and so we can tell them honestly whether the site is working. To count each visitor once a day we make a scrambled code from the visitor's connection details and a daily key; we don't store the connection details, and the code can't be reversed. We don't count a professional looking at their own profile, or us.\n\nWe record what people search for and how many results they got, without who searched, so we can see what the site is missing.\n\nWe use Google Search Console to see which searches bring people to the site. That's about pages, not people, and Google doesn't give us anyone's identity." },

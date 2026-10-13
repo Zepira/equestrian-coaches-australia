@@ -7,44 +7,16 @@ import { RichText } from "@/components/rich-text";
 import { getContent } from "@/lib/cms/read";
 
 /**
- * /about: the two people behind the site, and how it runs. Every word is
- * a content block (about.*, edited under Admin → Pages → About); the photos
- * and layout stay here.
- *
- * Copy: "Claude outputs/about-us-copy.md" (draft 2, 16 Sep 2026). Facts the
- * draft left in square brackets are left OUT here rather than guessed at —
- * see PENDING at the bottom of this file. Kim's section is a first-person
- * rewrite of her own site bio and needs her sign-off before launch.
- *
- * Photos: Rosie is Lisa Gordon / Little More Grace Photographics — permission
- * pending, watermark left in place until it's granted. The coach portrait is
- * a stand-in (the /for-coaches Unsplash master) until Kim's garrocha photo
- * (same photographer) is cleared. Both ladders come from
- * scripts/build-hero-images.mjs.
+ * /about: why the site exists and how it runs, in the site's own "we". It
+ * names nobody who runs it (tone audit, 13 Oct 2026, docs/tone-audit.md):
+ * five blocks, every word a content block (about.*, Admin, Pages, About),
+ * no photographs. A founder named in copy here is a bug.
  */
 
 export const metadata: Metadata = {
   title: { absolute: "About Equine Professionals Australia" },
-  description: "A rider and a coach built a directory for Australian riding coaches, because finding the right one shouldn't come down to luck.",
+  description: "An independent Australian directory of riding coaches and horse care professionals, so finding the right one doesn't come down to luck.",
 };
-
-const srcset = (crop: string, ext: string, widths: number[]) => widths.map((w) => `/hero/${crop}-${w}.${ext} ${w}w`).join(", ");
-
-function FactRail({ facts, dark = false }: { facts: { title: string; body: string }[]; dark?: boolean }) {
-  const line = dark ? "border-ink-fg/18" : "border-border";
-  const k = dark ? "text-ink-fg/55" : "text-subtle";
-  const v = dark ? "text-ink-fg" : "text-ink";
-  return (
-    <dl className={`grid grid-cols-[auto_1fr] gap-x-5 border-t text-[14px] leading-[1.45] wide:text-[15px] ${line}`}>
-      {facts.map(({ title: key, body: val }) => (
-        <div key={key} className="contents">
-          <dt className={`border-b py-2.5 text-[11px] font-medium uppercase tracking-[0.16em] ${line} ${k} pt-3.5`}>{key}</dt>
-          <dd className={`border-b py-2.5 ${line} ${v}`}>{val}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
 
 /** Block text with its *italic* in the accent the section uses. */
 function Em({ text, cls }: { text: string; cls: string }) {
@@ -61,11 +33,9 @@ function Eyebrow({ children, tone = "light" }: { children: ReactNode; tone?: "li
 }
 
 export default async function AboutPage() {
-  const [opening, why, rider, coach, principles, record, cta] = await Promise.all([
+  const [opening, why, principles, record, cta] = await Promise.all([
     getContent("about.opening"),
     getContent("about.why"),
-    getContent("about.rider"),
-    getContent("about.coach"),
     getContent("about.principles"),
     getContent("about.record"),
     getContent("about.cta"),
@@ -95,7 +65,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* ── 2. Why we built it ─────────────────────────────────────────── */}
+      {/* ── 2. Why it exists ────────────────────────────────────────────── */}
       <Reveal as="section" className="bg-ink-deep text-ink-fg">
         <div className="mx-auto max-w-[1184px] px-[18px] py-14 wide:grid wide:grid-cols-[1.1fr_1fr] wide:items-start wide:gap-16 wide:px-12 wide:py-[104px]">
           <div className="wide:sticky wide:top-[100px]">
@@ -118,101 +88,8 @@ export default async function AboutPage() {
         </div>
       </Reveal>
 
-      {/* ── 3. The rider ───────────────────────────────────────────────── */}
-      <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] pt-14 wide:px-12 wide:pt-[104px]">
-        <div className="wide:grid wide:grid-cols-[1fr_360px] wide:items-end wide:gap-16">
-          <div>
-            <Eyebrow>{rider.eyebrow}</Eyebrow>
-            <h2 className="mt-3 text-[40px] leading-[0.98] -tracking-[0.02em] text-ink wide:mt-4 wide:text-[68px] wide:leading-[0.96] wide:-tracking-[0.025em]">
-              <Em text={rider.title} cls="text-accent" />
-            </h2>
-            <div className="mt-6 flex max-w-[62ch] flex-col gap-4 text-[16px] leading-[1.55] text-muted wide:mt-8 wide:text-[17px]">
-              {rider.paragraphs.map((t) => (
-                <p key={t}>
-                  <Em text={t} cls={inBody} />
-                </p>
-              ))}
-              <p className="font-medium text-ink">{rider.closing}</p>
-              <p className="text-[14px] text-subtle">{rider.signature}</p>
-            </div>
-          </div>
-          <div className="mt-8 wide:mt-0">
-            <FactRail facts={rider.facts} />
-          </div>
-        </div>
-        <figure className="relative mt-9 overflow-hidden rounded-[16px] bg-shade wide:mt-14 wide:rounded-[20px]">
-          <div className="aspect-[6/5]">
-            <picture>
-              <source type="image/avif" srcSet={srcset("about-rosie", "avif", [640, 1024, 1400, 1800])} sizes="(min-width: 1280px) 1088px, 100vw" />
-              <source type="image/webp" srcSet={srcset("about-rosie", "webp", [640, 1024, 1400, 1800])} sizes="(min-width: 1280px) 1088px, 100vw" />
-              <img
-                src="/hero/about-rosie-1024.jpg"
-                alt="Rosie, a dappled grey mare, standing square in show sashes."
-                loading="lazy"
-                decoding="async"
-                // No parallax drift on this one: the drift scales the photo
-                // 1.12× to hide its edges, which clips Rosie's ears and hooves.
-                className="block h-full w-full object-cover"
-              />
-            </picture>
-          </div>
-          <figcaption className="absolute bottom-3 left-3 flex flex-wrap items-center gap-2 wide:bottom-5 wide:left-5">
-            <span className="rounded-[var(--radius-pill)] bg-ink-deep/82 px-3 py-1.5 text-[12px] font-medium text-ink-fg backdrop-blur-[6px] wide:px-3.5 wide:text-[13px]">Rosie</span>
-            <span className="rounded-[var(--radius-pill)] bg-ink-deep/60 px-3 py-1.5 text-[11px] text-ink-fg/85 backdrop-blur-[6px] wide:text-[12px]">Photo: Lisa Gordon, Little More Grace Photographics</span>
-          </figcaption>
-        </figure>
-      </Reveal>
-
-      {/* ── 4. The coach ───────────────────────────────────────────────── */}
-      <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] pt-16 wide:px-12 wide:pt-[120px]">
-        <div className="wide:grid wide:grid-cols-[420px_1fr] wide:items-start wide:gap-20">
-          <figure className="relative mx-auto max-w-[360px] wide:sticky wide:top-[100px] wide:mx-0 wide:max-w-none">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-t-[999px] rounded-b-[14px] bg-shade">
-              <picture>
-                <source type="image/avif" srcSet={srcset("about-kim", "avif", [480, 800, 1200])} sizes="(min-width: 1100px) 420px, 90vw" />
-                <source type="image/webp" srcSet={srcset("about-kim", "webp", [480, 800, 1200])} sizes="(min-width: 1100px) 420px, 90vw" />
-                <img
-                  src="/hero/about-kim-800.jpg"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                  data-parallax="drift"
-                  data-parallax-speed="0.08"
-                  data-parallax-max="40"
-                  className="parallax-drift block h-full w-full object-cover"
-                />
-              </picture>
-            </div>
-            <figcaption className="mt-3 text-[12px] leading-[1.45] text-subtle wide:text-[13px]">
-              Kim. <span className="text-subtle/70">Portrait to come — Lisa Gordon, Little More Grace Photographics.</span>
-            </figcaption>
-          </figure>
-          <div className="mt-10 wide:mt-0">
-            <Eyebrow>{coach.eyebrow}</Eyebrow>
-            <h2 className="mt-3 text-[40px] leading-[0.98] -tracking-[0.02em] text-ink wide:mt-4 wide:text-[68px] wide:leading-[0.96] wide:-tracking-[0.025em]">
-              <Em text={coach.title} cls="text-accent" />
-            </h2>
-            <div className="mt-6 flex max-w-[62ch] flex-col gap-4 text-[16px] leading-[1.55] text-muted wide:mt-8 wide:text-[17px]">
-              <p>
-                I coach foundational connection, lightness and body feel — the things that sit underneath every discipline, whether you&rsquo;re jumping, doing dressage or riding bridleless in an open paddock.
-              </p>
-              <p>
-                I&rsquo;ve been working with horses for most of my life, and teaching for a good part of it. I work with youngsters through to advanced horses, and with riders from their first lessons through to competition. My specialties are liberty, bridleless riding, classical dressage, showjumping and the transition to bitless, and a lot of what I teach is confidence, biomechanics and mindset as much as it is technique.
-              </p>
-              <p>
-                What I&rsquo;m actually after, in all of it, is a horse and rider who understand each other well enough that the aids stop being instructions and start being a conversation. Bridleless riding is the clearest test of that, but it isn&rsquo;t the point. The point is the partnership that makes it possible.
-              </p>
-              <p className="text-[14px] text-subtle">— Kim</p>
-            </div>
-            <div className="mt-8 wide:mt-10">
-              <FactRail facts={coach.facts} />
-            </div>
-          </div>
-        </div>
-      </Reveal>
-
-      {/* ── 5. How we do things ────────────────────────────────────────── */}
-      <Reveal as="section" className="mt-16 bg-ink text-ink-fg wide:mt-[120px]">
+      {/* ── 3. How we do things ────────────────────────────────────────── */}
+      <Reveal as="section" className="bg-ink text-ink-fg">
         <div className="mx-auto max-w-[1184px] px-[18px] py-14 wide:grid wide:grid-cols-[1fr_1.5fr] wide:items-start wide:gap-16 wide:px-12 wide:py-[104px]">
           <div className="wide:sticky wide:top-[100px]">
             <Eyebrow tone="dark">{principles.eyebrow}</Eyebrow>
@@ -235,7 +112,7 @@ export default async function AboutPage() {
         </div>
       </Reveal>
 
-      {/* ── 6. For the record + we're new ──────────────────────────────── */}
+      {/* ── 4. Who runs it + we're new ────────────────────────────────── */}
       <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] pt-14 wide:px-12 wide:pt-[104px]">
         <div className="grid gap-4 wide:grid-cols-2 wide:gap-6">
           <div className="rounded-[16px] bg-shade px-5 py-6 wide:rounded-[20px] wide:px-9 wide:py-9">
@@ -254,7 +131,7 @@ export default async function AboutPage() {
         </div>
       </Reveal>
 
-      {/* ── 7. CTA ─────────────────────────────────────────────────────── */}
+      {/* ── 5. CTA ─────────────────────────────────────────────────────── */}
       <Reveal as="section" className="mx-auto max-w-[1184px] px-[18px] py-14 wide:px-12 wide:py-[104px]">
         <div className="relative overflow-hidden rounded-[16px] bg-ink-deep px-6 py-10 text-center text-ink-fg wide:rounded-[24px] wide:px-12 wide:py-20">
           <p className="mx-auto font-display text-[36px] leading-[1.02] -tracking-[0.02em] wide:max-w-[20ch] wide:text-[64px] wide:leading-none wide:-tracking-[0.025em]">
@@ -286,14 +163,3 @@ export default async function AboutPage() {
   );
 }
 
-/*
- * PENDING — facts the copy draft left blank, deliberately not invented here.
- * Kim: years with horses / years teaching; which countries the international
- * work covers (left out until backed — "international" unbacked reads as a
- * claim); where she's based and travel radius; what she rides now; the horse
- * that changed how she teaches; whether to list qualifications; coach vs
- * trainer vs instructor; whether "animal communicator" goes here or on her
- * profile (recommendation in the copy notes: profile only). Alana: launch
- * month/year for the "we're new" card; the partnership entity name once ASIC
- * registration is through. Both photos: written permission from Lisa Gordon.
- */

@@ -39,8 +39,8 @@ const WHAT_WE_DO: { title: string; body: string }[] = [
     body: "LocalBusiness and Person markup, so search engines can read who you are and where you teach.",
   },
   {
-    title: "Kim answers the recommendation posts in equestrian Facebook groups",
-    body: "By name, from her own account. Never an ad.",
+    title: "We answer the recommendation posts in equestrian Facebook groups",
+    body: "From a real account, naming real coaches on the site. Never an ad, and never a template.",
   },
   {
     title: "We email riders every month",
@@ -102,7 +102,7 @@ export default async function ForCoachesPage() {
         <Plans tiers={tierCards(plans, w)} rows={comparisonRows(w)} joinBase="/join/coaches" planExample={w.planExample} provider={w.provider} billingNote={notices.pricing} />
       </Reveal>
       <NoCommission work={w.work} customer="a rider" />
-      <PitchQuestions items={faq.items} provider={w.provider} />
+      <PitchQuestions items={faq.items} />
     </div>
   );
 }

@@ -17,8 +17,8 @@ const TABS = [
 /**
  * Dashboard navigation (canvas: Dashboards 1a/1b). Phones: a horizontal
  * tab row under the header with a terracotta underline on the active tab;
- * desktop: a 200px sticky rail with the plan card and the "tell Kim or
- * Alana" note. Tabs are real routes, so deep links and back/forward work.
+ * desktop: a 200px sticky rail with the plan card and the "something not
+ * working?" note. Tabs are real routes, so deep links and back/forward work.
  */
 export function DashboardNav({
   newEnquiries,
@@ -75,11 +75,11 @@ export function DashboardNav({
           <p className="mt-1 text-[12.5px] leading-[1.4] text-muted">{planLine}</p>
         </div>
         <p className="mt-5 px-3.5 text-[13px] leading-[1.5] text-subtle">
-          Something not working? Tell Kim or Alana directly —{" "}
+          Something not working?{" "}
           <a href={`mailto:${contactEmail}`} className="text-accent">
-            message us
+            Email us
           </a>
-          .
+          . A person who runs the site reads it.
         </p>
       </nav>
     </>

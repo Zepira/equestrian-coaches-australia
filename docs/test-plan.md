@@ -269,3 +269,14 @@ Built 13 Oct 2026. Only testable on a real iPhone, after the push deploys.
 - [ ] **No line under the status bar, and no gap after scrolling back up (13 Oct, later):** on the home page, /coaches and /horse-care, the photo behind the clock is shaded the same as just below it, with no line where the status bar ends. Scroll down, then back up to the top and let go: the page glides back to where it opened, photo behind the clock, no flat dark band. Tap the status bar to jump to the top: same result.
 - [ ] Scroll down until the header turns cream: header and status bar are now the same solid cream, no seam.
 - [ ] Go to About, then tap the logo back to home: it opens the same way (photo behind the clock).
+
+## 20. Nobody named on the site (tone audit)
+
+Done 13 Oct 2026 (docs/tone-audit.md). The database rows are already updated; give the test site a minute after the deploy.
+- [ ] **About** (/about): five parts only: the opening, "Why it exists" (no names), "How we do things", "Who runs it, for the record" (an independent partnership, one person behind it coaches and is listed like any other) beside "We're new", then "Built by riders. Riders and professionals are what make it work." No bios, no photos.
+- [ ] **Admin, Pages, About:** the editor lists those five blocks, no "The rider" or "The coach".
+- [ ] **/for-coaches:** the "what we do" table says "We answer the recommendation posts in equestrian Facebook groups", no name.
+- [ ] **/for-coaches and /for-professionals:** the "tell us what to fix" box ends "a person who runs the site reads it, not a ticket queue. Founding members get a reply within two business days."
+- [ ] **Coach dashboard** (test coach, on a wide screen): under the plan card, "Something not working? Email us. A person who runs the site reads it."
+- [ ] **Terms** "Who we are" and **Privacy** "Who this covers": the business name and ABN, no partners' names.
+- [ ] **Footer:** "Site by Daiquiri Creative" still there and still links.

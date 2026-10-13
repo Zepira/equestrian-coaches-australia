@@ -17,7 +17,7 @@ export async function createLink(fd: FormData) {
   const slug = slugify(formText(fd, "slug", 60) || label);
   const destination = formText(fd, "destination", 200) || "/";
   const source = slugify(formText(fd, "utm_source", 60) || slug);
-  if (!label) back("Give the link a name you'll recognise, like \"Kim's Facebook post, Western group\".");
+  if (!label) back("Give the link a name you'll recognise, like \"Facebook post, Western group\".");
   if (!slug) back("That name doesn't make a usable address.");
   if (!destination.startsWith("/")) back("The destination is a page on this site, starting with /.");
   const { error } = await supabase.from("links").insert({

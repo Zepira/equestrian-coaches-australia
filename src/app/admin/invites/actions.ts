@@ -8,7 +8,7 @@ import { createServiceSupabase } from "@/lib/supabase/service";
 import { currentWording, ensureContact, recordConsent } from "@/lib/audience";
 
 /**
- * Invites (The Site as a CMS §06.6). Kim enters who and what they do,
+ * Invites (The Site as a CMS §06.6). An admin enters who and what they do,
  * optionally starts the profile, and sends the link from her own message.
  * The link opens a pre-filled sign-up; the sign-up trigger checks the token
  * is unused and unexpired, links the new provider to the invite and records

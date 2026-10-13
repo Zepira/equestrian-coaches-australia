@@ -17,7 +17,7 @@ import { CONTACT_EMAIL } from "@/lib/site-url";
  * its own wordmark. No photograph and no counts on purpose: the copy has to
  * stay true while nothing is live, and a number here would be a claim.
  *
- * Every word comes from the coming_soon content block, so Alana and Kim can
+ * Every word comes from the coming_soon content block, so the admins can
  * change it from /admin/pages without a deploy.
  */
 export async function ComingSoon() {

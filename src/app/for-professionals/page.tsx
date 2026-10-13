@@ -169,7 +169,6 @@ export default async function ForProfessionals({ searchParams }: { searchParams:
       <NoCommission work={w.work} customer="an owner" />
       <PitchQuestions
         items={faq.items}
-        provider={w.provider}
         before={
           selected && selected.faq.length > 0 ? (
             <div className="mb-10">

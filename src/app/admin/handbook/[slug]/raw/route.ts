@@ -8,7 +8,7 @@ import { buildHandbookFrameHtml, readHandbookDoc } from "@/lib/handbook-content"
  *
  * The admin layout does not protect route handlers, so this checks is_admin()
  * itself. Without that, the planning documents — which contain the partnership
- * split, the pricing that has not been announced, and Kim's unfinished bio —
+ * split, the pricing that has not been announced, and draft bios,
  * would be readable by anyone who guessed the URL.
  */
 const notFound = () =>

@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getProfession } from "@/lib/cms/read";
 
 /**
- * /join/[profession]: the short link Kim puts in her messages
+ * /join/[profession]: the short link that goes in outreach messages
  * (/join/farriers). Sends the visitor to sign-up with the profession set and
  * every tracking parameter carried over (plan, ref, utm tags, invite), so
  * the link teaches the site's shape and still records where the sign-up

@@ -28,7 +28,7 @@ What is in here:
 
 ### Who we are
 
-Equine Professionals Australia is a partnership between Alana La Bouchardiere and Kim Thompson, trading as Equine Professionals Australia, ABN 74 931 177 211, based in Victoria. When these terms say "we" or "us", that's who they mean. You can reach us at {contact_email}. We answer email within two business days.
+Equine Professionals Australia is a partnership registered in Victoria, trading as Equine Professionals Australia, ABN 74 931 177 211. When these terms say "we" or "us", that's who they mean. [Solicitor: the partners' names are on the ABN register; add them here only if you advise it.] You can reach us at {contact_email}. We answer email within two business days.
 
 ### What the site is
 
@@ -130,7 +130,7 @@ These terms are governed by the law of Victoria, Australia, and the courts of Vi
 
 ### Who this covers
 
-Equine Professionals Australia (Alana La Bouchardiere and Kim Thompson in partnership, ABN 74 931 177 211). Privacy questions and requests go to {contact_email}.
+Equine Professionals Australia, a partnership registered in Victoria, ABN 74 931 177 211. Privacy questions and requests go to {contact_email}.
 
 ### If you're looking for help
 
