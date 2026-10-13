@@ -38,9 +38,10 @@ Site-copy rules applied, humanizer pass run: no dashes, sentence case, plain wor
 
 - eyebrow: "Why it exists"
 - title: "Most riders find their coach *by accident.*"
-- paragraphs: ["A post turns up in a feed, a friend mentions a name, someone at a clinic points across the arena. It works if you already know people. If you're new, you've moved, or you want something more specific than general ridden work, it mostly doesn't. For some disciplines there are only a handful of coaches in the country, and no way to go looking for one on purpose."]
+- paragraphs: ["A post turns up in a feed, a friend mentions a name, someone at a clinic points across the arena. For some disciplines there are only a handful of coaches in the country, and no way to go looking for one on purpose."]
 - pullQuote: unchanged ("Somewhere a rider is looking for a liberty coach... *And neither of them will ever hear about the other.*")
 - closing: "A directory is an unglamorous fix for that. But it is the fix."
+- (Trimmed 13 Oct 2026: the two sentences after the examples repeated the opening's, so they went.)
 
 **`about.rider`** and **`about.coach`**: deleted, and their two sections and photos removed from `src/app/about/page.tsx`.
 

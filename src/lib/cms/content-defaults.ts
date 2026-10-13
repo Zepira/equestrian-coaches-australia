@@ -109,7 +109,7 @@ export const CONTENT_DEFAULTS = {
     eyebrow: "Why it exists",
     title: "Most riders find their coach *by accident.*",
     paragraphs: [
-      "A post turns up in a feed, a friend mentions a name, someone at a clinic points across the arena. It works if you already know people. If you're new, you've moved, or you want something more specific than general ridden work, it mostly doesn't. For some disciplines there are only a handful of coaches in the country, and no way to go looking for one on purpose.",
+      "A post turns up in a feed, a friend mentions a name, someone at a clinic points across the arena. For some disciplines there are only a handful of coaches in the country, and no way to go looking for one on purpose.",
     ],
     pullQuote: "Somewhere a rider is looking for a liberty coach, or a Western coach, or a dressage coach who works with nervous riders. Somewhere near them is exactly that person. *And neither of them will ever hear about the other.*",
     closing: "A directory is an unglamorous fix for that. But it is the fix.",
