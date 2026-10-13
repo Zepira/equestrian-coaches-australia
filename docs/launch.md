@@ -145,6 +145,8 @@ SITE_LAUNCHED=false
 REDIRECT_HOSTS=equineprofessionals.au,www.equineprofessionals.au
 TEST_AUTH_USER=<pick one>
 TEST_AUTH_PASSWORD=<pick one>
+# TEST_HOST_OPEN=true   takes the password off the test host (13 Oct 2026); still
+#                       noindex, and mock payments stop there, so test billing on localhost
 NEXT_PUBLIC_SITE_URL=https://test.equineprofessionals.com.au
 CRON_EMAILS_ENABLED=false
 ```

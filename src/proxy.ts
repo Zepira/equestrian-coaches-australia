@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
-import { COACH_STAGE_HEADER, PUBLIC_HOST, SITE_STAGE, isCoachStagePath, isGatedHost, normaliseHost, showsComingSoon } from "@/lib/launch";
+import { COACH_STAGE_HEADER, PUBLIC_HOST, SITE_STAGE, TEST_HOST_OPEN, isCoachStagePath, isGatedHost, normaliseHost, showsComingSoon } from "@/lib/launch";
 import { FIRST_TOUCH, setTouchCookies, touchFromParams } from "@/lib/touch";
 
 /**
@@ -133,8 +133,9 @@ export async function proxy(request: NextRequest) {
   }
 
   // 2. Every host but the public one is password protected and never indexed.
+  //    TEST_HOST_OPEN takes the password off; the noindex stays.
   if (isGatedHost(host)) {
-    if (!isMachinePath(path)) {
+    if (!isMachinePath(path) && !TEST_HOST_OPEN) {
       const user = process.env.TEST_AUTH_USER;
       const password = process.env.TEST_AUTH_PASSWORD;
       // Fails closed: a gated host with no password configured serves nothing

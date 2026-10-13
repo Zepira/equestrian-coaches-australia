@@ -236,3 +236,12 @@ After the Vercel keys and the Auth settings are switched (see the steps in the b
 - [ ] **Save something** (a profile edit, an admin setting) and reload: it stuck.
 - [ ] **Search and area pages** still list the right people (sample listings, and the test coach once published).
 - [ ] **A week later,** with nothing missing: pause the Tokyo project, then delete it, and remove the `TOKYO_*` lines from `.env`.
+
+## 17. The test site without a password
+
+Built 13 Oct 2026. Works once `TEST_HOST_OPEN=true` is added in Vercel (Production) and the site redeploys.
+- [ ] Open https://test.equineprofessionals.com.au in a private window: the site loads with no password box.
+- [ ] Google still can't list it: https://test.equineprofessionals.com.au/robots.txt says `Disallow: /`.
+- [ ] https://equineprofessionals.com.au still shows the coming soon page.
+- [ ] As the test coach on the test site, try changing plan in Dashboard, Billing: it says billing isn't switched on yet (no free plans while the site is open). Plan changes still work on localhost.
+- [ ] Taking the password back: remove `TEST_HOST_OPEN` (or set it to anything but `true`), redeploy, and the password box returns.

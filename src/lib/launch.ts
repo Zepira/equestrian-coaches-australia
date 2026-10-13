@@ -90,13 +90,24 @@ export function isCoachStagePath(path: string): boolean {
 export const COACH_STAGE_HEADER = "x-coach-stage";
 
 /**
+ * TEST_HOST_OPEN=true takes the password off the test hosts (Alana and Kim,
+ * 13 Oct 2026: people they show it to shouldn't need one). They stay
+ * noindex, and mock payments stop there (see below), because the test host
+ * shares the one real database: an open host plus mock billing would let a
+ * stranger give themselves a free plan that carries into launch. Exactly
+ * "true"; anything else keeps the password.
+ */
+export const TEST_HOST_OPEN = process.env.TEST_HOST_OPEN === "true";
+
+/**
  * Mock payments hand out a real active plan without a card, so they must
  * never run where the public can reach them. Fine on localhost and the
- * password-protected test hosts; refused on the public host.
+ * password-protected test hosts; refused on the public host, and on the
+ * test hosts too once TEST_HOST_OPEN takes their password off.
  */
 export function mockPaymentsAllowed(host: string | null | undefined): boolean {
   if (host && isLocalHost(host)) return true;
-  return isGatedHost(host);
+  return isGatedHost(host) && !TEST_HOST_OPEN;
 }
 
 /** Local development, where no password or launch gate applies. */

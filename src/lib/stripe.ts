@@ -31,7 +31,8 @@ export const isMockPayments = !isStripeConfigured;
  * Mock payments give out a real active plan with no card, so a billing
  * action refuses them on the public host: there, no Stripe key means
  * billing isn't set up, not "free plans for everyone". Localhost and the
- * password-protected test hosts keep mock mode. Call at the top of any
+ * password-protected test hosts keep mock mode (not an open one:
+ * TEST_HOST_OPEN in src/lib/launch.ts). Call at the top of any
  * billing action a person triggers.
  */
 export async function refuseMockOnPublicHost() {

@@ -16,6 +16,8 @@
 //   --mode coaches     SITE_STAGE=coaches, password set (professionals can
 //                      join on the public host; riders still see coming soon)
 //   --mode launched    SITE_LAUNCHED=true
+//   --mode open        SITE_LAUNCHED=false, TEST_HOST_OPEN=true (the test
+//                      host serves without a password, still noindex)
 //   --mode dev         started with no environment at all, the way a
 //                      developer or a local agent runs it
 import { request } from "node:http";
@@ -205,6 +207,18 @@ if (mode === "nopassword") {
   row(!r.body.includes("<footer"), "and no page content with it");
   const home = await get("/");
   row(home.status === 200 && home.body.includes(COMING_SOON), "the public host is unaffected", `status ${home.status}`);
+}
+
+if (mode === "open") {
+  const r = await get("/coaches", { host: TEST_HOST });
+  row(r.status === 200 && !r.body.includes(COMING_SOON), "the test host serves the whole site with no password", `status ${r.status}`);
+  row(noindex(r), "and is still noindex");
+  const robots = await get("/robots.txt", { host: TEST_HOST });
+  row(robots.body.includes("Disallow: /"), "its robots.txt still turns crawlers away");
+  const vercel = await get("/", { host: "equestrian-coaches-australia.vercel.app" });
+  row(vercel.status === 200 && noindex(vercel), "any other host is open the same way, and noindex", `status ${vercel.status}`);
+  const home = await get("/");
+  row(home.status === 200 && home.body.includes(COMING_SOON), "the public host still shows the coming soon page", `status ${home.status}`);
 }
 
 if (mode === "launched") {
