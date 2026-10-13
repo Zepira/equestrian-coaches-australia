@@ -213,3 +213,12 @@ By hand, once `SITE_STAGE=coaches` is set on the real deployment:
 - [ ] **Nothing new in Google:** in the browser's dev tools, Network tab, `/for-coaches` comes back with `X-Robots-Tag: noindex`. `robots.txt` still allows only `/`.
 - [ ] **Test site** is unchanged: the whole site behind the password.
 - [ ] **Admin → Pages → Coming soon** has "Join now (coaches stage only)" to edit the box's words.
+
+## 15. Safety lock on the database wipe
+
+Built 13 Oct 2026. `scripts/db/rebuild.mjs` (which drops every table) now refuses, with no override, once a real professional is in the database: a Stripe customer that isn't a mock one, or a published profile whose accounts aren't admins or test addresses (@resend.dev, @example.com).
+
+- [ ] `node scripts/db/rebuild.mjs --check` on today's database says the wipe would be allowed, and changes nothing.
+- [ ] With a fake real customer on the test coach (ask Claude, or set `subscriptions.stripe_customer_id` to `cus_TEST…` by hand), `--check` refuses and names the profile. Put it back to `mock_epa_test_coach` after.
+- [ ] Running it with no flag refuses to start.
+- [ ] After the first real coach joins, `--check` refuses on its own.

@@ -4,6 +4,7 @@
 // accounts worth keeping from the stage 0 export.
 //
 //   node scripts/db/export-keepers.mjs          (first, always)
+//   node scripts/db/rebuild.mjs --check       (the lock only; changes nothing)
 //   node scripts/db/rebuild.mjs --yes-wipe
 //   node --experimental-strip-types scripts/db/seed-content.mjs   (then: page copy and plans)
 //
@@ -18,8 +19,10 @@ import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { FEATURED_DISCIPLINES, NEW_SHARED_ATTRIBUTES, PROFESSIONS, SHARED_ATTRIBUTE_SLUGS } from "../../supabase/seed/professions.mjs";
 
-if (!process.argv.includes("--yes-wipe")) {
-  console.error("This drops every table in public. Run with --yes-wipe once the export exists.");
+// --check runs only the lock below and stops: nothing is changed.
+const CHECK_ONLY = process.argv.includes("--check");
+if (!CHECK_ONLY && !process.argv.includes("--yes-wipe")) {
+  console.error("This drops every table in public. Run with --yes-wipe once the export exists (or --check to see whether the lock would allow it).");
   process.exit(1);
 }
 
@@ -65,6 +68,42 @@ const client = new pg.Client({
 });
 await client.connect();
 const q = (sql, params) => client.query(sql, params);
+
+// ── The lock (12 Oct 2026) ──────────────────────────────────────────────────
+// Once a real professional is in this database, the wipe refuses, whatever
+// flags are passed: there's no override on purpose. Real means a Stripe
+// customer that isn't a mock one, or a published profile whose accounts
+// aren't admins or test addresses (@resend.dev, @example.com). To wipe a
+// database like that, remove those rows by hand first, knowing what you're
+// deleting. A fresh database with no tables passes.
+try {
+  const { rows: real } = await q(`
+    select p.slug, p.status, s.stripe_customer_id
+    from public.providers p
+    left join public.subscriptions s on s.provider_id = p.id
+    where (s.stripe_customer_id is not null and s.stripe_customer_id not like 'mock%')
+       or (p.status = 'published' and not exists (
+            select 1 from public.provider_members m
+            join public.profiles pr on pr.id = m.user_id
+            where m.provider_id = p.id
+              and (pr.email ilike '%@resend.dev' or pr.email ilike '%@example.com'
+                   or exists (select 1 from public.admin_users a where a.user_id = pr.id))))`);
+  if (real.length) {
+    console.error(`Refusing to wipe: this database has ${real.length} real professional(s):`);
+    for (const r of real.slice(0, 10)) console.error(`  ${r.slug} (${r.status}${r.stripe_customer_id ? `, Stripe ${r.stripe_customer_id}` : ""})`);
+    console.error("There's no flag to override this. See the comment above this check in scripts/db/rebuild.mjs.");
+    await client.end();
+    process.exit(1);
+  }
+} catch (err) {
+  // No public.providers yet (a brand-new project): nothing to protect.
+  if (err?.code !== "42P01") throw err;
+}
+if (CHECK_ONLY) {
+  console.log("Lock: no real professionals here, so a wipe would be allowed. Nothing was changed.");
+  await client.end();
+  process.exit(0);
+}
 
 try {
   // ── 1. Storage ────────────────────────────────────────────────────────────

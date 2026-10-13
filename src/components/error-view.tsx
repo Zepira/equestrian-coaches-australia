@@ -27,7 +27,10 @@ export function ErrorView({
   home?: { href: string; label: string };
 }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    // A server error arrives here with a digest and was already reported by
+    // onRequestError (src/instrumentation.ts); reporting it again would add a
+    // second, vaguer issue. Browser errors have no digest and are reported here.
+    if (!error.digest) Sentry.captureException(error);
   }, [error]);
 
   return (

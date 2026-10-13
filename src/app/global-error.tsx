@@ -11,7 +11,8 @@ import { CONTACT_EMAIL } from "@/lib/site-url";
  */
 export default function GlobalError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    // Server errors (with a digest) were reported on the server already.
+    if (!error.digest) Sentry.captureException(error);
   }, [error]);
 
   return (
