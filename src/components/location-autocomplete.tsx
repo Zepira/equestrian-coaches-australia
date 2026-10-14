@@ -3,6 +3,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import type { LocationSuggestion } from "@/app/api/location-suggest/route";
 import { placePanel } from "@/lib/anchored-panel";
+import { Spinner } from "@/components/ui/spinner";
 
 /**
  * The suburb field, wherever a place is typed outside the hero search.
@@ -66,6 +67,10 @@ export function LocationAutocomplete({
   const verified = value.trim() !== "" && value === picked;
 
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
+  // Looking something up, and the text the current list answers: together
+  // they tell "still looking" from "nothing matches".
+  const [loading, setLoading] = useState(false);
+  const [answered, setAnswered] = useState("");
   const [open, setOpen] = useState(false);
   const [touched, setTouched] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -77,6 +82,11 @@ export function LocationAutocomplete({
 
   const visible = strict ? suggestions.filter((s) => s.postcode) : suggestions;
   const showList = open && visible.length > 0;
+  const typed = value.trim();
+  const looking = typed.length >= 2 && value !== picked && (loading || answered !== typed);
+  // A status row in place of the list: while the first answer is on its way,
+  // or (where a pick is required) when nothing matches.
+  const status = !open || showList || typed.length < 2 || value === picked ? null : looking ? "looking" : strict ? "none" : null;
 
   function setValue(v: string) {
     if (controlled === undefined) setOwn(v);
@@ -91,15 +101,22 @@ export function LocationAutocomplete({
     const timer = setTimeout(() => {
       if (q.length < 2 || value === picked) {
         setSuggestions([]);
+        setLoading(false);
         return;
       }
+      setLoading(true);
       fetch(`/api/location-suggest?q=${encodeURIComponent(q)}`, { signal: controller.signal })
         .then((res) => res.json())
         .then((data: { suggestions: LocationSuggestion[] }) => {
           setSuggestions(data.suggestions ?? []);
+          setAnswered(q);
           setActiveIndex(-1);
+          setLoading(false);
         })
-        .catch(() => {});
+        .catch(() => {
+          // Aborted by newer typing (which is loading now), or offline.
+          if (!controller.signal.aborted) setLoading(false);
+        });
     }, 180);
     return () => {
       clearTimeout(timer);
@@ -135,8 +152,8 @@ export function LocationAutocomplete({
 
   // Open up or down depending on what the page (or a clipping hero) leaves.
   useLayoutEffect(() => {
-    if (showList) setPlace(placePanel(inputRef.current, 256));
-  }, [showList]);
+    if (showList || status) setPlace(placePanel(inputRef.current, showList ? 256 : 60));
+  }, [showList, status]);
 
   function select(s: LocationSuggestion) {
     const v = strict && s.postcode ? s.label : s.value;
@@ -205,7 +222,7 @@ export function LocationAutocomplete({
         onKeyDown={onKeyDown}
         placeholder={placeholder}
         className={inputClassName}
-        style={strict ? { paddingRight: "2.5rem" } : undefined}
+        style={{ paddingRight: "2.5rem" }}
         disabled={disabled}
         role="combobox"
         aria-label={ariaLabel}
@@ -214,11 +231,22 @@ export function LocationAutocomplete({
         aria-autocomplete="list"
         aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined}
         aria-invalid={showHint || undefined}
+        aria-busy={looking || undefined}
         aria-describedby={showHint ? hintId : undefined}
         autoComplete="off"
         spellCheck={false}
       />
       {strict && name && <input type="hidden" name={name} value={verified ? value : ""} />}
+      {looking && (
+        // Fades in after a beat, so a quick (cached) answer never flickers it.
+        <span
+          aria-hidden
+          className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-subtle"
+          style={{ animation: "appear 0.2s ease 0.25s both" }}
+        >
+          <Spinner className="text-[15px]" />
+        </span>
+      )}
       {strict && verified && (
         <span aria-hidden className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-accent">
           <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -231,6 +259,24 @@ export function LocationAutocomplete({
         <p id={hintId} className="mt-1.5 text-[13px] text-accent">
           Pick your suburb from the list.
         </p>
+      )}
+      {status && (
+        <div
+          role="status"
+          className={`absolute left-0 right-0 z-30 flex items-center gap-2 rounded-[var(--radius-control)] border border-border bg-surface px-3 py-2.5 text-[14px] text-muted shadow-[0_12px_30px_rgba(31,58,46,0.12)] ${
+            place.dropUp ? "bottom-full mb-1" : "top-full mt-1"
+          }`}
+          style={status === "looking" ? { animation: "appear 0.2s ease 0.25s both" } : undefined}
+        >
+          {status === "looking" ? (
+            <>
+              <Spinner className="text-[13px] text-accent" />
+              Looking up suburbs…
+            </>
+          ) : (
+            <>No suburb matches &ldquo;{typed}&rdquo;. Check the spelling, or try the postcode.</>
+          )}
+        </div>
       )}
       {showList && (
         <ul

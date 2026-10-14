@@ -298,6 +298,8 @@ Built 14 Oct 2026. Every box where someone saves a place now works like an addre
 - [ ] Same step: type "Richmond" and tab away. It doesn't pick one (there are five) and shows "Pick your suburb from the list." Continue won't go on. Type "Richmond VIC" and tab away: it picks Richmond VIC 3121.
 - [ ] Type "Bendigo" in full and press Enter: it takes Bendigo VIC 3550 rather than submitting.
 - [ ] Arrow keys move down the list, Enter picks, Escape closes it.
+- [ ] **While it looks up** (easiest on a slow phone connection): a small spinner turns at the right of the box and the list says "Looking up suburbs…". On a fast connection it may not appear at all, which is fine.
+- [ ] Type nonsense like "Zzqx": the list says "No suburb matches "Zzqx". Check the spelling, or try the postcode."
 - [ ] **Dashboard, Profile, "Based in"** (test coach): change the town by picking from the list, save, reload: it's kept. Type a town without picking: Save is refused with the message.
 - [ ] **Dashboard, Profile, Other locations** (needs Clinic): "Add location" only works after a pick, and the box clears after adding.
 - [ ] **Account, alerts** (test rider): the "Near" box works the same way.
