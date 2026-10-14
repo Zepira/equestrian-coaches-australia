@@ -1,6 +1,6 @@
 # Supabase auth email templates
 
-Paste these into Supabase: **Authentication → Email Templates**. They use the same shell as every other email the site sends (`src/lib/email-layout.ts`): cream ground, ink header with the horse and wordmark, white card, quiet footer. The logo loads from the public host, which serves `/brand/` before launch. Two templates
+Paste these into Supabase: **Authentication → Email Templates**. They use the same shell as every other email the site sends (`src/lib/email-layout.ts`): cream ground, ink header with the horse and wordmark, white card, quiet footer. In dark mode they switch to a deep green version (the `em-*` classes and the `<style>` block; the colours match `EMAIL_DARK_CSS` in that file, so change both together). Every colour is also inline, so a client that drops `<style>` still gets the light version. The logo loads from the public host, which serves `/brand/` before launch. Two templates
 change: **Confirm signup** and **Reset password**. Each has a subject line and a
 body (the body field takes HTML; use the source view).
 
@@ -65,17 +65,42 @@ Confirm your email for Equine Professionals Australia
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="color-scheme" content="light only" />
-<meta name="supported-color-schemes" content="light only" />
+<meta name="color-scheme" content="light dark" />
+<meta name="supported-color-schemes" content="light dark" />
 <title>Confirm your email</title>
+<style>
+:root { color-scheme: light dark; supported-color-schemes: light dark; }
+@media (prefers-color-scheme: dark) {
+  .em-ground { background-color: #0e1c16 !important; }
+  .em-card { background-color: #14281f !important; border-color: #2c4a3d !important; }
+  .em-head { background-color: #1f3a2e !important; }
+  .em-h1 { color: #f6f1e7 !important; }
+  .em-text { color: #ece6da !important; }
+  .em-muted { color: #cfc8ba !important; }
+  .em-subtle { color: #aba495 !important; }
+  .em-rule { background-color: #2c4a3d !important; }
+  .em-link { color: #e8b79a !important; }
+}
+[data-ogsb] .em-ground { background-color: #0e1c16 !important; }
+[data-ogsb] .em-card { background-color: #14281f !important; }
+[data-ogsb] .em-head { background-color: #1f3a2e !important; }
+[data-ogsb] .em-rule { background-color: #2c4a3d !important; }
+[data-ogsc] .em-h1 { color: #f6f1e7 !important; }
+[data-ogsc] .em-text { color: #ece6da !important; }
+[data-ogsc] .em-muted { color: #cfc8ba !important; }
+[data-ogsc] .em-subtle { color: #aba495 !important; }
+[data-ogsc] .em-link { color: #e8b79a !important; }
+[data-ogsb] .em-btn { background-color: #b4553a !important; }
+[data-ogsc] .em-btn-text { color: #f6f1e7 !important; }
+</style>
 </head>
-<body style="margin:0;padding:0;background-color:#f6f1e7;">
+<body class="em-ground" style="margin:0;padding:0;background-color:#f6f1e7;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">One tap to confirm your email and get started.</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f6f1e7;">
+<table class="em-ground" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f6f1e7;">
 <tr><td align="center" style="padding:24px 12px;">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#fffdf8;border:1px solid #e7dac6;border-radius:18px;overflow:hidden;">
+<table class="em-card" role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#fffdf8;border:1px solid #e7dac6;border-radius:18px;overflow:hidden;">
 
-<tr><td style="background-color:#14281f;padding:22px 28px;">
+<tr><td class="em-head" style="background-color:#14281f;padding:22px 28px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
 <td style="padding-right:12px;vertical-align:middle;"><img src="https://equineprofessionals.com.au/brand/horse-cream-small.png" width="34" height="34" alt="" style="display:block;width:34px;height:34px;border:0;" /></td>
 <td style="vertical-align:middle;">
@@ -86,24 +111,24 @@ Confirm your email for Equine Professionals Australia
 </td></tr>
 
 <tr><td style="padding:32px 28px 8px;font-family:Helvetica,Arial,sans-serif;">
-<h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:30px;line-height:1.15;color:#14281f;">Confirm your email</h1>
-<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">{{ if .Data.name }}Hi {{ .Data.name }},{{ else }}Hi,{{ end }}</p>
-<p style="margin:0 0 24px;font-size:16px;line-height:1.55;color:#22201c;">Thanks for signing up to Equine Professionals Australia. Tap the button to confirm this is your email address.</p>
+<h1 class="em-h1" style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:30px;line-height:1.15;color:#14281f;">Confirm your email</h1>
+<p class="em-text" style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">{{ if .Data.name }}Hi {{ .Data.name }},{{ else }}Hi,{{ end }}</p>
+<p class="em-text" style="margin:0 0 24px;font-size:16px;line-height:1.55;color:#22201c;">Thanks for signing up to Equine Professionals Australia. Tap the button to confirm this is your email address.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;"><tr>
-<td style="background-color:#b4553a;border-radius:999px;">
-<a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email" style="display:inline-block;padding:14px 28px;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:bold;color:#f6f1e7;text-decoration:none;border-radius:999px;">Confirm my email</a>
+<td class="em-btn" style="background-color:#b4553a;border-radius:999px;">
+<a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email" class="em-btn-text" style="display:inline-block;padding:14px 28px;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:bold;color:#f6f1e7;text-decoration:none;border-radius:999px;">Confirm my email</a>
 </td>
 </tr></table>
-<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">You can open this on a different phone or computer from the one you signed up on. The link works once.</p>
-<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">Didn't sign up? Ignore this email and nothing will happen.</p>
-<p style="margin:0 0 24px;font-size:13px;line-height:1.5;color:#6c685e;">If the button doesn't work, copy this into your browser:<br />
-<span style="word-break:break-all;color:#4a4842;">{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email</span></p>
+<p class="em-text" style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">You can open this on a different phone or computer from the one you signed up on. The link works once.</p>
+<p class="em-text" style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">Didn't sign up? Ignore this email and nothing will happen.</p>
+<p class="em-subtle" style="margin:0 0 24px;font-size:13px;line-height:1.5;color:#6c685e;">If the button doesn't work, copy this into your browser:<br />
+<span class="em-muted" style="word-break:break-all;color:#4a4842;">{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email</span></p>
 </td></tr>
 
-<tr><td style="padding:0 28px;"><div style="height:1px;background-color:#e7dac6;"></div></td></tr>
+<tr><td style="padding:0 28px;"><div class="em-rule" style="height:1px;background-color:#e7dac6;"></div></td></tr>
 <tr><td style="padding:18px 28px 24px;font-family:Helvetica,Arial,sans-serif;">
-<p style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#6c685e;">Questions? Write to <a href="mailto:hello@equineprofessionals.com.au" style="color:#b4553a;text-decoration:underline;">hello@equineprofessionals.com.au</a>. Replies to this email don't reach anyone.</p>
-<p style="margin:0;font-size:13px;line-height:1.5;color:#6c685e;">Equine Professionals Australia · <a href="https://equineprofessionals.com.au" style="color:#6c685e;text-decoration:underline;">equineprofessionals.com.au</a></p>
+<p class="em-subtle" style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#6c685e;">Questions? Write to <a class="em-link" href="mailto:hello@equineprofessionals.com.au" style="color:#b4553a;text-decoration:underline;">hello@equineprofessionals.com.au</a>. Replies to this email don't reach anyone.</p>
+<p class="em-subtle" style="margin:0;font-size:13px;line-height:1.5;color:#6c685e;">Equine Professionals Australia · <a class="em-subtle" href="https://equineprofessionals.com.au" style="color:#6c685e;text-decoration:underline;">equineprofessionals.com.au</a></p>
 </td></tr>
 
 </table>
@@ -131,17 +156,42 @@ Set a new password for Equine Professionals Australia
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="color-scheme" content="light only" />
-<meta name="supported-color-schemes" content="light only" />
+<meta name="color-scheme" content="light dark" />
+<meta name="supported-color-schemes" content="light dark" />
 <title>Set a new password</title>
+<style>
+:root { color-scheme: light dark; supported-color-schemes: light dark; }
+@media (prefers-color-scheme: dark) {
+  .em-ground { background-color: #0e1c16 !important; }
+  .em-card { background-color: #14281f !important; border-color: #2c4a3d !important; }
+  .em-head { background-color: #1f3a2e !important; }
+  .em-h1 { color: #f6f1e7 !important; }
+  .em-text { color: #ece6da !important; }
+  .em-muted { color: #cfc8ba !important; }
+  .em-subtle { color: #aba495 !important; }
+  .em-rule { background-color: #2c4a3d !important; }
+  .em-link { color: #e8b79a !important; }
+}
+[data-ogsb] .em-ground { background-color: #0e1c16 !important; }
+[data-ogsb] .em-card { background-color: #14281f !important; }
+[data-ogsb] .em-head { background-color: #1f3a2e !important; }
+[data-ogsb] .em-rule { background-color: #2c4a3d !important; }
+[data-ogsc] .em-h1 { color: #f6f1e7 !important; }
+[data-ogsc] .em-text { color: #ece6da !important; }
+[data-ogsc] .em-muted { color: #cfc8ba !important; }
+[data-ogsc] .em-subtle { color: #aba495 !important; }
+[data-ogsc] .em-link { color: #e8b79a !important; }
+[data-ogsb] .em-btn { background-color: #b4553a !important; }
+[data-ogsc] .em-btn-text { color: #f6f1e7 !important; }
+</style>
 </head>
-<body style="margin:0;padding:0;background-color:#f6f1e7;">
+<body class="em-ground" style="margin:0;padding:0;background-color:#f6f1e7;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">A link to choose a new password.</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f6f1e7;">
+<table class="em-ground" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f6f1e7;">
 <tr><td align="center" style="padding:24px 12px;">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#fffdf8;border:1px solid #e7dac6;border-radius:18px;overflow:hidden;">
+<table class="em-card" role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#fffdf8;border:1px solid #e7dac6;border-radius:18px;overflow:hidden;">
 
-<tr><td style="background-color:#14281f;padding:22px 28px;">
+<tr><td class="em-head" style="background-color:#14281f;padding:22px 28px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
 <td style="padding-right:12px;vertical-align:middle;"><img src="https://equineprofessionals.com.au/brand/horse-cream-small.png" width="34" height="34" alt="" style="display:block;width:34px;height:34px;border:0;" /></td>
 <td style="vertical-align:middle;">
@@ -152,24 +202,24 @@ Set a new password for Equine Professionals Australia
 </td></tr>
 
 <tr><td style="padding:32px 28px 8px;font-family:Helvetica,Arial,sans-serif;">
-<h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:30px;line-height:1.15;color:#14281f;">Set a new password</h1>
-<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">{{ if .Data.name }}Hi {{ .Data.name }},{{ else }}Hi,{{ end }}</p>
-<p style="margin:0 0 24px;font-size:16px;line-height:1.55;color:#22201c;">Someone asked to reset the password for this email address on Equine Professionals Australia. If that was you, tap the button to choose a new one.</p>
+<h1 class="em-h1" style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:30px;line-height:1.15;color:#14281f;">Set a new password</h1>
+<p class="em-text" style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">{{ if .Data.name }}Hi {{ .Data.name }},{{ else }}Hi,{{ end }}</p>
+<p class="em-text" style="margin:0 0 24px;font-size:16px;line-height:1.55;color:#22201c;">Someone asked to reset the password for this email address on Equine Professionals Australia. If that was you, tap the button to choose a new one.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;"><tr>
-<td style="background-color:#b4553a;border-radius:999px;">
-<a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=recovery" style="display:inline-block;padding:14px 28px;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:bold;color:#f6f1e7;text-decoration:none;border-radius:999px;">Set a new password</a>
+<td class="em-btn" style="background-color:#b4553a;border-radius:999px;">
+<a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=recovery" class="em-btn-text" style="display:inline-block;padding:14px 28px;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:bold;color:#f6f1e7;text-decoration:none;border-radius:999px;">Set a new password</a>
 </td>
 </tr></table>
-<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">The link works once. If it has expired, ask for another on the log in page under "Forgot password?".</p>
-<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">Didn't ask for this? Ignore it and your password stays as it is.</p>
-<p style="margin:0 0 24px;font-size:13px;line-height:1.5;color:#6c685e;">If the button doesn't work, copy this into your browser:<br />
-<span style="word-break:break-all;color:#4a4842;">{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=recovery</span></p>
+<p class="em-text" style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">The link works once. If it has expired, ask for another on the log in page under "Forgot password?".</p>
+<p class="em-text" style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">Didn't ask for this? Ignore it and your password stays as it is.</p>
+<p class="em-subtle" style="margin:0 0 24px;font-size:13px;line-height:1.5;color:#6c685e;">If the button doesn't work, copy this into your browser:<br />
+<span class="em-muted" style="word-break:break-all;color:#4a4842;">{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=recovery</span></p>
 </td></tr>
 
-<tr><td style="padding:0 28px;"><div style="height:1px;background-color:#e7dac6;"></div></td></tr>
+<tr><td style="padding:0 28px;"><div class="em-rule" style="height:1px;background-color:#e7dac6;"></div></td></tr>
 <tr><td style="padding:18px 28px 24px;font-family:Helvetica,Arial,sans-serif;">
-<p style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#6c685e;">Questions? Write to <a href="mailto:hello@equineprofessionals.com.au" style="color:#b4553a;text-decoration:underline;">hello@equineprofessionals.com.au</a>. Replies to this email don't reach anyone.</p>
-<p style="margin:0;font-size:13px;line-height:1.5;color:#6c685e;">Equine Professionals Australia · <a href="https://equineprofessionals.com.au" style="color:#6c685e;text-decoration:underline;">equineprofessionals.com.au</a></p>
+<p class="em-subtle" style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#6c685e;">Questions? Write to <a class="em-link" href="mailto:hello@equineprofessionals.com.au" style="color:#b4553a;text-decoration:underline;">hello@equineprofessionals.com.au</a>. Replies to this email don't reach anyone.</p>
+<p class="em-subtle" style="margin:0;font-size:13px;line-height:1.5;color:#6c685e;">Equine Professionals Australia · <a class="em-subtle" href="https://equineprofessionals.com.au" style="color:#6c685e;text-decoration:underline;">equineprofessionals.com.au</a></p>
 </td></tr>
 
 </table>
@@ -213,17 +263,42 @@ Your Equine Professionals Australia password was changed
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="color-scheme" content="light only" />
-<meta name="supported-color-schemes" content="light only" />
+<meta name="color-scheme" content="light dark" />
+<meta name="supported-color-schemes" content="light dark" />
 <title>Your password was changed</title>
+<style>
+:root { color-scheme: light dark; supported-color-schemes: light dark; }
+@media (prefers-color-scheme: dark) {
+  .em-ground { background-color: #0e1c16 !important; }
+  .em-card { background-color: #14281f !important; border-color: #2c4a3d !important; }
+  .em-head { background-color: #1f3a2e !important; }
+  .em-h1 { color: #f6f1e7 !important; }
+  .em-text { color: #ece6da !important; }
+  .em-muted { color: #cfc8ba !important; }
+  .em-subtle { color: #aba495 !important; }
+  .em-rule { background-color: #2c4a3d !important; }
+  .em-link { color: #e8b79a !important; }
+}
+[data-ogsb] .em-ground { background-color: #0e1c16 !important; }
+[data-ogsb] .em-card { background-color: #14281f !important; }
+[data-ogsb] .em-head { background-color: #1f3a2e !important; }
+[data-ogsb] .em-rule { background-color: #2c4a3d !important; }
+[data-ogsc] .em-h1 { color: #f6f1e7 !important; }
+[data-ogsc] .em-text { color: #ece6da !important; }
+[data-ogsc] .em-muted { color: #cfc8ba !important; }
+[data-ogsc] .em-subtle { color: #aba495 !important; }
+[data-ogsc] .em-link { color: #e8b79a !important; }
+[data-ogsb] .em-btn { background-color: #b4553a !important; }
+[data-ogsc] .em-btn-text { color: #f6f1e7 !important; }
+</style>
 </head>
-<body style="margin:0;padding:0;background-color:#f6f1e7;">
+<body class="em-ground" style="margin:0;padding:0;background-color:#f6f1e7;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your password was just changed. Nothing to do if it was you.</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f6f1e7;">
+<table class="em-ground" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f6f1e7;">
 <tr><td align="center" style="padding:24px 12px;">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#fffdf8;border:1px solid #e7dac6;border-radius:18px;overflow:hidden;">
+<table class="em-card" role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#fffdf8;border:1px solid #e7dac6;border-radius:18px;overflow:hidden;">
 
-<tr><td style="background-color:#14281f;padding:22px 28px;">
+<tr><td class="em-head" style="background-color:#14281f;padding:22px 28px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
 <td style="padding-right:12px;vertical-align:middle;"><img src="https://equineprofessionals.com.au/brand/horse-cream-small.png" width="34" height="34" alt="" style="display:block;width:34px;height:34px;border:0;" /></td>
 <td style="vertical-align:middle;">
@@ -234,17 +309,17 @@ Your Equine Professionals Australia password was changed
 </td></tr>
 
 <tr><td style="padding:32px 28px 8px;font-family:Helvetica,Arial,sans-serif;">
-<h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:30px;line-height:1.15;color:#14281f;">Your password was changed</h1>
-<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">{{ if .Data.name }}Hi {{ .Data.name }},{{ else }}Hi,{{ end }}</p>
-<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">The password for your Equine Professionals Australia account ({{ .Email }}) was just changed.</p>
-<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">If that was you, there's nothing else to do.</p>
-<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">If it wasn't, someone else may know your password. Set a new one straight away with "Forgot password?" on the log in page, then write to us at <a href="mailto:hello@equineprofessionals.com.au" style="color:#b4553a;text-decoration:underline;">hello@equineprofessionals.com.au</a> so we can check your account with you.</p>
+<h1 class="em-h1" style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:30px;line-height:1.15;color:#14281f;">Your password was changed</h1>
+<p class="em-text" style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">{{ if .Data.name }}Hi {{ .Data.name }},{{ else }}Hi,{{ end }}</p>
+<p class="em-text" style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">The password for your Equine Professionals Australia account ({{ .Email }}) was just changed.</p>
+<p class="em-text" style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">If that was you, there's nothing else to do.</p>
+<p class="em-text" style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#22201c;">If it wasn't, someone else may know your password. Set a new one straight away with "Forgot password?" on the log in page, then write to us at <a class="em-link" href="mailto:hello@equineprofessionals.com.au" style="color:#b4553a;text-decoration:underline;">hello@equineprofessionals.com.au</a> so we can check your account with you.</p>
 </td></tr>
 
-<tr><td style="padding:0 28px;"><div style="height:1px;background-color:#e7dac6;"></div></td></tr>
+<tr><td style="padding:0 28px;"><div class="em-rule" style="height:1px;background-color:#e7dac6;"></div></td></tr>
 <tr><td style="padding:18px 28px 24px;font-family:Helvetica,Arial,sans-serif;">
-<p style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#6c685e;">We send this whenever an account password changes, so you always know. Replies to this email don't reach anyone.</p>
-<p style="margin:0;font-size:13px;line-height:1.5;color:#6c685e;">Equine Professionals Australia · <a href="https://equineprofessionals.com.au" style="color:#6c685e;text-decoration:underline;">equineprofessionals.com.au</a></p>
+<p class="em-subtle" style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#6c685e;">We send this whenever an account password changes, so you always know. Replies to this email don't reach anyone.</p>
+<p class="em-subtle" style="margin:0;font-size:13px;line-height:1.5;color:#6c685e;">Equine Professionals Australia · <a class="em-subtle" href="https://equineprofessionals.com.au" style="color:#6c685e;text-decoration:underline;">equineprofessionals.com.au</a></p>
 </td></tr>
 
 </table>

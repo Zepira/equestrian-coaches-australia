@@ -280,3 +280,13 @@ Done 13 Oct 2026 (docs/tone-audit.md). The database rows are already updated; gi
 - [ ] **Coach dashboard** (test coach, on a wide screen): under the plan card, "Something not working? Email us. A person who runs the site reads it."
 - [ ] **Terms** "Who we are" and **Privacy** "Who this covers": the business name and ABN, no partners' names.
 - [ ] **Footer:** "Site by Daiquiri Creative" still there and still links.
+
+## 21. Emails in dark mode
+
+Built 14 Oct 2026. Needs the three auth templates in docs/auth-email-templates.md pasted into Supabase again (Authentication, Email Templates: Confirm signup, Reset password, Password changed). The other emails pick it up on the push.
+- [ ] Turn on dark mode on your phone. Sign up on the test site with a new address and open the confirmation email in the Outlook app: deep green background, a slightly lighter green header bar, cream heading and text, terracotta button. No grey.
+- [ ] Open the same email in Apple Mail (dark mode on): the same deep green version.
+- [ ] Turn dark mode off and open it again: the cream version, as before.
+- [ ] Forgot password on the log in page, with dark mode on: the reset email is the green version too, and its button still works.
+- [ ] Send yourself an enquiry or a waitlist confirmation with dark mode on: the same green version, links in peach.
+- [ ] Gmail decides its own dark colours, so it may still look different there. It should still be readable.

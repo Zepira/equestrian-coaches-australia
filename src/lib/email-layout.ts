@@ -42,6 +42,53 @@ const C = {
   peach: "#e8b79a",
 } as const;
 
+/**
+ * The dark version, chosen rather than left to the mail app. Without it the
+ * Outlook app in dark mode works out its own colours from the light ones and
+ * the cream turns a flat grey. Apple Mail and Outlook for Mac and iOS read the
+ * media query; Outlook's own recolouring marks what it changed with
+ * [data-ogsc] (text) and [data-ogsb] (backgrounds), and those rules steer it
+ * to the same palette. Gmail ignores both and does what it likes.
+ *
+ * Every class here must also carry its light colour inline, because Gmail and
+ * older clients drop <style> and need the email to work without it.
+ */
+const D = {
+  ground: "#0e1c16",
+  surface: "#14281f",
+  head: "#1f3a2e",
+  heading: "#f6f1e7",
+  text: "#ece6da",
+  muted: "#cfc8ba",
+  subtle: "#aba495",
+  border: "#2c4a3d",
+  link: "#e8b79a",
+} as const;
+
+export const EMAIL_DARK_CSS = `
+:root { color-scheme: light dark; supported-color-schemes: light dark; }
+@media (prefers-color-scheme: dark) {
+  .em-ground { background-color: ${D.ground} !important; }
+  .em-card { background-color: ${D.surface} !important; border-color: ${D.border} !important; }
+  .em-head { background-color: ${D.head} !important; }
+  .em-h1 { color: ${D.heading} !important; }
+  .em-text { color: ${D.text} !important; }
+  .em-muted { color: ${D.muted} !important; }
+  .em-subtle { color: ${D.subtle} !important; }
+  .em-rule { background-color: ${D.border} !important; }
+  .em-link { color: ${D.link} !important; }
+}
+[data-ogsb] .em-ground { background-color: ${D.ground} !important; }
+[data-ogsb] .em-card { background-color: ${D.surface} !important; }
+[data-ogsb] .em-head { background-color: ${D.head} !important; }
+[data-ogsb] .em-rule { background-color: ${D.border} !important; }
+[data-ogsc] .em-h1 { color: ${D.heading} !important; }
+[data-ogsc] .em-text { color: ${D.text} !important; }
+[data-ogsc] .em-muted { color: ${D.muted} !important; }
+[data-ogsc] .em-subtle { color: ${D.subtle} !important; }
+[data-ogsc] .em-link { color: ${D.link} !important; }
+`;
+
 const escapeHtml = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
@@ -59,7 +106,7 @@ function linkify(escaped: string): string {
     let label = url.replace(/^https?:\/\//, "");
     if (label.length > 48) label = `${label.split("?")[0]}`;
     if (label.length > 48) label = `${label.slice(0, 45)}...`;
-    return `<a href="${url}" style="color:${C.accent};text-decoration:underline;word-break:break-word;">${label}</a>`;
+    return `<a class="em-link" href="${url}" style="color:${C.accent};text-decoration:underline;word-break:break-word;">${label}</a>`;
   });
 }
 
@@ -74,6 +121,8 @@ function paragraphs(text: string): string[] {
 
 const P_STYLE = `margin:0 0 16px;font-size:16px;line-height:1.55;color:${C.text};`;
 const SMALL_STYLE = `margin:0 0 10px;font-size:13px;line-height:1.5;color:${C.subtle};`;
+const P_CLASS = "em-text";
+const SMALL_CLASS = "em-subtle";
 
 /**
  * The whole email. `text` is exactly what the plain text part carries, footer
@@ -94,9 +143,9 @@ export function renderEmailHtml(text: string, subject: string): string {
       ? []
       : [blocks[cut].replace(/^--\n?/, ""), ...blocks.slice(cut + 1)].filter(Boolean);
 
-  const render = (list: string[], style: string) =>
+  const render = (list: string[], style: string, cls: string) =>
     list
-      .map((p) => `<p style="${style}">${linkify(escapeHtml(p)).replace(/\n/g, "<br />")}</p>`)
+      .map((p) => `<p class="${cls}" style="${style}">${linkify(escapeHtml(p)).replace(/\n/g, "<br />")}</p>`)
       .join("");
 
   // Shown by most inboxes as the preview line beside the subject. Hidden in
@@ -109,17 +158,18 @@ export function renderEmailHtml(text: string, subject: string): string {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="color-scheme" content="light only" />
-<meta name="supported-color-schemes" content="light only" />
+<meta name="color-scheme" content="light dark" />
+<meta name="supported-color-schemes" content="light dark" />
 <title>${escapeHtml(subject)}</title>
+<style>${EMAIL_DARK_CSS}</style>
 </head>
-<body style="margin:0;padding:0;background-color:${C.ground};">
+<body class="em-ground" style="margin:0;padding:0;background-color:${C.ground};">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preheader}${"&#847;&zwnj;&nbsp;".repeat(60)}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${C.ground};">
+<table class="em-ground" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${C.ground};">
 <tr><td align="center" style="padding:24px 12px;">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:${C.surface};border:1px solid ${C.border};border-radius:18px;overflow:hidden;">
+<table class="em-card" role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:${C.surface};border:1px solid ${C.border};border-radius:18px;overflow:hidden;">
 
-<tr><td style="background-color:${C.ink};padding:22px 28px;">
+<tr><td class="em-head" style="background-color:${C.ink};padding:22px 28px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
 <td style="padding-right:12px;vertical-align:middle;">
 <img src="${assetUrl("/brand/horse-cream-small.png")}" width="34" height="34" alt="" style="display:block;width:34px;height:34px;border:0;" />
@@ -132,13 +182,13 @@ export function renderEmailHtml(text: string, subject: string): string {
 </td></tr>
 
 <tr><td style="padding:28px;font-family:Helvetica,Arial,sans-serif;">
-${render(body, P_STYLE)}
+${render(body, P_STYLE, P_CLASS)}
 </td></tr>
 
 ${
   footer.length
-    ? `<tr><td style="padding:0 28px;"><div style="height:1px;background-color:${C.border};"></div></td></tr>
-<tr><td style="padding:18px 28px 24px;font-family:Helvetica,Arial,sans-serif;">${render(footer, SMALL_STYLE)}</td></tr>`
+    ? `<tr><td style="padding:0 28px;"><div class="em-rule" style="height:1px;background-color:${C.border};"></div></td></tr>
+<tr><td style="padding:18px 28px 24px;font-family:Helvetica,Arial,sans-serif;">${render(footer, SMALL_STYLE, SMALL_CLASS)}</td></tr>`
     : ""
 }
 
