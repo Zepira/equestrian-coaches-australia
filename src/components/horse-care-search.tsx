@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SelectMenu } from "@/components/ui/select-menu";
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 import { LocateButton } from "@/components/locate-button";
 import { Caret } from "@/components/ui/caret";
 import { sectionHref, type Profession } from "@/lib/professions";
@@ -39,7 +40,6 @@ export function HorseCareSearch({
   const router = useRouter();
   const [profession, setProfession] = useState(defaultProfession);
   const [location, setLocation] = useState(defaultLocation);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -63,21 +63,18 @@ export function HorseCareSearch({
         <label className="order-1 flex min-w-0 basis-full items-center gap-2.5 rounded-[9px] bg-surface px-3.5 text-fg wide:basis-0 wide:flex-[1.6] wide:rounded-[10px] wide:px-4">
           <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-accent" />
           <span className="sr-only">Suburb or postcode</span>
-          <input
-            ref={inputRef}
+          {/* Search stays forgiving (a state, a partial name); the list
+              just offers real suburbs as you type. */}
+          <LocationAutocomplete
+            strict={false}
             name="location"
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={setLocation}
             placeholder="Suburb or postcode"
-            autoComplete="off"
-            className="min-w-0 flex-1 bg-transparent py-3 text-[18px] text-fg outline-none placeholder:text-subtle wide:py-4"
+            className="min-w-0 flex-1"
+            inputClassName="w-full bg-transparent py-3 text-[18px] text-fg outline-none placeholder:text-subtle wide:py-4"
           />
-          <LocateButton
-            onLocated={(loc) => {
-              setLocation(loc.value);
-              inputRef.current?.focus();
-            }}
-          />
+          <LocateButton onLocated={(loc) => setLocation(loc.value)} />
         </label>
 
         <SelectMenu

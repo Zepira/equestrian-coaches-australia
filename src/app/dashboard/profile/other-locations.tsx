@@ -34,10 +34,14 @@ export function OtherLocations({
 }) {
   const empty = { text: "", suburb: "", state: "", postcode: "" };
   const [place, setPlace] = useState(empty);
+  const [added, setAdded] = useState(0);
   // Clear the town once one has been added, ready for the next.
   const [state, action] = useActionState<LocationState, FormData>(async (prev, fd) => {
     const result = await addLocation(prev, fd);
-    if (result?.ok) setPlace(empty);
+    if (result?.ok) {
+      setPlace(empty);
+      setAdded((n) => n + 1);
+    }
     return result;
   }, null);
   const extrasAllowed = Math.max(0, limit - 1);
@@ -82,9 +86,9 @@ export function OtherLocations({
           <label className="block flex-[2]">
             <span className={label}>Another place you work from</span>
             <LocationAutocomplete
-              value={place.text}
-              onChange={(v) => setPlace({ text: v, suburb: "", state: "", postcode: "" })}
-              onSelect={(s) => setPlace({ text: [s.suburb, s.state, s.postcode].filter(Boolean).join(" "), suburb: s.suburb, state: s.state, postcode: s.postcode })}
+              key={added}
+              onChange={() => setPlace({ text: "", suburb: "", state: "", postcode: "" })}
+              onSelect={(s) => setPlace({ text: s.label, suburb: s.suburb, state: s.state, postcode: s.postcode })}
               placeholder="Suburb VIC 3550"
               disabled={!configured}
               inputClassName={input}

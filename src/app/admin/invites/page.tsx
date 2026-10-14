@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { getProfessions } from "@/lib/cms/read";
@@ -96,12 +97,8 @@ export default async function InvitesPage({ searchParams }: { searchParams: Prom
             <input name="business_name" className={input} />
           </label>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium text-fg">Suburb</span>
-            <input name="suburb" className={input} />
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-fg">State</span>
-            <input name="state" maxLength={3} className={input} />
+            <span className="mb-1 block text-sm font-medium text-fg">Where they&apos;re based</span>
+            <LocationAutocomplete name="place" placeholder="Start typing a suburb" inputClassName={input} />
           </label>
           <div className="@[560px]/admin:col-span-2">
             <Button type="submit">Make the invite</Button>

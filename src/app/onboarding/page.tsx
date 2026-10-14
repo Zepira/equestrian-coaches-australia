@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -146,8 +147,8 @@ export default async function OnboardingPage({
               <AutosaveForm action={saveWhere} next={nextOf("where")}>
                 <label className="block">
                   <span className={label}>Where you&apos;re based</span>
-                  <span className={help}>Suburb and state, or a postcode. Your profile shows the suburb, never a street address.</span>
-                  <input name="place" defaultValue={[provider.suburb, provider.state, provider.postcode].filter(Boolean).join(" ")} className={field} autoComplete="off" />
+                  <span className={help}>Start typing and pick your suburb from the list. Your profile shows the suburb, never a street address.</span>
+                  <LocationAutocomplete name="place" defaultValue={[provider.suburb, provider.state, provider.postcode].filter(Boolean).join(" ")} placeholder="Start typing your suburb or postcode" inputClassName={field} />
                 </label>
                 <label className="flex items-center gap-3">
                   <input type="checkbox" name="travels" defaultChecked={Boolean(provider.travels_to_client)} className="accent-accent" />

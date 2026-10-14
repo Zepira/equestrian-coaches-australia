@@ -1,5 +1,7 @@
 "use server";
 
+import { titleCase } from "@/lib/text";
+import { placeProblem, verifyPlace } from "@/lib/places";
 import { headers } from "next/headers";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { deviceHash } from "@/lib/reviews";
@@ -30,7 +32,10 @@ export async function submitTestimonial(_prev: TestimonialResult, fd: FormData):
   if (quote.length < L.quoteMin) return { ok: false, message: "Write a sentence or two about what it was like." };
   if (quote.length > L.quote) return { ok: false, message: `That's a bit long for a testimonial. Keep it under ${L.quote} characters.` };
   if (!name || name.length > L.name) return { ok: false, message: "Add your name, as you'd like it shown." };
-  if (place.length > L.place) return { ok: false, message: "Keep the town short, like Bendigo." };
+  // Picked from the list, shown as "Bendigo VIC" (no postcode).
+  const town = place ? await verifyPlace(service, place) : null;
+  if (place && !town) return { ok: false, message: placeProblem(place) };
+  const shownPlace = town ? `${titleCase(town.suburb)} ${town.state}`.slice(0, L.place) : "";
   if (fd.get("consent") !== "on") return { ok: false, message: "Tick the box to say they can show it." };
 
   const h = await headers();
@@ -47,7 +52,7 @@ export async function submitTestimonial(_prev: TestimonialResult, fd: FormData):
     provider_id: target.id,
     quote,
     author_name: name,
-    author_place: place,
+    author_place: shownPlace,
     status: "pending",
     source: "request",
     consent_at: new Date().toISOString(),

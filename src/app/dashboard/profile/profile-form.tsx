@@ -204,16 +204,15 @@ export function ProfileForm({ error, registration = null, configured, coach, dis
               <label className="block">
                 <span className={label}>Based in</span>
                 <LocationAutocomplete
-                  value={[suburb, state, postcode].filter(Boolean).join(" ")}
+                  defaultValue={[suburb, state, postcode].filter(Boolean).join(" ")}
                   onChange={(v) => {
-                    // free text until a suggestion is picked: keep the suburb
-                    // as typed, leave state/postcode as they were
-                    const parts = v.trim().split(/\s+/);
-                    const st = parts.find((p) => /^(NSW|VIC|QLD|SA|WA|TAS|ACT|NT)$/i.test(p));
-                    const pc = parts.find((p) => /^\d{4}$/.test(p));
-                    setSuburb(parts.filter((p) => p !== st && p !== pc).join(" "));
-                    if (st) setState(st.toUpperCase());
-                    if (pc) setPostcode(pc);
+                    // Cleared means no base. Anything else typed stays unsaved
+                    // until a suburb is picked: the field blocks the save.
+                    if (!v.trim()) {
+                      setSuburb("");
+                      setState("");
+                      setPostcode("");
+                    }
                   }}
                   onSelect={(s) => {
                     setSuburb(s.suburb);

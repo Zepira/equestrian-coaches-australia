@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireProvider } from "@/lib/provider-session";
 import { createServiceSupabase } from "@/lib/supabase/service";
-import { resolveLocation } from "@/lib/supabase/queries";
+import { placeProblem, verifyPlace } from "@/lib/places";
 import { getProfessions } from "@/lib/cms/read";
 import { isReviewRequired } from "@/lib/settings";
 import { isComplete, logChange, profileChecklist, submitForReview } from "@/lib/provider-lifecycle";
@@ -86,7 +86,7 @@ export async function saveWhere(fd: FormData): Promise<SaveResult> {
   const { supabase, providerId } = await requireProvider();
   const place = text(fd, "place", 120);
   const travels = fd.get("travels") === "on";
-  const resolved = place ? await resolveLocation(supabase, place) : null;
+  const resolved = place ? await verifyPlace(supabase, place) : null;
   const { error } = await supabase
     .from("providers")
     .update({
@@ -110,7 +110,7 @@ export async function saveWhere(fd: FormData): Promise<SaveResult> {
     .eq("id", providerId);
   if (error) return notSaved(error);
   done();
-  if (place && !resolved) return { ok: true, warn: true, message: `We couldn't find "${place}". Try the suburb and state, or a postcode.` };
+  if (place && !resolved) return { ok: true, warn: true, message: placeProblem(place) };
   return { ok: true, message: resolved ? `Based in ${titleCase(resolved.suburb)} ${resolved.state} ${resolved.postcode}` : undefined };
 }
 

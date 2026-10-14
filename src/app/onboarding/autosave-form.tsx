@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { SaveResult } from "./actions";
 import { PendingSpinner } from "@/components/ui/spinner";
+import { PLACE_PICKED } from "@/components/location-autocomplete";
 
 /**
  * One onboarding step's form. Saves itself a moment after the last change
@@ -45,6 +46,15 @@ export function AutosaveForm({
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(save, 700);
   }
+
+  // Picking a suburb from the list changes the field without a change event.
+  useEffect(() => {
+    const el = form.current;
+    if (!el) return;
+    const onPicked = () => schedule();
+    el.addEventListener(PLACE_PICKED, onPicked);
+    return () => el.removeEventListener(PLACE_PICKED, onPicked);
+  });
 
   return (
     <form

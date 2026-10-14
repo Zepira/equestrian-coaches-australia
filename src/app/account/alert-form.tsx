@@ -38,7 +38,6 @@ const field = "w-full rounded-[12px] border border-border bg-white px-3.5 h-12 t
 export type AlertConsent = { alerts: { id: string; body: string } | null; news: { id: string; body: string } | null; newsOn: boolean };
 
 export function AlertForm({ professions, defaults, submitLabel, consent }: { professions: AlertProfession[]; defaults: AlertDefaults; submitLabel: string; consent: AlertConsent }) {
-  const [place, setPlace] = useState(defaults.place);
   const [who, setWho] = useState(defaults.who);
   const picked = who.startsWith("p:") ? professions.find((p) => p.id === who.slice(2)) : undefined;
   const coaches = professions.filter((p) => p.door === "coaches");
@@ -51,8 +50,7 @@ export function AlertForm({ professions, defaults, submitLabel, consent }: { pro
       {defaults.source && <input type="hidden" name="source" value={defaults.source} />}
       <label className="block">
         <span className={label}>Near</span>
-        <input type="hidden" name="place" value={place} />
-        <LocationAutocomplete value={place} onChange={setPlace} onSelect={(s) => setPlace(s.value)} placeholder="Suburb or postcode" inputClassName={field} />
+        <LocationAutocomplete name="place" required defaultValue={defaults.place} placeholder="Suburb or postcode" inputClassName={field} />
       </label>
       <label className="block">
         <span className={label}>How far</span>

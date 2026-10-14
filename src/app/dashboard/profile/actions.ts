@@ -6,7 +6,8 @@ import { assertUploaded, imageExt, signUpload, type SignedUpload } from "@/lib/s
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireProvider } from "@/lib/provider-session";
-import { PROVIDER_PHOTOS, PROVIDER_VIDEOS, resolveLocation } from "@/lib/supabase/queries";
+import { PROVIDER_PHOTOS, PROVIDER_VIDEOS } from "@/lib/supabase/queries";
+import { placeProblem, verifyPlace } from "@/lib/places";
 import { hasVideo } from "@/lib/tiers";
 import { getPlanCapabilities, getPlans } from "@/lib/settings";
 import { TIERS } from "@/lib/tiers";
@@ -62,10 +63,13 @@ export async function saveProfile(formData: FormData) {
   const titleProblem = await protectedTitleProblem(supabase, providerId, [headline, bio, ...qualifications].join("\n"), formData.has("registration_number") ? registrationNumber : undefined);
   if (titleProblem) redirect(`/dashboard/profile?error=${encodeURIComponent(titleProblem)}#registration`);
 
-  // Geocode suburb/state/postcode into a point so radius search (phase 4)
-  // can find this coach. Silently skipped if it doesn't resolve — the
-  // profile still saves, it just won't surface in "near me" searches yet.
-  const resolved = await resolveLocation(supabase, `${suburb} ${postcode || state}`.trim());
+  // Geocode suburb/state/postcode into a point so radius search can find
+  // this profile. The field only submits a suburb picked from the list;
+  // anything else (a posted form, an old tab) is refused rather than saved
+  // as a place nobody can search.
+  const placeText = `${suburb} ${state} ${postcode}`.trim();
+  const resolved = placeText ? await verifyPlace(supabase, placeText) : null;
+  if (placeText && !resolved) redirect(`/dashboard/profile?error=${encodeURIComponent(placeProblem(placeText))}#location`);
 
   const { error } = await supabase
     .from("providers")

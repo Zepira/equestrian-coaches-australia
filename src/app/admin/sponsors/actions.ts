@@ -1,5 +1,6 @@
 "use server";
 
+import { areaIdForPlace } from "@/lib/places";
 import { assertUploaded, imageExt, signUpload, type SignedUpload } from "@/lib/storage-upload";
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
@@ -47,11 +48,9 @@ export async function saveSponsor(id: string, fd: FormData) {
   go(`/admin/sponsors/${id}`, "Saved.");
 }
 
-/** "Bendigo" or "bendigo-vic" to an area; empty means every area. */
+/** A picked suburb ("Bendigo VIC 3550") or a slug ("bendigo-vic") to an area; empty means every area. */
 async function areaFrom(service: NonNullable<ReturnType<typeof createServiceSupabase>>, text: string): Promise<string | null | false> {
-  if (!text) return null;
-  const { data } = await service.from("areas").select("id").or(`slug.eq.${slugify(text)},name.ilike.${text.replace(/[%_,()]/g, "")}`).limit(1).maybeSingle();
-  return data ? (data.id as string) : false;
+  return areaIdForPlace(service, text);
 }
 
 function slotFields(fd: FormData) {
@@ -96,7 +95,7 @@ export async function createSlot(sponsorId: string, fd: FormData) {
   if (f.error) go(path, f.error, "error");
   if (f.row.placement === "area") {
     const area = await areaFrom(service, formText(fd, "area", 80));
-    if (area === false) go(path, "We couldn't find that place. Try its name, like Bendigo, or bendigo-vic.", "error");
+    if (area === false) go(path, "We couldn't find that place. Pick the suburb from the list as you type.", "error");
     f.row.area_id = area || null;
   }
   const { data: link, error: linkError } = await service
@@ -128,7 +127,7 @@ export async function updateSlot(sponsorId: string, slotId: string, fd: FormData
   if (f.error) go(path, f.error, "error");
   if (f.row.placement === "area") {
     const area = await areaFrom(service, formText(fd, "area", 80));
-    if (area === false) go(path, "We couldn't find that place. Try its name, like Bendigo, or bendigo-vic.", "error");
+    if (area === false) go(path, "We couldn't find that place. Pick the suburb from the list as you type.", "error");
     f.row.area_id = area || null;
   }
   const { data: slot } = await service.from("sponsor_slots").update({ ...f.row, active: fd.get("active") === "on" }).eq("id", slotId).eq("sponsor_id", sponsorId).select("link_id").single();

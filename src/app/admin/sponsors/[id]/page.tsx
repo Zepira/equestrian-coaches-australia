@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createServiceSupabase } from "@/lib/supabase/service";
@@ -25,7 +26,7 @@ type SlotRow = {
   ends_on: string;
   active: boolean;
   links: { slug: string; destination: string } | null;
-  areas: { name: string } | null;
+  areas: { name: string; state: string } | null;
 };
 
 /**
@@ -42,7 +43,7 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
   if (!sponsor) notFound();
   const month = /^\d{4}-\d{2}$/.test(sp.month ?? "") ? sp.month! : new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Melbourne" }).slice(0, 7);
   const [{ data: slots }, { data: guides }, professions, report, history] = await Promise.all([
-    service.from("sponsor_slots").select("*, links(slug, destination), areas(name)").eq("sponsor_id", id).order("starts_on", { ascending: false }),
+    service.from("sponsor_slots").select("*, links(slug, destination), areas(name, state)").eq("sponsor_id", id).order("starts_on", { ascending: false }),
     service.from("guides").select("id, title").eq("status", "published").order("title"),
     getProfessions(),
     sponsorReport(service, id, month),
@@ -65,7 +66,7 @@ export default async function AdminSponsorPage({ params, searchParams }: { param
           <optgroup label="Professions">{professions.filter((p) => p.id).map((p) => <option key={p.id} value={p.id!}>{p.name}</option>)}</optgroup>
         </select>
       </label>
-      <label><span className={label}>Area (area pages; empty for all)</span><input name="area" defaultValue={s?.areas?.name ?? ""} placeholder="Bendigo" className={input} /></label>
+      <label><span className={label}>Area (area pages; empty for all)</span><LocationAutocomplete name="area" defaultValue={s?.areas ? `${s.areas.name} ${s.areas.state}` : ""} placeholder="Start typing a suburb" inputClassName={input} /></label>
       <label><span className={label}>Their link (https://)</span><input name="url" defaultValue={s?.links?.destination ?? sponsor.website} className={input} /></label>
       <label className="@[460px]/editor:col-span-2"><span className={label}>Headline</span><input name="headline" defaultValue={s?.headline ?? ""} maxLength={90} className={input} /></label>
       <label className="@[460px]/editor:col-span-2"><span className={label}>A line or two (up to 300)</span><textarea name="body" defaultValue={s?.body ?? ""} maxLength={300} rows={2} className={input} /></label>

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { createClient as createServerClient } from "@/lib/supabase/server";
-import { resolveLocation } from "@/lib/supabase/queries";
+import { placeProblem, verifyPlace } from "@/lib/places";
 import { titleCase } from "@/lib/text";
 import { headers } from "next/headers";
 import { consentStatus, ensureContact, recordConsent } from "@/lib/audience";
@@ -77,8 +77,8 @@ export async function saveAlert(formData: FormData) {
   const { supabase, userId } = await requireRider();
   const id = String(formData.get("id") ?? "");
   const place = String(formData.get("place") ?? "").trim();
-  const resolved = place ? await resolveLocation(supabase, place) : null;
-  if (!resolved) redirect(`/account?alert_error=${encodeURIComponent(place ? `We couldn't find "${place}". Try a suburb and state, or a postcode.` : "Add the place you want to hear about.")}#alerts`);
+  const resolved = place ? await verifyPlace(supabase, place) : null;
+  if (!resolved) redirect(`/account?alert_error=${encodeURIComponent(place ? placeProblem(place) : "Add the place you want to hear about.")}#alerts`);
 
   const radius = Number(formData.get("radius_km"));
   const who = String(formData.get("who") ?? "");

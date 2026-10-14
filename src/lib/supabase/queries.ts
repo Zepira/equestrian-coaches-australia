@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { verifyPlace } from "@/lib/places";
 import { disciplines as staticDisciplines } from "@/lib/disciplines";
 import type { DisciplineContent } from "@/lib/discipline-content";
 import { parseState, type AuState } from "@/lib/au-states";
@@ -141,6 +142,12 @@ export async function resolveLocation(
 ): Promise<ResolvedLocation | null> {
   const trimmed = query.trim();
   if (!trimmed) return null;
+
+  // A place picked from the list ("Bendigo VIC 3550") names exactly one
+  // suburb. The guessing below would read only its postcode and could land
+  // on a neighbour that shares it (3350 is Alfredton before Ballarat).
+  const exact = await verifyPlace(supabase, trimmed);
+  if (exact) return exact;
 
   const words = trimmed.split(/\s+/);
   const lastWord = words[words.length - 1]?.toUpperCase();

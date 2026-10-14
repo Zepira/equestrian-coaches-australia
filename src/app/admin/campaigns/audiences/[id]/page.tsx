@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createServiceSupabase } from "@/lib/supabase/service";
@@ -80,7 +81,7 @@ export default async function AudiencePage({ params, searchParams }: { params: P
           </select>
         </label>
         <div className="grid grid-cols-[1fr_110px] gap-2">
-          <label><span className={label}>Near (suburb or postcode)</span><input name="place" defaultValue={f.place ?? ""} className={input} /></label>
+          <label><span className={label}>Near (suburb or postcode)</span><LocationAutocomplete name="place" defaultValue={f.place ?? ""} placeholder="Start typing a suburb" inputClassName={input} /></label>
           <label><span className={label}>Within</span>
             <select name="km" defaultValue={String(f.km ?? 50)} className={input}>
               {[10, 25, 50, 100, 250].map((k) => <option key={k} value={k}>{k} km</option>)}

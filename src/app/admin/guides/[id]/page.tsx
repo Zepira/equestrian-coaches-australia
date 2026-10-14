@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Markdown } from "@/components/markdown";
@@ -82,7 +83,7 @@ export default async function AdminGuidePage({ params, searchParams }: { params:
                 {professions.filter((p) => p.id).map((p) => <option key={p.id} value={p.id!}>{p.name}</option>)}
               </select>
             </label>
-            <label><span className={label}>Place (for the professionals nearby)</span><input name="area" defaultValue={area ? `${area.name}` : ""} placeholder="Bendigo" className={input} /></label>
+            <label><span className={label}>Place (for the professionals nearby)</span><LocationAutocomplete name="area" defaultValue={area ? `${area.name} ${area.state}` : ""} placeholder="Start typing a suburb" inputClassName={input} /></label>
           </div>
           {(terms ?? []).length > 0 && (
             <fieldset>

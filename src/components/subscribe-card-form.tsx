@@ -1,5 +1,6 @@
 "use client";
 
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 import { useActionState, useEffect, useState } from "react";
 import { subscribeToAlerts, type SubscribeResult } from "@/app/alerts/actions";
 import { createClient } from "@/lib/supabase/client";
@@ -69,7 +70,7 @@ export function SubscribeCardForm(p: SubscribeCardProps) {
             ) : (
               <label className="block">
                 <span className="sr-only">Suburb or postcode</span>
-                <input name="place" required placeholder="Suburb or postcode" className={input} />
+                <LocationAutocomplete name="place" required placeholder="Suburb or postcode" ariaLabel="Suburb or postcode" inputClassName={input} />
               </label>
             )}
             {!signedIn && (

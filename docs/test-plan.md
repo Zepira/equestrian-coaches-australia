@@ -290,3 +290,20 @@ Built 14 Oct 2026. Needs the three auth templates in docs/auth-email-templates.m
 - [ ] Forgot password on the log in page, with dark mode on: the reset email is the green version too, and its button still works.
 - [ ] Send yourself an enquiry or a waitlist confirmation with dark mode on: the same green version, links in peach.
 - [ ] Gmail decides its own dark colours, so it may still look different there. It should still be readable.
+
+## 22. Suburb fields that only take a real suburb
+
+Built 14 Oct 2026. Every box where someone saves a place now works like an address box on a shop checkout: type, pick from the list, and it fills in as "Bendigo VIC 3550" with a tick. Until a suburb is picked the form won't save and says "Pick your suburb from the list." Searches stay forgiving.
+- [ ] **Onboarding** (new test coach, "Where do you work?"): type "Bend", pick Bendigo. The box shows "Bendigo VIC 3550" with a tick and the line under Continue says "Based in Bendigo VIC 3550".
+- [ ] Same step: type "Richmond" and tab away. It doesn't pick one (there are five) and shows "Pick your suburb from the list." Continue won't go on. Type "Richmond VIC" and tab away: it picks Richmond VIC 3121.
+- [ ] Type "Bendigo" in full and press Enter: it takes Bendigo VIC 3550 rather than submitting.
+- [ ] Arrow keys move down the list, Enter picks, Escape closes it.
+- [ ] **Dashboard, Profile, "Based in"** (test coach): change the town by picking from the list, save, reload: it's kept. Type a town without picking: Save is refused with the message.
+- [ ] **Dashboard, Profile, Other locations** (needs Clinic): "Add location" only works after a pick, and the box clears after adding.
+- [ ] **Account, alerts** (test rider): the "Near" box works the same way.
+- [ ] **"Hear when…" box** on a search with no place (signed out): the suburb box works the same way.
+- [ ] **Testimonial link** (/testimonial/<slug>): the town box is optional; if filled, it must be picked, and the testimonial shows "Bendigo VIC" (no postcode).
+- [ ] **Horse care search card** (/horse-care): typing shows suggestions (states first, then towns). Typing a town and pressing Search without picking still searches, as before.
+- [ ] **Admin, Invites**: one "Where they're based" box replaces suburb and state; the invited coach's profile starts with that suburb.
+- [ ] **Admin, Guides and Sponsors**: the place box takes a picked suburb. An existing guide or sponsor slot with a place still saves without retyping it.
+- [ ] **Admin, Campaigns, audiences**: "Near" takes a picked suburb.

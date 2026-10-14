@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isEmail } from "@/lib/settings";
+import { placeProblem, verifyPlace } from "@/lib/places";
+import { titleCase } from "@/lib/text";
 import { createServiceSupabase } from "@/lib/supabase/service";
 import { currentWording, ensureContact, recordConsent } from "@/lib/audience";
 
@@ -36,8 +38,18 @@ export async function createInvite(formData: FormData) {
     const { data: blocked } = await service.from("suppressions").select("reason").eq("email", email).limit(1);
     if (blocked?.length) redirect(`/admin/invites?error=${encodeURIComponent("That address is on our do-not-email list, so we can't invite it.")}`);
   }
+  // The suburb is picked from the list; the sign-up trigger copies suburb
+  // and state onto the new profile, so only a real place goes in.
+  const placeText = get("place");
+  const place = placeText ? await verifyPlace(supabase, placeText) : null;
+  if (placeText && !place) redirect(`/admin/invites?error=${encodeURIComponent(placeProblem(placeText))}`);
   const prefill = Object.fromEntries(
-    (["headline", "suburb", "state", "business_name"] as const).map((k) => [k, get(k)]).filter(([, v]) => v)
+    [
+      ["headline", get("headline")],
+      ["business_name", get("business_name")],
+      ["suburb", place ? titleCase(place.suburb) : ""],
+      ["state", place?.state ?? ""],
+    ].filter(([, v]) => v)
   );
   const { error } = await supabase.from("invites").insert({
     email,

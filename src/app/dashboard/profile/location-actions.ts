@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireProvider } from "@/lib/provider-session";
 import { profilePath } from "@/lib/page-paths";
 import { getPlanCapabilities, getPlans } from "@/lib/settings";
-import { resolveLocation } from "@/lib/supabase/queries";
+import { placeProblem, verifyPlace } from "@/lib/places";
 import { baseLimit, TIERS } from "@/lib/tiers";
 import { titleCase } from "@/lib/text";
 
@@ -36,10 +36,9 @@ export async function addLocation(_prev: LocationState, fd: FormData): Promise<L
   const state = String(fd.get("state") ?? "").trim();
   const postcode = String(fd.get("postcode") ?? "").trim();
   if (!suburb) return { ok: false, message: "Pick the town from the list as you type." };
-  // By town and state first: a postcode alone resolves to whichever suburb
-  // shares it first (3350 is Alfredton before Ballarat).
-  const at = (state && (await resolveLocation(supabase, `${suburb} ${state}`))) || (await resolveLocation(supabase, `${suburb} ${postcode || state}`.trim()));
-  if (!at) return { ok: false, message: "We couldn't find that town. Pick it from the list as you type." };
+  // Exactly one suburb, or nothing saved (src/lib/places.ts).
+  const at = await verifyPlace(supabase, `${suburb} ${state} ${postcode}`);
+  if (!at) return { ok: false, message: placeProblem(`${suburb} ${state}`) };
   const radius = Math.round(Number(fd.get("travel_radius_km") || 30));
   if (!Number.isFinite(radius) || radius < 0 || radius > 1000) return { ok: false, message: "Travel distance is a number of kilometres, up to 1000." };
 

@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 import { Field, inputClass } from "@/components/ui/field";
 import { LegalText } from "@/components/legal-text";
 import { submitTestimonial, type TestimonialResult } from "@/app/testimonial/actions";
@@ -40,7 +41,7 @@ export function TestimonialForm({ slug, words, notice, maxLength }: { slug: stri
           <input name="name" required maxLength={80} autoComplete="given-name" className={inputClass} />
         </Field>
         <Field label={words.placeLabel} hint={<span className="mt-1 block text-[13px] text-subtle">{words.placeHint}</span>}>
-          <input name="place" maxLength={60} autoComplete="address-level2" className={inputClass} />
+          <LocationAutocomplete name="place" placeholder="Start typing your town" inputClassName={inputClass} />
         </Field>
       </div>
       <label className="flex items-start gap-2.5 text-[14px] leading-[1.45] text-fg">

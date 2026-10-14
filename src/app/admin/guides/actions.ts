@@ -1,5 +1,6 @@
 "use server";
 
+import { areaIdForPlace } from "@/lib/places";
 import { assertUploaded, imageExt, signUpload, type SignedUpload } from "@/lib/storage-upload";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -50,9 +51,9 @@ export async function saveGuide(id: string, fd: FormData) {
   const areaText = formText(fd, "area", 80);
   let areaId: string | null = null;
   if (areaText) {
-    const { data: area } = await service.from("areas").select("id").or(`slug.eq.${slugify(areaText)},name.ilike.${areaText.replace(/[%_,()]/g, "")}`).limit(1).maybeSingle();
-    if (!area) go(path, `We couldn't find the place "${areaText}". Try its name, like Bendigo, or bendigo-vic.`, "error");
-    areaId = area!.id as string;
+    const area = await areaIdForPlace(service, areaText);
+    if (!area) go(path, `We couldn't find the place "${areaText}". Pick the suburb from the list as you type.`, "error");
+    areaId = area as string;
   }
   const professionId = formText(fd, "profession_id", 40);
   const coauthor = formText(fd, "coauthor_provider_id", 40);
